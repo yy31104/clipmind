@@ -1,7 +1,72 @@
 # ClipMind v1 技术审计与质量门槛
 
-审计对象：1760 行，13 个模块，零测试。三个真实抖音链接跑通。
-本文不含代码改动，只定义 v1 的验收标准与实施顺序。
+审计起点：1760 行，13 个模块，零测试，三个真实抖音链接跑通。
+当前状态：P0-A 与 P0-B 已完成，24 项自动化测试通过。本文定义后续 v1 的
+产品契约、验收标准与实施顺序。
+
+---
+
+## 0. ClipMind v1 产品契约（范围更正）
+
+### Canonical purpose
+
+ClipMind 是一个 local-first 的短视频**证据提取系统**。它负责忠实提取、对齐和
+结构化来源证据；不负责判断用户应该学什么、什么最重要、或什么应进入长期知识库。
+解释和知识管理决策属于下游 knowledge-base agent。
+
+### Canonical free path
+
+完整 canonical pipeline 必须在没有任何付费 API key 时成立：
+
+```text
+抖音分享文字 / URL
+→ 本地认证媒体获取
+→ 本地 ASR
+→ 视觉状态提取
+→ 本地 OCR
+→ 确定性时间线对齐
+→ Evidence Pack
+```
+
+这条路径不需要 Claude、OpenAI、Gemini 或其他付费模型。
+
+### Semantic summarization
+
+语义摘要**不是 v1 要求**。未来可以增加可选 summarizer，但它不得成为提取依赖；
+缺失或失败不得降低证据完整性。canonical artifact 是 Evidence Pack，不是 AI 摘要。
+
+### Canonical Evidence Pack
+
+每个成功处理的视频至少应产生：
+
+- source metadata、source URL 与可用的稳定来源身份；
+- 完整、带时间戳的 transcript；
+- 与时间戳/视觉状态关联的 OCR；
+- visual timeline；
+- 所有 materially distinct、stable 的视觉状态；
+- manifest 与 schema version；
+- 从结构化产物确定性生成的人类可读 evidence view。
+
+源视频只是临时处理输入；成功提取后无需保留，除非显式 debug/user 选项要求。
+
+### Visual extraction contract
+
+canonical extraction 禁止固定每个视频的关键帧数量。保留数量必须由内容决定：
+
+- 无实质画面变化的纯口播可以只有很少视觉状态；
+- 四页白板或幻灯片应大致对应四个稳定状态；
+- 密集代码或 UI 演示可以产生更多状态。
+
+选择必须考虑 scene cut、结构变化、OCR/文字变化、转场与构建动画、画面稳定性和
+可读性、重复/近重复状态。逐步构建中后来消失或被替换的信息不得丢弃；近重复构建
+状态可以组成 build group。完整 evidence set 保存所有有用状态，单独的 compact
+preview 可以选代表帧，但不得替代或截断 canonical evidence set。
+
+### Responsibility boundary
+
+ClipMind 负责本地获取、转写、视觉证据提取、OCR、时间对齐和可靠打包。
+下游 knowledge-base agent 负责解释、按需摘要、与已有知识比较、判断相关性、知识
+去重、创建学习任务/笔记，以及决定长期保留内容。
 
 ---
 
@@ -18,37 +83,35 @@
                               │ ASR (MLX Whisper)             │ 视觉 (抽帧 + OCR)
                               └───────────────┬───────────────┘
                                               ↓
-                                        timeline fusion
+                                   deterministic timeline
                                               ↓
-                                         summarizer
+                                         Evidence Pack
                                               ↓
-                                       不可变笔记 + 清理
+                                  下游知识库 agent（独立阶段）
 ```
 
 三个正确的决策：
 
-1. **按资源类型分池，而不是一个全局并发数。** `fetch=4 / asr=1 / ocr=2 / llm=4`
+1. **按资源类型分池，而不是一个全局并发数。** `fetch=4 / asr=1 / ocr=2`
    反映了各阶段争抢的是不同资源（网络 / GPU / CPU）。单一信号量会让网络等待
    占住 GPU 名额。
-2. **产品产出是笔记，源媒体是实现细节。** 处理完即删。这个定位让整个系统
-   不必去解决"下载器"要解决的问题。
+2. **产品产出是 Evidence Pack，源媒体是实现细节。** 处理完即删。这个定位让
+   系统不必去解决"下载器"要解决的问题。
 3. **ASR 和 OCR 都已做到失败降级而非杀任务。** 这是失败隔离的正确方向，
-   但覆盖不完整（见 B.5）。
+   但 Evidence Pack 仍需显式记录证据缺失，不能把降级结果冒充完整输出。
 
 ### A.2 结构性缺陷
 
-**缺陷 1：没有持久化层，内存与磁盘两套状态不对账。**
+**已解决：持久化层与重启恢复（P0-B）。**
 
-`JobStore.jobs` 是纯内存字典（jobs.py:43），启动时不扫描 `out/`。后果：
-笔记在磁盘上好好的，重启后笔记库显示为空；重启时正在跑的任务无法恢复，
-其临时文件成为孤儿。这是最大的单点结构问题。
+`out/<job-id>/job.json` 现在通过 write-through 持久化任务；启动恢复逐状态遵循
+C.3 契约，异常路径清理已由自动化测试保护。
 
 **缺陷 2：timeline fusion 不是一个阶段，而是一个字符串拼接函数。**
 
-架构图里 fusion 是独立环节，代码里它是 `summarize.build_context()`——
-一个把转写和 OCR 拼成 prompt 的辅助函数。这带来两个问题：融合逻辑无法
-独立测试；换 summarizer 就得重写融合。**融合必须先于摘要独立出来**，产出
-一个确定性的、可断言的 `Timeline` 对象。
+架构图里 timeline 是独立环节，代码里仍是为摘要构建字符串的辅助函数。
+Evidence Pack 需要一个确定、可断言的 `Timeline`，把 transcript、OCR 和视觉状态
+对齐，而不是为某个 summarizer 构造 prompt。
 
 **缺陷 3：没有平台适配器边界。**
 
@@ -56,9 +119,10 @@
 没有 `DouyinAdapter` 接口。v1 只做抖音是对的，但边界要画出来——否则
 抖音页面一变，改动会渗进核心。
 
-**缺陷 4：`summarize.py` 同时承担融合、provider 选择、API 调用、降级。**
+**兼容层：当前 `summarize.py` 仍承担旧的人类可读输出。**
 
-四件事挤在一个模块里，是 provider 抽象缺失的直接症状。
+它可以在迁移期保留，但不再是 v1 canonical path，也不是 P0。Evidence Pack 不得
+依赖该模块或任何 summarizer provider。
 
 ---
 
@@ -66,38 +130,31 @@
 
 ### P0 — 阻断 v1
 
-**P0-1 免费路径没有真正的语义摘要**
+**✓ P0-A：行为回归安全网**
 
-当前无 key 时走 `_fallback()`：把转写截断 400 字 + OCR 文字按 novelty 排序
-拼接。这是抽取式拼接，不是归纳。本机实测 `ollama` 未安装、`mlx_lm` 未安装，
-所以"免费也能用"目前只是"免费也能跑完"。
+24 项自动化测试现已覆盖 URL、job lifecycle、并发、管线降级、SSE、重启恢复和
+异常清理。下一刀在修改视觉核心前，仍需补 `dhash / hamming / dedupe /
+collapse_builds / score / select` 的 characterization tests。
 
-这是明确的硬约束，必须在 v1 解决。
+**✓ P0-B：持久化、恢复与异常安全清理**
 
-**P0-2 重启丢失整个笔记库**
+任务状态已 write-through 到 `out/<job-id>/job.json`；queued/running/terminal 恢复
+遵循 C.3，已完成笔记可恢复，所有下载后异常都清理临时媒体且保留 final artifacts。
 
-证据：`jobs.py:43` 仅 `self.jobs = {}`，全仓库无任何 `out/` 扫描逻辑。
-`out/` 下已有 3 个完整笔记目录，但重启后 `GET /api/jobs` 返回空。
-运行中的任务在重启后既不恢复也不标记失败。
+**NEXT：Extraction fidelity**
 
-**P0-3 零测试**
+当前固定 10 张的策略违反 v1 visual extraction contract。下一核心工作是完整时间戳
+转写、内容驱动的 stable visual states、OCR 对齐和 progressive build 分组。
 
-1760 行代码，`find` 无任何 `test_*`。这一条单独就能让仓库在面试中失分。
+**THEN：Evidence Pack contract 与知识库交接**
 
-**P0-4 无幂等，重复 URL 全量重算**
+定义 versioned manifest、结构化 transcript/OCR/visual timeline、完整视觉状态集和
+确定性 evidence view；通过监听目录或同等简单边界交给下游知识库 agent。
 
-`server.py:26` 的去重集合只包含 `queued|running`。已完成的 URL 再次提交会
-重新下载、重新转写、重新 OCR。评测集里"同一 URL 提交两次"这一项目前必然
-浪费一整轮算力。
+**THEN：P0-C hardening**
 
-**P0-5 临时文件生命周期只覆盖成功路径**
-
-`pipeline.py:90-94` 的 `rmtree(samples)` 和 `unlink(source)` 是直线代码，
-不在 `try/finally` 里。下载完成之后、`write_all` 之前的任何异常都会留下
-`source.mp4` 加最多 1200 张候选 JPEG。
-
-说明：本次实测的失败用例（无效链接）在下载前就失败了，目录是空的，
-所以**这条是代码路径推断，尚未实测复现**。评测集必须包含"中途失败"用例来证实。
+同一 URL 目前仍会重复下载与推理；批量任务还需要明确的资源控制和压力验证。
+幂等与资源限制在 Evidence Pack 身份/schema 稳定后实施。
 
 ### P1 — 影响可信度
 
@@ -106,7 +163,7 @@
 服务端不发 event id，客户端 `EventSource` 自动重连但 `app.js` 无 `onerror`、
 重连后不重新拉 `/api/jobs`。断线期间的所有状态变化永久丢失，界面卡在旧状态。
 
-**P1-7 关键帧预算不随时长伸缩**
+**已提升到 v1 core：固定关键帧预算不符合产品契约**
 
 实测：
 
@@ -116,8 +173,8 @@
 | 面试问底层 | 64s | 128 | 10 |
 | AI 产品经理面试 | 52s | 104 | 10 |
 
-227 秒的视频和 52 秒的视频拿到同样的信息预算。`keyframe_information_coverage`
-这个指标目前必然随时长单调下降。预算应当是时长与信息密度的函数。
+227 秒的视频和 52 秒的视频拿到同样的信息预算。修复方向不是按时长增加固定预算，
+而是移除 canonical hard cap，按 materially distinct、stable 的内容状态决定数量。
 
 **P1-8 降级链路有一级是死的**
 
@@ -156,7 +213,7 @@ yt-dlp，而不只是 douyin.com。对一个本地工具可以接受，但必须
 - `fetch._winning_source` 是模块级可变全局
 - `Settings` 在 import 时从环境变量固化，测试需 monkeypatch 环境
 - README 的基准数字是手抄的，不可复现
-- UI 暴露 `fallback (no API key)` 这种开发者措辞
+- UI 仍以“摘要/关键帧”描述旧输出，而不是 Evidence Pack / visual states
 
 ---
 
@@ -166,31 +223,29 @@ yt-dlp，而不只是 douyin.com。对一个本地工具可以接受，但必须
 
 ### C.1 免费性（硬约束）
 
-- [ ] 全新机器、**未设置任何 API key**，能得到真正的语义摘要而非拼接
-- [ ] `ANTHROPIC_API_KEY` 不出现在任何必需路径；缺失它不产生任何警告
-- [ ] 三级 summarizer 均可用且可显式选择：`extractive` / `local` / `api`
+- [x] 当前媒体获取、ASR、OCR 与视觉处理不要求付费 API key
+- [ ] 全新机器、**未设置任何 API key**，能生成完整 canonical Evidence Pack
+- [ ] 可选 summarizer 缺失或失败时，Evidence Pack 的完整性不受影响
+- [ ] canonical path 不发起任何 Claude/OpenAI/Gemini 等付费模型请求
 
 ### C.2 正确性与失败隔离
 
-- [ ] 任一单阶段失败（OCR / ASR / summarizer）不导致任务失败，产出标注降级原因
+- [ ] ASR / OCR 单阶段失败被明确记录，输出不得静默冒充完整证据
 - [ ] 采集失败按类型分类上报，而非透传 yt-dlp 原始报错
-- [ ] 任意阶段抛异常，临时媒体与候选帧 100% 被清理
+- [x] 任意下载后阶段抛异常，临时媒体与候选帧被清理且 final artifacts 被保留
 
 ### C.3 状态与重启
 
-- [ ] 重启后笔记库完整恢复（从 `out/` 重建索引）
-- [ ] 重启时 `running` 的任务被标记为 `interrupted`，其临时文件被回收
+- [x] 重启后已有结果从 `out/` 重建索引
+- [x] 重启时 `running` 的任务被标记为 `interrupted`，其临时文件被回收
 - [ ] 同一 URL 重复提交命中缓存，不重复下载与推理
-- [ ] 恢复行为逐状态符合下方 Restart recovery contract
-- [ ] 持久化顺序不变式成立：先写 `running`，再产生任何外部副作用
+- [x] 恢复行为逐状态符合下方 Restart recovery contract
+- [x] 持久化顺序不变式成立：先写 `running`，再产生任何外部副作用
 
 #### Restart recovery contract
 
-这是 P0-B 的实现契约。四种状态的恢复行为在此定死，实现时不得自行发挥。
-
-注意 `interrupted` 是**新增的第五种状态**——当前代码只有
-`queued / running / done / error`，P0-A 的迁移表也只覆盖这四种。P0-B 需要
-同时扩展状态机与对应测试。
+这是 P0-B 已实现并由测试保护的契约。`interrupted` 是第五种状态；当前状态机和
+UI 已覆盖 `queued / running / done / error / interrupted`。
 
 **Persistence ordering invariant**
 
@@ -236,15 +291,21 @@ before any temporary media or other processing side effects are created.
 `done`, `error`, and `interrupted` jobs MUST NOT automatically transition back
 into `queued` or `running` during startup recovery.
 
-### C.4 质量（不以 DONE 为准）
+### C.4 Extraction fidelity（不以 DONE 为准）
 
-- [ ] `duplicate_keyframe_rate` < 10%（关键帧两两 dHash 距离全部 > 阈值）
-- [ ] `keyframe_information_coverage` 不随时长显著下降
-- [ ] 无语音幻灯片类视频仍产出有意义笔记（OCR 独立成立）
+- [ ] transcript 完整保留时间戳，不因摘要或 preview 截断
+- [ ] canonical extraction 不使用固定 per-video frame cap
+- [ ] 所有 materially distinct、stable、可读的视觉状态进入完整 evidence set
+- [ ] progressive build 中后来消失或被替换的信息不丢失
+- [ ] preview 与完整 evidence set 分离，preview 不得截断 canonical artifacts
+- [ ] OCR 与 visual state/timestamp 可确定性关联
+- [ ] `duplicate_visual_state_rate` < 10%
+- [ ] 无语音幻灯片仍可依靠 OCR/视觉状态形成可用 Evidence Pack
 
 ### C.5 工程
 
-- [ ] 单元测试覆盖：URL 提取、dedupe、collapse_builds、评分、fusion、失败分级
+- [ ] 修改视觉算法前，characterization tests 覆盖 `dhash / hamming / dedupe / collapse_builds / score / select`
+- [ ] 单元测试覆盖确定性 timeline alignment 与 Evidence Pack schema
 - [ ] `make bench` 一条命令产出可复现基准，README 数字由它生成
 - [ ] `make eval` 跑评测集并输出指标表
 - [ ] 每个任务落盘结构化 stage timing，失败可事后诊断
@@ -252,8 +313,8 @@ into `queued` or `running` during startup recovery.
 ### C.6 可解释性（面试目标）
 
 - [ ] `ARCHITECTURE.md` 回答：每个阶段为何存在、失败时会怎样、什么并发、
-      关键帧算法为何选中某一帧——**不看源码即可解释**
-- [ ] UI 高级面板暴露实际使用的 provider，而非硬编码文案
+      visual-state 算法为何保留某个状态——**不看源码即可解释**
+- [ ] Evidence Pack schema 与 ClipMind / 下游 agent 的责任边界可独立阅读
 
 ---
 
@@ -265,25 +326,26 @@ into `queued` or `running` during startup recovery.
 
 | # | 类型 | 主要考察 | 期望 |
 |---|---|---|---|
-| 1 | 纯口播 | ASR 主导 | 转写完整，关键帧少而不空 |
-| 2 | 无语音幻灯片 | OCR 独立成立 | ASR 为空不算失败，笔记仍有内容 |
-| 3 | 录屏 / 编程教学 | 小字号 OCR | 代码文本可读，帧不塌缩成一张 |
-| 4 | 大量烧录中文字幕 | ASR/OCR 冗余 | fusion 不产生重复内容 |
-| 5 | 画面文字极少 | 视觉信号弱 | 不因 novelty=0 而返回零帧 |
-| 6 | 30s / 3min / 10min+ | 时长伸缩 | 关键帧预算随时长增长；耗时线性 |
+| 1 | 纯口播 | ASR 主导 | 转写完整；视觉状态可很少但不强凑数量 |
+| 2 | 无语音幻灯片 | OCR 独立成立 | ASR 为空不算失败，Evidence Pack 仍有内容 |
+| 3 | 录屏 / 编程教学 | 小字号 OCR、滚动状态 | 代码可读，信息消失前的状态被保存 |
+| 4 | 大量烧录中文字幕 | ASR/OCR 冗余 | timeline 对齐但不复制冗余证据 |
+| 5 | 画面文字极少 | 视觉信号弱 | 实质 scene/structure change 仍可形成状态 |
+| 6 | 30s / 3min / 10min+ | 内容驱动伸缩 | 状态数由内容变化决定；耗时与候选量可解释 |
+| 7 | 白板/PPT progressive build | 构建分组 | 被替换信息不丢；近重复状态可分组 |
 
 ### D.2 故障维度
 
 | # | 注入 | 期望 |
 |---|---|---|
-| 7 | 同一 URL 提交两次 | 第二次命中缓存，不重复推理 |
-| 8 | 一次提交 5–10 个 URL | 并发受限于 `max_videos`，无 OOM |
-| 9 | 失效 / 已删 / 私密链接 | 分类报错，非原始 yt-dlp 文本 |
-| 10 | Chrome cookie 不可用 | 明确提示需要什么，非静默失败 |
-| 11 | OCR 强制失败 | 任务成功，笔记标注视觉降级 |
-| 12 | ASR 强制失败 | 任务成功，笔记仅含视觉信息 |
-| 13 | yt-dlp 中途失败 | **临时文件被清理**（验证 P0-5） |
-| 14 | 运行中重启 | 任务标记 interrupted，临时文件回收 |
+| 8 | 同一 URL 提交两次 | 第二次命中缓存，不重复推理 |
+| 9 | 一次提交 5–10 个 URL | 并发受限于资源预算，无 OOM |
+| 10 | 失效 / 已删 / 私密链接 | 分类报错，非原始 yt-dlp 文本 |
+| 11 | Chrome cookie 不可用 | 明确提示需要什么，非静默失败 |
+| 12 | OCR 强制失败 | Evidence Pack 明确标注视觉证据不完整 |
+| 13 | ASR 强制失败 | Evidence Pack 明确标注转写缺失，保留视觉证据 |
+| 14 | yt-dlp 中途失败 | 临时文件被清理 |
+| 15 | 运行中重启 | 任务标记 interrupted，临时文件回收 |
 
 ### D.3 指标
 
@@ -293,80 +355,57 @@ into `queued` or `running` during startup recovery.
 ingestion_success_rate          成功采集 / 尝试
 asr_realtime_factor             ASR 耗时 / 视频时长
 ocr_runtime_per_frame           OCR 总耗时 / 帧数
-end_to_end_latency              提交到笔记落盘
-keyframe_count                  最终帧数
-duplicate_keyframe_rate         两两 dHash 距离 <= 阈值的比例
-keyframe_information_coverage   关键帧 OCR 字符并集 / 全部候选帧字符并集
+end_to_end_latency              提交到 Evidence Pack 落盘
+visual_state_count              canonical visual state 数量
+preview_frame_count             UI preview 数量（不得限制 canonical set）
+duplicate_visual_state_rate     近重复 visual state 的比例
+visual_information_coverage     保留状态信息并集 / 全部有意义候选状态信息并集
 batch_wall_clock_speedup        串行耗时和 / 实际墙钟
-failure_recovery_rate           注入故障后仍产出可用笔记的比例
-disk_cleanup_success            任务结束后残留字节数（应为仅笔记）
+failure_recovery_rate           注入故障后的正确终态/降级比例
+disk_cleanup_success            任务结束后仅保留 canonical/final artifacts
 ```
 
-`keyframe_information_coverage` 是这套指标里最关键的一个——它是唯一能证明
-"选帧算法真的在选信息"而不只是"选出了 10 张图"的量化依据。
+`visual_information_coverage` 是核心指标：它证明算法保留了来源信息，而不只是
+“选出若干张图”。OCR 耗时也必须随状态数单独监控，尤其是长视频与密集 UI 演示。
 
 ---
 
 ## E. 实施顺序
 
-依赖关系决定顺序，不要并行做 1 和 2。
+P0-A 与 P0-B 已完成。后续严格按依赖顺序推进：
 
-**第 1 步：summarizer provider 抽象（解 P0-1）**
+**第 1 步：视觉算法 characterization tests（下一刀）**
 
-```
-Timeline ──→ SummarizerProvider (Protocol)
-                    │
-       ┌────────────┼────────────┐
-       ▼            ▼            ▼
-  Extractive     Local        API
-  无依赖         mlx_lm       anthropic
-  永远可用       默认         可选
-```
+在改变行为前，为 `dhash / hamming / dedupe / collapse_builds / score / select`
+建立安全网，明确当前对重复画面、渐进构建、无文字画面和 opening context 的行为。
 
-三级而非两级：`extractive` 必须保留为永远成立的地板，`local` 是默认，
-`api` 是可选增强。选择逻辑：能加载本地模型就用 local，否则 extractive；
-显式配置了 API 才用 api。
+**第 2 步：content-driven visual states**
 
-本地 provider 选 **mlx_lm** 而不是 Ollama：本机已通过 mlx-whisper 引入
-MLX，同一运行时、无后台守护进程、无额外服务管理。模型选 4-bit Qwen 系
-instruct（中文质量足够，显存可控）——具体仓库 tag 在实现时验证可用性再定。
+移除 canonical 固定 10 张上限；检测 materially distinct、stable、可读状态，保存
+完整集并为 progressive builds 建组。preview 是派生产物，不限制完整集。
 
-**第 2 步：抽出 Timeline fusion（解缺陷 2，是第 1 步的前置产物）**
+**第 3 步：Evidence Pack 与 deterministic timeline**
 
-`fuse(transcript, frames) -> Timeline`，纯函数，确定性，可断言。
-所有 provider 消费同一个 `Timeline`。
+定义 versioned manifest、source metadata、timestamped transcript、OCR、visual
+timeline、`visual_states/all`、`visual_states/preview` 和 human-readable evidence view。
 
-**第 3 步：持久化与恢复（解 P0-2 / P0-4 / C.3）**
+**第 4 步：知识库交接边界**
 
-`out/<content_hash>/` 内容寻址，启动时扫描重建索引，`running` 标记为
-`interrupted` 并回收临时文件。内容寻址同时解决幂等。
+先采用确定性目录/文件契约或监听目录；不在 v1 引入复杂双向 API、MCP 或 RAG。
 
-**第 4 步：临时文件生命周期（解 P0-5）**
+**第 5 步：P0-C idempotency 与资源控制**
 
-`try/finally` 或上下文管理器包裹整个 workdir，异常路径必清理。
+稳定来源身份命中已完成 Evidence Pack，避免重复 ASR/OCR；验证 5–10 URL 批量提交
+的并发上限、GPU/CPU/OCR 资源占用和失败隔离。
 
-**第 5 步：测试与评测（解 P0-3 / D）**
+**第 6 步：真实视频 eval 与可复现 benchmark**
 
-先单元测试纯函数（links / dedupe / collapse_builds / score / fuse），
-再评测集，最后基准命令。
+覆盖 D 的内容/故障矩阵，生成 extraction-quality、性能和清理指标，而不是手抄数字。
 
-**第 6 步：失败分类与可观测性（解 P1-9 / P1-12）**
+**第 7 步：失败分类、可观测性、UI 术语与 `ARCHITECTURE.md`**
 
-**第 7 步：UI 措辞与高级面板（解 P2）**
-
-```
-Summary mode: Local          ← 默认
-Summary mode: AI             ← 配置了 API
-Summary mode: Extractive     ← 无模型可用
-
-高级详情：
-  Ingestion   yt-dlp + Chrome session
-  ASR         mlx-whisper (large-v3-turbo)
-  OCR         macOS Vision
-  Summarizer  mlx_lm / anthropic / none
-```
-
-**第 8 步：`ARCHITECTURE.md`（解 C.6）**
+UI 从“摘要/关键帧”迁移到 Evidence Pack / visual states，并完整解释各阶段、并发、
+失败语义、状态选择原因和下游责任边界。
 
 ---
 
@@ -376,18 +415,18 @@ Summary mode: Extractive     ← 无模型可用
 
 | 任务 | 依据 |
 |---|---|
-| Timeline fusion 纯函数 + 单元测试 | 输入输出明确，无歧义 |
-| SummarizerProvider 协议 + 三个实现 | 接口定死后是机械工作 |
-| 内容寻址存储与启动恢复 | 规格清楚 |
-| workdir 上下文管理器 | 小而独立 |
-| 纯函数单元测试套件 | 最适合 |
+| 视觉纯函数 characterization tests | 当前输入输出可直接断言，不改变算法 |
+| 已定义规则后的 visual-state implementation | 行为边界由测试和产品契约共同约束 |
+| Timeline / Evidence Pack schema 与序列化 | 输入输出明确、适合契约测试 |
+| 知识库目录交接与 schema 验证 | 边界窄且可在临时目录测试 |
+| idempotency 与资源限制 | Evidence Pack 身份稳定后规格清楚 |
 | `make bench` / `make eval` 与指标计算 | 公式已在 D.3 定义 |
 | 失败分类映射表 | 需先人工枚举 yt-dlp 错误样本 |
-| UI 措辞与高级面板 | 文案已给定 |
+| UI 术语迁移 | Evidence Pack 文案与字段确定后是机械工作 |
 
 **不要交给 Codex：**
 
-- 关键帧算法调参——需要人看图判断选得对不对
+- 没有代表性 fixture/eval 的视觉阈值调参——需要人看图判断
 - 评测集 URL 选取——需要人判断内容类型是否有代表性
 - `ARCHITECTURE.md`——这是你面试时要讲的东西，必须自己写
 
@@ -404,12 +443,13 @@ Summary mode: Extractive     ← 无模型可用
 - Docker / K8s
 - 移动端
 - 浏览器扩展与 tabCapture——已被 yt-dlp 路径证明不必要
-- 视频理解模型（VLM 看关键帧）——先把 OCR + ASR 的融合做扎实
+- 必需的本地/付费 semantic summarizer——不属于 canonical v1 path
+- 视频理解模型（VLM）——先把 ASR、OCR 与视觉状态的确定性证据做扎实
+- 复杂双向知识库 API / MCP / RAG——v1 先用稳定文件契约交接
 
 ---
 
 ## 一句话总结
 
-现在的代码是一个**结构正确但只在顺境验证过**的原型。v1 的全部工作是：
-把免费路径补成真正可用（P0-1）、把状态补成可恢复（P0-2/4）、把清理补成
-无条件（P0-5）、把质量补成可测量（P0-3 + D）。功能一个都不用加。
+ClipMind 已完成可靠任务底座；v1 剩余主线是把“固定数量的摘要式关键帧输出”升级为
+**免费、完整、可验证的 Evidence Pack**，再通过稳定文件契约交给下游知识库 agent。
