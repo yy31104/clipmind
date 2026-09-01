@@ -1,0 +1,1 @@
+"""ClipMind regression tests."""

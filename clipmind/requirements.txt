@@ -1,0 +1,10 @@
+fastapi>=0.115
+uvicorn[standard]>=0.32
+python-dotenv>=1.0
+yt-dlp>=2025.1.1
+pillow>=10.4
+numpy>=2.0
+pyobjc-framework-Vision>=10.3
+pyobjc-framework-Quartz>=10.3
+mlx-whisper>=0.4.2
+anthropic>=0.40
