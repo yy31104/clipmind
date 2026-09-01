@@ -1,5 +1,6 @@
 import asyncio
 import json
+import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
@@ -27,34 +28,36 @@ class ServerEventTests(unittest.IsolatedAsyncioTestCase):
                 raise RuntimeError("fatal ingestion failure")
             return {"title": "Done"}
 
-        test_store = JobStore()
-        with (
-            patch.object(server, "store", test_store),
-            patch("clipmind.jobs.process", new=fake_process),
-        ):
-            response = await server.events()
-            stream = response.body_iterator
-            try:
-                hello = sse_payload(await anext(stream))
-                self.assertEqual(hello, {"type": "hello"})
+        with tempfile.TemporaryDirectory() as tempdir:
+            test_store = JobStore(Path(tempdir) / "out")
+            with (
+                patch.object(server, "store", test_store),
+                patch("clipmind.jobs.process", new=fake_process),
+            ):
+                response = await server.events()
+                stream = response.body_iterator
+                try:
+                    hello = sse_payload(await anext(stream))
+                    self.assertEqual(hello, {"type": "hello"})
 
-                done = test_store.submit(
-                    "https://v.douyin.com/done",
-                    "Done",
-                )
-                failed = test_store.submit(
-                    "https://v.douyin.com/error",
-                    "Error",
-                )
-                terminal: dict[str, dict] = {}
-                while len(terminal) < 2:
-                    event = sse_payload(
-                        await asyncio.wait_for(anext(stream), timeout=1)
+                    done = test_store.submit(
+                        "https://v.douyin.com/done",
+                        "Done",
                     )
-                    if event["status"] in {"done", "error"}:
-                        terminal[event["id"]] = event
-            finally:
-                await stream.aclose()
+                    failed = test_store.submit(
+                        "https://v.douyin.com/error",
+                        "Error",
+                    )
+                    terminal: dict[str, dict] = {}
+                    while len(terminal) < 2:
+                        event = sse_payload(
+                            await asyncio.wait_for(anext(stream), timeout=1)
+                        )
+                        if event["status"] in {"done", "error"}:
+                            terminal[event["id"]] = event
+                finally:
+                    await stream.aclose()
+            await test_store.close()
 
         done_event = terminal[done.id]
         error_event = terminal[failed.id]
@@ -66,6 +69,41 @@ class ServerEventTests(unittest.IsolatedAsyncioTestCase):
             (error_event["status"], error_event["stage"], error_event["error"]),
             ("error", "error", "fatal ingestion failure"),
         )
+
+    async def test_recovered_done_job_is_listed_and_readable(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            out_dir = Path(tempdir) / "out"
+
+            async def fake_process(url, workdir, pools, report):
+                (workdir / "note.md").write_text("persisted note", encoding="utf-8")
+                (workdir / "transcript.json").write_text(
+                    '[{"start": 0, "end": 1, "text": "persisted"}]',
+                    encoding="utf-8",
+                )
+                return {"title": "Recovered note", "duration": 1, "keyframes": []}
+
+            first = JobStore(out_dir)
+            queue = first.subscribe()
+            with patch("clipmind.jobs.process", new=fake_process):
+                job = first.submit("https://v.douyin.com/recovered", "Recovered")
+                while True:
+                    event = await asyncio.wait_for(queue.get(), timeout=1)
+                    if event["id"] == job.id and event["status"] == "done":
+                        break
+            await first.close()
+
+            recovered = JobStore(out_dir)
+            recovered.start()
+            with patch.object(server, "store", recovered):
+                listing = await server.listing()
+                detail = await server.detail(job.id)
+            await recovered.close()
+
+        self.assertEqual([item["id"] for item in listing["jobs"]], [job.id])
+        self.assertEqual(detail["status"], "done")
+        self.assertEqual(detail["result"]["title"], "Recovered note")
+        self.assertEqual(detail["note_markdown"], "persisted note")
+        self.assertEqual(detail["transcript"][0]["text"], "persisted")
 
 
 class ExtractiveSummaryTests(unittest.IsolatedAsyncioTestCase):

@@ -6,7 +6,8 @@ const esc = (s) => (s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&l
 
 const STAGE_LABEL = {
   queued: "排队中", fetching: "获取视频", sampling: "抽帧",
-  analysing: "语音转写 + 画面识别", summarising: "生成笔记", writing: "写入", done: "完成", error: "失败",
+  analysing: "语音转写 + 画面识别", summarising: "生成笔记", writing: "写入",
+  done: "完成", error: "失败", interrupted: "已中断",
 };
 
 /* ── minimal markdown renderer for the note format we generate ── */
@@ -53,13 +54,13 @@ function markdown(src) {
 function render() {
   const jobs = [...state.jobs.values()].sort((a, b) => b.created_at - a.created_at);
   const active = jobs.filter((j) => j.status === "queued" || j.status === "running");
-  const settled = jobs.filter((j) => j.status === "done" || j.status === "error");
+  const settled = jobs.filter((j) => ["done", "error", "interrupted"].includes(j.status));
 
   $("active-label").hidden = active.length === 0;
   $("active").innerHTML = active.map(jobCard).join("");
 
   const done = settled.filter((j) => j.status === "done");
-  const failed = settled.filter((j) => j.status === "error");
+  const failed = settled.filter((j) => j.status === "error" || j.status === "interrupted");
   $("library-label").hidden = done.length === 0;
   $("library").innerHTML = done.map(libraryCard).join("");
   $("active").innerHTML += failed.map(jobCard).join("");
@@ -72,13 +73,14 @@ function render() {
 
 function jobCard(j) {
   const pct = Math.round((j.progress || 0) * 100);
-  return `<div class="job ${j.status}">
+  const failed = j.status === "error" || j.status === "interrupted";
+  return `<div class="job ${failed ? "error" : j.status}">
     <div class="job-head">
       <div class="job-title">${esc(j.title)}</div>
-      <div class="job-time">${j.status === "error" ? "失败" : `${pct}% · ${j.elapsed}s`}</div>
+      <div class="job-time">${failed ? STAGE_LABEL[j.status] : `${pct}% · ${j.elapsed}s`}</div>
     </div>
     <div class="job-note">${esc(STAGE_LABEL[j.stage] || j.stage)}${j.note ? " · " + esc(j.note) : ""}</div>
-    ${j.status === "error"
+    ${failed
       ? `<div class="job-error">${esc(j.error || "")}</div>`
       : `<div class="bar"><i style="width:${pct}%"></i></div>`}
   </div>`;

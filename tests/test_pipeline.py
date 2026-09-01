@@ -6,7 +6,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from clipmind import pipeline
+from clipmind import keyframes, pipeline
 from clipmind.asr import Segment, Transcript
 from clipmind.fetch import FetchError, Media
 from clipmind.media import Frame
@@ -187,6 +187,23 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
             self.rendered_ocr_error,
             "OCR failed on 1/1 frames: injected failure",
         )
+        self.assertFalse(self.source_path.exists())
+        self.assertFalse(self.audio_path.exists())
+        self.assertFalse((self.workdir / "samples").exists())
+
+    async def test_asr_failure_degrades_and_cleans_temporary_media(self) -> None:
+        async def failed_asr(audio) -> Transcript:
+            return Transcript([], error="injected ASR failure")
+
+        with self.patched_pipeline(transcribe=failed_asr):
+            result = await pipeline.process(
+                "https://v.douyin.com/example", self.workdir, self.pools(), self.report
+            )
+
+        self.assertEqual(result["title"], "Video title")
+        self.assertFalse(self.source_path.exists())
+        self.assertFalse(self.audio_path.exists())
+        self.assertFalse((self.workdir / "samples").exists())
 
     async def test_fatal_fetch_failure_raises_pipeline_error(self) -> None:
         async def failed_fetch(url, workdir, on_note=None):
@@ -208,10 +225,7 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(self.audio_path.exists())
         self.assertFalse((self.workdir / "samples").exists())
 
-    @unittest.expectedFailure
     async def test_post_download_failure_should_remove_temporary_media(self) -> None:
-        """TODO(P0-5): remove expectedFailure after exception-safe cleanup lands."""
-
         async def failed_summary(transcript, frames, title, duration, semaphore):
             raise RuntimeError("injected post-download failure")
 
@@ -224,6 +238,54 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(self.source_path.exists(), "source video leaked after failure")
         self.assertFalse(self.audio_path.exists(), "temporary audio leaked after failure")
         self.assertFalse((self.workdir / "samples").exists(), "sample frames leaked after failure")
+
+    async def test_note_write_failure_removes_temporary_media(self) -> None:
+        def failed_write(*args, **kwargs):
+            raise RuntimeError("injected note write failure")
+
+        with self.patched_pipeline(write_all=failed_write):
+            with self.assertRaisesRegex(RuntimeError, "injected note write failure"):
+                await pipeline.process(
+                    "https://v.douyin.com/example", self.workdir, self.pools(), self.report
+                )
+
+        self.assertFalse(self.source_path.exists())
+        self.assertFalse(self.audio_path.exists())
+        self.assertFalse((self.workdir / "samples").exists())
+
+    async def test_cleanup_failure_does_not_hide_pipeline_failure(self) -> None:
+        async def failed_summary(transcript, frames, title, duration, semaphore):
+            raise RuntimeError("original pipeline failure")
+
+        with (
+            self.patched_pipeline(summarize=failed_summary),
+            patch.object(
+                pipeline,
+                "cleanup_temporary",
+                side_effect=RuntimeError("cleanup also failed"),
+            ),
+        ):
+            with self.assertRaisesRegex(RuntimeError, "original pipeline failure"):
+                await pipeline.process(
+                    "https://v.douyin.com/example", self.workdir, self.pools(), self.report
+                )
+
+    async def test_failed_full_resolution_grab_preserves_final_keyframe(self) -> None:
+        sample = self.workdir / "samples" / "sample.jpg"
+        sample.parent.mkdir(parents=True)
+        sample.write_bytes(b"low-resolution frame")
+        frame = Frame(index=0, timestamp=3.5, path=sample)
+
+        async def failed_grab(video, timestamp, dest):
+            raise pipeline.media.MediaError("injected frame grab failure")
+
+        with patch.object(keyframes.media, "extract_still", new=failed_grab):
+            promoted = await keyframes.promote(
+                Path("video.mp4"), [frame], self.workdir / "keyframes"
+            )
+
+        self.assertEqual(promoted[0].path, self.workdir / "keyframes" / "00-03.jpg")
+        self.assertEqual(promoted[0].path.read_bytes(), b"low-resolution frame")
 
 
 if __name__ == "__main__":

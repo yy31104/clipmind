@@ -7,6 +7,7 @@ keep the frames that introduce text or visuals nothing before them had.
 from __future__ import annotations
 
 import asyncio
+import shutil
 from pathlib import Path
 
 from . import media, ocr
@@ -125,5 +126,9 @@ async def promote(video: Path, chosen: list[Frame], dest_dir: Path) -> list[Fram
             await media.extract_still(video, frame.timestamp, dest)
             frame.path = dest
         except media.MediaError:
-            pass  # keep the low-res sample rather than losing the frame
+            try:
+                shutil.copy2(frame.path, dest)
+                frame.path = dest
+            except OSError:
+                pass
     return chosen

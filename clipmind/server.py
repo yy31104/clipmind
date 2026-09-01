@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
@@ -10,12 +11,23 @@ from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from .config import OUT_DIR, WEB_DIR, settings
+from .config import WEB_DIR, settings
 from .jobs import JobStore
 from .links import extract_urls, guess_title
 
-app = FastAPI(title="ClipMind")
 store = JobStore()
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    store.start()
+    try:
+        yield
+    finally:
+        await store.close()
+
+
+app = FastAPI(title="ClipMind", lifespan=lifespan)
 
 
 class SubmitBody(BaseModel):
@@ -60,7 +72,7 @@ async def detail(job_id: str):
 @app.get("/api/jobs/{job_id}/keyframes/{name}")
 async def keyframe(job_id: str, name: str):
     path = (store.workdir(job_id) / "keyframes" / name).resolve()
-    root = (OUT_DIR / job_id / "keyframes").resolve()
+    root = (store.workdir(job_id) / "keyframes").resolve()
     if not str(path).startswith(str(root)) or not path.exists():
         raise HTTPException(404, "no such frame")
     return FileResponse(path)

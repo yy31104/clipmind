@@ -27,9 +27,10 @@ class JobStoreTests(unittest.IsolatedAsyncioTestCase):
     def _assert_current_transition_contract(self, events: list[dict]) -> None:
         allowed = {
             "queued": {"queued", "running"},
-            "running": {"running", "done", "error"},
+            "running": {"running", "done", "error", "interrupted"},
             "done": {"done"},
             "error": {"error"},
+            "interrupted": {"interrupted"},
         }
         self.assertEqual(events[0]["status"], "queued")
         for previous, current in zip(events, events[1:]):
