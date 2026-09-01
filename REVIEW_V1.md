@@ -181,6 +181,60 @@ yt-dlp，而不只是 douyin.com。对一个本地工具可以接受，但必须
 - [ ] 重启后笔记库完整恢复（从 `out/` 重建索引）
 - [ ] 重启时 `running` 的任务被标记为 `interrupted`，其临时文件被回收
 - [ ] 同一 URL 重复提交命中缓存，不重复下载与推理
+- [ ] 恢复行为逐状态符合下方 Restart recovery contract
+- [ ] 持久化顺序不变式成立：先写 `running`，再产生任何外部副作用
+
+#### Restart recovery contract
+
+这是 P0-B 的实现契约。四种状态的恢复行为在此定死，实现时不得自行发挥。
+
+注意 `interrupted` 是**新增的第五种状态**——当前代码只有
+`queued / running / done / error`，P0-A 的迁移表也只覆盖这四种。P0-B 需要
+同时扩展状态机与对应测试。
+
+**Persistence ordering invariant**
+
+A job MUST be durably transitioned to `running` before ingestion begins or
+before any temporary media or other processing side effects are created.
+
+这条是整份契约成立的前提。若实际顺序是"先开始下载、再写 `running`"，那么
+进程在两者之间崩溃时，磁盘状态是 `queued` 而副作用已经产生，
+`queued → requeue` 就不再安全。
+
+**`queued`**
+
+- Represents work that has not begun.
+- On application restart, restore the job and enqueue it exactly once.
+- No temporary artifacts are expected for a valid queued job.
+- This behavior does not depend on URL-level idempotency because the prior
+  execution has not begun.
+
+**`running`**
+
+- A persisted running job found during startup is considered interrupted.
+- It MUST NOT automatically resume or restart.
+- Recover it as `interrupted`.
+- Clean any temporary processing artifacts owned by that job.
+- Preserve final/user-facing artifacts if any exist.
+- The UI may offer an explicit manual retry later.
+
+**`done`**
+
+- Restore as a terminal successful job.
+- Restore its persisted result/note into the library/index.
+- Never automatically re-enter processing.
+
+**`error`**
+
+- Restore as a terminal failed job.
+- Preserve its diagnostic metadata.
+- Do not automatically retry.
+- A later retry must be an explicit user action.
+
+**Terminal-state invariant**
+
+`done`, `error`, and `interrupted` jobs MUST NOT automatically transition back
+into `queued` or `running` during startup recovery.
 
 ### C.4 质量（不以 DONE 为准）
 

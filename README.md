@@ -32,7 +32,7 @@
 ```bash
 brew install ffmpeg yt-dlp
 uv venv --python 3.12
-uv pip install -r requirements.txt
+uv pip install -r clipmind/requirements.txt
 ```
 
 macOS 会在首次读取 Chrome cookie 时弹一次钥匙串授权。首次运行还会下载
