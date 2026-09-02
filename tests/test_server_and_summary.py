@@ -24,6 +24,64 @@ def sse_payload(chunk: str | bytes) -> dict:
 
 
 class ServerEventTests(unittest.IsolatedAsyncioTestCase):
+    async def test_sse_serializes_resync_and_keeps_subscription(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            test_store = JobStore(Path(tempdir) / "out")
+            with patch.object(server, "store", test_store):
+                response = await server.events()
+                stream = response.body_iterator
+                try:
+                    self.assertEqual(
+                        sse_payload(await anext(stream)), {"type": "hello"}
+                    )
+                    queue = next(iter(test_store._subscribers))
+                    for index in range(queue.maxsize):
+                        queue.put_nowait(
+                            {"id": f"stale-{index}", "status": "running"}
+                        )
+                    current = Job(
+                        "current",
+                        "https://v.douyin.com/current",
+                        "Current",
+                        status="done",
+                        stage="done",
+                        progress=1.0,
+                    )
+                    test_store.jobs[current.id] = current
+
+                    test_store._publish(current)
+
+                    self.assertEqual(
+                        sse_payload(await anext(stream)), {"type": "resync"}
+                    )
+                    self.assertIn(queue, test_store._subscribers)
+                    later = Job(
+                        "later",
+                        "https://v.douyin.com/later",
+                        "Later",
+                        status="running",
+                        stage="fetching",
+                    )
+                    test_store._publish(later)
+                    self.assertEqual(sse_payload(await anext(stream))["id"], later.id)
+                finally:
+                    await stream.aclose()
+
+            self.assertNotIn(queue, test_store._subscribers)
+
+    def test_frontend_refreshes_snapshot_for_hello_and_resync(self) -> None:
+        source = (
+            Path(__file__).resolve().parents[1] / "web" / "app.js"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn(
+            'if (job.type === "hello" || job.type === "resync") {\n'
+            "    await refreshJobs();\n"
+            "    return;\n"
+            "  }",
+            source,
+        )
+
     async def test_handoff_requires_an_explicit_inbox_configuration(self) -> None:
         with patch.object(
             server, "settings", SimpleNamespace(knowledge_base_inbox=None)

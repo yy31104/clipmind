@@ -266,7 +266,7 @@ async function refreshJobs() {
 const events = new EventSource("/api/events");
 events.onmessage = async (e) => {
   const job = JSON.parse(e.data);
-  if (job.type === "hello") {
+  if (job.type === "hello" || job.type === "resync") {
     await refreshJobs();
     return;
   }
