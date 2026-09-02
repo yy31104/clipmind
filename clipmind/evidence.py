@@ -9,7 +9,7 @@ from .asr import Segment, Transcript
 from .config import settings
 from .fetch import Media
 from .media import Frame
-from .visual_states import BuildGroup
+from .visual_states import PREVIEW_ALGORITHM, BuildGroup
 
 SCHEMA_NAME = "clipmind-evidence-pack"
 SCHEMA_VERSION = "1.0.0"
@@ -332,6 +332,7 @@ def write_pack(
             "change_detection_width": settings.sample_width,
             "evidence_width": settings.evidence_width,
             "dedupe_threshold": settings.dedupe_threshold,
+            "preview_algorithm": PREVIEW_ALGORITHM,
         },
     }
     _write_json(dest / "manifest.json", manifest)

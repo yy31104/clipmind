@@ -295,6 +295,8 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
             return frames
 
         def dedupe_without_opening(frames) -> list[Frame]:
+            for frame in frames:
+                frame.phash = 0 if frame.index % 2 == 0 else (1 << 64) - 1
             return frames[1:]
 
         async def annotate_all(frames, semaphore) -> str | None:

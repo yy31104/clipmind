@@ -2,10 +2,14 @@
 from __future__ import annotations
 
 import shutil
+import statistics
 from dataclasses import dataclass, replace
 from pathlib import Path
 
+from . import media
 from .media import Frame
+
+PREVIEW_ALGORITHM = "adaptive-scene-v1"
 
 
 @dataclass(frozen=True)
@@ -108,15 +112,69 @@ def group_progressive_builds(
     return groups
 
 
-def derive_preview(frames: list[Frame]) -> list[Frame]:
-    """Keep all ungrouped states and only the completed state of each build."""
+def derive_preview(
+    frames: list[Frame],
+    *,
+    scene_floor: float = 24.0,
+    activity_margin: float = 14.0,
+    scene_ceiling: float = 32.0,
+    latest_readability_ratio: float = 0.6,
+) -> list[Frame]:
+    """Choose one readable representative per content-driven visual scene.
+
+    Progressive builds first collapse to their completed state. The scene
+    threshold then adapts to the video's observed visual activity, but no frame
+    count or per-duration budget is applied.
+    """
     ordered = sorted(frames, key=lambda frame: (frame.timestamp, frame.index))
-    return [
+    candidates = [
         frame
         for frame in ordered
         if frame.build_group_id is None
         or frame.build_position == frame.build_size - 1
     ]
+    if len(candidates) < 2:
+        return candidates
+
+    comparable_pairs = [
+        (earlier, later)
+        for earlier, later in zip(candidates, candidates[1:])
+        if earlier.dedupe_warning is None and later.dedupe_warning is None
+    ]
+    activity = statistics.median(
+        media.hamming(earlier.phash, later.phash)
+        for earlier, later in comparable_pairs
+    ) if comparable_pairs else scene_floor
+    threshold = min(scene_ceiling, max(scene_floor, activity + activity_margin))
+
+    scenes: list[list[Frame]] = []
+    for frame in candidates:
+        if frame.dedupe_warning is not None:
+            scenes.append([frame])
+            continue
+        if (
+            not scenes
+            or scenes[-1][-1].dedupe_warning is not None
+            or media.hamming(scenes[-1][0].phash, frame.phash) >= threshold
+        ):
+            scenes.append([frame])
+        else:
+            scenes[-1].append(frame)
+
+    preview = []
+    for scene in scenes:
+        richest = max(
+            scene,
+            key=lambda frame: (len(_characters(frame)), frame.timestamp, frame.index),
+        )
+        latest = scene[-1]
+        preview.append(
+            latest
+            if len(_characters(latest))
+            >= latest_readability_ratio * len(_characters(richest))
+            else richest
+        )
+    return preview
 
 
 def materialize_preview(frames: list[Frame], dest_dir: Path) -> list[Frame]:

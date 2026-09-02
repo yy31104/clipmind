@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "code-ui-long",
+      "source_id": "7672326469565041966",
+      "url": "https://www.douyin.com/video/7672326469565041966",
+      "content_type": "code-ui-screen-recording",
+      "expected": {
+        "minimum_transcript_segments": 20,
+        "minimum_visual_states": 20,
+        "maximum_preview_states": 60,
+        "requires_ocr": true,
+        "checks": ["small text", "scrolling UI", "long video scaling"]
+      }
+    },
+    {
+      "id": "talking-head-interview",
+      "source_id": "7678633330908155199",
+      "url": "https://v.douyin.com/dTfIvetIbJw/",
+      "stable_url_failure_fixture": "https://www.douyin.com/video/7678633330908155199",
+      "content_type": "talking-head-with-burned-captions",
+      "expected": {
+        "minimum_transcript_segments": 5,
+        "minimum_visual_states": 1,
+        "maximum_preview_states": 8,
+        "requires_ocr": true,
+        "checks": ["speech completeness", "burned-caption redundancy"]
+      }
+    },
+    {
+      "id": "interview-slides-short",
+      "source_id": "7662407644698660102",
+      "url": "https://v.douyin.com/QolP-jHN_Es/",
+      "content_type": "talking-head-and-slides",
+      "expected": {
+        "minimum_transcript_segments": 5,
+        "minimum_visual_states": 3,
+        "maximum_preview_states": 12,
+        "requires_ocr": true,
+        "checks": ["slide changes", "short video scaling"]
+      }
+    }
+  ]
+}

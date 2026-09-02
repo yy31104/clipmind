@@ -74,19 +74,58 @@ class CanonicalVisualStateTests(unittest.TestCase):
 
         self.assertEqual(len(groups), 1)
         self.assertEqual(groups[0].frames, tuple(frames[:2]))
-        self.assertEqual(preview, frames[1:])
-        self.assertIn("FastAPI", preview[0].text or " ".join(preview[0].lines))
-        self.assertIn("PostgreSQL", preview[1].text or " ".join(preview[1].lines))
+        self.assertEqual(len(frames), 3, "replaced information remains canonical")
+        self.assertIn("FastAPI", " ".join(frames[1].lines))
+        self.assertIn("PostgreSQL", " ".join(frames[2].lines))
+        self.assertEqual(preview, [frames[2]])
 
     def test_preview_has_no_fixed_frame_budget(self) -> None:
         frames = [
-            Frame(index, float(index), Path(f"{index}.jpg"), lines=(f"state {index}",))
+            Frame(
+                index,
+                float(index),
+                Path(f"{index}.jpg"),
+                phash=0 if index % 2 == 0 else (1 << 64) - 1,
+                lines=(f"state {index}",),
+            )
             for index in range(15)
         ]
 
         visual_states.group_progressive_builds(frames, window=0.5)
 
         self.assertEqual(visual_states.derive_preview(frames), frames)
+
+    def test_preview_selects_latest_when_it_remains_similarly_readable(self) -> None:
+        richest = Frame(0, 0.0, Path("a.jpg"), phash=0, lines=("alpha beta",))
+        completed = Frame(1, 1.0, Path("b.jpg"), phash=1, lines=("alpha gamma",))
+
+        preview = visual_states.derive_preview(
+            [richest, completed], scene_floor=10, activity_margin=0
+        )
+
+        self.assertEqual(preview, [completed])
+
+    def test_preview_keeps_richest_frame_when_latest_visual_is_text_poor(self) -> None:
+        document = Frame(0, 0.0, Path("a.jpg"), phash=0, lines=("a detailed document",))
+        fading = Frame(1, 1.0, Path("b.jpg"), phash=1, lines=("end",))
+
+        preview = visual_states.derive_preview(
+            [document, fading], scene_floor=10, activity_margin=0
+        )
+
+        self.assertEqual(preview, [document])
+
+    def test_dedupe_warning_is_never_hidden_by_preview_clustering(self) -> None:
+        normal = Frame(0, 0.0, Path("a.jpg"), phash=0)
+        uncertain = Frame(
+            1,
+            1.0,
+            Path("b.jpg"),
+            phash=0,
+            dedupe_warning="hash failed; retained",
+        )
+
+        self.assertEqual(visual_states.derive_preview([normal, uncertain]), [normal, uncertain])
 
     def test_materialize_preview_copies_and_does_not_repoint_canonical(self) -> None:
         with tempfile.TemporaryDirectory() as tempdir:

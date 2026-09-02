@@ -106,6 +106,10 @@ class EvidencePackTests(unittest.TestCase):
             self.assertEqual(manifest["status"], "complete")
             self.assertEqual(manifest["counts"]["canonical_visual_states"], 2)
             self.assertEqual(manifest["counts"]["preview_visual_states"], 1)
+            self.assertEqual(
+                manifest["configuration"]["preview_algorithm"],
+                "adaptive-scene-v1",
+            )
             self.assertEqual(manifest["completeness"]["transcript"], "complete")
             self.assertEqual(manifest["completeness"]["ocr"], "complete")
             schema = json.loads(
