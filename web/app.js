@@ -1,5 +1,5 @@
 const $ = (id) => document.getElementById(id);
-const state = { jobs: new Map(), view: "home", current: null };
+const state = { jobs: new Map(), view: "home", current: null, kbInbox: false };
 
 const clock = (s) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 const esc = (s) => (s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -136,7 +136,10 @@ async function openDetail(id) {
         <li>OCR：${esc(complete.ocr || "unknown")}</li>
         <li>视觉状态：${esc(complete.visual_states || "unknown")}</li>
       </ul>
-      <a class="download" href="/api/jobs/${job.id}/evidence.md" download>下载完整 Evidence Markdown</a>`;
+      <a class="download" href="/api/jobs/${job.id}/evidence.md" download>下载 Evidence Markdown</a>
+      <a class="download" href="/api/jobs/${job.id}/evidence.zip" download>下载完整 ZIP</a>
+      ${state.kbInbox ? `<button class="download" id="send-kb">发送到知识库 Inbox</button><p id="handoff-status"></p>` : ""}`;
+    if (state.kbInbox) $("send-kb").onclick = () => sendToKnowledgeBase(job.id);
   } else {
     $("pane-summary").innerHTML =
       markdown((job.note_markdown || "").split("## 关键帧")[0].replace(/^# .*$/m, "").replace(/^- (来源|作者|时长|获取方式|总结模型):.*$/gm, "")) +
@@ -155,6 +158,22 @@ async function openDetail(id) {
     : `<p class="hint">这个视频没有可转写的语音。${meta.asr_error ? esc(" (" + meta.asr_error + ")") : ""}</p>`;
 
   selectTab("summary");
+}
+
+async function sendToKnowledgeBase(id) {
+  const button = $("send-kb");
+  const status = $("handoff-status");
+  button.disabled = true;
+  status.textContent = "正在复制…";
+  try {
+    const response = await fetch(`/api/jobs/${id}/handoff`, { method: "POST" });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.detail || "发送失败");
+    status.textContent = result.status === "already_present" ? "知识库中已存在。" : "已发送到知识库 Inbox。";
+  } catch (error) {
+    status.textContent = error.message;
+    button.disabled = false;
+  }
 }
 
 function selectTab(name) {
@@ -226,6 +245,7 @@ new EventSource("/api/events").onmessage = (e) => {
     fetch("/api/health").then((r) => r.json()),
   ]);
   for (const j of jobs.jobs) state.jobs.set(j.id, j);
+  state.kbInbox = Boolean(health.knowledge_base_inbox);
   render();
   $("health").innerHTML = [
     ["yt-dlp", health.yt_dlp], ["ffmpeg", health.ffmpeg],

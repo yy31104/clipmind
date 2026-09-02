@@ -47,6 +47,11 @@ python run.py
 打开 http://127.0.0.1:8420，把分享文字整段粘进去 —— 不用自己把 URL 抠出来，
 一次粘多个也可以，它们会并行处理。
 
+结果页可以直接下载只包含正式 v1 artifacts 的确定性 ZIP。若设置
+`CLIPMIND_KB_INBOX=/absolute/path/to/Inbox`，还会出现“发送到知识库 Inbox”按钮；
+复制过程把 `manifest.json` 最后落盘，因此下游 Codex 可以把它作为完成标记。现有
+同名 Pack 会安全复用，不会覆盖另一份来源。
+
 命令行同样可用：
 
 ```bash

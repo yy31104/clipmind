@@ -14,6 +14,11 @@ OUT_DIR = Path(os.getenv("CLIPMIND_OUT", ROOT / "out"))
 WEB_DIR = ROOT / "web"
 
 
+def _optional_path(name: str) -> Path | None:
+    value = os.getenv(name, "").strip()
+    return Path(value).expanduser() if value else None
+
+
 def _int(name: str, default: int) -> int:
     try:
         return int(os.getenv(name, ""))
@@ -66,6 +71,9 @@ class Settings:
 
     # --- housekeeping ---
     keep_source_video: bool = os.getenv("CLIPMIND_KEEP_VIDEO", "0") == "1"
+    knowledge_base_inbox: Path | None = field(
+        default_factory=lambda: _optional_path("CLIPMIND_KB_INBOX")
+    )
 
 
 settings = Settings()

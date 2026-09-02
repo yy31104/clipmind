@@ -13,6 +13,40 @@ from .visual_states import BuildGroup
 
 SCHEMA_NAME = "clipmind-evidence-pack"
 SCHEMA_VERSION = "1.0.0"
+PACK_ARTIFACTS = (
+    "source.json",
+    "job.json",
+    "transcript.jsonl",
+    "transcript.md",
+    "ocr.jsonl",
+    "visual_timeline.jsonl",
+    "evidence.md",
+    "visual_states/all/",
+    "visual_states/preview/",
+)
+
+
+class EvidencePackError(RuntimeError):
+    pass
+
+
+def load_complete_pack(dest: Path) -> dict:
+    """Return a validated completion manifest or reject a partial pack."""
+    manifest_path = dest / "manifest.json"
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise EvidencePackError("missing or invalid manifest.json") from exc
+    if (
+        manifest.get("schema")
+        != {"name": SCHEMA_NAME, "version": SCHEMA_VERSION}
+        or manifest.get("status") != "complete"
+    ):
+        raise EvidencePackError("unsupported or incomplete Evidence Pack")
+    missing = [artifact for artifact in PACK_ARTIFACTS if not (dest / artifact).exists()]
+    if missing:
+        raise EvidencePackError(f"Evidence Pack is missing: {', '.join(missing)}")
+    return manifest
 
 
 def _timestamp(seconds: float) -> str:
@@ -261,17 +295,7 @@ def write_pack(
         "schema": {"name": SCHEMA_NAME, "version": SCHEMA_VERSION},
         "source": {"platform": "douyin", "id": item.video_id},
         "status": "complete",
-        "artifacts": [
-            "source.json",
-            "job.json",
-            "transcript.jsonl",
-            "transcript.md",
-            "ocr.jsonl",
-            "visual_timeline.jsonl",
-            "evidence.md",
-            "visual_states/all/",
-            "visual_states/preview/",
-        ],
+        "artifacts": list(PACK_ARTIFACTS),
         "counts": {
             "candidate_frames": candidate_frame_count,
             "canonical_visual_states": len(canonical),

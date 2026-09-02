@@ -97,3 +97,14 @@ ClipMind owns acquisition, timestamped transcription, visual-state capture,
 OCR, deterministic alignment, and packaging. A downstream knowledge-base agent
 owns interpretation, summarisation, relevance, deduplication, learning tasks,
 and long-term retention decisions.
+
+## Delivery
+
+`GET /api/jobs/<job-id>/evidence.zip` exports only the files in this contract;
+legacy notes and temporary media are excluded. ZIP metadata uses fixed timestamps,
+so identical pack bytes produce identical archives.
+
+When `CLIPMIND_KB_INBOX` is configured, the UI can copy the same canonical files
+to `<Inbox>/<job-id>/`. Copying occurs through a private temporary directory and
+publishes `manifest.json` last. Delivery is one-way: ClipMind never reads or
+modifies the downstream knowledge base beyond that Inbox directory.

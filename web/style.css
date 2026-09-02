@@ -177,7 +177,8 @@ h1 { font-size: 34px; line-height: 1.2; letter-spacing: -.025em; margin: 0 0 10p
 
 .download { display: inline-block; margin-top: 26px; font-size: 13.5px;
   color: var(--muted); text-decoration: none; border: 1px solid var(--line);
-  padding: 7px 14px; border-radius: 8px; }
+  padding: 7px 14px; border-radius: 8px; background: transparent; cursor: pointer;
+  font-family: inherit; margin-right: 7px; }
 .download:hover { color: var(--text); border-color: var(--line-strong); }
 
 @media (max-width: 600px) {

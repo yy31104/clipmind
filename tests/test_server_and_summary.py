@@ -23,6 +23,16 @@ def sse_payload(chunk: str | bytes) -> dict:
 
 
 class ServerEventTests(unittest.IsolatedAsyncioTestCase):
+    async def test_handoff_requires_an_explicit_inbox_configuration(self) -> None:
+        with patch.object(
+            server, "settings", SimpleNamespace(knowledge_base_inbox=None)
+        ):
+            with self.assertRaises(HTTPException) as raised:
+                await server.send_to_knowledge_base("job-1")
+
+        self.assertEqual(raised.exception.status_code, 409)
+        self.assertIn("CLIPMIND_KB_INBOX", raised.exception.detail)
+
     async def test_visual_preview_route_serves_only_preview_files(self) -> None:
         with tempfile.TemporaryDirectory() as tempdir:
             test_store = JobStore(Path(tempdir) / "out")

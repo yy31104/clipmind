@@ -11,6 +11,7 @@ from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
+from . import handoff
 from .config import WEB_DIR, settings
 from .jobs import JobStore
 from .links import extract_urls, guess_title
@@ -108,6 +109,35 @@ async def evidence_file(job_id: str):
     )
 
 
+@app.get("/api/jobs/{job_id}/evidence.zip")
+async def evidence_zip(job_id: str):
+    workdir = store.workdir(job_id)
+    try:
+        path = handoff.export_zip(workdir)
+    except handoff.EvidencePackError as exc:
+        raise HTTPException(409, str(exc)) from exc
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename=f"{job_id}-evidence.zip",
+    )
+
+
+@app.post("/api/jobs/{job_id}/handoff")
+async def send_to_knowledge_base(job_id: str):
+    if settings.knowledge_base_inbox is None:
+        raise HTTPException(
+            409,
+            "Knowledge Base Inbox is not configured. Set CLIPMIND_KB_INBOX and restart.",
+        )
+    try:
+        return handoff.send_to_inbox(
+            store.workdir(job_id), settings.knowledge_base_inbox
+        )
+    except handoff.EvidencePackError as exc:
+        raise HTTPException(409, str(exc)) from exc
+
+
 @app.get("/api/jobs/{job_id}/note.md")
 async def note_file(job_id: str):
     path = store.workdir(job_id) / "note.md"
@@ -148,6 +178,7 @@ async def health():
         "asr": asr.available(),
         "llm": bool(settings.anthropic_api_key),
         "summary_model": settings.summary_model if settings.anthropic_api_key else None,
+        "knowledge_base_inbox": settings.knowledge_base_inbox is not None,
     }
 
 
