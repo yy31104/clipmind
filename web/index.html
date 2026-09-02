@@ -20,15 +20,15 @@
   <!-- ───────────────── home ───────────────── -->
   <main class="view" id="view-home">
     <section class="hero">
-      <h1>把短视频变成笔记</h1>
-      <p class="sub">粘贴抖音分享文字，整段粘进来就行。多个链接会并行处理。</p>
+      <h1>把短视频变成证据包</h1>
+      <p class="sub">粘贴抖音分享文字，完整转写、画面和 OCR 会在本地提取。多个链接可并行处理。</p>
 
       <div class="composer">
         <textarea id="input" rows="4" spellcheck="false"
           placeholder="4.66 g@b.nQ 09/22 ULJ:/ 傻*面试官为什么老是问我底层？ https://v.douyin.com/xxxx/ 复制此链接…"></textarea>
         <div class="composer-foot">
           <span class="hint" id="detected">等待粘贴</span>
-          <button class="primary" id="analyze">分析</button>
+          <button class="primary" id="analyze">提取</button>
         </div>
       </div>
       <p class="error" id="error" hidden></p>
@@ -38,11 +38,11 @@
       <h2 class="section-label" id="active-label" hidden>正在处理</h2>
       <div class="stack" id="active"></div>
 
-      <h2 class="section-label" id="library-label" hidden>笔记库</h2>
+      <h2 class="section-label" id="library-label" hidden>Evidence Packs</h2>
       <div class="grid" id="library"></div>
 
       <div class="empty" id="empty">
-        <p>还没有笔记。上面粘贴一个链接开始。</p>
+        <p>还没有 Evidence Pack。上面粘贴一个链接开始。</p>
       </div>
     </section>
   </main>
@@ -54,7 +54,7 @@
     <div class="meta" id="d-meta"></div>
 
     <nav class="tabs" id="tabs">
-      <button class="tab active" data-tab="summary">摘要</button>
+      <button class="tab active" data-tab="summary">证据包</button>
       <button class="tab" data-tab="frames">画面证据</button>
       <button class="tab" data-tab="transcript">转写</button>
     </nav>

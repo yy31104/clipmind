@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://clipmind.local/schemas/evidence-pack-v1.schema.json",
+  "title": "ClipMind Evidence Pack Manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "source",
+    "status",
+    "artifacts",
+    "counts",
+    "completeness",
+    "diagnostics",
+    "configuration"
+  ],
+  "properties": {
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": {"const": "clipmind-evidence-pack"},
+        "version": {"const": "1.0.0"}
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["platform", "id"],
+      "properties": {
+        "platform": {"const": "douyin"},
+        "id": {"type": "string", "minLength": 1}
+      }
+    },
+    "status": {"const": "complete"},
+    "artifacts": {
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": {"type": "integer", "minimum": 0}
+    },
+    "completeness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["transcript", "ocr", "visual_states"],
+      "properties": {
+        "transcript": {"enum": ["complete", "unavailable"]},
+        "ocr": {"enum": ["complete", "partial", "unavailable"]},
+        "visual_states": {"enum": ["complete", "complete_with_warnings"]}
+      }
+    },
+    "diagnostics": {"type": "object"},
+    "configuration": {"type": "object"}
+  }
+}

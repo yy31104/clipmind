@@ -3,12 +3,10 @@ from __future__ import annotations
 
 import asyncio
 import sys
-import time
-from pathlib import Path
 
 from clipmind.config import OUT_DIR
-from clipmind.links import extract_urls
-from clipmind.pipeline import Pools, process
+from clipmind.jobs import JobStore
+from clipmind.links import extract_urls, guess_title
 
 
 async def main(text: str) -> int:
@@ -17,27 +15,40 @@ async def main(text: str) -> int:
         print("no Douyin links found in that text", file=sys.stderr)
         return 1
 
-    pools = Pools()
+    store = JobStore()
+    queue = store.subscribe()
     print(f"{len(urls)} video(s)\n")
+    labels: dict[str, str] = {}
+    pending: set[str] = set()
+    for index, url in enumerate(urls, start=1):
+        job = store.submit(url, guess_title(text, url) or url)
+        labels[job.id] = f"[{index}]"
+        pending.add(job.id)
 
-    async def one(index: int, url: str):
-        started = time.time()
-        label = f"[{index}]"
-
-        def report(stage, progress, note=""):
-            print(f"{label} {progress * 100:5.1f}%  {stage:<12} {note}", flush=True)
-
-        try:
-            meta = await process(url, OUT_DIR / f"cli-{index}", pools, report)
-            print(f"{label} done in {time.time() - started:.1f}s -> "
-                  f"{OUT_DIR / f'cli-{index}' / 'note.md'}\n")
-            return meta
-        except Exception as exc:  # noqa: BLE001
-            print(f"{label} FAILED: {exc}\n", file=sys.stderr)
-            return None
-
-    results = await asyncio.gather(*(one(i, u) for i, u in enumerate(urls, 1)))
-    return 0 if any(results) else 1
+    succeeded = 0
+    try:
+        while pending:
+            event = await queue.get()
+            job_id = event.get("id")
+            if job_id not in pending:
+                continue
+            label = labels[job_id]
+            print(
+                f"{label} {event.get('progress', 0) * 100:5.1f}%  "
+                f"{event.get('stage', ''):<12} {event.get('note', '')}",
+                flush=True,
+            )
+            if event.get("status") == "done":
+                succeeded += 1
+                pending.remove(job_id)
+                print(f"{label} done -> {OUT_DIR / job_id / 'evidence.md'}\n")
+            elif event.get("status") in {"error", "interrupted"}:
+                pending.remove(job_id)
+                print(f"{label} FAILED: {event.get('error') or event.get('note')}\n", file=sys.stderr)
+    finally:
+        store.unsubscribe(queue)
+        await store.close()
+    return 0 if succeeded else 1
 
 
 if __name__ == "__main__":

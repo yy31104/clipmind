@@ -27,6 +27,7 @@ def write_all(
     visual_preview: list[Frame] | None = None,
     build_groups: list[BuildGroup] | None = None,
     candidate_frame_count: int | None = None,
+    evidence_manifest: dict | None = None,
 ) -> dict:
     dest.mkdir(parents=True, exist_ok=True)
     canonical = sorted(
@@ -117,6 +118,13 @@ def write_all(
                 ),
             }
         )
+    if evidence_manifest is not None:
+        metadata["evidence_pack"] = {
+            "manifest": "manifest.json",
+            "evidence": "evidence.md",
+            "schema": evidence_manifest["schema"],
+            "completeness": evidence_manifest["completeness"],
+        }
     (dest / "metadata.json").write_text(
         json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8"
     )

@@ -27,6 +27,7 @@ class Frame:
     novelty: int = 0
     score: float = 0.0
     dedupe_warning: str | None = None
+    ocr_warning: str | None = None
     build_group_id: str | None = None
     build_position: int | None = None
     build_size: int | None = None

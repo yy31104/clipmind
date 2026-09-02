@@ -41,6 +41,23 @@ class ServerEventTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(Path(response.path), frame.resolve())
         self.assertEqual(raised.exception.status_code, 404)
 
+    async def test_canonical_visual_state_and_evidence_routes(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            test_store = JobStore(Path(tempdir) / "out")
+            workdir = test_store.workdir("job-1")
+            canonical = workdir / "visual_states" / "all" / "00-01-00000.jpg"
+            canonical.parent.mkdir(parents=True)
+            canonical.write_bytes(b"canonical")
+            evidence_path = workdir / "evidence.md"
+            evidence_path.write_text("# Evidence", encoding="utf-8")
+
+            with patch.object(server, "store", test_store):
+                image_response = await server.visual_state("job-1", canonical.name)
+                evidence_response = await server.evidence_file("job-1")
+
+        self.assertEqual(Path(image_response.path), canonical.resolve())
+        self.assertEqual(Path(evidence_response.path), evidence_path)
+
     async def test_sse_serializes_done_and_error_terminal_events(self) -> None:
         async def fake_process(url, workdir, pools, report):
             report("fetching", 0.2, "fetching")

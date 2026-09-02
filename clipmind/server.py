@@ -87,6 +87,27 @@ async def visual_preview(job_id: str, name: str):
     return FileResponse(path)
 
 
+@app.get("/api/jobs/{job_id}/visual_states/all/{name}")
+async def visual_state(job_id: str, name: str):
+    root = (store.workdir(job_id) / "visual_states" / "all").resolve()
+    path = (root / name).resolve()
+    if not path.is_relative_to(root) or not path.is_file():
+        raise HTTPException(404, "no such visual state")
+    return FileResponse(path)
+
+
+@app.get("/api/jobs/{job_id}/evidence.md")
+async def evidence_file(job_id: str):
+    path = store.workdir(job_id) / "evidence.md"
+    if not path.is_file():
+        raise HTTPException(404, "evidence pack not ready")
+    return FileResponse(
+        path,
+        media_type="text/markdown",
+        filename=f"{job_id}-evidence.md",
+    )
+
+
 @app.get("/api/jobs/{job_id}/note.md")
 async def note_file(job_id: str):
     path = store.workdir(job_id) / "note.md"

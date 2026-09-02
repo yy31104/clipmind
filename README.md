@@ -63,27 +63,35 @@ python cli.py "4.66 g@b.nQ ULJ:/ 标题 https://v.douyin.com/xxxx/ 复制此链�
 
 ## 当前产出
 
-当前实现仍使用下面的兼容格式；它是 Evidence Pack 的前身，不是最终 v1 schema：
+每个成功任务都会生成 versioned Evidence Pack；`manifest.json` 最后写入，是可以复用
+这个结果的完成标记：
 
 ```
 out/<job-id>/
+├── manifest.json      # clipmind-evidence-pack@1.0.0
+├── source.json
 ├── job.json           # 可恢复的任务状态
-├── note.md            # 当前的人类可读证据视图
-├── metadata.json
-├── transcript.json
+├── transcript.jsonl   # 完整、带时间戳的 ASR segments
+├── transcript.md
+├── ocr.jsonl          # 每个 canonical visual state 一条记录
+├── visual_timeline.jsonl
+├── evidence.md        # 确定性的完整人类可读证据视图
 ├── visual_states/
 │   ├── all/            # 当前采样与近重复过滤后保留的完整 canonical 集合
 │   └── preview/        # 内容驱动预览；渐进构建只展示完成态，无固定张数上限
-└── keyframes/          # 旧笔记格式的兼容产物，仍可最多 10 张
-    ├── 00-08.jpg
-    └── 00-23.jpg
+├── metadata.json      # 以下为迁移期兼容产物
+├── transcript.json
+├── note.md
+└── keyframes/
 ```
 
 源视频和音频在处理完会自动删除（`CLIPMIND_KEEP_VIDEO=1` 可保留）。
 
-v1 的 canonical artifact 将是确定性的 **Evidence Pack**：完整时间戳转写、OCR、
-视觉时间线、所有实质不同的稳定画面、来源信息和 schema/manifest。ClipMind 只负责
-提取和组织证据；判断重点、关联已有知识和决定长期保留内容，交给下游知识库 agent。
+Evidence Pack 的字段、ID、完整性状态和责任边界见
+[`docs/EVIDENCE_PACK.md`](docs/EVIDENCE_PACK.md)，manifest 的机器可读定义见
+[`schemas/evidence-pack-v1.schema.json`](schemas/evidence-pack-v1.schema.json)。ClipMind
+只负责提取和组织证据；判断重点、关联已有知识和决定长期保留内容，交给下游知识库
+agent。
 
 ## 免费路径
 

@@ -96,7 +96,7 @@ function libraryCard(j) {
     ${cover}
     <div class="card-body">
       <div class="card-title">${esc(j.title)}</div>
-      <div class="card-meta">${clock(j.result?.duration || 0)} · ${frames.length} 帧 · ${j.elapsed}s</div>
+      <div class="card-meta">${clock(j.result?.duration || 0)} · ${frames.length} 预览 · ${j.elapsed}s</div>
     </div>
   </button>`;
 }
@@ -127,9 +127,21 @@ async function openDetail(id) {
     meta.summary_engine ? esc(meta.summary_engine) : null,
   ].filter(Boolean).join("<span>·</span>");
 
-  $("pane-summary").innerHTML =
-    markdown((job.note_markdown || "").split("## 关键帧")[0].replace(/^# .*$/m, "").replace(/^- (来源|作者|时长|获取方式|总结模型):.*$/gm, "")) +
-    `<a class="download" href="/api/jobs/${job.id}/note.md" download>下载 Markdown</a>`;
+  if (meta.evidence_pack) {
+    const complete = meta.evidence_pack.completeness || {};
+    $("pane-summary").innerHTML = `<h2>Evidence Pack ${esc(meta.evidence_pack.schema?.version || "")}</h2>
+      <p>完整时间戳转写、OCR、视觉时间线和 canonical 画面已经按稳定文件契约落盘。</p>
+      <ul>
+        <li>转写：${esc(complete.transcript || "unknown")}</li>
+        <li>OCR：${esc(complete.ocr || "unknown")}</li>
+        <li>视觉状态：${esc(complete.visual_states || "unknown")}</li>
+      </ul>
+      <a class="download" href="/api/jobs/${job.id}/evidence.md" download>下载完整 Evidence Markdown</a>`;
+  } else {
+    $("pane-summary").innerHTML =
+      markdown((job.note_markdown || "").split("## 关键帧")[0].replace(/^# .*$/m, "").replace(/^- (来源|作者|时长|获取方式|总结模型):.*$/gm, "")) +
+      `<a class="download" href="/api/jobs/${job.id}/note.md" download>下载旧版 Markdown</a>`;
+  }
 
   $("pane-frames").innerHTML = frames.map((f) => `
     <div class="frame">

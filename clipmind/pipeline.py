@@ -11,7 +11,7 @@ import shutil
 from dataclasses import dataclass, field, replace
 from pathlib import Path
 
-from . import asr, keyframes, media, render, summarize, visual_states
+from . import asr, evidence, keyframes, media, render, summarize, visual_states
 from .config import settings
 from .fetch import FetchError, fetch
 
@@ -45,6 +45,8 @@ def cleanup_temporary(workdir: Path, keep_source: bool = False) -> None:
     if keep_source:
         return
     for path in [workdir / "audio.wav", *workdir.glob("source.*")]:
+        if path.name == "source.json":
+            continue
         try:
             path.unlink(missing_ok=True)
         except OSError:
@@ -121,6 +123,16 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
         transcript, (chosen, preview, build_groups, ocr_error) = await asyncio.gather(
             speech(), vision()
         )
+        evidence_manifest = evidence.write_pack(
+            workdir,
+            item,
+            transcript,
+            canonical,
+            preview,
+            build_groups,
+            candidate_frame_count=len(candidates),
+            ocr_error=ocr_error,
+        )
         chosen = await keyframes.promote(
             item.video_path, chosen, workdir / "keyframes"
         )
@@ -129,23 +141,57 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
                f"{len(transcript.segments)} speech segments")
 
         # --- fuse ----------------------------------------------------------
-        summary = await summarize.summarize(
-            transcript, chosen, item.title, item.duration, pools.llm)
+        try:
+            summary = await summarize.summarize(
+                transcript, chosen, item.title, item.duration, pools.llm
+            )
+        except Exception as exc:  # noqa: BLE001 - optional compatibility view
+            summary = summarize.Summary(
+                "## Evidence Pack\n\nCanonical evidence was written to `evidence.md`.",
+                "compatibility fallback",
+                error=f"{type(exc).__name__}: {exc}",
+            )
         base += STAGES[3][1]
         report("writing", base, "writing note")
 
-        metadata = render.write_all(
-            workdir,
-            item,
-            transcript,
-            chosen,
-            summary,
-            ocr_error=ocr_error,
-            visual_states=canonical,
-            visual_preview=preview,
-            build_groups=build_groups,
-            candidate_frame_count=len(candidates),
-        )
+        try:
+            metadata = render.write_all(
+                workdir,
+                item,
+                transcript,
+                chosen,
+                summary,
+                ocr_error=ocr_error,
+                visual_states=canonical,
+                visual_preview=preview,
+                build_groups=build_groups,
+                candidate_frame_count=len(candidates),
+                evidence_manifest=evidence_manifest,
+            )
+        except Exception as exc:  # noqa: BLE001 - legacy output is non-canonical
+            metadata = {
+                "id": item.video_id,
+                "title": item.title,
+                "uploader": item.uploader,
+                "duration": item.duration,
+                "url": item.webpage_url,
+                "visual_preview": [
+                    {
+                        "timestamp": frame.timestamp,
+                        "clock": render.clock(frame.timestamp),
+                        "file": frame.path.relative_to(workdir).as_posix(),
+                        "text": frame.text,
+                    }
+                    for frame in preview
+                ],
+                "evidence_pack": {
+                    "manifest": "manifest.json",
+                    "evidence": "evidence.md",
+                    "schema": evidence_manifest["schema"],
+                    "completeness": evidence_manifest["completeness"],
+                },
+                "compatibility_error": f"{type(exc).__name__}: {exc}",
+            }
         report("done", 1.0, "complete")
         completed = True
         return metadata

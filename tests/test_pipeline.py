@@ -102,6 +102,7 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         visual_preview=None,
         build_groups=None,
         candidate_frame_count=None,
+        evidence_manifest=None,
     ) -> dict:
         self.rendered_ocr_error = ocr_error
         return {
@@ -148,6 +149,9 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
                 SimpleNamespace(
                     keep_source_video=False,
                     evidence_width=1280,
+                    sample_width=640,
+                    sample_fps=2.0,
+                    dedupe_threshold=6,
                 ),
             )
         )
@@ -259,6 +263,8 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         canonical = self.workdir / "visual_states" / "all" / "state.jpg"
         canonical.parent.mkdir(parents=True)
         canonical.write_bytes(b"final evidence")
+        source_metadata = self.workdir / "source.json"
+        source_metadata.write_text('{"source_id":"stable"}', encoding="utf-8")
         self.source_path.write_bytes(b"source")
         self.audio_path.write_bytes(b"audio")
         self.sample_path.parent.mkdir(parents=True)
@@ -270,6 +276,7 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         pipeline.cleanup_temporary(self.workdir)
 
         self.assertTrue(canonical.exists())
+        self.assertTrue(source_metadata.exists())
         self.assertFalse(self.source_path.exists())
         self.assertFalse(self.audio_path.exists())
         self.assertFalse(self.sample_path.parent.exists())
@@ -320,6 +327,8 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result["canonical_visual_state_count"], 12)
         self.assertEqual(result["preview_frame_count"], 12)
         self.assertEqual(result["compatibility_keyframe_count"], 2)
+        self.assertEqual(result["evidence_pack"]["schema"]["version"], "1.0.0")
+        self.assertEqual(result["evidence_pack"]["manifest"], "manifest.json")
         self.assertEqual(result["dedupe_failure_count"], 0)
         self.assertEqual(len(result["visual_states"]), 12)
         self.assertEqual(len(result["visual_preview"]), 12)
@@ -444,16 +453,18 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
             [0, 1, 2],
         )
 
-    async def test_post_download_failure_should_remove_temporary_media(self) -> None:
+    async def test_optional_summary_failure_does_not_invalidate_evidence_pack(self) -> None:
         async def failed_summary(transcript, frames, title, duration, semaphore):
             raise RuntimeError("injected post-download failure")
 
         with self.patched_pipeline(summarize=failed_summary):
-            with self.assertRaisesRegex(RuntimeError, "injected post-download failure"):
-                await pipeline.process(
-                    "https://v.douyin.com/example", self.workdir, self.pools(), self.report
-                )
+            result = await pipeline.process(
+                "https://v.douyin.com/example", self.workdir, self.pools(), self.report
+            )
 
+        self.assertEqual(result["title"], "Video title")
+        self.assertTrue((self.workdir / "manifest.json").exists())
+        self.assertTrue((self.workdir / "evidence.md").exists())
         self.assertFalse(self.source_path.exists(), "source video leaked after failure")
         self.assertFalse(self.audio_path.exists(), "temporary audio leaked after failure")
         self.assertFalse((self.workdir / "samples").exists(), "sample frames leaked after failure")
@@ -462,26 +473,32 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
             "canonical visual evidence was removed after failure",
         )
 
-    async def test_note_write_failure_removes_temporary_media(self) -> None:
+    async def test_legacy_note_write_failure_does_not_invalidate_evidence_pack(self) -> None:
         def failed_write(*args, **kwargs):
             raise RuntimeError("injected note write failure")
 
         with self.patched_pipeline(write_all=failed_write):
-            with self.assertRaisesRegex(RuntimeError, "injected note write failure"):
-                await pipeline.process(
-                    "https://v.douyin.com/example", self.workdir, self.pools(), self.report
-                )
+            result = await pipeline.process(
+                "https://v.douyin.com/example", self.workdir, self.pools(), self.report
+            )
 
+        self.assertIn("injected note write failure", result["compatibility_error"])
+        self.assertTrue((self.workdir / "manifest.json").exists())
         self.assertFalse(self.source_path.exists())
         self.assertFalse(self.audio_path.exists())
         self.assertFalse((self.workdir / "samples").exists())
 
     async def test_cleanup_failure_does_not_hide_pipeline_failure(self) -> None:
-        async def failed_summary(transcript, frames, title, duration, semaphore):
+        def failed_evidence(*args, **kwargs):
             raise RuntimeError("original pipeline failure")
 
         with (
-            self.patched_pipeline(summarize=failed_summary),
+            self.patched_pipeline(),
+            patch.object(
+                pipeline.evidence,
+                "write_pack",
+                side_effect=failed_evidence,
+            ),
             patch.object(
                 pipeline,
                 "cleanup_temporary",

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import tempfile
 import unittest
 from pathlib import Path
@@ -67,6 +68,22 @@ class SamplingTests(unittest.IsolatedAsyncioTestCase):
 
         self.assertIn("fps=3.0,scale=1280:-2", captured)
         self.assertEqual([(frame.index, frame.timestamp) for frame in frames], [(0, 0.0)])
+
+
+class OCRAnnotationTests(unittest.IsolatedAsyncioTestCase):
+    async def test_ocr_failure_is_attached_to_the_affected_frame(self) -> None:
+        frame = make_frame(0)
+        with patch.object(
+            keyframes.ocr,
+            "read_text",
+            side_effect=RuntimeError("injected OCR failure"),
+        ):
+            error = await keyframes.annotate([frame], asyncio.Semaphore(1))
+
+        self.assertEqual(frame.lines, ())
+        self.assertEqual(frame.text, "")
+        self.assertEqual(frame.ocr_warning, "RuntimeError: injected OCR failure")
+        self.assertIn("OCR failed on 1/1 frames", error)
 
 
 class DedupeTests(unittest.TestCase):

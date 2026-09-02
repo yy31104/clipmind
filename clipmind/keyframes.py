@@ -28,11 +28,13 @@ async def annotate(frames: list[Frame], ocr_semaphore: asyncio.Semaphore) -> str
     failures: list[str] = []
 
     async def run(frame: Frame) -> None:
+        frame.ocr_warning = None
         async with ocr_semaphore:
             try:
                 lines = await asyncio.to_thread(ocr.read_text, frame.path)
             except Exception as exc:  # noqa: BLE001
-                failures.append(f"{type(exc).__name__}: {exc}")
+                frame.ocr_warning = f"{type(exc).__name__}: {exc}"
+                failures.append(frame.ocr_warning)
                 return
         frame.lines = tuple(lines)
         frame.text = "\n".join(lines)
