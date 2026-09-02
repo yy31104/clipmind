@@ -123,6 +123,23 @@ h1 { font-size: 34px; line-height: 1.2; letter-spacing: -.025em; margin: 0 0 10p
   white-space: pre-wrap; }
 .job-action { color: var(--muted); font-size: 12.5px; margin-top: 5px; }
 
+/* ── folded failures ── */
+.fold {
+  display: block; width: 100%; margin-top: 34px; padding: 11px 0;
+  background: none; border: 0; border-top: 1px solid var(--line);
+  color: var(--faint); font: inherit; font-size: 12.5px; cursor: pointer;
+  text-align: left; transition: color .15s ease;
+}
+.fold::after { content: "  ▸"; font-size: 10px; }
+.fold.open::after { content: "  ▾"; }
+.fold:hover { color: var(--muted); }
+#failed { margin-top: 12px; }
+.job-source {
+  font-size: 12px; color: var(--faint); margin-top: 3px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
 /* ── library ── */
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(212px, 1fr)); gap: 14px; }
 .card {
@@ -138,6 +155,7 @@ h1 { font-size: 34px; line-height: 1.2; letter-spacing: -.025em; margin: 0 0 10p
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .card-meta { font-size: 11.5px; color: var(--faint); margin-top: 6px;
   font-variant-numeric: tabular-nums; }
+.card-older { font-size: 11px; color: var(--faint); margin-top: 5px; opacity: .8; }
 
 /* ── detail ── */
 .back { background: none; border: 0; color: var(--muted); cursor: pointer;
