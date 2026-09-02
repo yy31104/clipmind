@@ -82,12 +82,16 @@ class JobRecoveryTests(unittest.IsolatedAsyncioTestCase):
         async def interrupted_process(url, workdir, pools, report):
             (workdir / "samples").mkdir(parents=True)
             (workdir / "keyframes").mkdir()
+            (workdir / "visual_states" / "all").mkdir(parents=True)
             (workdir / "source.mp4").write_bytes(b"source")
             (workdir / "source.mp4.part").write_bytes(b"partial")
             (workdir / "audio.wav").write_bytes(b"audio")
             (workdir / "samples" / "candidate.jpg").write_bytes(b"candidate")
             (workdir / "note.md").write_text("final note", encoding="utf-8")
             (workdir / "keyframes" / "final.jpg").write_bytes(b"final")
+            (workdir / "visual_states" / "all" / "final.jpg").write_bytes(
+                b"canonical"
+            )
             entered.set()
             await asyncio.Event().wait()
 
@@ -121,6 +125,7 @@ class JobRecoveryTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse((workdir / "samples").exists())
         self.assertTrue((workdir / "note.md").exists())
         self.assertTrue((workdir / "keyframes" / "final.jpg").exists())
+        self.assertTrue((workdir / "visual_states" / "all" / "final.jpg").exists())
 
         third = JobStore(self.out_dir)
         with patch("clipmind.jobs.process", new=must_not_run):

@@ -1,4 +1,5 @@
 import asyncio
+import json
 import tempfile
 import unittest
 from contextlib import ExitStack
@@ -76,10 +77,29 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
     async def fake_promote(self, video, chosen, dest_dir) -> list[Frame]:
         return chosen
 
+    async def copy_preview(self, video, chosen, dest_dir) -> list[Frame]:
+        dest_dir.mkdir(parents=True, exist_ok=True)
+        for position, frame in enumerate(chosen):
+            dest = dest_dir / f"preview-{position}.jpg"
+            dest.write_bytes(frame.path.read_bytes())
+            frame.path = dest
+        return chosen
+
     async def fake_summarize(self, transcript, frames, title, duration, semaphore) -> Summary:
         return Summary("## 摘要\n\nA note.", "fake-summary")
 
-    def fake_write_all(self, dest, item, transcript, frames, summary, ocr_error=None) -> dict:
+    def fake_write_all(
+        self,
+        dest,
+        item,
+        transcript,
+        frames,
+        summary,
+        ocr_error=None,
+        *,
+        visual_states=None,
+        candidate_frame_count=None,
+    ) -> dict:
         self.rendered_ocr_error = ocr_error
         return {
             "title": item.title,
@@ -225,6 +245,133 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(self.audio_path.exists())
         self.assertFalse((self.workdir / "samples").exists())
 
+    def test_cleanup_preserves_canonical_visual_states(self) -> None:
+        canonical = self.workdir / "visual_states" / "all" / "state.jpg"
+        canonical.parent.mkdir(parents=True)
+        canonical.write_bytes(b"final evidence")
+        self.source_path.write_bytes(b"source")
+        self.audio_path.write_bytes(b"audio")
+        self.sample_path.parent.mkdir(parents=True)
+        self.sample_path.write_bytes(b"candidate")
+
+        pipeline.cleanup_temporary(self.workdir)
+
+        self.assertTrue(canonical.exists())
+        self.assertFalse(self.source_path.exists())
+        self.assertFalse(self.audio_path.exists())
+        self.assertFalse(self.sample_path.parent.exists())
+
+    async def test_canonical_states_are_untruncated_while_preview_stays_small(self) -> None:
+        async def many_samples(video, dest_dir) -> list[Frame]:
+            dest_dir.mkdir(parents=True, exist_ok=True)
+            frames = []
+            for index in range(13):
+                path = dest_dir / f"sample-{index}.jpg"
+                path.write_bytes(b"opening-logo" if index == 0 else f"state-{index}".encode())
+                frames.append(Frame(index=index, timestamp=index / 2, path=path))
+            return frames
+
+        def dedupe_without_opening(frames) -> list[Frame]:
+            return frames[1:]
+
+        async def annotate_all(frames, semaphore) -> str | None:
+            # Preview opening-context logic only receives canonical frames.
+            self.assertEqual([frame.index for frame in frames], list(range(1, 13)))
+            return None
+
+        real_write_all = pipeline.render.write_all
+        real_select = pipeline.keyframes.select
+        with (
+            self.patched_pipeline(
+                sample_frames=many_samples,
+                dedupe=dedupe_without_opening,
+                annotate=annotate_all,
+                select=real_select,
+                promote=self.copy_preview,
+                write_all=real_write_all,
+            ),
+            patch.object(
+                pipeline.keyframes,
+                "settings",
+                SimpleNamespace(max_keyframes=2),
+            ),
+        ):
+            result = await pipeline.process(
+                "https://v.douyin.com/example", self.workdir, self.pools(), self.report
+            )
+
+        self.assertEqual(result["candidate_frame_count"], 13)
+        self.assertEqual(result["canonical_visual_state_count"], 12)
+        self.assertEqual(result["preview_frame_count"], 2)
+        self.assertEqual(result["dedupe_failure_count"], 0)
+        self.assertEqual(len(result["visual_states"]), 12)
+        self.assertEqual(len(result["keyframes"]), 2)
+        persisted = json.loads(
+            (self.workdir / "metadata.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(persisted["visual_states"], result["visual_states"])
+        self.assertEqual(
+            [state["timestamp"] for state in result["visual_states"]],
+            sorted(state["timestamp"] for state in result["visual_states"]),
+        )
+        canonical_files = sorted((self.workdir / "visual_states" / "all").glob("*.jpg"))
+        self.assertEqual(len(canonical_files), 12)
+        self.assertNotIn(b"opening-logo", {path.read_bytes() for path in canonical_files})
+        self.assertTrue(
+            all((self.workdir / state["file"]).exists() for state in result["visual_states"])
+        )
+        preview_files = list((self.workdir / "keyframes").glob("*.jpg"))
+        self.assertEqual(len(preview_files), 2)
+        self.assertNotIn(b"opening-logo", {path.read_bytes() for path in preview_files})
+        self.assertFalse((self.workdir / "samples").exists())
+
+    async def test_dedupe_failure_is_retained_and_serialized(self) -> None:
+        async def two_samples(video, dest_dir) -> list[Frame]:
+            dest_dir.mkdir(parents=True, exist_ok=True)
+            frames = []
+            for index in range(2):
+                path = dest_dir / f"sample-{index}.jpg"
+                path.write_bytes(f"state-{index}".encode())
+                frames.append(Frame(index=index, timestamp=float(index), path=path))
+            return frames
+
+        actual_dedupe = pipeline.media.dedupe
+
+        def dedupe_with_explicit_threshold(frames) -> list[Frame]:
+            return actual_dedupe(frames, threshold=0)
+
+        async def annotate_all(frames, semaphore) -> str | None:
+            return None
+
+        real_write_all = pipeline.render.write_all
+        with (
+            self.patched_pipeline(
+                sample_frames=two_samples,
+                dedupe=dedupe_with_explicit_threshold,
+                annotate=annotate_all,
+                select=lambda frames: frames[:1],
+                promote=self.copy_preview,
+                write_all=real_write_all,
+            ),
+            patch.object(
+                pipeline.media,
+                "dhash",
+                side_effect=[0, OSError("/Users/private/Cookies")],
+            ),
+        ):
+            result = await pipeline.process(
+                "https://v.douyin.com/example", self.workdir, self.pools(), self.report
+            )
+
+        self.assertEqual(result["candidate_frame_count"], 2)
+        self.assertEqual(result["canonical_visual_state_count"], 2)
+        self.assertEqual(result["preview_frame_count"], 1)
+        self.assertEqual(result["dedupe_failure_count"], 1)
+        self.assertEqual(
+            result["visual_states"][1]["dedupe_warning"],
+            "OSError: perceptual hash failed; frame retained",
+        )
+
     async def test_post_download_failure_should_remove_temporary_media(self) -> None:
         async def failed_summary(transcript, frames, title, duration, semaphore):
             raise RuntimeError("injected post-download failure")
@@ -238,6 +385,10 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(self.source_path.exists(), "source video leaked after failure")
         self.assertFalse(self.audio_path.exists(), "temporary audio leaked after failure")
         self.assertFalse((self.workdir / "samples").exists(), "sample frames leaked after failure")
+        self.assertTrue(
+            any((self.workdir / "visual_states" / "all").iterdir()),
+            "canonical visual evidence was removed after failure",
+        )
 
     async def test_note_write_failure_removes_temporary_media(self) -> None:
         def failed_write(*args, **kwargs):

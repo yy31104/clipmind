@@ -71,7 +71,9 @@ out/<job-id>/
 ├── note.md            # 当前的人类可读证据视图
 ├── metadata.json
 ├── transcript.json
-└── keyframes/
+├── visual_states/
+│   └── all/            # 当前采样与近重复过滤后保留的完整 canonical 集合
+└── keyframes/          # 现有 UI 使用的兼容 preview，仍可最多 10 张
     ├── 00-08.jpg
     └── 00-23.jpg
 ```
@@ -100,15 +102,18 @@ v1 的 canonical artifact 将是确定性的 **Evidence Pack**：完整时间戳
 
 ## 视觉提取状态
 
-当前实现使用下面的漏斗，并固定最多保留 10 张：
+当前实现先无固定数量上限地保留 canonical 集合，再派生小型兼容 preview：
 
 ```
-2 fps 采样  →  dHash 去重  →  OCR  →  按"新增文字量"排序  →  取前 10
+2 fps 采样  →  dHash 近重复过滤  →  visual_states/all/（无固定上限）
+                                      ↓
+                         OCR → collapse/score/select → keyframes/（最多 10 张 preview）
 ```
 
-这是已知的 v1 缺口，不是最终契约。v1 禁止固定每个视频的数量：应按内容保留所有
-实质不同、稳定且可读的视觉状态；纯口播可能只有少数几张，白板/PPT 按实际页面数，
-密集代码或 UI 演示则可能更多。紧凑 preview 可以存在，但不能截断完整证据集。
+这里的 canonical phase 1 只表示“保留所有通过当前采样与安全近重复过滤的候选状态”，
+还没有完整解决转场、稳定性、信息价值或 progressive build 分组。最终 v1 仍应按内容
+识别所有实质不同、稳定且可读的视觉状态；紧凑 preview 可以存在，但不能截断完整
+证据集。
 
 ## 并发
 

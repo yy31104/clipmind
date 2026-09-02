@@ -26,6 +26,7 @@ class Frame:
     lines: tuple[str, ...] = ()
     novelty: int = 0
     score: float = 0.0
+    dedupe_warning: str | None = None
 
 
 async def _ffmpeg(args: list[str]) -> None:
@@ -91,17 +92,33 @@ def hamming(a: int, b: int) -> int:
 
 
 def dedupe(frames: list[Frame], threshold: int | None = None) -> list[Frame]:
-    """Drop frames visually indistinguishable from the last one we kept."""
+    """Drop near-duplicates; retain and mark frames that cannot be compared."""
     threshold = settings.dedupe_threshold if threshold is None else threshold
     kept: list[Frame] = []
     last_hash: int | None = None
     for frame in frames:
+        frame.dedupe_warning = None
         try:
             frame.phash = dhash(frame.path)
-        except Exception:
+        except Exception as exc:  # noqa: BLE001 - fail open to preserve evidence
+            frame.dedupe_warning = (
+                f"{type(exc).__name__}: perceptual hash failed; frame retained"
+            )
+            kept.append(frame)
+            last_hash = None
             continue
-        if last_hash is not None and hamming(frame.phash, last_hash) <= threshold:
-            continue
+        if last_hash is not None:
+            try:
+                duplicate = hamming(frame.phash, last_hash) <= threshold
+            except Exception as exc:  # noqa: BLE001 - fail open to preserve evidence
+                frame.dedupe_warning = (
+                    f"{type(exc).__name__}: perceptual comparison failed; frame retained"
+                )
+                kept.append(frame)
+                last_hash = None
+                continue
+            if duplicate:
+                continue
         kept.append(frame)
         last_hash = frame.phash
     return kept

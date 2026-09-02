@@ -14,9 +14,21 @@ def clock(seconds: float) -> str:
     return f"{int(seconds // 60):02d}:{int(seconds % 60):02d}"
 
 
-def write_all(dest: Path, item: Media, transcript: Transcript, frames: list[Frame],
-              summary: Summary, ocr_error: str | None = None) -> dict:
+def write_all(
+    dest: Path,
+    item: Media,
+    transcript: Transcript,
+    frames: list[Frame],
+    summary: Summary,
+    ocr_error: str | None = None,
+    *,
+    visual_states: list[Frame] | None = None,
+    candidate_frame_count: int | None = None,
+) -> dict:
     dest.mkdir(parents=True, exist_ok=True)
+    canonical = sorted(
+        visual_states or [], key=lambda frame: (frame.timestamp, frame.index)
+    )
 
     metadata = {
         "id": item.video_id,
@@ -41,6 +53,33 @@ def write_all(dest: Path, item: Media, transcript: Transcript, frames: list[Fram
             for f in frames
         ],
     }
+    if visual_states is not None:
+        states = []
+        for frame in canonical:
+            state = {
+                "timestamp": frame.timestamp,
+                "clock": clock(frame.timestamp),
+                "file": frame.path.relative_to(dest).as_posix(),
+                "text": frame.text,
+            }
+            if frame.dedupe_warning:
+                state["dedupe_warning"] = frame.dedupe_warning
+            states.append(state)
+        metadata.update(
+            {
+                "visual_states": states,
+                "candidate_frame_count": (
+                    len(canonical)
+                    if candidate_frame_count is None
+                    else candidate_frame_count
+                ),
+                "canonical_visual_state_count": len(canonical),
+                "preview_frame_count": len(frames),
+                "dedupe_failure_count": sum(
+                    frame.dedupe_warning is not None for frame in canonical
+                ),
+            }
+        )
     (dest / "metadata.json").write_text(
         json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8"
     )

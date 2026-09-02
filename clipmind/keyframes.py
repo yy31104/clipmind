@@ -1,8 +1,8 @@
-"""Pick the handful of frames that actually carry information.
+"""Derive the small compatibility preview shown by the current UI.
 
 Uniform "one screenshot every 5 seconds" produces mostly redundant images. The
-funnel here is: sample dense -> drop visual duplicates -> OCR the survivors ->
-keep the frames that introduce text or visuals nothing before them had.
+canonical visual-state set is retained before this module collapses, scores and
+selects a capped preview.
 """
 from __future__ import annotations
 

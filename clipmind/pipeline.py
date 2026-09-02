@@ -8,10 +8,10 @@ from __future__ import annotations
 
 import asyncio
 import shutil
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 
-from . import asr, keyframes, media, render, summarize
+from . import asr, keyframes, media, render, summarize, visual_states
 from .config import settings
 from .fetch import FetchError, fetch
 
@@ -74,9 +74,22 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
         audio_path = await media.extract_audio(item.video_path, workdir / "audio.wav")
         candidates = await media.sample_frames(item.video_path, workdir / "samples")
         unique = media.dedupe(candidates)
+        canonical = visual_states.retain_all(
+            unique, workdir / "visual_states" / "all"
+        )
+        dedupe_failure_count = sum(
+            frame.dedupe_warning is not None for frame in canonical
+        )
         base += STAGES[1][1]
-        report("analysing", base,
-               f"{len(candidates)} frames -> {len(unique)} unique")
+        diagnostic = (
+            f", {dedupe_failure_count} dedupe warning(s)"
+            if dedupe_failure_count else ""
+        )
+        report(
+            "analysing",
+            base,
+            f"{len(candidates)} frames -> {len(canonical)} canonical states{diagnostic}",
+        )
 
         # --- speech and vision, concurrently ------------------------------
         async def speech():
@@ -85,9 +98,10 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
                 return await asr.transcribe(audio_path)
 
         async def vision():
-            problem = await keyframes.annotate(unique, pools.ocr)
+            problem = await keyframes.annotate(canonical, pools.ocr)
             report("analysing", base + 0.05, problem or "reading on-screen text")
-            return keyframes.select(unique), problem
+            preview_candidates = [replace(frame) for frame in canonical]
+            return keyframes.select(preview_candidates), problem
 
         transcript, (chosen, ocr_error) = await asyncio.gather(speech(), vision())
         chosen = await keyframes.promote(
@@ -104,7 +118,14 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
         report("writing", base, "writing note")
 
         metadata = render.write_all(
-            workdir, item, transcript, chosen, summary, ocr_error=ocr_error
+            workdir,
+            item,
+            transcript,
+            chosen,
+            summary,
+            ocr_error=ocr_error,
+            visual_states=canonical,
+            candidate_frame_count=len(candidates),
         )
         report("done", 1.0, "complete")
         completed = True

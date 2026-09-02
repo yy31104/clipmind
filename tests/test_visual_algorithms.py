@@ -57,6 +57,46 @@ class DedupeTests(unittest.TestCase):
         self.assertEqual(kept, [frames[0], frames[2]])
         self.assertEqual([frame.phash for frame in frames], [0b000, 0b001, 0b011])
 
+    def test_dedupe_removes_exact_and_near_duplicates(self) -> None:
+        frames = [make_frame(index) for index in range(4)]
+
+        with patch.object(media, "dhash", side_effect=[0b000, 0b000, 0b001, 0b111]):
+            kept = media.dedupe(frames, threshold=1)
+
+        self.assertEqual(kept, [frames[0], frames[3]])
+
+    def test_hash_failure_retains_evidence_and_records_a_safe_warning(self) -> None:
+        frames = [make_frame(index) for index in range(3)]
+
+        with patch.object(
+            media,
+            "dhash",
+            side_effect=[0b000, OSError("/Users/private/Cookies"), 0b000],
+        ):
+            kept = media.dedupe(frames, threshold=0)
+
+        self.assertEqual(kept, frames)
+        self.assertEqual(
+            frames[1].dedupe_warning,
+            "OSError: perceptual hash failed; frame retained",
+        )
+        self.assertNotIn("Cookies", frames[1].dedupe_warning)
+
+    def test_comparison_failure_retains_evidence_and_records_a_warning(self) -> None:
+        frames = [make_frame(index) for index in range(2)]
+
+        with (
+            patch.object(media, "dhash", side_effect=[0b000, 0b111]),
+            patch.object(media, "hamming", side_effect=RuntimeError("injected")),
+        ):
+            kept = media.dedupe(frames, threshold=1)
+
+        self.assertEqual(kept, frames)
+        self.assertEqual(
+            frames[1].dedupe_warning,
+            "RuntimeError: perceptual comparison failed; frame retained",
+        )
+
 
 class VisualSelectionTests(unittest.TestCase):
     def test_collapse_builds_keeps_the_completed_state(self) -> None:
