@@ -38,6 +38,9 @@ class Settings:
     # --- vision ---
     sample_fps: float = float(os.getenv("CLIPMIND_SAMPLE_FPS", "2"))
     sample_width: int = _int("CLIPMIND_SAMPLE_WIDTH", 640)
+    # Canonical evidence and OCR use a readable size; low-res samples remain
+    # the cheap input for change detection.
+    evidence_width: int = _int("CLIPMIND_EVIDENCE_WIDTH", 1280)
     # dHash hamming distance below which two frames count as duplicates.
     dedupe_threshold: int = _int("CLIPMIND_DEDUPE_THRESHOLD", 6)
     max_keyframes: int = _int("CLIPMIND_MAX_KEYFRAMES", 10)

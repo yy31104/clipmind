@@ -47,6 +47,28 @@ class PerceptualHashTests(unittest.TestCase):
         self.assertEqual(media.hamming(0b1010, 0b1010), 0)
 
 
+class SamplingTests(unittest.IsolatedAsyncioTestCase):
+    async def test_explicit_width_controls_evidence_sampling(self) -> None:
+        captured: list[str] = []
+
+        async def fake_ffmpeg(args: list[str]) -> None:
+            captured.extend(args)
+            pattern = Path(args[-1])
+            (pattern.parent / "s_00001.jpg").write_bytes(b"frame")
+
+        with (
+            tempfile.TemporaryDirectory() as tempdir,
+            patch.object(media, "_ffmpeg", new=fake_ffmpeg),
+            patch.object(media, "settings", type("S", (), {"sample_fps": 3.0, "sample_width": 640})()),
+        ):
+            frames = await media.sample_frames(
+                Path("video.mp4"), Path(tempdir), width=1280
+            )
+
+        self.assertIn("fps=3.0,scale=1280:-2", captured)
+        self.assertEqual([(frame.index, frame.timestamp) for frame in frames], [(0, 0.0)])
+
+
 class DedupeTests(unittest.TestCase):
     def test_dedupe_compares_against_the_last_kept_frame(self) -> None:
         frames = [make_frame(index) for index in range(3)]

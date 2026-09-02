@@ -57,13 +57,19 @@ async def extract_audio(video: Path, dest: Path) -> Path | None:
     return dest if dest.exists() and dest.stat().st_size > 1024 else None
 
 
-async def sample_frames(video: Path, dest_dir: Path) -> list[Frame]:
-    """Uniformly sample small frames; selection happens later, on content."""
+async def sample_frames(
+    video: Path,
+    dest_dir: Path,
+    *,
+    width: int | None = None,
+) -> list[Frame]:
+    """Uniformly sample frames at a requested width."""
     dest_dir.mkdir(parents=True, exist_ok=True)
     fps = settings.sample_fps
+    width = settings.sample_width if width is None else width
     await _ffmpeg([
         "-i", str(video),
-        "-vf", f"fps={fps},scale={settings.sample_width}:-2",
+        "-vf", f"fps={fps},scale={width}:-2",
         "-q:v", "4", str(dest_dir / "s_%05d.jpg"),
     ])
     files = sorted(dest_dir.glob("s_*.jpg"))

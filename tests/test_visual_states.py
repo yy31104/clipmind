@@ -106,6 +106,27 @@ class CanonicalVisualStateTests(unittest.TestCase):
             self.assertEqual(preview[0].path.read_bytes(), b"canonical")
             self.assertNotEqual(preview[0].path, frame.path)
 
+    def test_retain_all_can_promote_high_resolution_evidence_by_sample_index(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            workdir = Path(tempdir)
+            low = workdir / "samples" / "s_00001.jpg"
+            high = workdir / "evidence_samples" / "s_00001.jpg"
+            low.parent.mkdir()
+            high.parent.mkdir()
+            low.write_bytes(b"low")
+            high.write_bytes(b"high")
+            frame = Frame(0, 0.0, low)
+
+            retained = visual_states.retain_all(
+                [frame],
+                workdir / "visual_states" / "all",
+                evidence_sources={0: high},
+            )
+
+            self.assertEqual(retained[0].path.read_bytes(), b"high")
+            self.assertTrue(low.exists(), "low-resolution detector input remains temporary")
+            self.assertFalse(high.exists())
+
 
 if __name__ == "__main__":
     unittest.main()

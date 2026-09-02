@@ -54,10 +54,11 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         dest.write_bytes(b"audio")
         return dest
 
-    async def fake_sample_frames(self, video, dest_dir) -> list[Frame]:
+    async def fake_sample_frames(self, video, dest_dir, *, width=None) -> list[Frame]:
         dest_dir.mkdir(parents=True, exist_ok=True)
-        self.sample_path.write_bytes(b"sample")
-        return [Frame(index=0, timestamp=0.0, path=self.sample_path)]
+        path = dest_dir / "s_00001.jpg"
+        path.write_bytes(b"high-resolution sample" if width else b"sample")
+        return [Frame(index=0, timestamp=0.0, path=path)]
 
     def fake_dedupe(self, frames) -> list[Frame]:
         return frames
@@ -141,7 +142,14 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
             target, attribute = targets[name]
             stack.enter_context(patch.object(target, attribute, new=replacement))
         stack.enter_context(
-            patch.object(pipeline, "settings", SimpleNamespace(keep_source_video=False))
+            patch.object(
+                pipeline,
+                "settings",
+                SimpleNamespace(
+                    keep_source_video=False,
+                    evidence_width=1280,
+                ),
+            )
         )
         return stack
 
@@ -255,6 +263,9 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         self.audio_path.write_bytes(b"audio")
         self.sample_path.parent.mkdir(parents=True)
         self.sample_path.write_bytes(b"candidate")
+        evidence_sample = self.workdir / "evidence_samples" / "s_00001.jpg"
+        evidence_sample.parent.mkdir()
+        evidence_sample.write_bytes(b"high-resolution candidate")
 
         pipeline.cleanup_temporary(self.workdir)
 
@@ -262,14 +273,17 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(self.source_path.exists())
         self.assertFalse(self.audio_path.exists())
         self.assertFalse(self.sample_path.parent.exists())
+        self.assertFalse(evidence_sample.parent.exists())
 
     async def test_canonical_and_content_driven_preview_are_not_capped(self) -> None:
-        async def many_samples(video, dest_dir) -> list[Frame]:
+        async def many_samples(video, dest_dir, *, width=None) -> list[Frame]:
             dest_dir.mkdir(parents=True, exist_ok=True)
             frames = []
             for index in range(13):
                 path = dest_dir / f"sample-{index}.jpg"
-                path.write_bytes(b"opening-logo" if index == 0 else f"state-{index}".encode())
+                prefix = b"high-" if width else b""
+                content = b"opening-logo" if index == 0 else f"state-{index}".encode()
+                path.write_bytes(prefix + content)
                 frames.append(Frame(index=index, timestamp=index / 2, path=path))
             return frames
 
@@ -320,7 +334,10 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         )
         canonical_files = sorted((self.workdir / "visual_states" / "all").glob("*.jpg"))
         self.assertEqual(len(canonical_files), 12)
-        self.assertNotIn(b"opening-logo", {path.read_bytes() for path in canonical_files})
+        self.assertEqual(
+            {path.read_bytes() for path in canonical_files},
+            {f"high-state-{index}".encode() for index in range(1, 13)},
+        )
         self.assertTrue(
             all((self.workdir / state["file"]).exists() for state in result["visual_states"])
         )
@@ -335,14 +352,16 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
             all((self.workdir / state["file"]).exists() for state in result["visual_preview"])
         )
         self.assertFalse((self.workdir / "samples").exists())
+        self.assertFalse((self.workdir / "evidence_samples").exists())
 
     async def test_dedupe_failure_is_retained_and_serialized(self) -> None:
-        async def two_samples(video, dest_dir) -> list[Frame]:
+        async def two_samples(video, dest_dir, *, width=None) -> list[Frame]:
             dest_dir.mkdir(parents=True, exist_ok=True)
             frames = []
             for index in range(2):
                 path = dest_dir / f"sample-{index}.jpg"
-                path.write_bytes(f"state-{index}".encode())
+                prefix = "high-" if width else ""
+                path.write_bytes(f"{prefix}state-{index}".encode())
                 frames.append(Frame(index=index, timestamp=float(index), path=path))
             return frames
 
@@ -385,12 +404,13 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         )
 
     async def test_progressive_build_metadata_compacts_only_the_preview(self) -> None:
-        async def build_samples(video, dest_dir) -> list[Frame]:
+        async def build_samples(video, dest_dir, *, width=None) -> list[Frame]:
             dest_dir.mkdir(parents=True, exist_ok=True)
             frames = []
             for index in range(3):
                 path = dest_dir / f"sample-{index}.jpg"
-                path.write_bytes(f"state-{index}".encode())
+                prefix = "high-" if width else ""
+                path.write_bytes(f"{prefix}state-{index}".encode())
                 frames.append(Frame(index=index, timestamp=float(index), path=path))
             return frames
 

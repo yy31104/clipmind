@@ -1,0 +1,73 @@
+{
+  "video": "VibeCoding大赏-227s-TRAE-code-UI",
+  "fps": 2.0,
+  "low_width": 640,
+  "high_width": 1280,
+  "candidate_frame_count": 455,
+  "sampling_seconds": {
+    "low": 1.233,
+    "high": 1.244
+  },
+  "dedupe_seconds": {
+    "low": 0.231,
+    "high": 0.695
+  },
+  "runs": {
+    "A_640_store_640_ocr": {
+      "canonical_frame_count": 243,
+      "ocr_failure_count": 0,
+      "ocr_total_seconds": 24.731,
+      "ocr_seconds_per_frame": 0.1018,
+      "recognized_character_occurrences": 3902,
+      "recognized_unique_characters": 559,
+      "character_union_coverage": 0.5314,
+      "final_storage_bytes": 6425505,
+      "ocr_input_bytes": 6425505
+    },
+    "B_native_store_native_ocr": {
+      "canonical_frame_count": 244,
+      "ocr_failure_count": 0,
+      "ocr_total_seconds": 38.104,
+      "ocr_seconds_per_frame": 0.1562,
+      "recognized_character_occurrences": 28653,
+      "recognized_unique_characters": 1033,
+      "character_union_coverage": 0.9819,
+      "final_storage_bytes": 19778876,
+      "ocr_input_bytes": 19778876
+    },
+    "C_640_store_native_ocr": {
+      "canonical_frame_count": 243,
+      "ocr_failure_count": 0,
+      "ocr_total_seconds": 36.615,
+      "ocr_seconds_per_frame": 0.1507,
+      "recognized_character_occurrences": 29947,
+      "recognized_unique_characters": 1034,
+      "character_union_coverage": 0.9829,
+      "final_storage_bytes": 6425505,
+      "ocr_input_bytes": 19482198
+    }
+  },
+  "hybrid_vs_low": {
+    "additional_character_occurrences": 26070,
+    "missing_character_occurrences": 25,
+    "frames_with_more_recognized_text": 161,
+    "largest_improvements": [
+      {"timestamp": 164.0, "recognized_character_gain": 889},
+      {"timestamp": 167.5, "recognized_character_gain": 846},
+      {"timestamp": 68.5, "recognized_character_gain": 769},
+      {"timestamp": 168.0, "recognized_character_gain": 741},
+      {"timestamp": 64.0, "recognized_character_gain": 709},
+      {"timestamp": 91.0, "recognized_character_gain": 675},
+      {"timestamp": 97.0, "recognized_character_gain": 656},
+      {"timestamp": 90.5, "recognized_character_gain": 642},
+      {"timestamp": 66.0, "recognized_character_gain": 639},
+      {"timestamp": 67.0, "recognized_character_gain": 597}
+    ]
+  },
+  "decision": {
+    "change_detection_width": 640,
+    "canonical_evidence_and_ocr_width": 1280,
+    "derived_final_storage_bytes": 19482198,
+    "reason": "Native OCR nearly doubled unique character coverage; the additional 13 MB per 227-second video preserves readable code/UI evidence for downstream agents."
+  }
+}

@@ -41,6 +41,7 @@ class Pools:
 def cleanup_temporary(workdir: Path, keep_source: bool = False) -> None:
     """Remove pipeline-owned temporary files without touching final artifacts."""
     shutil.rmtree(workdir / "samples", ignore_errors=True)
+    shutil.rmtree(workdir / "evidence_samples", ignore_errors=True)
     if keep_source:
         return
     for path in [workdir / "audio.wav", *workdir.glob("source.*")]:
@@ -74,8 +75,17 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
         audio_path = await media.extract_audio(item.video_path, workdir / "audio.wav")
         candidates = await media.sample_frames(item.video_path, workdir / "samples")
         unique = media.dedupe(candidates)
+        evidence_candidates = await media.sample_frames(
+            item.video_path,
+            workdir / "evidence_samples",
+            width=settings.evidence_width,
+        )
         canonical = visual_states.retain_all(
-            unique, workdir / "visual_states" / "all"
+            unique,
+            workdir / "visual_states" / "all",
+            evidence_sources={
+                frame.index: frame.path for frame in evidence_candidates
+            },
         )
         dedupe_failure_count = sum(
             frame.dedupe_warning is not None for frame in canonical
