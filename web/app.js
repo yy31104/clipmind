@@ -1,7 +1,20 @@
 const $ = (id) => document.getElementById(id);
-const state = { jobs: new Map(), view: "home", current: null, kbInbox: false };
+const state = { jobs: new Map(), view: "home", current: null, kbInbox: false,
+                showFailed: false };
 
 const clock = (s) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+// A job that never got past ingestion still carries its URL as a title.
+const urlish = (t) => /^\/?(?:https?:\/\/)?(?:www\.|v\.)?douyin\.com\//i.test(t || "")
+  || /^\/?https?:\/\//i.test(t || "");
+
+const dateLabel = (seconds) => {
+  if (!seconds) return "";
+  const at = new Date(seconds * 1000);
+  return at.toDateString() === new Date().toDateString()
+    ? at.toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" })
+    : at.toLocaleDateString("zh-CN", { month: "numeric", day: "numeric" });
+};
+
 const esc = (s) => (s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
 const STAGE_LABEL = {
@@ -54,16 +67,24 @@ function markdown(src) {
 function render() {
   const jobs = [...state.jobs.values()].sort((a, b) => b.created_at - a.created_at);
   const active = jobs.filter((j) => j.status === "queued" || j.status === "running");
-  const settled = jobs.filter((j) => ["done", "error", "interrupted"].includes(j.status));
+  const done = jobs.filter((j) => j.status === "done");
+  const failed = jobs.filter((j) => j.status === "error" || j.status === "interrupted");
 
   $("active-label").hidden = active.length === 0;
   $("active").innerHTML = active.map(jobCard).join("");
 
-  const done = settled.filter((j) => j.status === "done");
-  const failed = settled.filter((j) => j.status === "error" || j.status === "interrupted");
-  $("library-label").hidden = done.length === 0;
-  $("library").innerHTML = done.map(libraryCard).join("");
-  $("active").innerHTML += failed.map(jobCard).join("");
+  const packs = groupPacks(done);
+  $("library-label").hidden = packs.length === 0;
+  $("library").innerHTML = packs.map(libraryCard).join("");
+
+  const toggle = $("failed-toggle");
+  toggle.hidden = failed.length === 0;
+  toggle.textContent = `${failed.length} 个链接获取失败`;
+  toggle.setAttribute("aria-expanded", String(state.showFailed));
+  toggle.classList.toggle("open", state.showFailed);
+  $("failed").hidden = failed.length === 0 || !state.showFailed;
+  $("failed").innerHTML = failed.map(jobCard).join("");
+
   $("empty").hidden = jobs.length > 0;
 
   for (const el of document.querySelectorAll("[data-open]")) {
@@ -74,14 +95,30 @@ function render() {
   }
 }
 
+/* One video reprocessed three times is one entry, not three. Packs arrive
+   newest-first, so the head of each group is the current one. */
+function groupPacks(done) {
+  const groups = new Map();
+  for (const job of done) {
+    const key = job.result?.id || job.id;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(job);
+  }
+  return [...groups.values()];
+}
+
 function jobCard(j) {
   const pct = Math.round((j.progress || 0) * 100);
   const failed = j.status === "error" || j.status === "interrupted";
+  const title = failed && urlish(j.title) ? "链接无法获取" : j.title;
+  const source = failed && urlish(j.title)
+    ? `<div class="job-source">${esc(j.title.replace(/^\/+/, ""))}</div>` : "";
   return `<div class="job ${failed ? "error" : j.status}">
     <div class="job-head">
-      <div class="job-title">${esc(j.title)}</div>
+      <div class="job-title">${esc(title)}</div>
       <div class="job-time">${failed ? STAGE_LABEL[j.status] : `${pct}% · ${j.elapsed}s`}</div>
     </div>
+    ${source}
     <div class="job-note">${esc(STAGE_LABEL[j.stage] || j.stage)}${j.note ? " · " + esc(j.note) : ""}</div>
     ${failed
       ? `<div class="job-error">${esc(j.error || "")}</div>
@@ -91,17 +128,24 @@ function jobCard(j) {
   </div>`;
 }
 
-function libraryCard(j) {
-  const modern = Array.isArray(j.result?.visual_preview);
-  const frames = modern ? j.result.visual_preview : (j.result?.keyframes || []);
+function libraryCard(group) {
+  const [current, ...superseded] = group;
+  const modern = Array.isArray(current.result?.visual_preview);
+  const frames = modern ? current.result.visual_preview : (current.result?.keyframes || []);
   const cover = frames.length
-    ? `<img class="thumb" loading="lazy" src="${frameUrl(j.id, frames[Math.floor(frames.length / 2)], modern)}" alt="">`
+    ? `<img class="thumb" loading="lazy" src="${frameUrl(current.id, frames[Math.floor(frames.length / 2)], modern)}" alt="">`
     : `<div class="thumb"></div>`;
-  return `<button class="card" data-open="${j.id}">
+  const meta = [
+    clock(current.result?.duration || 0),
+    `${frames.length} 个画面`,
+    dateLabel(current.finished_at || current.created_at),
+  ].filter(Boolean).join(" · ");
+  return `<button class="card" data-open="${current.id}">
     ${cover}
     <div class="card-body">
-      <div class="card-title">${esc(j.title)}</div>
-      <div class="card-meta">${clock(j.result?.duration || 0)} · ${frames.length} 预览 · ${j.elapsed}s</div>
+      <div class="card-title">${esc(current.title)}</div>
+      <div class="card-meta">${esc(meta)}</div>
+      ${superseded.length ? `<div class="card-older">+${superseded.length} 个旧版本</div>` : ""}
     </div>
   </button>`;
 }
@@ -212,6 +256,10 @@ function show(view) {
 
 /* ── wiring ── */
 $("tabs").onclick = (e) => { if (e.target.dataset.tab) selectTab(e.target.dataset.tab); };
+$("failed-toggle").onclick = () => {
+  state.showFailed = !state.showFailed;
+  render();
+};
 $("back").onclick = () => show("home");
 $("home-btn").onclick = () => show("home");
 
