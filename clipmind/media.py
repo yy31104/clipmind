@@ -26,8 +26,6 @@ class Frame:
     phash: int = 0
     text: str = ""
     lines: tuple[str, ...] = ()
-    novelty: int = 0
-    score: float = 0.0
     dedupe_warning: str | None = None
     # Filled in by visual_states.annotate_transcript_alignment; describes how
     # much of this frame's text the nearby speech does not already carry.

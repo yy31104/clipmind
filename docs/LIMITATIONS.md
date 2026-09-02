@@ -33,6 +33,3 @@
 - **Local UI lifecycle:** there is no per-job cancel control or history
   pagination in v1. Concurrency is bounded, but a very large long-lived library
   will increase startup index time.
-- **Optional summary:** the compatibility summarizer is not canonical. It may
-  cost money and transmit extracted text if a key is configured; summary failure
-  never invalidates the Evidence Pack.

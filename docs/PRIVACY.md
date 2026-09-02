@@ -10,10 +10,8 @@ The application contacts Douyin through yt-dlp to resolve and download the
 submitted media. MLX Whisper may contact its model host on first use to download
 the configured model; later runs use the local cache.
 
-No transcript, image, or OCR text is sent to an LLM on the default path. If an
-`ANTHROPIC_API_KEY` is explicitly configured, the optional compatibility summary
-sends selected transcript and OCR context to the configured Anthropic endpoint.
-That option is outside the canonical Evidence Pack contract.
+No transcript, image, or OCR text is sent to any model provider. Extraction is
+local end to end, and there is no configuration that changes that.
 
 ## Browser cookies
 

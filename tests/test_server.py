@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 from fastapi import HTTPException
 
-from clipmind import server, summarize
+from clipmind import server
 from clipmind.asr import Segment, Transcript
 from clipmind.fetch import FetchError
 from clipmind.jobs import Job, JobStore
@@ -272,55 +272,6 @@ class ServerEventTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(detail["note_markdown"], "persisted note")
         self.assertEqual(detail["transcript"][0]["text"], "persisted")
 
-
-class ExtractiveSummaryTests(unittest.IsolatedAsyncioTestCase):
-    async def test_no_api_key_uses_current_deterministic_fallback(self) -> None:
-        transcript = Transcript(
-            [
-                Segment(0.0, 1.0, "第一句"),
-                Segment(1.0, 2.0, "第二句"),
-            ]
-        )
-        frame = Frame(
-            index=0,
-            timestamp=12.0,
-            path=Path("frame.jpg"),
-            text="屏幕要点\n第二行",
-            lines=("屏幕要点", "第二行"),
-            novelty=8,
-        )
-        expected = "\n".join(
-            [
-                "## 摘要 / Summary",
-                "",
-                "第一句 第二句",
-                "",
-                "## 要点 / Key points",
-                "",
-                "- [00:12] 屏幕要点 第二行",
-                "",
-                "> 未配置 `ANTHROPIC_API_KEY`，这份笔记由转写与 OCR 直接拼接生成，"
-                "没有经过模型归纳。配置 key 后重跑即可得到真正的摘要。",
-            ]
-        )
-
-        settings = SimpleNamespace(anthropic_api_key=None)
-        with (
-            patch.object(summarize, "settings", settings),
-            patch.object(summarize, "_client", side_effect=AssertionError("API must not be called")) as client,
-        ):
-            result = await summarize.summarize(
-                transcript,
-                [frame],
-                "Title",
-                52.0,
-                asyncio.Semaphore(1),
-            )
-
-        client.assert_not_called()
-        self.assertEqual(result.engine, "fallback (no API key)")
-        self.assertIsNone(result.error)
-        self.assertEqual(result.markdown, expected)
 
 
 if __name__ == "__main__":

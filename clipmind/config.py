@@ -48,7 +48,6 @@ class Settings:
     evidence_width: int = _int("CLIPMIND_EVIDENCE_WIDTH", 1280)
     # dHash hamming distance below which two frames count as duplicates.
     dedupe_threshold: int = _int("CLIPMIND_DEDUPE_THRESHOLD", 6)
-    max_keyframes: int = _int("CLIPMIND_MAX_KEYFRAMES", 10)
     ocr_languages: tuple[str, ...] = ("zh-Hans", "zh-Hant", "en-US")
 
     # --- speech ---
@@ -57,9 +56,6 @@ class Settings:
     )
     asr_language: str | None = os.getenv("CLIPMIND_ASR_LANGUAGE", "zh") or None
 
-    # --- summarisation ---
-    anthropic_api_key: str | None = os.getenv("ANTHROPIC_API_KEY") or None
-    summary_model: str = os.getenv("CLIPMIND_SUMMARY_MODEL", "claude-sonnet-5")
 
     # --- concurrency ---
     # Distinct resource pools so one heavy stage cannot starve the others.
@@ -67,7 +63,6 @@ class Settings:
     max_fetch: int = _int("CLIPMIND_MAX_FETCH", 4)
     max_asr: int = _int("CLIPMIND_MAX_ASR", 1)  # single GPU
     max_ocr: int = _int("CLIPMIND_MAX_OCR", 2)
-    max_llm: int = _int("CLIPMIND_MAX_LLM", 4)
 
     # --- housekeeping ---
     keep_source_video: bool = os.getenv("CLIPMIND_KEEP_VIDEO", "0") == "1"

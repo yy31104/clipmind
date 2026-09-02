@@ -1,4 +1,4 @@
-"""Write the analysed video out as files a human (or Obsidian) can read."""
+"""Compatibility metadata beside the Evidence Pack, for the existing UI."""
 from __future__ import annotations
 
 import json
@@ -7,7 +7,6 @@ from pathlib import Path
 from .asr import Transcript
 from .fetch import Media
 from .media import Frame
-from .summarize import Summary
 from .visual_states import BuildGroup
 
 
@@ -19,8 +18,6 @@ def write_all(
     dest: Path,
     item: Media,
     transcript: Transcript,
-    frames: list[Frame],
-    summary: Summary,
     ocr_error: str | None = None,
     *,
     visual_states: list[Frame] | None = None,
@@ -42,22 +39,10 @@ def write_all(
         "duration": item.duration,
         "url": item.webpage_url,
         "strategy": item.info.get("_clipmind_strategy"),
-        "summary_engine": summary.engine,
         "asr_engine": transcript.engine,
         "asr_error": transcript.error,
         "ocr_error": ocr_error,
-        "summary_error": summary.error,
         "stage_timings": dict(sorted((stage_timings or {}).items())),
-        "keyframes": [
-            {
-                "timestamp": f.timestamp,
-                "clock": clock(f.timestamp),
-                "file": f.path.name,
-                "text": f.text,
-                "novelty": f.novelty,
-            }
-            for f in frames
-        ],
     }
     if visual_states is not None:
         states = []
@@ -116,7 +101,6 @@ def write_all(
                 "candidate_frame_count": candidate_frame_count,
                 "canonical_visual_state_count": len(canonical),
                 "preview_frame_count": len(preview),
-                "compatibility_keyframe_count": len(frames),
                 "dedupe_failure_count": sum(
                     frame.dedupe_warning is not None for frame in canonical
                 ),
@@ -139,41 +123,4 @@ def write_all(
         ),
         encoding="utf-8",
     )
-    (dest / "note.md").write_text(_note(item, transcript, frames, summary), encoding="utf-8")
     return metadata
-
-
-def _note(item: Media, transcript: Transcript, frames: list[Frame],
-          summary: Summary) -> str:
-    lines = [
-        f"# {item.title}",
-        "",
-        f"- 来源: {item.webpage_url or '-'}",
-        f"- 作者: {item.uploader or '-'}",
-        f"- 时长: {clock(item.duration)}",
-        f"- 获取方式: {item.info.get('_clipmind_strategy', '-')}",
-        f"- 总结模型: {summary.engine}",
-        "",
-        summary.markdown,
-        "",
-        "## 关键帧 / Keyframes",
-        "",
-    ]
-    for frame in frames:
-        lines.append(f"### {clock(frame.timestamp)}")
-        lines.append("")
-        lines.append(f"![{clock(frame.timestamp)}](keyframes/{frame.path.name})")
-        if frame.text.strip():
-            lines.append("")
-            lines.append("```")
-            lines.extend(frame.lines)
-            lines.append("```")
-        lines.append("")
-
-    lines += ["## 转写 / Transcript", ""]
-    if transcript.segments:
-        lines += [f"**{clock(s.start)}** {s.text}" for s in transcript.segments]
-    else:
-        lines.append(f"_无语音内容（{transcript.error or '未检测到语音'}）_")
-    lines.append("")
-    return "\n".join(lines)

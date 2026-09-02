@@ -210,8 +210,6 @@ async def health():
         "ffmpeg": bool(shutil.which("ffmpeg")),
         "ocr": ocr.available(),
         "asr": asr.available(),
-        "llm": bool(settings.anthropic_api_key),
-        "summary_model": settings.summary_model if settings.anthropic_api_key else None,
         "knowledge_base_inbox": settings.knowledge_base_inbox is not None,
     }
 

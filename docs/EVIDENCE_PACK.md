@@ -28,8 +28,10 @@ out/<job-id>/
     └── preview/
 ```
 
-`metadata.json`, `transcript.json`, `note.md`, and `keyframes/` are migration
-compatibility artifacts. They are not part of the v1 contract.
+`metadata.json` and `transcript.json` are compatibility artifacts for the
+current UI and are not part of the v1 contract. `note.md` and `keyframes/`
+appear only in packs written before the Evidence Pack became canonical; they
+are still readable, but nothing writes them any more.
 
 ## Record identities
 

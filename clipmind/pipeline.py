@@ -1,18 +1,18 @@
 """Per-video orchestration.
 
-Speech and vision are independent, so they run concurrently and only rejoin at
-summarisation. Each stage reports progress so the UI can show real movement
-rather than a fake spinner.
+Speech and vision are independent, so they run concurrently and only rejoin
+when the Evidence Pack is written. Each stage reports progress so the UI can
+show real movement rather than a fake spinner.
 """
 from __future__ import annotations
 
 import asyncio
 import shutil
 import time
-from dataclasses import dataclass, field, replace
+from dataclasses import dataclass, field
 from pathlib import Path
 
-from . import asr, evidence, keyframes, media, render, summarize, visual_states
+from . import asr, evidence, media, render, visual_states
 from .config import settings
 from .fetch import fetch
 
@@ -20,9 +20,8 @@ from .fetch import fetch
 STAGES = (
     ("fetching", 0.20),
     ("sampling", 0.12),
-    ("analysing", 0.50),
-    ("summarising", 0.15),
-    ("writing", 0.03),
+    ("analysing", 0.55),
+    ("writing", 0.13),
 )
 
 
@@ -35,8 +34,6 @@ class Pools:
         default_factory=lambda: asyncio.Semaphore(settings.max_asr))
     ocr: asyncio.Semaphore = field(
         default_factory=lambda: asyncio.Semaphore(settings.max_ocr))
-    llm: asyncio.Semaphore = field(
-        default_factory=lambda: asyncio.Semaphore(settings.max_llm))
 
 
 def cleanup_temporary(workdir: Path, keep_source: bool = False) -> None:
@@ -116,26 +113,17 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
 
         async def vision():
             started = time.perf_counter()
-            problem = await keyframes.annotate(canonical, pools.ocr)
+            problem = await visual_states.annotate(canonical, pools.ocr)
             ocr_seconds = round(time.perf_counter() - started, 3)
             report("analysing", base + 0.05, problem or "reading on-screen text")
             build_groups = visual_states.group_progressive_builds(canonical)
-            preview_candidates = [replace(frame) for frame in canonical]
-            return (
-                keyframes.select(preview_candidates),
-                build_groups,
-                problem,
-                ocr_seconds,
-            )
+            return build_groups, problem, ocr_seconds
 
         (transcript, asr_seconds), (
-            chosen,
             build_groups,
             ocr_error,
             ocr_seconds,
-        ) = await asyncio.gather(
-            speech(), vision()
-        )
+        ) = await asyncio.gather(speech(), vision())
         stage_started = time.perf_counter()
         spoken = tuple(
             (segment.start, segment.end, segment.text)
@@ -165,38 +153,15 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
             ocr_error=ocr_error,
             timings=timings,
         )
-        chosen = await keyframes.promote(
-            item.video_path, chosen, workdir / "keyframes"
-        )
         base += STAGES[2][1]
-        report("summarising", base, f"{len(preview)} preview states, "
+        report("writing", base, f"{len(preview)} preview states, "
                f"{len(transcript.segments)} speech segments")
-
-        # --- fuse ----------------------------------------------------------
-        stage_started = time.perf_counter()
-        try:
-            summary = await summarize.summarize(
-                transcript, chosen, item.title, item.duration, pools.llm
-            )
-        except Exception as exc:  # noqa: BLE001 - optional compatibility view
-            summary = summarize.Summary(
-                "## Evidence Pack\n\nCanonical evidence was written to `evidence.md`.",
-                "compatibility fallback",
-                error=f"{type(exc).__name__}: {exc}",
-            )
-        timings["optional_summary_seconds"] = round(
-            time.perf_counter() - stage_started, 3
-        )
-        base += STAGES[3][1]
-        report("writing", base, "writing note")
 
         try:
             metadata = render.write_all(
                 workdir,
                 item,
                 transcript,
-                chosen,
-                summary,
                 ocr_error=ocr_error,
                 visual_states=canonical,
                 visual_preview=preview,
