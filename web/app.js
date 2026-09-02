@@ -156,6 +156,14 @@ function frameUrl(jobId, frame, modern) {
   return `/api/jobs/${jobId}/${collection}/${encodeURIComponent(name)}`;
 }
 
+/* Text the speech never carried: this frame is the only place it exists.
+   A count, not a verdict - the reader decides whether it matters. */
+function unspokenBadge(frame) {
+  const novel = frame.transcript_novelty_char_count;
+  if (!Number.isFinite(novel) || novel < 40) return "";
+  return `<span class="unspoken">${novel} 字未在语音中</span>`;
+}
+
 /* ── detail view ── */
 async function openDetail(id) {
   const res = await fetch(`/api/jobs/${id}`);
@@ -199,7 +207,7 @@ async function openDetail(id) {
 
   $("pane-frames").innerHTML = frames.map((f) => `
     <div class="frame">
-      <div class="frame-cap"><span class="ts">${f.clock}</span></div>
+      <div class="frame-cap"><span class="ts">${f.clock}</span>${unspokenBadge(f)}</div>
       <img loading="lazy" src="${frameUrl(job.id, f, modernFrames)}" alt="${f.clock}">
       ${f.text ? `<div class="frame-ocr">${esc(f.text)}</div>` : ""}
     </div>`).join("") || `<p class="hint">没有提取到可预览的画面证据。</p>`;
@@ -304,11 +312,24 @@ $("input").addEventListener("keydown", (e) => {
 });
 
 /* ── live updates ── */
-async function refreshJobs() {
-  const data = await fetch("/api/jobs").then((response) => response.json());
-  state.jobs.clear();
-  for (const job of data.jobs) state.jobs.set(job.id, job);
-  if (state.view === "home") render();
+async function refreshJobs(attempt = 0) {
+  // A resync that fails silently puts the page back in the stuck state the
+  // resync exists to escape, so retry with backoff before giving up.
+  try {
+    const response = await fetch("/api/jobs");
+    if (!response.ok) throw new Error(`snapshot failed: ${response.status}`);
+    const data = await response.json();
+    state.jobs.clear();
+    for (const job of data.jobs) state.jobs.set(job.id, job);
+    if (state.view === "home") render();
+  } catch (error) {
+    if (attempt >= 3) {
+      $("error").textContent = "无法同步任务状态，请刷新页面。";
+      $("error").hidden = false;
+      return;
+    }
+    setTimeout(() => refreshJobs(attempt + 1), 500 * 2 ** attempt);
+  }
 }
 
 const events = new EventSource("/api/events");

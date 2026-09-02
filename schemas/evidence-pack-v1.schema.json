@@ -18,46 +18,98 @@
     "schema": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["name", "version"],
+      "required": [
+        "name",
+        "version"
+      ],
       "properties": {
-        "name": {"const": "clipmind-evidence-pack"},
-        "version": {"const": "1.0.0"}
+        "name": {
+          "const": "clipmind-evidence-pack"
+        },
+        "version": {
+          "enum": [
+            "1.0.0",
+            "1.1.0"
+          ]
+        }
       }
     },
     "source": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["platform", "id"],
+      "required": [
+        "platform",
+        "id"
+      ],
       "properties": {
-        "platform": {"const": "douyin"},
-        "id": {"type": "string", "minLength": 1}
+        "platform": {
+          "const": "douyin"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
-    "status": {"const": "complete"},
+    "status": {
+      "const": "complete"
+    },
     "artifacts": {
       "type": "array",
-      "items": {"type": "string"},
+      "items": {
+        "type": "string"
+      },
       "uniqueItems": true
     },
     "counts": {
       "type": "object",
-      "additionalProperties": {"type": "integer", "minimum": 0}
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
     },
     "completeness": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["transcript", "ocr", "visual_states"],
+      "required": [
+        "transcript",
+        "ocr",
+        "visual_states"
+      ],
       "properties": {
-        "transcript": {"enum": ["complete", "unavailable"]},
-        "ocr": {"enum": ["complete", "partial", "unavailable"]},
-        "visual_states": {"enum": ["complete", "complete_with_warnings"]}
+        "transcript": {
+          "enum": [
+            "complete",
+            "unavailable"
+          ]
+        },
+        "ocr": {
+          "enum": [
+            "complete",
+            "partial",
+            "unavailable"
+          ]
+        },
+        "visual_states": {
+          "enum": [
+            "complete",
+            "complete_with_warnings"
+          ]
+        }
       }
     },
-    "diagnostics": {"type": "object"},
+    "diagnostics": {
+      "type": "object"
+    },
     "timings": {
       "type": "object",
-      "additionalProperties": {"type": "number", "minimum": 0}
+      "additionalProperties": {
+        "type": "number",
+        "minimum": 0
+      }
     },
-    "configuration": {"type": "object"}
+    "configuration": {
+      "type": "object"
+    }
   }
 }

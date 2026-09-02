@@ -335,7 +335,7 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result["canonical_visual_state_count"], 12)
         self.assertEqual(result["preview_frame_count"], 12)
         self.assertEqual(result["compatibility_keyframe_count"], 2)
-        self.assertEqual(result["evidence_pack"]["schema"]["version"], "1.0.0")
+        self.assertEqual(result["evidence_pack"]["schema"]["version"], "1.1.0")
         self.assertEqual(result["evidence_pack"]["manifest"], "manifest.json")
         self.assertEqual(result["dedupe_failure_count"], 0)
         self.assertEqual(len(result["visual_states"]), 12)
