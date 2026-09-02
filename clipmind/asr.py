@@ -62,8 +62,17 @@ async def transcribe(audio: Path | None) -> Transcript:
     if audio is None:
         return Transcript(segments=[], error="no audio track")
     if not available():
-        return Transcript(segments=[], error="mlx-whisper not installed")
+        return Transcript(
+            segments=[],
+            error="mlx-whisper is unavailable; install dependencies and reprocess",
+        )
     try:
         return await asyncio.to_thread(_transcribe_sync, audio)
     except Exception as exc:  # noqa: BLE001 - surfaced to the UI, not swallowed
-        return Transcript(segments=[], error=f"{type(exc).__name__}: {exc}")
+        return Transcript(
+            segments=[],
+            error=(
+                f"speech transcription failed ({type(exc).__name__}); "
+                "check the local log and reprocess"
+            ),
+        )

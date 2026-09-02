@@ -69,6 +69,9 @@ function render() {
   for (const el of document.querySelectorAll("[data-open]")) {
     el.onclick = () => openDetail(el.dataset.open);
   }
+  for (const el of document.querySelectorAll("[data-reprocess]")) {
+    el.onclick = () => reprocess(el.dataset.reprocess);
+  }
 }
 
 function jobCard(j) {
@@ -81,7 +84,9 @@ function jobCard(j) {
     </div>
     <div class="job-note">${esc(STAGE_LABEL[j.stage] || j.stage)}${j.note ? " · " + esc(j.note) : ""}</div>
     ${failed
-      ? `<div class="job-error">${esc(j.error || "")}</div>`
+      ? `<div class="job-error">${esc(j.error || "")}</div>
+         ${j.error_action ? `<div class="job-action">${esc(j.error_action)}</div>` : ""}
+         <button class="download" data-reprocess="${j.id}">重新处理</button>`
       : `<div class="bar"><i style="width:${pct}%"></i></div>`}
   </div>`;
 }
@@ -138,7 +143,9 @@ async function openDetail(id) {
       </ul>
       <a class="download" href="/api/jobs/${job.id}/evidence.md" download>下载 Evidence Markdown</a>
       <a class="download" href="/api/jobs/${job.id}/evidence.zip" download>下载完整 ZIP</a>
+      <button class="download" id="reprocess">重新处理</button>
       ${state.kbInbox ? `<button class="download" id="send-kb">发送到知识库 Inbox</button><p id="handoff-status"></p>` : ""}`;
+    $("reprocess").onclick = () => reprocess(job.id);
     if (state.kbInbox) $("send-kb").onclick = () => sendToKnowledgeBase(job.id);
   } else {
     $("pane-summary").innerHTML =
@@ -173,6 +180,21 @@ async function sendToKnowledgeBase(id) {
   } catch (error) {
     status.textContent = error.message;
     button.disabled = false;
+  }
+}
+
+async function reprocess(id) {
+  try {
+    const response = await fetch(`/api/jobs/${id}/reprocess`, { method: "POST" });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.detail || "无法重新处理");
+    state.jobs.set(result.id, result);
+    show("home");
+    render();
+  } catch (error) {
+    $("error").textContent = error.message;
+    $("error").hidden = false;
+    show("home");
   }
 }
 
@@ -216,7 +238,9 @@ async function analyze() {
     if (!res.ok) throw new Error(data.detail || "提交失败");
     for (const j of data.jobs) state.jobs.set(j.id, j);
     $("input").value = "";
-    $("detected").textContent = "等待粘贴";
+    $("detected").textContent = data.reused
+      ? `已复用 ${data.reused} 个 Evidence Pack${data.skipped ? `，跳过 ${data.skipped} 个处理中任务` : ""}`
+      : data.skipped ? `跳过 ${data.skipped} 个处理中任务` : "等待粘贴";
     $("detected").classList.remove("ready");
     render();
   } catch (err) {

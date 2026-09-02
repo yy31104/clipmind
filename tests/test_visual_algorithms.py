@@ -82,7 +82,10 @@ class OCRAnnotationTests(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(frame.lines, ())
         self.assertEqual(frame.text, "")
-        self.assertEqual(frame.ocr_warning, "RuntimeError: injected OCR failure")
+        self.assertEqual(
+            frame.ocr_warning,
+            "RuntimeError: Vision OCR failed; image retained",
+        )
         self.assertIn("OCR failed on 1/1 frames", error)
 
 

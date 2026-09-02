@@ -52,8 +52,21 @@ class PreviewRebuildTests(unittest.TestCase):
                     "webpage_url": "https://www.douyin.com/video/fixture",
                 },
             )
+            metadata = {"id": "fixture", "visual_preview": [], "preview_frame_count": 3}
+            (dest / "metadata.json").write_text(
+                json.dumps(metadata), encoding="utf-8"
+            )
             (dest / "job.json").write_text(
-                json.dumps({"job": {"id": "fixture", "status": "done"}}),
+                json.dumps(
+                    {
+                        "version": 1,
+                        "job": {
+                            "id": "fixture",
+                            "status": "done",
+                            "result": dict(metadata),
+                        },
+                    }
+                ),
                 encoding="utf-8",
             )
             evidence.write_pack(
@@ -80,6 +93,9 @@ class PreviewRebuildTests(unittest.TestCase):
             self.assertEqual(sum(row["in_preview"] for row in timeline), 2)
             self.assertEqual(len(list(all_dir.glob("*.jpg"))), 3)
             self.assertEqual(len(list(preview_dir.glob("*.jpg"))), 2)
+            job = json.loads((dest / "job.json").read_text(encoding="utf-8"))["job"]
+            self.assertEqual(job["result"]["preview_frame_count"], 2)
+            self.assertEqual(len(job["result"]["visual_preview"]), 2)
 
 
 if __name__ == "__main__":

@@ -10,7 +10,8 @@ from fastapi import HTTPException
 
 from clipmind import server, summarize
 from clipmind.asr import Segment, Transcript
-from clipmind.jobs import JobStore
+from clipmind.fetch import FetchError
+from clipmind.jobs import Job, JobStore
 from clipmind.media import Frame
 
 
@@ -72,7 +73,11 @@ class ServerEventTests(unittest.IsolatedAsyncioTestCase):
         async def fake_process(url, workdir, pools, report):
             report("fetching", 0.2, "fetching")
             if url.endswith("/error"):
-                raise RuntimeError("fatal ingestion failure")
+                raise FetchError(
+                    "link_unavailable",
+                    "This Douyin share link is expired or unavailable.",
+                    "Copy a fresh share link from Douyin and try again.",
+                )
             return {"title": "Done"}
 
         with tempfile.TemporaryDirectory() as tempdir:
@@ -113,9 +118,51 @@ class ServerEventTests(unittest.IsolatedAsyncioTestCase):
             ("done", "done", 1.0),
         )
         self.assertEqual(
-            (error_event["status"], error_event["stage"], error_event["error"]),
-            ("error", "error", "fatal ingestion failure"),
+            (
+                error_event["status"],
+                error_event["stage"],
+                error_event["error_code"],
+            ),
+            ("error", "error", "link_unavailable"),
         )
+        self.assertIn("fresh share link", error_event["error_action"])
+
+    async def test_submit_reuses_a_complete_pack_and_reprocess_is_explicit(self) -> None:
+        async def fake_process(url, workdir, pools, report):
+            return {"id": "123", "title": "Reprocessed"}
+
+        with tempfile.TemporaryDirectory() as tempdir:
+            test_store = JobStore(Path(tempdir) / "out")
+            cached = Job(
+                id="cached",
+                url="https://v.douyin.com/AbC",
+                title="Cached",
+                status="done",
+                stage="done",
+                progress=1.0,
+                result={"id": "123", "title": "Cached"},
+                finished_at=10.0,
+            )
+            test_store.jobs[cached.id] = cached
+            with (
+                patch.object(server, "store", test_store),
+                patch("clipmind.jobs.evidence.load_complete_pack", return_value={}),
+                patch("clipmind.jobs.process", new=fake_process),
+            ):
+                response = await server.submit(
+                    server.SubmitBody(text="https://v.douyin.com/AbC/")
+                )
+                stable_response = await server.submit(
+                    server.SubmitBody(text="https://www.douyin.com/video/123")
+                )
+                replacement = await server.reprocess(cached.id)
+                await asyncio.gather(*list(test_store._tasks))
+
+        self.assertEqual(response["reused"], 1)
+        self.assertEqual(response["jobs"][0]["id"], cached.id)
+        self.assertEqual(stable_response["jobs"][0]["id"], cached.id)
+        self.assertNotEqual(replacement["id"], cached.id)
+        self.assertEqual(replacement["status"], "queued")
 
     async def test_recovered_done_job_is_listed_and_readable(self) -> None:
         with tempfile.TemporaryDirectory() as tempdir:

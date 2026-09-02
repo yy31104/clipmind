@@ -7,6 +7,7 @@ so we cannot assume the clipboard holds a bare URL.
 from __future__ import annotations
 
 import re
+from urllib.parse import urlsplit, urlunsplit
 
 _PATTERNS = (
     r"https?://v\.douyin\.com/[A-Za-z0-9_\-]+",
@@ -27,6 +28,21 @@ def extract_urls(text: str) -> list[str]:
         url = match.group(0).rstrip(_TRAILING).rstrip("/")
         seen.setdefault(url, None)
     return list(seen)
+
+
+def normalize_url(url: str) -> str:
+    """Return a stable cache key without changing case-sensitive share codes."""
+    parsed = urlsplit(url.strip())
+    host = (parsed.hostname or "").lower()
+    if host.startswith("www."):
+        host = host[4:]
+    path = parsed.path.rstrip("/")
+    return urlunsplit(("https", host, path, "", ""))
+
+
+def source_id_from_url(url: str) -> str | None:
+    match = re.search(r"/(?:video|note)/(\d+)(?:/|$)", urlsplit(url).path)
+    return match.group(1) if match else None
 
 
 def guess_title(text: str, url: str) -> str | None:

@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 import shutil
 from dataclasses import dataclass
 from pathlib import Path
@@ -20,8 +21,67 @@ from pathlib import Path
 from .config import settings
 
 
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
+
+
 class FetchError(RuntimeError):
-    pass
+    def __init__(self, code: str, user_message: str, action: str) -> None:
+        super().__init__(user_message)
+        self.code = code
+        self.user_message = user_message
+        self.action = action
+
+
+def _fetch_error(errors: list[str]) -> FetchError:
+    diagnostic = "\n".join(errors)
+    lowered = diagnostic.lower()
+    logger.warning("Douyin acquisition failed after all strategies: %s", diagnostic)
+    if (
+        "private video" in lowered
+        or "video is private" in lowered
+        or "private account" in lowered
+        or "仅自己" in diagnostic
+    ):
+        return FetchError(
+            "private_video",
+            "This Douyin video is private.",
+            "Use a public video or change its visibility, then retry.",
+        )
+    if "fresh cookies" in lowered:
+        return FetchError(
+            "cookies_stale",
+            "Douyin rejected the browser cookies.",
+            "Open Douyin in Chrome, refresh the page, then copy a fresh share link and retry.",
+        )
+    if "sign in" in lowered or "login required" in lowered or "log in" in lowered:
+        return FetchError(
+            "login_required",
+            "Douyin requires a signed-in Chrome session for this video.",
+            "Sign in to Douyin in Chrome, refresh the video, and retry.",
+        )
+    if (
+        "could not copy chrome cookie" in lowered
+        or "failed to decrypt" in lowered
+        or "permission" in lowered
+        or "operation not permitted" in lowered
+    ):
+        return FetchError(
+            "cookies_unavailable",
+            "ClipMind could not read Chrome cookies.",
+            "Keep Chrome installed and readable, or configure CLIPMIND_COOKIE_FILE.",
+        )
+    if "unsupported url" in lowered or "not available" in lowered or "removed" in lowered:
+        return FetchError(
+            "link_unavailable",
+            "This Douyin share link is expired or unavailable.",
+            "Copy a fresh share link from Douyin and try again.",
+        )
+    return FetchError(
+        "media_fetch_failed",
+        "ClipMind could not retrieve this video.",
+        "Check that the link opens in Chrome, then copy a fresh share link and retry.",
+    )
 
 
 @dataclass
@@ -63,7 +123,11 @@ def _cookie_args(source: str) -> list[str]:
         return []
     if source == "file":
         if not settings.cookie_file:
-            raise FetchError("no cookie file configured")
+            raise FetchError(
+                "cookies_unavailable",
+                "The configured cookie file is unavailable.",
+                "Set CLIPMIND_COOKIE_FILE to a readable Netscape cookie file.",
+            )
         return ["--cookies", settings.cookie_file]
     return ["--cookies-from-browser", source]
 
@@ -95,7 +159,11 @@ async def fetch(url: str, workdir: Path, on_note=None) -> Media:
     global _winning_source
 
     if not shutil.which("yt-dlp"):
-        raise FetchError("yt-dlp is not installed (brew install yt-dlp)")
+        raise FetchError(
+            "missing_dependency",
+            "yt-dlp is not installed.",
+            "Install it with `brew install yt-dlp`, then restart ClipMind.",
+        )
 
     workdir.mkdir(parents=True, exist_ok=True)
     errors: list[str] = []
@@ -143,9 +211,7 @@ async def fetch(url: str, workdir: Path, on_note=None) -> Media:
         info["_clipmind_strategy"] = _describe(source)
         return Media(video_path=path, info=info)
 
-    raise FetchError(
-        "could not retrieve this video.\n  " + "\n  ".join(errors[-4:])
-    )
+    raise _fetch_error(errors[-4:])
 
 
 def _downloaded_path(info: dict, workdir: Path) -> Path | None:

@@ -33,7 +33,9 @@ async def annotate(frames: list[Frame], ocr_semaphore: asyncio.Semaphore) -> str
             try:
                 lines = await asyncio.to_thread(ocr.read_text, frame.path)
             except Exception as exc:  # noqa: BLE001
-                frame.ocr_warning = f"{type(exc).__name__}: {exc}"
+                frame.ocr_warning = (
+                    f"{type(exc).__name__}: Vision OCR failed; image retained"
+                )
                 failures.append(frame.ocr_warning)
                 return
         frame.lines = tuple(lines)

@@ -169,7 +169,9 @@ class JobRecoveryTests(unittest.IsolatedAsyncioTestCase):
             "persisted note",
         )
         self.assertEqual(second.jobs[error.id].status, "error")
-        self.assertEqual(second.jobs[error.id].error, "persisted diagnostic")
+        self.assertEqual(second.jobs[error.id].error, "Processing failed.")
+        self.assertEqual(second.jobs[error.id].error_code, "processing_failed")
+        self.assertIn("retry", second.jobs[error.id].error_action)
         self.assertEqual(process_calls, 0)
 
     async def test_existing_note_directory_is_loaded_as_legacy_done_job(self) -> None:

@@ -14,7 +14,7 @@ from pydantic import BaseModel
 from . import handoff
 from .config import WEB_DIR, settings
 from .jobs import JobStore
-from .links import extract_urls, guess_title
+from .links import extract_urls, guess_title, normalize_url
 
 store = JobStore()
 
@@ -33,6 +33,7 @@ app = FastAPI(title="ClipMind", lifespan=lifespan)
 
 class SubmitBody(BaseModel):
     text: str
+    reprocess: bool = False
 
 
 @app.post("/api/jobs")
@@ -40,14 +41,40 @@ async def submit(body: SubmitBody):
     urls = extract_urls(body.text)
     if not urls:
         raise HTTPException(400, "没有在这段文字里找到抖音链接")
-    active = {j.url for j in store.jobs.values() if j.status in ("queued", "running")}
-    jobs, skipped = [], 0
+    active = {
+        normalize_url(j.url)
+        for j in store.jobs.values()
+        if j.status in ("queued", "running")
+    }
+    jobs, skipped, reused = [], 0, 0
     for url in urls:
-        if url in active:
+        cache_key = normalize_url(url)
+        if cache_key in active:
             skipped += 1
             continue
+        cached = None if body.reprocess else store.reusable(url)
+        if cached is not None:
+            jobs.append(cached.public())
+            reused += 1
+            continue
         jobs.append(store.submit(url, guess_title(body.text, url) or url).public())
-    return {"jobs": jobs, "found": len(urls), "skipped": skipped}
+        active.add(cache_key)
+    return {
+        "jobs": jobs,
+        "found": len(urls),
+        "skipped": skipped,
+        "reused": reused,
+    }
+
+
+@app.post("/api/jobs/{job_id}/reprocess")
+async def reprocess(job_id: str):
+    source = store.jobs.get(job_id)
+    if not source:
+        raise HTTPException(404, "no such job")
+    if source.status in {"queued", "running"}:
+        raise HTTPException(409, "This job is already processing.")
+    return store.submit(source.url, source.title).public()
 
 
 @app.get("/api/jobs")

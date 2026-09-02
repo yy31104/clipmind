@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from clipmind import evidence, media, visual_states  # noqa: E402
+from clipmind import evidence, media, render, visual_states  # noqa: E402
 
 
 def read_jsonl(path: Path) -> list[dict]:
@@ -67,10 +67,18 @@ def rebuild(workdir: Path) -> int:
     timeline_previous = workdir / f"visual_timeline.previous-{os.getpid()}.jsonl"
     manifest_path = workdir / "manifest.json"
     manifest_previous = workdir / f"manifest.previous-{os.getpid()}.json"
+    job_path = workdir / "job.json"
+    job_previous = workdir / f"job.previous-{os.getpid()}.json"
+    metadata_path = workdir / "metadata.json"
+    metadata_previous = workdir / f"metadata.previous-{os.getpid()}.json"
     timeline_next = workdir / "visual_timeline.jsonl.next"
     manifest_next = workdir / "manifest.json.next"
+    job_next = workdir / "job.json.next"
+    metadata_next = workdir / "metadata.json.next"
     manifest_moved = False
     timeline_moved = False
+    job_moved = False
+    metadata_moved = False
     preview_moved = False
     preview_installed = False
     complete = False
@@ -96,41 +104,104 @@ def rebuild(workdir: Path) -> int:
         manifest["counts"]["preview_visual_states"] = len(selected)
         manifest["counts"]["progressive_build_groups"] = len(groups)
         manifest["configuration"]["preview_algorithm"] = visual_states.PREVIEW_ALGORITHM
+        preview_records = [
+            {
+                "timestamp": frame.timestamp,
+                "clock": render.clock(frame.timestamp),
+                "file": f"visual_states/preview/{frame.path.name}",
+                "canonical_file": f"visual_states/all/{frame.path.name}",
+                "text": frame.text,
+                "build_group_id": frame.build_group_id,
+            }
+            for frame in selected
+        ]
+        group_records = [
+            {
+                "id": group.id,
+                "members": [
+                    f"visual_states/all/{frame.path.name}" for frame in group.frames
+                ],
+                "representative": (
+                    f"visual_states/all/{group.representative.path.name}"
+                ),
+            }
+            for group in groups
+        ]
+        metadata = (
+            json.loads(metadata_path.read_text(encoding="utf-8"))
+            if metadata_path.exists()
+            else None
+        )
+        if metadata is not None:
+            metadata.update(
+                visual_preview=preview_records,
+                build_groups=group_records,
+                preview_frame_count=len(selected),
+            )
+        job_payload = json.loads(job_path.read_text(encoding="utf-8"))
+        result = job_payload.get("job", {}).get("result")
+        if isinstance(result, dict):
+            result.update(
+                visual_preview=preview_records,
+                build_groups=group_records,
+                preview_frame_count=len(selected),
+            )
         write_jsonl(timeline_next, timeline)
         write_json(manifest_next, manifest)
+        write_json(job_next, job_payload)
+        if metadata is not None:
+            write_json(metadata_next, metadata)
 
         os.replace(manifest_path, manifest_previous)
         manifest_moved = True
         os.replace(timeline_path, timeline_previous)
         timeline_moved = True
+        os.replace(job_path, job_previous)
+        job_moved = True
+        if metadata is not None:
+            os.replace(metadata_path, metadata_previous)
+            metadata_moved = True
         os.replace(preview, previous)
         preview_moved = True
         os.replace(temporary, preview)
         preview_installed = True
         os.replace(timeline_next, timeline_path)
+        os.replace(job_next, job_path)
+        if metadata is not None:
+            os.replace(metadata_next, metadata_path)
         os.replace(manifest_next, manifest_path)
         complete = True
     except Exception:
         if not complete:
-            if manifest_moved:
-                manifest_path.unlink(missing_ok=True)
-                os.replace(manifest_previous, manifest_path)
-            if timeline_moved:
-                timeline_path.unlink(missing_ok=True)
-                os.replace(timeline_previous, timeline_path)
             if preview_installed and preview.exists():
                 shutil.rmtree(preview)
             if preview_moved:
                 os.replace(previous, preview)
+            if metadata_moved:
+                metadata_path.unlink(missing_ok=True)
+                os.replace(metadata_previous, metadata_path)
+            if job_moved:
+                job_path.unlink(missing_ok=True)
+                os.replace(job_previous, job_path)
+            if timeline_moved:
+                timeline_path.unlink(missing_ok=True)
+                os.replace(timeline_previous, timeline_path)
+            if manifest_moved:
+                manifest_path.unlink(missing_ok=True)
+                os.replace(manifest_previous, manifest_path)
         raise
     finally:
         shutil.rmtree(temporary, ignore_errors=True)
         timeline_next.unlink(missing_ok=True)
         manifest_next.unlink(missing_ok=True)
+        job_next.unlink(missing_ok=True)
+        metadata_next.unlink(missing_ok=True)
         if complete:
             shutil.rmtree(previous, ignore_errors=True)
             manifest_previous.unlink(missing_ok=True)
             timeline_previous.unlink(missing_ok=True)
+            job_previous.unlink(missing_ok=True)
+            metadata_previous.unlink(missing_ok=True)
     return len(selected)
 
 

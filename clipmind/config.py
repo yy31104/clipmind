@@ -33,7 +33,7 @@ class Settings:
     cookie_sources: tuple[str, ...] = field(
         default_factory=lambda: tuple(
             s.strip()
-            for s in os.getenv("CLIPMIND_COOKIE_SOURCES", "chrome,-,safari").split(",")
+            for s in os.getenv("CLIPMIND_COOKIE_SOURCES", "chrome,-").split(",")
             if s.strip()
         )
     )

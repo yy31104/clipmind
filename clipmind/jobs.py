@@ -2,17 +2,22 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 import time
 import uuid
 from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
 
+from . import evidence
 from .config import OUT_DIR, settings
+from .links import normalize_url, source_id_from_url
 from .pipeline import Pools, cleanup_temporary, process
 from .storage import JobStorage
 
 
 STATUSES = {"queued", "running", "done", "error", "interrupted"}
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
 
 
 @dataclass
@@ -25,6 +30,8 @@ class Job:
     progress: float = 0.0
     note: str = ""
     error: str | None = None
+    error_code: str | None = None
+    error_action: str | None = None
     result: dict | None = None
     created_at: float = field(default_factory=time.time)
     started_at: float | None = None
@@ -38,6 +45,12 @@ class Job:
 
     def public(self) -> dict:
         data = asdict(self)
+        if self.status == "error" and not self.error_code:
+            data.update(
+                error="A previous processing attempt failed.",
+                error_code="legacy_error",
+                error_action="Reprocess the video to get an actionable diagnosis.",
+            )
         data["elapsed"] = round(self.elapsed, 1)
         return data
 
@@ -111,6 +124,30 @@ class JobStore:
         self._publish(job)
         return job
 
+    def reusable(self, url: str) -> Job | None:
+        """Find the newest complete Evidence Pack for the same known source."""
+        key = normalize_url(url)
+        source_id = source_id_from_url(url)
+        candidates = sorted(
+            (job for job in self.jobs.values() if job.status == "done"),
+            key=lambda job: job.finished_at or 0,
+            reverse=True,
+        )
+        for job in candidates:
+            same_url = normalize_url(job.url) == key
+            same_source = bool(
+                source_id
+                and str((job.result or {}).get("id") or "") == source_id
+            )
+            if not same_url and not same_source:
+                continue
+            try:
+                evidence.load_complete_pack(self.workdir(job.id))
+            except evidence.EvidencePackError:
+                continue
+            return job
+        return None
+
     def _schedule(self, job: Job) -> None:
         task = asyncio.create_task(self._run(job))
         self._tasks.add(task)
@@ -145,8 +182,15 @@ class JobStore:
                 # transition to interrupted and must not accidentally requeue it.
                 raise
             except Exception as exc:  # noqa: BLE001
+                logger.exception("Job %s failed", job.id)
                 job.status, job.stage = "error", "error"
-                job.error = str(exc)
+                job.error = getattr(exc, "user_message", "Processing failed.")
+                job.error_code = getattr(exc, "code", "processing_failed")
+                job.error_action = getattr(
+                    exc,
+                    "action",
+                    "Check the local server log, then retry.",
+                )
             job.finished_at = time.time()
             self._persist(job)
             self._publish(job)

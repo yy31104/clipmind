@@ -1,9 +1,17 @@
 import unittest
 
-from clipmind.links import extract_urls
+from clipmind.links import extract_urls, normalize_url, source_id_from_url
 
 
 class ExtractUrlsTests(unittest.TestCase):
+    def test_normalizes_cache_keys_and_extracts_stable_source_ids(self) -> None:
+        self.assertEqual(
+            normalize_url("http://WWW.douyin.com/video/123/?x=tracking"),
+            "https://douyin.com/video/123",
+        )
+        self.assertEqual(source_id_from_url("https://www.douyin.com/video/123"), "123")
+        self.assertIsNone(source_id_from_url("https://v.douyin.com/AbC-1"))
+
     def test_extracts_a_short_link_from_share_text(self) -> None:
         text = (
             "4.66 g@b.nQ 09/22 :5pm ULJ:/ 傻*面试官为什么老是问我底层？ "

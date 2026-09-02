@@ -13,7 +13,9 @@ from .config import settings
 
 
 class MediaError(RuntimeError):
-    pass
+    code = "media_processing_failed"
+    user_message = "Local media processing failed."
+    action = "Check that FFmpeg is installed, then reprocess this video."
 
 
 @dataclass

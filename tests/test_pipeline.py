@@ -241,7 +241,11 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_fatal_fetch_failure_raises_pipeline_error(self) -> None:
         async def failed_fetch(url, workdir, on_note=None):
-            raise FetchError("could not retrieve this video")
+            raise FetchError(
+                "media_fetch_failed",
+                "ClipMind could not retrieve this video.",
+                "Copy a fresh share link and retry.",
+            )
 
         with self.patched_pipeline(fetch=failed_fetch):
             with self.assertRaisesRegex(RuntimeError, "could not retrieve this video"):

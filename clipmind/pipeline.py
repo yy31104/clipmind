@@ -13,7 +13,7 @@ from pathlib import Path
 
 from . import asr, evidence, keyframes, media, render, summarize, visual_states
 from .config import settings
-from .fetch import FetchError, fetch
+from .fetch import fetch
 
 # (label, share of the bar) - fetch and the two analysis legs dominate.
 STAGES = (
@@ -63,13 +63,10 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
         # --- acquire -------------------------------------------------------
         report("fetching", base, "resolving link")
         async with pools.fetch:
-            try:
-                item = await fetch(
-                    url, workdir,
-                    on_note=lambda n: report("fetching", base, n),
-                )
-            except FetchError as exc:
-                raise RuntimeError(str(exc)) from exc
+            item = await fetch(
+                url, workdir,
+                on_note=lambda n: report("fetching", base, n),
+            )
         base += STAGES[0][1]
         report("sampling", base, item.title)
 

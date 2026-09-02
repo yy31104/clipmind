@@ -79,7 +79,9 @@ class JobStoreTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual([event["status"] for event in events], ["queued", "running", "error"])
         self.assertEqual(job.status, "error")
         self.assertEqual(job.stage, "error")
-        self.assertEqual(job.error, "ingestion unavailable")
+        self.assertEqual(job.error, "Processing failed.")
+        self.assertEqual(job.error_code, "processing_failed")
+        self.assertIn("retry", job.error_action)
         self.assertIsNotNone(job.finished_at)
 
     async def test_two_independent_jobs_can_enter_process_together(self) -> None:
@@ -114,6 +116,40 @@ class JobStoreTests(unittest.IsolatedAsyncioTestCase):
                     terminal_ids.add(event["id"])
 
         self.assertEqual({first.status, second.status}, {"done"})
+
+    async def test_jobs_over_the_video_limit_remain_queued(self) -> None:
+        running = 0
+        peak = 0
+        first_wave = asyncio.Event()
+        release = asyncio.Event()
+
+        async def gated_process(url, workdir, pools, report):
+            nonlocal running, peak
+            running += 1
+            peak = max(peak, running)
+            if running == 2:
+                first_wave.set()
+            await release.wait()
+            running -= 1
+            return {"title": url}
+
+        with (
+            patch("clipmind.jobs.settings", SimpleNamespace(max_videos=2)),
+            patch("clipmind.jobs.process", new=gated_process),
+        ):
+            store = JobStore()
+            jobs = [
+                store.submit(f"https://v.douyin.com/{index}", str(index))
+                for index in range(5)
+            ]
+            await asyncio.wait_for(first_wave.wait(), timeout=1)
+            self.assertEqual(sum(job.status == "running" for job in jobs), 2)
+            self.assertEqual(sum(job.status == "queued" for job in jobs), 3)
+            release.set()
+            await asyncio.gather(*list(store._tasks))
+
+        self.assertEqual(peak, 2)
+        self.assertTrue(all(job.status == "done" for job in jobs))
 
 
 if __name__ == "__main__":
