@@ -1,6 +1,7 @@
 """Retain canonical visual states and derive a compact, uncapped preview."""
 from __future__ import annotations
 
+import asyncio
 import re
 import shutil
 import statistics
@@ -10,7 +11,7 @@ from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Iterable
 
-from . import media
+from . import media, ocr
 from .media import Frame
 
 PREVIEW_ALGORITHM = "adaptive-scene-text-v1"
@@ -189,6 +190,35 @@ def _replaces_visible_text(
         _caption_like(earlier, spoken_intervals)
         and _caption_like(later, spoken_intervals)
     )
+
+
+
+async def annotate(frames: list[Frame], ocr_semaphore: asyncio.Semaphore) -> str | None:
+    """Attach OCR text to each frame. Returns an error string if OCR misbehaved.
+
+    A frame that fails to OCR simply carries no text; losing on-screen text
+    degrades the note but must never sink a job that still has good audio.
+    """
+    failures: list[str] = []
+
+    async def run(frame: Frame) -> None:
+        frame.ocr_warning = None
+        async with ocr_semaphore:
+            try:
+                lines = await asyncio.to_thread(ocr.read_text, frame.path)
+            except Exception as exc:  # noqa: BLE001
+                frame.ocr_warning = (
+                    f"{type(exc).__name__}: Vision OCR failed; image retained"
+                )
+                failures.append(frame.ocr_warning)
+                return
+        frame.lines = tuple(lines)
+        frame.text = "\n".join(lines)
+
+    await asyncio.gather(*(run(f) for f in frames))
+    if not failures:
+        return None
+    return f"OCR failed on {len(failures)}/{len(frames)} frames: {failures[0]}"
 
 
 def retain_all(

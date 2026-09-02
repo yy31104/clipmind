@@ -7,4 +7,3 @@ numpy>=2.0
 pyobjc-framework-Vision>=10.3
 pyobjc-framework-Quartz>=10.3
 mlx-whisper>=0.4.2
-anthropic>=0.40

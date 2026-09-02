@@ -66,16 +66,15 @@ flowchart LR
 | ASR unavailable/fails | visual evidence still completes; transcript is marked `unavailable` |
 | OCR fails for some frames | images remain; failed OCR records are explicit and completeness is `partial` |
 | dHash fails | frame is retained and marked; evidence fails open |
-| optional summary fails | canonical pack remains valid; compatibility note falls back |
-| legacy note writer fails | canonical pack remains valid |
+| compatibility metadata write fails | canonical pack remains valid |
 | process stops while `running` | restart marks job `interrupted`, cleans temporary files, never auto-replays |
 | process stops while `queued` | restart schedules the job exactly once |
 
 ## Concurrency and backpressure
 
 The outer job semaphore limits active videos. Separate pools then bound fetch,
-ASR, OCR, and optional LLM work. The defaults are four videos, four fetches, one
-ASR task, two OCR calls, and four optional LLM calls. Submitting more work does
+ASR and OCR work. The defaults are four videos, four fetches, one ASR task and
+two OCR calls. Submitting more work does
 not create more active processing; overflow jobs remain durably `queued`.
 
 The scheduler benchmark uses eight deterministic simulated jobs and asserts

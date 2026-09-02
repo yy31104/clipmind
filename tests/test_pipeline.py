@@ -7,11 +7,10 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from clipmind import keyframes, pipeline
+from clipmind import pipeline, visual_states
 from clipmind.asr import Segment, Transcript
 from clipmind.fetch import FetchError, Media
 from clipmind.media import Frame
-from clipmind.summarize import Summary
 
 
 class PipelineTests(unittest.IsolatedAsyncioTestCase):
@@ -31,7 +30,6 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
             fetch=asyncio.Semaphore(2),
             asr=asyncio.Semaphore(2),
             ocr=asyncio.Semaphore(2),
-            llm=asyncio.Semaphore(2),
         )
 
     async def fake_fetch(self, url, workdir, on_note=None) -> Media:
@@ -69,16 +67,9 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
     async def fake_annotate(self, frames, semaphore) -> str | None:
         frames[0].lines = ("screen text",)
         frames[0].text = "screen text"
-        frames[0].novelty = 8
         return None
 
-    def fake_select(self, frames) -> list[Frame]:
-        return frames
-
-    async def fake_promote(self, video, chosen, dest_dir) -> list[Frame]:
-        return chosen
-
-    async def copy_preview(self, video, chosen, dest_dir) -> list[Frame]:
+    def copy_preview(self, chosen, dest_dir) -> list[Frame]:
         dest_dir.mkdir(parents=True, exist_ok=True)
         for position, frame in enumerate(chosen):
             dest = dest_dir / f"preview-{position}.jpg"
@@ -86,16 +77,11 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
             frame.path = dest
         return chosen
 
-    async def fake_summarize(self, transcript, frames, title, duration, semaphore) -> Summary:
-        return Summary("## 摘要\n\nA note.", "fake-summary")
-
     def fake_write_all(
         self,
         dest,
         item,
         transcript,
-        frames,
-        summary,
         ocr_error=None,
         *,
         visual_states=None,
@@ -109,8 +95,6 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         return {
             "title": item.title,
             "duration": item.duration,
-            "keyframes": [],
-            "summary_engine": summary.engine,
             "stage_timings": stage_timings,
         }
 
@@ -122,9 +106,8 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
             "dedupe": self.fake_dedupe,
             "transcribe": self.fake_transcribe,
             "annotate": self.fake_annotate,
-            "select": self.fake_select,
-            "promote": self.fake_promote,
-            "summarize": self.fake_summarize,
+            "materialize": visual_states.materialize_preview,
+            "write_pack": pipeline.evidence.write_pack,
             "write_all": self.fake_write_all,
         }
         replacements.update(overrides)
@@ -134,10 +117,9 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
             "sample_frames": (pipeline.media, "sample_frames"),
             "dedupe": (pipeline.media, "dedupe"),
             "transcribe": (pipeline.asr, "transcribe"),
-            "annotate": (pipeline.keyframes, "annotate"),
-            "select": (pipeline.keyframes, "select"),
-            "promote": (pipeline.keyframes, "promote"),
-            "summarize": (pipeline.summarize, "summarize"),
+            "annotate": (pipeline.visual_states, "annotate"),
+            "materialize": (pipeline.visual_states, "materialize_preview"),
+            "write_pack": (pipeline.evidence, "write_pack"),
             "write_all": (pipeline.render, "write_all"),
         }
         stack = ExitStack()
@@ -162,11 +144,11 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
     def report(self, stage, progress, note="") -> None:
         pass
 
-    async def test_speech_and_vision_overlap_and_join_before_summary(self) -> None:
+    async def test_speech_and_vision_overlap_and_join_before_the_pack(self) -> None:
         speech_started = asyncio.Event()
         vision_started = asyncio.Event()
         release = asyncio.Event()
-        summary_started = asyncio.Event()
+        pack_started = asyncio.Event()
         speech_done = False
         vision_done = False
 
@@ -184,16 +166,19 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
             vision_done = True
             return None
 
-        async def checking_summarize(transcript, frames, title, duration, semaphore) -> Summary:
+        real_write_pack = pipeline.evidence.write_pack
+
+        def checking_write_pack(*args, **kwargs):
             self.assertTrue(speech_done)
             self.assertTrue(vision_done)
-            summary_started.set()
-            return Summary("joined", "fake-summary")
+            pack_started.set()
+            return real_write_pack(*args, **kwargs)
 
         with self.patched_pipeline(
             transcribe=gated_transcribe,
             annotate=gated_annotate,
-            summarize=checking_summarize,
+            write_pack=checking_write_pack,
+
         ):
             task = asyncio.create_task(
                 pipeline.process("https://v.douyin.com/example", self.workdir, self.pools(), self.report)
@@ -202,12 +187,11 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
                 asyncio.gather(speech_started.wait(), vision_started.wait()),
                 timeout=1,
             )
-            self.assertFalse(summary_started.is_set())
+            self.assertFalse(pack_started.is_set())
             release.set()
             result = await task
 
-        self.assertTrue(summary_started.is_set())
-        self.assertEqual(result["summary_engine"], "fake-summary")
+        self.assertTrue(pack_started.is_set())
 
     async def test_ocr_failure_degrades_without_killing_job(self) -> None:
         async def failed_ocr(frames, semaphore) -> str:
@@ -240,6 +224,26 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(self.source_path.exists())
         self.assertFalse(self.audio_path.exists())
         self.assertFalse((self.workdir / "samples").exists())
+
+    async def test_a_successful_job_writes_no_pre_evidence_pack_outputs(self) -> None:
+        """The legacy layer is gone; nothing may quietly start writing it again."""
+        # The real renderer, not the fake: a fake cannot prove the writer
+        # stopped emitting the legacy outputs.
+        with self.patched_pipeline(write_all=pipeline.render.write_all):
+            await pipeline.process(
+                "https://v.douyin.com/example", self.workdir, self.pools(), self.report
+            )
+
+        self.assertTrue(
+            (self.workdir / "metadata.json").exists(),
+            "the real compatibility writer did not run, so this proves nothing",
+        )
+        self.assertFalse((self.workdir / "note.md").exists())
+        self.assertFalse((self.workdir / "keyframes").exists())
+        # The canonical artifacts are still there.
+        self.assertTrue((self.workdir / "manifest.json").exists())
+        self.assertTrue((self.workdir / "evidence.md").exists())
+        self.assertTrue(any((self.workdir / "visual_states" / "all").iterdir()))
 
     async def test_fatal_fetch_failure_raises_pipeline_error(self) -> None:
         async def failed_fetch(url, workdir, on_note=None):
@@ -311,20 +315,13 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
             return None
 
         real_write_all = pipeline.render.write_all
-        real_select = pipeline.keyframes.select
         with (
             self.patched_pipeline(
                 sample_frames=many_samples,
                 dedupe=dedupe_without_opening,
                 annotate=annotate_all,
-                select=real_select,
-                promote=self.copy_preview,
+                materialize=self.copy_preview,
                 write_all=real_write_all,
-            ),
-            patch.object(
-                pipeline.keyframes,
-                "settings",
-                SimpleNamespace(max_keyframes=2),
             ),
         ):
             result = await pipeline.process(
@@ -334,13 +331,11 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result["candidate_frame_count"], 13)
         self.assertEqual(result["canonical_visual_state_count"], 12)
         self.assertEqual(result["preview_frame_count"], 12)
-        self.assertEqual(result["compatibility_keyframe_count"], 2)
         self.assertEqual(result["evidence_pack"]["schema"]["version"], "1.1.0")
         self.assertEqual(result["evidence_pack"]["manifest"], "manifest.json")
         self.assertEqual(result["dedupe_failure_count"], 0)
         self.assertEqual(len(result["visual_states"]), 12)
         self.assertEqual(len(result["visual_preview"]), 12)
-        self.assertEqual(len(result["keyframes"]), 2)
         persisted = json.loads(
             (self.workdir / "metadata.json").read_text(encoding="utf-8")
         )
@@ -358,13 +353,15 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(
             all((self.workdir / state["file"]).exists() for state in result["visual_states"])
         )
-        preview_files = list((self.workdir / "keyframes").glob("*.jpg"))
-        self.assertEqual(len(preview_files), 2)
-        self.assertNotIn(b"opening-logo", {path.read_bytes() for path in preview_files})
         evidence_preview = list(
             (self.workdir / "visual_states" / "preview").glob("*.jpg")
         )
         self.assertEqual(len(evidence_preview), 12)
+        # The opening logo was dropped by dedupe, so no preview rule may
+        # reintroduce it.
+        self.assertNotIn(
+            b"opening-logo", {path.read_bytes() for path in evidence_preview}
+        )
         self.assertTrue(
             all((self.workdir / state["file"]).exists() for state in result["visual_preview"])
         )
@@ -396,8 +393,7 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
                 sample_frames=two_samples,
                 dedupe=dedupe_with_explicit_threshold,
                 annotate=annotate_all,
-                select=lambda frames: frames[:1],
-                promote=self.copy_preview,
+                materialize=self.copy_preview,
                 write_all=real_write_all,
             ),
             patch.object(
@@ -413,7 +409,6 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result["candidate_frame_count"], 2)
         self.assertEqual(result["canonical_visual_state_count"], 2)
         self.assertEqual(result["preview_frame_count"], 2)
-        self.assertEqual(result["compatibility_keyframe_count"], 1)
         self.assertEqual(result["dedupe_failure_count"], 1)
         self.assertEqual(
             result["visual_states"][1]["dedupe_warning"],
@@ -441,8 +436,7 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         with self.patched_pipeline(
             sample_frames=build_samples,
             annotate=annotate_build,
-            select=lambda frames: frames[:1],
-            promote=self.copy_preview,
+            materialize=self.copy_preview,
             write_all=pipeline.render.write_all,
         ):
             result = await pipeline.process(
@@ -461,25 +455,6 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
             [0, 1, 2],
         )
 
-    async def test_optional_summary_failure_does_not_invalidate_evidence_pack(self) -> None:
-        async def failed_summary(transcript, frames, title, duration, semaphore):
-            raise RuntimeError("injected post-download failure")
-
-        with self.patched_pipeline(summarize=failed_summary):
-            result = await pipeline.process(
-                "https://v.douyin.com/example", self.workdir, self.pools(), self.report
-            )
-
-        self.assertEqual(result["title"], "Video title")
-        self.assertTrue((self.workdir / "manifest.json").exists())
-        self.assertTrue((self.workdir / "evidence.md").exists())
-        self.assertFalse(self.source_path.exists(), "source video leaked after failure")
-        self.assertFalse(self.audio_path.exists(), "temporary audio leaked after failure")
-        self.assertFalse((self.workdir / "samples").exists(), "sample frames leaked after failure")
-        self.assertTrue(
-            any((self.workdir / "visual_states" / "all").iterdir()),
-            "canonical visual evidence was removed after failure",
-        )
 
     async def test_legacy_note_write_failure_does_not_invalidate_evidence_pack(self) -> None:
         def failed_write(*args, **kwargs):
@@ -517,23 +492,6 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
                 await pipeline.process(
                     "https://v.douyin.com/example", self.workdir, self.pools(), self.report
                 )
-
-    async def test_failed_full_resolution_grab_preserves_final_keyframe(self) -> None:
-        sample = self.workdir / "samples" / "sample.jpg"
-        sample.parent.mkdir(parents=True)
-        sample.write_bytes(b"low-resolution frame")
-        frame = Frame(index=0, timestamp=3.5, path=sample)
-
-        async def failed_grab(video, timestamp, dest):
-            raise pipeline.media.MediaError("injected frame grab failure")
-
-        with patch.object(keyframes.media, "extract_still", new=failed_grab):
-            promoted = await keyframes.promote(
-                Path("video.mp4"), [frame], self.workdir / "keyframes"
-            )
-
-        self.assertEqual(promoted[0].path, self.workdir / "keyframes" / "00-03.jpg")
-        self.assertEqual(promoted[0].path.read_bytes(), b"low-resolution frame")
 
 
 if __name__ == "__main__":

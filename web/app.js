@@ -19,7 +19,7 @@ const esc = (s) => (s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&l
 
 const STAGE_LABEL = {
   queued: "排队中", fetching: "获取视频", sampling: "抽帧",
-  analysing: "语音转写 + 画面识别", summarising: "生成笔记", writing: "写入",
+  analysing: "语音转写 + 画面识别", writing: "写入",
   done: "完成", error: "失败", interrupted: "已中断",
 };
 
@@ -355,6 +355,5 @@ events.onmessage = async (e) => {
   $("health").innerHTML = [
     ["yt-dlp", health.yt_dlp], ["ffmpeg", health.ffmpeg],
     ["OCR", health.ocr], ["语音", health.asr],
-    [health.llm ? "AI 总结" : "AI 总结未配置", health.llm],
   ].map(([label, on]) => `<span class="chip ${on ? "on" : "off"}">${label}</span>`).join("");
 })();

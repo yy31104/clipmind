@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 from PIL import Image
 
-from clipmind import keyframes, media
+from clipmind import media, visual_states
 from clipmind.media import Frame
 
 
@@ -74,11 +74,11 @@ class OCRAnnotationTests(unittest.IsolatedAsyncioTestCase):
     async def test_ocr_failure_is_attached_to_the_affected_frame(self) -> None:
         frame = make_frame(0)
         with patch.object(
-            keyframes.ocr,
+            visual_states.ocr,
             "read_text",
             side_effect=RuntimeError("injected OCR failure"),
         ):
-            error = await keyframes.annotate([frame], asyncio.Semaphore(1))
+            error = await visual_states.annotate([frame], asyncio.Semaphore(1))
 
         self.assertEqual(frame.lines, ())
         self.assertEqual(frame.text, "")
@@ -139,62 +139,6 @@ class DedupeTests(unittest.TestCase):
             "RuntimeError: perceptual comparison failed; frame retained",
         )
 
-
-class VisualSelectionTests(unittest.TestCase):
-    def test_collapse_builds_keeps_the_completed_state(self) -> None:
-        partial = make_frame(0, timestamp=0.0, lines=("alpha",))
-        completed = make_frame(1, timestamp=2.0, lines=("alpha beta",))
-        next_scene = make_frame(2, timestamp=9.0, lines=("gamma",))
-
-        collapsed = keyframes.collapse_builds([partial, completed, next_scene])
-
-        self.assertEqual(collapsed, [completed, next_scene])
-
-    def test_collapse_builds_does_not_cross_the_time_window(self) -> None:
-        window = 1.0
-        partial = make_frame(0, timestamp=0.0, lines=("alpha",))
-        later = make_frame(1, timestamp=window + 0.1, lines=("alpha beta",))
-
-        self.assertEqual(
-            keyframes.collapse_builds([partial, later], window=window),
-            [partial, later],
-        )
-
-    def test_collapse_builds_preserves_low_overlap_states(self) -> None:
-        first_scene = make_frame(0, timestamp=0.0, lines=("alpha",))
-        different_scene = make_frame(1, timestamp=2.0, lines=("bravo", "charlie"))
-
-        self.assertEqual(
-            keyframes.collapse_builds([first_scene, different_scene]),
-            [first_scene, different_scene],
-        )
-
-    def test_score_tracks_text_novelty_and_visual_change(self) -> None:
-        novel_text = make_frame(0, phash=0b000000, lines=("a b",))
-        repeated_text = make_frame(1, phash=0b001111, lines=("ab",))
-        visual_only = make_frame(2, phash=0b111111)
-        one_new_character = make_frame(3, phash=0b111111, lines=("abc",))
-        frames = [novel_text, repeated_text, visual_only, one_new_character]
-
-        keyframes.score(frames)
-
-        self.assertEqual([frame.novelty for frame in frames], [2, 0, 0, 1])
-        self.assertGreater(novel_text.score, repeated_text.score)
-        self.assertLess(repeated_text.score, visual_only.score)
-        self.assertGreater(one_new_character.score, repeated_text.score)
-
-    def test_select_keeps_opening_context_and_returns_time_order(self) -> None:
-        opening = make_frame(0, timestamp=0.0, phash=0)
-        strongest_change = make_frame(1, timestamp=2.0, phash=(1 << 64) - 1)
-        lesser_change = make_frame(2, timestamp=4.0, phash=(1 << 16) - 1)
-
-        selected = keyframes.select(
-            [opening, strongest_change, lesser_change],
-            limit=2,
-        )
-
-        self.assertEqual(selected, [opening, strongest_change])
-        self.assertEqual([frame.timestamp for frame in selected], [0.0, 2.0])
 
 
 if __name__ == "__main__":

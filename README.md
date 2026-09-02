@@ -95,8 +95,9 @@ out/<job-id>/
     └── preview/                  # compact derived view, no fixed cap
 ```
 
-`metadata.json`, `transcript.json`, `note.md`, and `keyframes/` remain as
-migration compatibility artifacts; they are excluded from the canonical ZIP.
+`metadata.json` and `transcript.json` remain as compatibility artifacts and are
+excluded from the canonical ZIP. `note.md` and `keyframes/` survive only in
+packs written before the Evidence Pack became canonical.
 Source video, audio, and sampling frames are deleted after processing unless
 `CLIPMIND_KEEP_VIDEO=1` is set.
 
