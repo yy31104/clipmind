@@ -5,7 +5,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from clipmind.jobs import JobStore
+from clipmind.jobs import Job, JobStore
 
 
 class JobStoreTests(unittest.IsolatedAsyncioTestCase):
@@ -38,6 +38,73 @@ class JobStoreTests(unittest.IsolatedAsyncioTestCase):
 
         progress = [event["progress"] for event in events]
         self.assertEqual(progress, sorted(progress))
+
+    def _fill_subscriber(self, queue: asyncio.Queue) -> None:
+        for index in range(queue.maxsize):
+            queue.put_nowait({"id": f"stale-{index}", "status": "running"})
+
+    async def test_overflow_emits_resync_without_detaching_or_blocking(self) -> None:
+        store = JobStore()
+        queue = store.subscribe()
+        self._fill_subscriber(queue)
+        job = JobStoreTests._job("current", "running")
+        store.jobs[job.id] = job
+
+        self.assertIsNone(store._publish(job))
+
+        self.assertIn(queue, store._subscribers)
+        self.assertEqual(queue.qsize(), 1)
+        self.assertEqual(queue.get_nowait(), {"type": "resync"})
+        self.assertEqual(store.listing()[0]["status"], "running")
+
+    async def test_stalled_subscriber_is_isolated_and_recovers(self) -> None:
+        store = JobStore()
+        stalled = store.subscribe()
+        healthy = store.subscribe()
+        self._fill_subscriber(stalled)
+        first = self._job("first", "running")
+
+        store._publish(first)
+
+        self.assertEqual(stalled.get_nowait(), {"type": "resync"})
+        self.assertEqual(healthy.get_nowait()["id"], first.id)
+        later = self._job("later", "done")
+        store._publish(later)
+        self.assertEqual(stalled.get_nowait()["id"], later.id)
+        self.assertEqual(healthy.get_nowait()["id"], later.id)
+
+    async def test_terminal_states_remain_recoverable_after_overflow(self) -> None:
+        for status in ("done", "error", "interrupted"):
+            with self.subTest(status=status):
+                store = JobStore()
+                queue = store.subscribe()
+                self._fill_subscriber(queue)
+                job = self._job(status, status)
+                store.jobs[job.id] = job
+
+                store._publish(job)
+
+                self.assertEqual(queue.get_nowait(), {"type": "resync"})
+                snapshot = {item["id"]: item for item in store.listing()}
+                self.assertEqual(snapshot[job.id]["status"], status)
+
+    async def test_unsubscribe_removes_subscriber(self) -> None:
+        store = JobStore()
+        queue = store.subscribe()
+
+        store.unsubscribe(queue)
+
+        self.assertNotIn(queue, store._subscribers)
+
+    @staticmethod
+    def _job(job_id: str, status: str) -> Job:
+        return Job(
+            id=job_id,
+            url=f"https://v.douyin.com/{job_id}",
+            title=job_id,
+            status=status,
+            stage=status,
+        )
 
     async def test_successful_job_emits_queued_running_done(self) -> None:
         async def successful_process(url, workdir, pools, report):

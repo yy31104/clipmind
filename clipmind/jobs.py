@@ -96,7 +96,12 @@ class JobStore:
                 queue.put_nowait(payload)
             except asyncio.QueueFull:
                 # A stalled listener must not block the pipeline.
-                self._subscribers.discard(queue)
+                while True:
+                    try:
+                        queue.get_nowait()
+                    except asyncio.QueueEmpty:
+                        break
+                queue.put_nowait({"type": "resync"})
 
     # --- lifecycle --------------------------------------------------------
     def start(self) -> None:
