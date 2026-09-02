@@ -87,9 +87,10 @@ function jobCard(j) {
 }
 
 function libraryCard(j) {
-  const frames = j.result?.keyframes || [];
+  const modern = Array.isArray(j.result?.visual_preview);
+  const frames = modern ? j.result.visual_preview : (j.result?.keyframes || []);
   const cover = frames.length
-    ? `<img class="thumb" loading="lazy" src="/api/jobs/${j.id}/keyframes/${encodeURIComponent(frames[Math.floor(frames.length / 2)].file)}" alt="">`
+    ? `<img class="thumb" loading="lazy" src="${frameUrl(j.id, frames[Math.floor(frames.length / 2)], modern)}" alt="">`
     : `<div class="thumb"></div>`;
   return `<button class="card" data-open="${j.id}">
     ${cover}
@@ -98,6 +99,12 @@ function libraryCard(j) {
       <div class="card-meta">${clock(j.result?.duration || 0)} · ${frames.length} 帧 · ${j.elapsed}s</div>
     </div>
   </button>`;
+}
+
+function frameUrl(jobId, frame, modern) {
+  const name = frame.file.split("/").pop();
+  const collection = modern ? "visual_states/preview" : "keyframes";
+  return `/api/jobs/${jobId}/${collection}/${encodeURIComponent(name)}`;
 }
 
 /* ── detail view ── */
@@ -109,11 +116,13 @@ async function openDetail(id) {
   show("detail");
 
   const meta = job.result || {};
+  const modernFrames = Array.isArray(meta.visual_preview);
+  const frames = modernFrames ? meta.visual_preview : (meta.keyframes || []);
   $("d-title").textContent = job.title;
   $("d-meta").innerHTML = [
     meta.uploader ? esc(meta.uploader) : null,
     meta.duration ? clock(meta.duration) : null,
-    `${(meta.keyframes || []).length} 关键帧`,
+    `${frames.length} 预览画面`,
     meta.url ? `<a href="${esc(meta.url)}" target="_blank" rel="noopener">原视频 ↗</a>` : null,
     meta.summary_engine ? esc(meta.summary_engine) : null,
   ].filter(Boolean).join("<span>·</span>");
@@ -122,12 +131,12 @@ async function openDetail(id) {
     markdown((job.note_markdown || "").split("## 关键帧")[0].replace(/^# .*$/m, "").replace(/^- (来源|作者|时长|获取方式|总结模型):.*$/gm, "")) +
     `<a class="download" href="/api/jobs/${job.id}/note.md" download>下载 Markdown</a>`;
 
-  $("pane-frames").innerHTML = (meta.keyframes || []).map((f) => `
+  $("pane-frames").innerHTML = frames.map((f) => `
     <div class="frame">
       <div class="frame-cap"><span class="ts">${f.clock}</span></div>
-      <img loading="lazy" src="/api/jobs/${job.id}/keyframes/${encodeURIComponent(f.file)}" alt="${f.clock}">
+      <img loading="lazy" src="${frameUrl(job.id, f, modernFrames)}" alt="${f.clock}">
       ${f.text ? `<div class="frame-ocr">${esc(f.text)}</div>` : ""}
-    </div>`).join("") || `<p class="hint">没有提取到关键帧。</p>`;
+    </div>`).join("") || `<p class="hint">没有提取到可预览的画面证据。</p>`;
 
   $("pane-transcript").innerHTML = (job.transcript || []).length
     ? job.transcript.map((s) => `<div class="line"><span class="ts">${clock(s.start)}</span><span>${esc(s.text)}</span></div>`).join("")

@@ -78,6 +78,15 @@ async def keyframe(job_id: str, name: str):
     return FileResponse(path)
 
 
+@app.get("/api/jobs/{job_id}/visual_states/preview/{name}")
+async def visual_preview(job_id: str, name: str):
+    root = (store.workdir(job_id) / "visual_states" / "preview").resolve()
+    path = (root / name).resolve()
+    if not path.is_relative_to(root) or not path.is_file():
+        raise HTTPException(404, "no such visual state")
+    return FileResponse(path)
+
+
 @app.get("/api/jobs/{job_id}/note.md")
 async def note_file(job_id: str):
     path = store.workdir(job_id) / "note.md"

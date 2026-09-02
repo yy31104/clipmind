@@ -44,6 +44,68 @@ class CanonicalVisualStateTests(unittest.TestCase):
             )
             self.assertTrue(all(not path.exists() for path in original_paths))
 
+    def test_progressive_build_is_grouped_without_removing_canonical_states(self) -> None:
+        frames = [
+            Frame(0, 0.0, Path("a.jpg"), lines=("Python",)),
+            Frame(1, 1.0, Path("b.jpg"), lines=("Python FastAPI",)),
+            Frame(2, 2.0, Path("c.jpg"), lines=("Python FastAPI PostgreSQL",)),
+        ]
+
+        groups = visual_states.group_progressive_builds(frames)
+        preview = visual_states.derive_preview(frames)
+
+        self.assertEqual(len(frames), 3, "grouping must not truncate canonical evidence")
+        self.assertEqual(len(groups), 1)
+        self.assertEqual(groups[0].id, "build-00001")
+        self.assertEqual(groups[0].frames, tuple(frames))
+        self.assertIs(groups[0].representative, frames[-1])
+        self.assertEqual([frame.build_position for frame in frames], [0, 1, 2])
+        self.assertEqual(preview, [frames[-1]])
+
+    def test_disappearing_or_replaced_text_breaks_the_build_group(self) -> None:
+        frames = [
+            Frame(0, 0.0, Path("a.jpg"), lines=("Python",)),
+            Frame(1, 1.0, Path("b.jpg"), lines=("Python FastAPI",)),
+            Frame(2, 2.0, Path("c.jpg"), lines=("Python PostgreSQL",)),
+        ]
+
+        groups = visual_states.group_progressive_builds(frames)
+        preview = visual_states.derive_preview(frames)
+
+        self.assertEqual(len(groups), 1)
+        self.assertEqual(groups[0].frames, tuple(frames[:2]))
+        self.assertEqual(preview, frames[1:])
+        self.assertIn("FastAPI", preview[0].text or " ".join(preview[0].lines))
+        self.assertIn("PostgreSQL", preview[1].text or " ".join(preview[1].lines))
+
+    def test_preview_has_no_fixed_frame_budget(self) -> None:
+        frames = [
+            Frame(index, float(index), Path(f"{index}.jpg"), lines=(f"state {index}",))
+            for index in range(15)
+        ]
+
+        visual_states.group_progressive_builds(frames, window=0.5)
+
+        self.assertEqual(visual_states.derive_preview(frames), frames)
+
+    def test_materialize_preview_copies_and_does_not_repoint_canonical(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            workdir = Path(tempdir)
+            canonical_dir = workdir / "visual_states" / "all"
+            canonical_dir.mkdir(parents=True)
+            source = canonical_dir / "00-01-00000.jpg"
+            source.write_bytes(b"canonical")
+            frame = Frame(0, 1.0, source)
+
+            preview = visual_states.materialize_preview(
+                [frame], workdir / "visual_states" / "preview"
+            )
+
+            self.assertEqual(frame.path, source)
+            self.assertTrue(source.exists())
+            self.assertEqual(preview[0].path.read_bytes(), b"canonical")
+            self.assertNotEqual(preview[0].path, frame.path)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -6,6 +6,8 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
+from fastapi import HTTPException
+
 from clipmind import server, summarize
 from clipmind.asr import Segment, Transcript
 from clipmind.jobs import JobStore
@@ -21,6 +23,24 @@ def sse_payload(chunk: str | bytes) -> dict:
 
 
 class ServerEventTests(unittest.IsolatedAsyncioTestCase):
+    async def test_visual_preview_route_serves_only_preview_files(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            test_store = JobStore(Path(tempdir) / "out")
+            preview = test_store.workdir("job-1") / "visual_states" / "preview"
+            preview.mkdir(parents=True)
+            frame = preview / "00-01-00000.jpg"
+            frame.write_bytes(b"preview")
+            outside = test_store.workdir("job-1") / "visual_states" / "all.jpg"
+            outside.write_bytes(b"outside")
+
+            with patch.object(server, "store", test_store):
+                response = await server.visual_preview("job-1", frame.name)
+                with self.assertRaises(HTTPException) as raised:
+                    await server.visual_preview("job-1", "../../all.jpg")
+
+        self.assertEqual(Path(response.path), frame.resolve())
+        self.assertEqual(raised.exception.status_code, 404)
+
     async def test_sse_serializes_done_and_error_terminal_events(self) -> None:
         async def fake_process(url, workdir, pools, report):
             report("fetching", 0.2, "fetching")

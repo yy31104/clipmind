@@ -72,8 +72,9 @@ out/<job-id>/
 ├── metadata.json
 ├── transcript.json
 ├── visual_states/
-│   └── all/            # 当前采样与近重复过滤后保留的完整 canonical 集合
-└── keyframes/          # 现有 UI 使用的兼容 preview，仍可最多 10 张
+│   ├── all/            # 当前采样与近重复过滤后保留的完整 canonical 集合
+│   └── preview/        # 内容驱动预览；渐进构建只展示完成态，无固定张数上限
+└── keyframes/          # 旧笔记格式的兼容产物，仍可最多 10 张
     ├── 00-08.jpg
     └── 00-23.jpg
 ```
@@ -102,18 +103,20 @@ v1 的 canonical artifact 将是确定性的 **Evidence Pack**：完整时间戳
 
 ## 视觉提取状态
 
-当前实现先无固定数量上限地保留 canonical 集合，再派生小型兼容 preview：
+当前实现先无固定数量上限地保留 canonical 集合，再非破坏性地标注渐进构建并派生预览：
 
 ```
 2 fps 采样  →  dHash 近重复过滤  →  visual_states/all/（无固定上限）
-                                      ↓
-                         OCR → collapse/score/select → keyframes/（最多 10 张 preview）
+                          ├→ OCR + progressive build 分组
+                          │  └→ visual_states/preview/（无固定上限，每组取完成态）
+                          └→ collapse/score/select
+                             └→ keyframes/（旧笔记格式的最多 10 张兼容产物）
 ```
 
-这里的 canonical phase 1 只表示“保留所有通过当前采样与安全近重复过滤的候选状态”，
-还没有完整解决转场、稳定性、信息价值或 progressive build 分组。最终 v1 仍应按内容
-识别所有实质不同、稳定且可读的视觉状态；紧凑 preview 可以存在，但不能截断完整
-证据集。
+build group 只合并相邻、OCR 内容单调增加的状态；文字被替换或消失就立即断组，因此
+前面的信息仍会进入 preview。这里的 canonical 仍表示“保留所有通过当前采样与安全
+近重复过滤的候选状态”，还没有完整解决转场、稳定性和信息价值。最终 v1 仍应按
+内容识别所有实质不同、稳定且可读的视觉状态；preview 不会截断完整证据集。
 
 ## 并发
 

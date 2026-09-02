@@ -8,6 +8,7 @@ from .asr import Transcript
 from .fetch import Media
 from .media import Frame
 from .summarize import Summary
+from .visual_states import BuildGroup
 
 
 def clock(seconds: float) -> str:
@@ -23,6 +24,8 @@ def write_all(
     ocr_error: str | None = None,
     *,
     visual_states: list[Frame] | None = None,
+    visual_preview: list[Frame] | None = None,
+    build_groups: list[BuildGroup] | None = None,
     candidate_frame_count: int | None = None,
 ) -> dict:
     dest.mkdir(parents=True, exist_ok=True)
@@ -64,17 +67,51 @@ def write_all(
             }
             if frame.dedupe_warning:
                 state["dedupe_warning"] = frame.dedupe_warning
+            if frame.build_group_id:
+                state.update(
+                    {
+                        "build_group_id": frame.build_group_id,
+                        "build_position": frame.build_position,
+                        "build_size": frame.build_size,
+                    }
+                )
             states.append(state)
+        preview = sorted(
+            visual_preview or [], key=lambda frame: (frame.timestamp, frame.index)
+        )
         metadata.update(
             {
                 "visual_states": states,
-                "candidate_frame_count": (
-                    len(canonical)
-                    if candidate_frame_count is None
-                    else candidate_frame_count
-                ),
+                "visual_preview": [
+                    {
+                        "timestamp": frame.timestamp,
+                        "clock": clock(frame.timestamp),
+                        "file": frame.path.relative_to(dest).as_posix(),
+                        "canonical_file": (
+                            Path("visual_states") / "all" / frame.path.name
+                        ).as_posix(),
+                        "text": frame.text,
+                        "build_group_id": frame.build_group_id,
+                    }
+                    for frame in preview
+                ],
+                "build_groups": [
+                    {
+                        "id": group.id,
+                        "members": [
+                            frame.path.relative_to(dest).as_posix()
+                            for frame in group.frames
+                        ],
+                        "representative": group.representative.path.relative_to(
+                            dest
+                        ).as_posix(),
+                    }
+                    for group in (build_groups or [])
+                ],
+                "candidate_frame_count": candidate_frame_count,
                 "canonical_visual_state_count": len(canonical),
-                "preview_frame_count": len(frames),
+                "preview_frame_count": len(preview),
+                "compatibility_keyframe_count": len(frames),
                 "dedupe_failure_count": sum(
                     frame.dedupe_warning is not None for frame in canonical
                 ),

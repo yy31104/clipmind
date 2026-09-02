@@ -100,15 +100,22 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
         async def vision():
             problem = await keyframes.annotate(canonical, pools.ocr)
             report("analysing", base + 0.05, problem or "reading on-screen text")
+            build_groups = visual_states.group_progressive_builds(canonical)
+            preview = visual_states.materialize_preview(
+                visual_states.derive_preview(canonical),
+                workdir / "visual_states" / "preview",
+            )
             preview_candidates = [replace(frame) for frame in canonical]
-            return keyframes.select(preview_candidates), problem
+            return keyframes.select(preview_candidates), preview, build_groups, problem
 
-        transcript, (chosen, ocr_error) = await asyncio.gather(speech(), vision())
+        transcript, (chosen, preview, build_groups, ocr_error) = await asyncio.gather(
+            speech(), vision()
+        )
         chosen = await keyframes.promote(
             item.video_path, chosen, workdir / "keyframes"
         )
         base += STAGES[2][1]
-        report("summarising", base, f"{len(chosen)} keyframes, "
+        report("summarising", base, f"{len(preview)} preview states, "
                f"{len(transcript.segments)} speech segments")
 
         # --- fuse ----------------------------------------------------------
@@ -125,6 +132,8 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
             summary,
             ocr_error=ocr_error,
             visual_states=canonical,
+            visual_preview=preview,
+            build_groups=build_groups,
             candidate_frame_count=len(candidates),
         )
         report("done", 1.0, "complete")

@@ -98,6 +98,8 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         ocr_error=None,
         *,
         visual_states=None,
+        visual_preview=None,
+        build_groups=None,
         candidate_frame_count=None,
     ) -> dict:
         self.rendered_ocr_error = ocr_error
@@ -261,7 +263,7 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(self.audio_path.exists())
         self.assertFalse(self.sample_path.parent.exists())
 
-    async def test_canonical_states_are_untruncated_while_preview_stays_small(self) -> None:
+    async def test_canonical_and_content_driven_preview_are_not_capped(self) -> None:
         async def many_samples(video, dest_dir) -> list[Frame]:
             dest_dir.mkdir(parents=True, exist_ok=True)
             frames = []
@@ -302,9 +304,11 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(result["candidate_frame_count"], 13)
         self.assertEqual(result["canonical_visual_state_count"], 12)
-        self.assertEqual(result["preview_frame_count"], 2)
+        self.assertEqual(result["preview_frame_count"], 12)
+        self.assertEqual(result["compatibility_keyframe_count"], 2)
         self.assertEqual(result["dedupe_failure_count"], 0)
         self.assertEqual(len(result["visual_states"]), 12)
+        self.assertEqual(len(result["visual_preview"]), 12)
         self.assertEqual(len(result["keyframes"]), 2)
         persisted = json.loads(
             (self.workdir / "metadata.json").read_text(encoding="utf-8")
@@ -323,6 +327,13 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         preview_files = list((self.workdir / "keyframes").glob("*.jpg"))
         self.assertEqual(len(preview_files), 2)
         self.assertNotIn(b"opening-logo", {path.read_bytes() for path in preview_files})
+        evidence_preview = list(
+            (self.workdir / "visual_states" / "preview").glob("*.jpg")
+        )
+        self.assertEqual(len(evidence_preview), 12)
+        self.assertTrue(
+            all((self.workdir / state["file"]).exists() for state in result["visual_preview"])
+        )
         self.assertFalse((self.workdir / "samples").exists())
 
     async def test_dedupe_failure_is_retained_and_serialized(self) -> None:
@@ -365,11 +376,52 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(result["candidate_frame_count"], 2)
         self.assertEqual(result["canonical_visual_state_count"], 2)
-        self.assertEqual(result["preview_frame_count"], 1)
+        self.assertEqual(result["preview_frame_count"], 2)
+        self.assertEqual(result["compatibility_keyframe_count"], 1)
         self.assertEqual(result["dedupe_failure_count"], 1)
         self.assertEqual(
             result["visual_states"][1]["dedupe_warning"],
             "OSError: perceptual hash failed; frame retained",
+        )
+
+    async def test_progressive_build_metadata_compacts_only_the_preview(self) -> None:
+        async def build_samples(video, dest_dir) -> list[Frame]:
+            dest_dir.mkdir(parents=True, exist_ok=True)
+            frames = []
+            for index in range(3):
+                path = dest_dir / f"sample-{index}.jpg"
+                path.write_bytes(f"state-{index}".encode())
+                frames.append(Frame(index=index, timestamp=float(index), path=path))
+            return frames
+
+        async def annotate_build(frames, semaphore) -> str | None:
+            texts = ("Python", "Python FastAPI", "Python FastAPI PostgreSQL")
+            for frame, text in zip(frames, texts):
+                frame.text = text
+                frame.lines = (text,)
+            return None
+
+        with self.patched_pipeline(
+            sample_frames=build_samples,
+            annotate=annotate_build,
+            select=lambda frames: frames[:1],
+            promote=self.copy_preview,
+            write_all=pipeline.render.write_all,
+        ):
+            result = await pipeline.process(
+                "https://v.douyin.com/example", self.workdir, self.pools(), self.report
+            )
+
+        self.assertEqual(result["canonical_visual_state_count"], 3)
+        self.assertEqual(result["preview_frame_count"], 1)
+        self.assertEqual(len(result["visual_states"]), 3)
+        self.assertEqual(len(result["visual_preview"]), 1)
+        self.assertEqual(result["visual_preview"][0]["text"], "Python FastAPI PostgreSQL")
+        self.assertEqual(result["build_groups"][0]["id"], "build-00001")
+        self.assertEqual(len(result["build_groups"][0]["members"]), 3)
+        self.assertEqual(
+            [state["build_position"] for state in result["visual_states"]],
+            [0, 1, 2],
         )
 
     async def test_post_download_failure_should_remove_temporary_media(self) -> None:
