@@ -59,13 +59,13 @@ def rebuild(workdir: Path) -> int:
 
     groups = visual_states.group_progressive_builds(frames)
     transcript = read_jsonl(workdir / "transcript.jsonl")
-    selected = visual_states.derive_preview(
-        frames,
-        spoken_intervals=(
-            (float(row["start"]), float(row["end"]), row["text"])
-            for row in transcript
-        ),
+    spoken = tuple(
+        (float(row["start"]), float(row["end"]), row["text"]) for row in transcript
     )
+    # Packs written before schema 1.1.0 carry no alignment measurements, so a
+    # rebuild is also how they gain them.
+    visual_states.annotate_transcript_alignment(frames, spoken)
+    selected = visual_states.derive_preview(frames, spoken_intervals=spoken)
     visual_root = workdir / "visual_states"
     temporary = Path(tempfile.mkdtemp(prefix="preview.next-", dir=visual_root))
     preview = visual_root / "preview"
@@ -96,6 +96,9 @@ def rebuild(workdir: Path) -> int:
         for index, row in enumerate(timeline):
             frame = by_index[index]
             row["in_preview"] = frame.path.name in selected_names
+            row["ocr_char_count"] = frame.ocr_char_count
+            row["transcript_novelty_char_count"] = frame.transcript_novelty
+            row["transcript_overlap_ratio"] = frame.transcript_overlap
             row.pop("preview_file", None)
             for key in ("build_group_id", "build_position", "build_size"):
                 row.pop(key, None)
@@ -108,6 +111,8 @@ def rebuild(workdir: Path) -> int:
                     build_size=frame.build_size,
                 )
 
+        # A rebuild brings the pack up to the schema it was rebuilt with.
+        manifest["schema"]["version"] = evidence.SCHEMA_VERSION
         manifest["counts"]["preview_visual_states"] = len(selected)
         manifest["counts"]["progressive_build_groups"] = len(groups)
         manifest["configuration"]["preview_algorithm"] = visual_states.PREVIEW_ALGORITHM
@@ -119,6 +124,8 @@ def rebuild(workdir: Path) -> int:
                 "canonical_file": f"visual_states/all/{frame.path.name}",
                 "text": frame.text,
                 "build_group_id": frame.build_group_id,
+                "transcript_novelty_char_count": frame.transcript_novelty,
+                "ocr_char_count": frame.ocr_char_count,
             }
             for frame in selected
         ]

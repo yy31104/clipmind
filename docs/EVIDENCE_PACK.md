@@ -77,6 +77,43 @@ interval. Build metadata is additive and never removes an `all/` artifact.
 A deterministic chronological rendering of every transcript segment and every
 canonical visual state. It contains no semantic ranking or generated summary.
 
+
+## Transcript alignment (schema 1.1.0)
+
+Every `visual_timeline.jsonl` record carries three measurements describing how
+much of the frame's on-screen text the nearby speech does **not** already
+carry:
+
+| field | meaning |
+| --- | --- |
+| `ocr_char_count` | characters across recognised tokens, excluding whitespace and punctuation |
+| `transcript_novelty_char_count` | characters in tokens the nearby speech does not cover |
+| `transcript_overlap_ratio` | `1 - novelty / total`, `0.0` when the frame has no text |
+
+Comparison is a multiset over tokens — one token per CJK ideograph, one per
+latin word — after NFKC normalisation and case folding, against speech within
+a small window around the state's own interval. A term shown three times but
+spoken once is not treated as fully covered.
+
+**This measures information novelty, not importance.** Burned-in captions
+repeat what is being said, so the transcript already holds that information and
+the ratio approaches `1.0`. A slide, document or code pane shows text nobody
+reads aloud, so the ratio approaches `0.0` and the frame is the only place that
+information exists. But a silent video makes every frame novel, code
+identifiers are novel because nobody says them out loud, and an ASR mistake
+manufactures novelty. Consumers decide what that is worth.
+
+The measurement never affects canonical retention. `visual_states/all/` is
+chosen before alignment runs, so an ASR or OCR slip can never delete evidence.
+It does give preview derivation one safety net: a state carrying enough
+unspoken text earns its own preview slot even when the whole video reads as a
+single visual scene, unless an already-selected state shows substantially the
+same terms.
+
+Packs written under schema `1.0.0` do not carry these fields and remain
+readable. Running `scripts/rebuild_preview.py` on such a pack adds them and
+upgrades its manifest.
+
 ## Completeness
 
 `manifest.json.completeness` reports each independent modality:

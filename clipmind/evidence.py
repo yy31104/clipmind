@@ -12,7 +12,10 @@ from .media import Frame
 from .visual_states import PREVIEW_ALGORITHM, BuildGroup
 
 SCHEMA_NAME = "clipmind-evidence-pack"
-SCHEMA_VERSION = "1.0.0"
+SCHEMA_VERSION = "1.1.0"
+# 1.1.0 only adds fields to visual_timeline records, so packs written by 1.0.0
+# stay readable and reusable; we simply never backfill their new measurements.
+READABLE_SCHEMA_VERSIONS = frozenset({"1.0.0", "1.1.0"})
 PACK_ARTIFACTS = (
     "source.json",
     "job.json",
@@ -37,9 +40,10 @@ def load_complete_pack(dest: Path) -> dict:
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         raise EvidencePackError("missing or invalid manifest.json") from exc
+    schema = manifest.get("schema") or {}
     if (
-        manifest.get("schema")
-        != {"name": SCHEMA_NAME, "version": SCHEMA_VERSION}
+        schema.get("name") != SCHEMA_NAME
+        or schema.get("version") not in READABLE_SCHEMA_VERSIONS
         or manifest.get("status") != "complete"
     ):
         raise EvidencePackError("unsupported or incomplete Evidence Pack")
@@ -147,6 +151,9 @@ def _timeline_records(
                 end,
             ),
             "in_preview": preview_frame is not None,
+            "ocr_char_count": frame.ocr_char_count,
+            "transcript_novelty_char_count": frame.transcript_novelty,
+            "transcript_overlap_ratio": frame.transcript_overlap,
         }
         if preview_frame is not None:
             record["preview_file"] = preview_frame.path.relative_to(dest).as_posix()

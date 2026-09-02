@@ -4,6 +4,8 @@ from __future__ import annotations
 import re
 import shutil
 import statistics
+import unicodedata
+from collections import Counter
 from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Iterable
@@ -41,6 +43,89 @@ def _terms(frame: Frame) -> set[str]:
             " ".join(frame.lines).casefold(),
         )
     )
+
+
+_TOKEN_RE = re.compile(r"[a-z0-9_]+|[\u3400-\u9fff]")
+
+
+def _tokens(text: str) -> list[str]:
+    """Information-bearing tokens: one per CJK ideograph, one per latin word.
+
+    Normalises width and case first so that full-width digits, latin letters
+    and casing differences between OCR and ASR do not read as novel text.
+    Returns a list, not a set: repeated terms carry weight.
+    """
+    return _TOKEN_RE.findall(unicodedata.normalize("NFKC", text).casefold())
+
+
+def _spoken_tokens(
+    spoken_intervals: tuple[tuple[float, float, str], ...],
+    start: float,
+    end: float,
+    padding: float,
+) -> list[str]:
+    return [
+        token
+        for interval_start, interval_end, text in spoken_intervals
+        if interval_end > start - padding and interval_start < end + padding
+        for token in _tokens(text)
+    ]
+
+
+def transcript_alignment(
+    frame: Frame,
+    spoken_intervals: Iterable[tuple[float, float, str]],
+    *,
+    end: float | None = None,
+    padding: float = 2.0,
+) -> tuple[int, int, float]:
+    """Measure how much on-screen text the nearby speech does not already carry.
+
+    Burned-in captions repeat what is being said, so the transcript already
+    holds that information. A slide, document or code pane shows text nobody is
+    reading aloud, and the frame is the only place it exists. This returns
+    ``(ocr_char_count, novelty_char_count, overlap_ratio)`` over tokens rather
+    than raw characters, and compares as a multiset so a term repeated on
+    screen but spoken once is not treated as fully covered.
+
+    It describes information novelty, not importance: a silent video makes
+    every frame novel, and code identifiers are novel because nobody says them
+    out loud. Callers decide what that is worth.
+    """
+    visible = _tokens(" ".join(frame.lines))
+    total = sum(len(token) for token in visible)
+    if not visible:
+        return 0, 0, 0.0
+
+    start = frame.timestamp
+    spoken = Counter(
+        _spoken_tokens(tuple(spoken_intervals), start, end if end is not None else start, padding)
+    )
+    novel_chars = 0
+    for token, count in Counter(visible).items():
+        unmatched = count - min(count, spoken.get(token, 0))
+        novel_chars += unmatched * len(token)
+    overlap = (total - novel_chars) / total if total else 0.0
+    return total, novel_chars, round(overlap, 4)
+
+
+def annotate_transcript_alignment(
+    frames: list[Frame],
+    spoken_intervals: Iterable[tuple[float, float, str]],
+) -> None:
+    """Attach the alignment measurements to each frame, in place."""
+    intervals = tuple(spoken_intervals)
+    ordered = sorted(frames, key=lambda frame: (frame.timestamp, frame.index))
+    for position, frame in enumerate(ordered):
+        end = (
+            ordered[position + 1].timestamp
+            if position + 1 < len(ordered)
+            else frame.timestamp
+        )
+        total, novel, overlap = transcript_alignment(frame, intervals, end=end)
+        frame.ocr_char_count = total
+        frame.transcript_novelty = novel
+        frame.transcript_overlap = overlap
 
 
 def _extends(
@@ -178,6 +263,8 @@ def derive_preview(
     scene_ceiling: float = 32.0,
     latest_readability_ratio: float = 0.6,
     replacement_visual_floor: float = 6.0,
+    novelty_floor: int = 40,
+    novelty_overlap: float = 0.5,
 ) -> list[Frame]:
     """Choose one readable representative per content-driven visual scene.
 
@@ -239,7 +326,27 @@ def derive_preview(
             >= latest_readability_ratio * len(_characters(richest))
             else richest
         )
-    return preview
+
+    # A document shown briefly inside one long visual scene would otherwise be
+    # represented by whatever else that scene chose. Any state carrying enough
+    # text the speech never covers earns its own slot, unless a selected state
+    # already shows substantially the same terms.
+    selected = {frame.index for frame in preview}
+    for frame in candidates:
+        if frame.index in selected or frame.transcript_novelty < novelty_floor:
+            continue
+        terms = _terms(frame)
+        if not terms:
+            continue
+        if any(
+            len(terms & _terms(chosen)) >= novelty_overlap * len(terms)
+            for chosen in preview
+        ):
+            continue
+        preview.append(frame)
+        selected.add(frame.index)
+
+    return sorted(preview, key=lambda frame: (frame.timestamp, frame.index))
 
 
 def materialize_preview(frames: list[Frame], dest_dir: Path) -> list[Frame]:

@@ -137,14 +137,15 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
             speech(), vision()
         )
         stage_started = time.perf_counter()
+        spoken = tuple(
+            (segment.start, segment.end, segment.text)
+            for segment in transcript.segments
+        )
+        # Measured on canonical states, never used to decide canonical
+        # membership: an ASR or OCR slip must not be able to delete evidence.
+        visual_states.annotate_transcript_alignment(canonical, spoken)
         preview = visual_states.materialize_preview(
-            visual_states.derive_preview(
-                canonical,
-                spoken_intervals=(
-                    (segment.start, segment.end, segment.text)
-                    for segment in transcript.segments
-                ),
-            ),
+            visual_states.derive_preview(canonical, spoken_intervals=spoken),
             workdir / "visual_states" / "preview",
         )
         preview_seconds = round(time.perf_counter() - stage_started, 3)
@@ -217,6 +218,8 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
                         "clock": render.clock(frame.timestamp),
                         "file": frame.path.relative_to(workdir).as_posix(),
                         "text": frame.text,
+                        "transcript_novelty_char_count": frame.transcript_novelty,
+                        "ocr_char_count": frame.ocr_char_count,
                     }
                     for frame in preview
                 ],

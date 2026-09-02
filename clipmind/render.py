@@ -95,6 +95,8 @@ def write_all(
                         ).as_posix(),
                         "text": frame.text,
                         "build_group_id": frame.build_group_id,
+                        "transcript_novelty_char_count": frame.transcript_novelty,
+                        "ocr_char_count": frame.ocr_char_count,
                     }
                     for frame in preview
                 ],

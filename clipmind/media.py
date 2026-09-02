@@ -29,6 +29,11 @@ class Frame:
     novelty: int = 0
     score: float = 0.0
     dedupe_warning: str | None = None
+    # Filled in by visual_states.annotate_transcript_alignment; describes how
+    # much of this frame's text the nearby speech does not already carry.
+    ocr_char_count: int = 0
+    transcript_novelty: int = 0
+    transcript_overlap: float = 0.0
     ocr_warning: str | None = None
     build_group_id: str | None = None
     build_position: int | None = None

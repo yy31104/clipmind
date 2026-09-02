@@ -104,7 +104,7 @@ class EvidencePackTests(unittest.TestCase):
                 first_bytes,
                 {name: (dest / name).read_bytes() for name in artifact_names},
             )
-            self.assertEqual(manifest["schema"]["version"], "1.0.0")
+            self.assertEqual(manifest["schema"]["version"], "1.1.0")
             self.assertEqual(manifest["status"], "complete")
             self.assertEqual(manifest["timings"], {"ocr_seconds": 1.25})
             self.assertEqual(manifest["counts"]["canonical_visual_states"], 2)
@@ -121,10 +121,11 @@ class EvidencePackTests(unittest.TestCase):
             )
             self.assertTrue(set(schema["required"]).issubset(manifest))
             self.assertTrue(set(manifest).issubset(schema["properties"]))
-            self.assertEqual(
-                schema["properties"]["schema"]["properties"]["version"]["const"],
-                manifest["schema"]["version"],
-            )
+            accepted = schema["properties"]["schema"]["properties"]["version"]["enum"]
+            self.assertIn(manifest["schema"]["version"], accepted)
+            # The published schema must keep accepting the version it accepted
+            # before, or existing packs stop validating.
+            self.assertIn("1.0.0", accepted)
 
             transcript_rows = jsonl(dest / "transcript.jsonl")
             ocr_rows = jsonl(dest / "ocr.jsonl")
@@ -200,6 +201,49 @@ class EvidencePackTests(unittest.TestCase):
                     )
 
             self.assertFalse((dest / "manifest.json").exists())
+
+
+
+class SchemaCompatibilityTests(unittest.TestCase):
+    def test_packs_written_by_the_previous_schema_stay_readable(self) -> None:
+        """1.1.0 only adds fields, so 1.0.0 packs must not become unusable."""
+        with tempfile.TemporaryDirectory() as tempdir:
+            dest = Path(tempdir)
+            for artifact in evidence.PACK_ARTIFACTS:
+                (dest / artifact).parent.mkdir(parents=True, exist_ok=True)
+                (dest / artifact).write_text("{}", encoding="utf-8")
+            (dest / "manifest.json").write_text(
+                json.dumps(
+                    {
+                        "schema": {"name": evidence.SCHEMA_NAME, "version": "1.0.0"},
+                        "status": "complete",
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            manifest = evidence.load_complete_pack(dest)
+
+        self.assertEqual(manifest["schema"]["version"], "1.0.0")
+
+    def test_an_unknown_schema_version_is_still_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            dest = Path(tempdir)
+            for artifact in evidence.PACK_ARTIFACTS:
+                (dest / artifact).parent.mkdir(parents=True, exist_ok=True)
+                (dest / artifact).write_text("{}", encoding="utf-8")
+            (dest / "manifest.json").write_text(
+                json.dumps(
+                    {
+                        "schema": {"name": evidence.SCHEMA_NAME, "version": "9.9.9"},
+                        "status": "complete",
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            with self.assertRaises(evidence.EvidencePackError):
+                evidence.load_complete_pack(dest)
 
 
 if __name__ == "__main__":
