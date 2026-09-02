@@ -1,0 +1,39 @@
+{
+  "checks": {
+    "all_four_slides_recognized": true,
+    "evidence_pack_complete": true,
+    "ocr_complete": true,
+    "transcript_explicitly_unavailable": true,
+    "visual_evidence_present": true
+  },
+  "completeness": {
+    "ocr": "complete",
+    "transcript": "unavailable",
+    "visual_states": "complete"
+  },
+  "counts": {
+    "candidate_frames": 15,
+    "canonical_visual_states": 4,
+    "ocr_records": 4,
+    "preview_visual_states": 4,
+    "progressive_build_groups": 0,
+    "transcript_segments": 0
+  },
+  "diagnostics": {
+    "asr_error": "no audio track",
+    "dedupe_failure_count": 0,
+    "ocr_error": null,
+    "ocr_failure_count": 0
+  },
+  "fixture": "generated-silent-four-slide-video",
+  "passed": true,
+  "recognized_text": "ALPHA PLAN BETA SYSTEM GAMMA DATA DELTA REVIEW",
+  "result_title": "Synthetic silent slides",
+  "timings": {
+    "acquisition_seconds": 0.0,
+    "asr_seconds": 0.0,
+    "ocr_seconds": 0.424,
+    "preview_seconds": 0.001,
+    "sampling_seconds": 0.118
+  }
+}

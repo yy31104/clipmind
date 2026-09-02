@@ -28,6 +28,7 @@ def write_all(
     build_groups: list[BuildGroup] | None = None,
     candidate_frame_count: int | None = None,
     evidence_manifest: dict | None = None,
+    stage_timings: dict[str, float] | None = None,
 ) -> dict:
     dest.mkdir(parents=True, exist_ok=True)
     canonical = sorted(
@@ -46,6 +47,7 @@ def write_all(
         "asr_error": transcript.error,
         "ocr_error": ocr_error,
         "summary_error": summary.error,
+        "stage_timings": dict(sorted((stage_timings or {}).items())),
         "keyframes": [
             {
                 "timestamp": f.timestamp,

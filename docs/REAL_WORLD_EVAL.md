@@ -18,13 +18,15 @@ follows while the canonical evidence sets remained unchanged:
 
 | Case | Canonical states | Old preview | v1 preview | Preview OCR coverage |
 | --- | ---: | ---: | ---: | ---: |
-| code/UI, 227 s | 243 | 205 | 48 | 77.37% |
-| talking head + documents, 64 s | 29 | 27 | 4 | 82.07% |
-| talking head + slides, 52 s | 31 | 23 | 3 | 57.14% |
+| code/UI, 227 s | 243 | 205 | 69 | 79.98% |
+| talking head + documents, 64 s | 29 | 27 | 6 | 85.26% |
+| talking head + slides, 52 s | 31 | 23 | 4 | 59.74% |
 
 The preview has no fixed count or per-duration budget. Progressive builds are
 collapsed first; remaining frames are clustered by content change, and each
-cluster contributes a readable representative. The relatively lower OCR union
+cluster contributes a readable representative. OCR replacement that is not
+explained by nearby speech captions also breaks a scene, preserving same-layout
+slides and code panes whose words change. The relatively lower OCR union
 for the short slide video is expected: preview keeps the completed four-item
 slide, while `visual_states/all/` still retains every intermediate text state.
 
@@ -45,6 +47,11 @@ This evidence supports keeping uniform 2 fps sampling for v1. It does not claim
 that sub-0.5-second flashes are readable evidence, and it does not rule out
 adaptive sampling for a future corpus that demonstrates a stable-state miss.
 
+Across all three packs, 9 of 300 adjacent canonical pairs were within the
+configured dHash duplicate threshold, an aggregate duplicate visual-state rate
+of 3.0%. Every timeline reference resolved to a canonical file and all three
+workdirs passed the temporary-file cleanup check.
+
 ## What this does and does not prove
 
 The current suite directly exercises long code/UI changes, scrolling, dense
@@ -53,5 +60,7 @@ slides. Unit fixtures additionally cover disappearing/replaced text, progressive
 builds, hash failure, and more than ten independent visual scenes.
 
 It is not a broad platform benchmark. Silent infographic videos and arbitrary
-whiteboard capture remain explicit corpus gaps; they are listed as limitations
-rather than inferred from unrelated material.
+whiteboard capture remain explicit real-world corpus gaps; they are listed as
+limitations rather than inferred from unrelated material. A separate generated
+four-slide video does exercise the real no-audio, FFmpeg, Vision OCR, preview,
+and Evidence Pack path reproducibly; see `silent-slides-eval.json`.

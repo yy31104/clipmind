@@ -5,6 +5,10 @@
   "ingestion_success_rate": 1.0,
   "passed": true,
   "missing": [],
+  "aggregate": {
+    "duplicate_visual_state_rate": 0.03,
+    "disk_cleanup_success_rate": 1.0
+  },
   "results": [
     {
       "id": "code-ui-long",
@@ -22,20 +26,29 @@
       "metrics": {
         "duration_seconds": 227.0,
         "end_to_end_seconds": 41.15,
+        "source_duration_processing_ratio": 5.5164,
+        "ocr_seconds": null,
         "transcript_segment_count": 149,
         "transcript_character_count": 1412,
+        "transcript_completeness": "complete",
+        "asr_realtime_factor": null,
         "canonical_visual_state_count": 243,
-        "preview_visual_state_count": 48,
-        "preview_ratio": 0.1975,
+        "preview_visual_state_count": 69,
+        "preview_ratio": 0.284,
         "ocr_unique_character_count": 1034,
-        "preview_ocr_character_coverage": 0.7737,
+        "ocr_runtime_per_frame": null,
+        "visual_information_coverage": 1.0,
+        "canonical_artifact_coverage": 1.0,
+        "preview_ocr_character_coverage": 0.7998,
         "duplicate_visual_state_rate": 0.0207,
+        "duplicate_pair_count": 5,
+        "adjacent_pair_count": 242,
         "adjacent_dhash_distance": {
           "p25": 10.0,
           "median": 18.0,
           "p75": 28.0
         },
-        "pack_bytes": 25664699,
+        "pack_bytes": 27021532,
         "temporary_leftovers": []
       }
     },
@@ -55,20 +68,29 @@
       "metrics": {
         "duration_seconds": 64.0,
         "end_to_end_seconds": 13.22,
+        "source_duration_processing_ratio": 4.841,
+        "ocr_seconds": null,
         "transcript_segment_count": 44,
         "transcript_character_count": 480,
+        "transcript_completeness": "complete",
+        "asr_realtime_factor": null,
         "canonical_visual_state_count": 29,
-        "preview_visual_state_count": 4,
-        "preview_ratio": 0.1379,
+        "preview_visual_state_count": 6,
+        "preview_ratio": 0.2069,
         "ocr_unique_character_count": 502,
-        "preview_ocr_character_coverage": 0.8207,
+        "ocr_runtime_per_frame": null,
+        "visual_information_coverage": null,
+        "canonical_artifact_coverage": 1.0,
+        "preview_ocr_character_coverage": 0.8526,
         "duplicate_visual_state_rate": 0.0357,
+        "duplicate_pair_count": 1,
+        "adjacent_pair_count": 28,
         "adjacent_dhash_distance": {
           "p25": 8.0,
           "median": 9.0,
           "p75": 13.0
         },
-        "pack_bytes": 6954041,
+        "pack_bytes": 7217118,
         "temporary_leftovers": []
       }
     },
@@ -88,20 +110,29 @@
       "metrics": {
         "duration_seconds": 52.0,
         "end_to_end_seconds": 8.173,
+        "source_duration_processing_ratio": 6.3625,
+        "ocr_seconds": null,
         "transcript_segment_count": 33,
         "transcript_character_count": 332,
+        "transcript_completeness": "complete",
+        "asr_realtime_factor": null,
         "canonical_visual_state_count": 31,
-        "preview_visual_state_count": 3,
-        "preview_ratio": 0.0968,
+        "preview_visual_state_count": 4,
+        "preview_ratio": 0.129,
         "ocr_unique_character_count": 154,
-        "preview_ocr_character_coverage": 0.5714,
+        "ocr_runtime_per_frame": null,
+        "visual_information_coverage": null,
+        "canonical_artifact_coverage": 1.0,
+        "preview_ocr_character_coverage": 0.5974,
         "duplicate_visual_state_rate": 0.1,
+        "duplicate_pair_count": 3,
+        "adjacent_pair_count": 30,
         "adjacent_dhash_distance": {
           "p25": 8.0,
           "median": 8.5,
           "p75": 10.0
         },
-        "pack_bytes": 6877235,
+        "pack_bytes": 6925309,
         "temporary_leftovers": []
       }
     }

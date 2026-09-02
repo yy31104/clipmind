@@ -103,6 +103,7 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         build_groups=None,
         candidate_frame_count=None,
         evidence_manifest=None,
+        stage_timings=None,
     ) -> dict:
         self.rendered_ocr_error = ocr_error
         return {
@@ -110,6 +111,7 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
             "duration": item.duration,
             "keyframes": [],
             "summary_engine": summary.engine,
+            "stage_timings": stage_timings,
         }
 
     def patched_pipeline(self, **overrides) -> ExitStack:

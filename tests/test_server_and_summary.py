@@ -37,6 +37,9 @@ class ServerEventTests(unittest.IsolatedAsyncioTestCase):
     async def test_visual_preview_route_serves_only_preview_files(self) -> None:
         with tempfile.TemporaryDirectory() as tempdir:
             test_store = JobStore(Path(tempdir) / "out")
+            test_store.jobs["job-1"] = Job(
+                "job-1", "https://v.douyin.com/test", "Test", status="done"
+            )
             preview = test_store.workdir("job-1") / "visual_states" / "preview"
             preview.mkdir(parents=True)
             frame = preview / "00-01-00000.jpg"
@@ -55,6 +58,9 @@ class ServerEventTests(unittest.IsolatedAsyncioTestCase):
     async def test_canonical_visual_state_and_evidence_routes(self) -> None:
         with tempfile.TemporaryDirectory() as tempdir:
             test_store = JobStore(Path(tempdir) / "out")
+            test_store.jobs["job-1"] = Job(
+                "job-1", "https://v.douyin.com/test", "Test", status="done"
+            )
             workdir = test_store.workdir("job-1")
             canonical = workdir / "visual_states" / "all" / "00-01-00000.jpg"
             canonical.parent.mkdir(parents=True)
@@ -68,6 +74,15 @@ class ServerEventTests(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(Path(image_response.path), canonical.resolve())
         self.assertEqual(Path(evidence_response.path), evidence_path)
+
+    async def test_artifact_routes_reject_unknown_job_directories(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            test_store = JobStore(Path(tempdir) / "out")
+            with patch.object(server, "store", test_store):
+                with self.assertRaises(HTTPException) as raised:
+                    await server.evidence_file("unknown")
+
+        self.assertEqual(raised.exception.status_code, 404)
 
     async def test_sse_serializes_done_and_error_terminal_events(self) -> None:
         async def fake_process(url, workdir, pools, report):

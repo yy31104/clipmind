@@ -1,15 +1,17 @@
 """Retain canonical visual states and derive a compact, uncapped preview."""
 from __future__ import annotations
 
+import re
 import shutil
 import statistics
 from dataclasses import dataclass, replace
 from pathlib import Path
+from typing import Iterable
 
 from . import media
 from .media import Frame
 
-PREVIEW_ALGORITHM = "adaptive-scene-v1"
+PREVIEW_ALGORITHM = "adaptive-scene-text-v1"
 
 
 @dataclass(frozen=True)
@@ -32,6 +34,15 @@ def _characters(frame: Frame) -> set[str]:
     }
 
 
+def _terms(frame: Frame) -> set[str]:
+    return set(
+        re.findall(
+            r"[a-z0-9_]+|[\u3400-\u9fff]",
+            " ".join(frame.lines).casefold(),
+        )
+    )
+
+
 def _extends(
     earlier: Frame,
     later: Frame,
@@ -46,6 +57,52 @@ def _extends(
         and later.timestamp - earlier.timestamp <= window
         and len(later_chars) > len(earlier_chars)
         and len(earlier_chars & later_chars) >= coverage * len(earlier_chars)
+    )
+
+
+def _caption_like(
+    frame: Frame,
+    spoken_intervals: tuple[tuple[float, float, str], ...],
+    *,
+    padding: float = 2.0,
+    coverage: float = 0.6,
+) -> bool:
+    visible = _characters(frame)
+    if not visible:
+        return False
+    nearby = {
+        character
+        for start, end, text in spoken_intervals
+        if end > frame.timestamp - padding and start < frame.timestamp + padding
+        for character in text
+        if not character.isspace()
+    }
+    return len(visible & nearby) >= coverage * len(visible)
+
+
+def _replaces_visible_text(
+    earlier: Frame,
+    later: Frame,
+    spoken_intervals: tuple[tuple[float, float, str], ...],
+    *,
+    minimum_characters: int = 5,
+    overlap: float = 0.35,
+) -> bool:
+    earlier_chars = _characters(earlier)
+    later_chars = _characters(later)
+    smaller = min(len(earlier_chars), len(later_chars))
+    if smaller < minimum_characters:
+        return False
+    earlier_terms = _terms(earlier)
+    later_terms = _terms(later)
+    smaller_terms = min(len(earlier_terms), len(later_terms))
+    if not smaller_terms:
+        return False
+    if len(earlier_terms & later_terms) >= overlap * smaller_terms:
+        return False
+    return not (
+        _caption_like(earlier, spoken_intervals)
+        and _caption_like(later, spoken_intervals)
     )
 
 
@@ -115,10 +172,12 @@ def group_progressive_builds(
 def derive_preview(
     frames: list[Frame],
     *,
+    spoken_intervals: Iterable[tuple[float, float, str]] = (),
     scene_floor: float = 24.0,
     activity_margin: float = 14.0,
     scene_ceiling: float = 32.0,
     latest_readability_ratio: float = 0.6,
+    replacement_visual_floor: float = 6.0,
 ) -> list[Frame]:
     """Choose one readable representative per content-driven visual scene.
 
@@ -126,6 +185,7 @@ def derive_preview(
     threshold then adapts to the video's observed visual activity, but no frame
     count or per-duration budget is applied.
     """
+    speech = tuple(spoken_intervals)
     ordered = sorted(frames, key=lambda frame: (frame.timestamp, frame.index))
     candidates = [
         frame
@@ -155,6 +215,11 @@ def derive_preview(
         if (
             not scenes
             or scenes[-1][-1].dedupe_warning is not None
+            or (
+                media.hamming(scenes[-1][-1].phash, frame.phash)
+                > replacement_visual_floor
+                and _replaces_visible_text(scenes[-1][-1], frame, speech)
+            )
             or media.hamming(scenes[-1][0].phash, frame.phash) >= threshold
         ):
             scenes.append([frame])

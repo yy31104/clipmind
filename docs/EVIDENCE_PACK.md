@@ -91,6 +91,10 @@ A pack can be structurally `complete` while a source modality is unavailable.
 That means packaging completed and the absence is explicit; it does not claim
 the unavailable evidence was extracted.
 
+Newly created packs also include an optional `timings` object with wall-clock
+seconds for acquisition, sampling, ASR, OCR, and preview derivation. The field
+is additive: v1 packs created before timing instrumentation remain valid.
+
 ## Responsibility boundary
 
 ClipMind owns acquisition, timestamped transcription, visual-state capture,

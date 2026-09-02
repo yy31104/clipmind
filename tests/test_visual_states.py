@@ -115,6 +115,28 @@ class CanonicalVisualStateTests(unittest.TestCase):
 
         self.assertEqual(preview, [document])
 
+    def test_preview_splits_same_layout_when_visible_text_is_replaced(self) -> None:
+        first = Frame(0, 0.0, Path("a.jpg"), phash=0, lines=("ALPHA PLAN",))
+        second = Frame(1, 1.0, Path("b.jpg"), phash=127, lines=("BETA SYSTEM",))
+
+        preview = visual_states.derive_preview([first, second])
+
+        self.assertEqual(preview, [first, second])
+
+    def test_preview_does_not_treat_matching_speech_captions_as_slides(self) -> None:
+        first = Frame(0, 0.0, Path("a.jpg"), phash=0, lines=("ALPHA BLOCK",))
+        second = Frame(1, 1.0, Path("b.jpg"), phash=127, lines=("SYSTEM VIEW",))
+
+        preview = visual_states.derive_preview(
+            [first, second],
+            spoken_intervals=(
+                (0.0, 0.8, "ALPHA BLOCK"),
+                (0.8, 2.0, "SYSTEM VIEW"),
+            ),
+        )
+
+        self.assertEqual(preview, [second])
+
     def test_dedupe_warning_is_never_hidden_by_preview_clustering(self) -> None:
         normal = Frame(0, 0.0, Path("a.jpg"), phash=0)
         uncertain = Frame(

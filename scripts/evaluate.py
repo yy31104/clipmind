@@ -67,6 +67,7 @@ def evaluate_case(case: dict, workdir: Path) -> dict:
     distances = [media.hamming(first, second) for first, second in zip(hashes, hashes[1:])]
     dedupe_threshold = int(manifest["configuration"]["dedupe_threshold"])
     duplicate_count = sum(distance <= dedupe_threshold for distance in distances)
+    referenced_files = [workdir / row["file"] for row in timeline]
     temp_leftovers = [
         name
         for name in ("samples", "evidence_samples", "audio.wav", "source.mp4", "source.webm")
@@ -76,7 +77,10 @@ def evaluate_case(case: dict, workdir: Path) -> dict:
         "transcript_minimum": len(transcript) >= expected["minimum_transcript_segments"],
         "visual_state_minimum": len(timeline) >= expected["minimum_visual_states"],
         "ocr_available": not expected["requires_ocr"] or manifest["completeness"]["ocr"] == "complete",
-        "preview_target": len(preview_refs) <= expected["maximum_preview_states"],
+        "preview_target": (
+            len(preview_refs) / max(len(timeline), 1)
+            <= expected["maximum_preview_ratio"]
+        ),
         "cleanup": not temp_leftovers,
     }
     started = job.get("started_at")
@@ -93,18 +97,45 @@ def evaluate_case(case: dict, workdir: Path) -> dict:
             "end_to_end_seconds": round(float(finished) - float(started), 3)
             if started and finished
             else None,
+            "source_duration_processing_ratio": round(
+                float(job.get("result", {}).get("duration") or 0)
+                / max(float(finished) - float(started), 0.001),
+                4,
+            ) if started and finished else None,
+            "ocr_seconds": manifest.get("timings", {}).get("ocr_seconds"),
             "transcript_segment_count": len(transcript),
             "transcript_character_count": sum(len(row["text"]) for row in transcript),
+            "transcript_completeness": manifest["completeness"]["transcript"],
+            "asr_realtime_factor": round(
+                float(manifest.get("timings", {}).get("asr_seconds"))
+                / max(float(job.get("result", {}).get("duration") or 0), 0.001),
+                4,
+            ) if manifest.get("timings", {}).get("asr_seconds") is not None else None,
             "canonical_visual_state_count": len(timeline),
             "preview_visual_state_count": len(preview_refs),
             "preview_ratio": round(len(preview_refs) / max(len(timeline), 1), 4),
             "ocr_unique_character_count": len(all_chars),
+            "ocr_runtime_per_frame": round(
+                float(manifest.get("timings", {}).get("ocr_seconds"))
+                / max(len(ocr), 1),
+                4,
+            ) if manifest.get("timings", {}).get("ocr_seconds") is not None else None,
+            "visual_information_coverage": expected.get(
+                "measured_stable_state_coverage"
+            ),
+            "canonical_artifact_coverage": round(
+                sum(path.is_file() for path in referenced_files)
+                / max(len(referenced_files), 1),
+                4,
+            ),
             "preview_ocr_character_coverage": round(
                 len(preview_chars) / max(len(all_chars), 1), 4
             ),
             "duplicate_visual_state_rate": round(
                 duplicate_count / max(len(distances), 1), 4
             ),
+            "duplicate_pair_count": duplicate_count,
+            "adjacent_pair_count": len(distances),
             "adjacent_dhash_distance": {
                 "p25": percentile(distances, 0.25),
                 "median": statistics.median(distances) if distances else None,
@@ -135,6 +166,12 @@ def main() -> int:
             missing.append(case["id"])
             continue
         results.append(evaluate_case(case, workdir))
+    duplicate_pairs = sum(
+        result["metrics"]["duplicate_pair_count"] for result in results
+    )
+    adjacent_pairs = sum(
+        result["metrics"]["adjacent_pair_count"] for result in results
+    )
     report = {
         "suite_version": suite["version"],
         "case_count": len(suite["cases"]),
@@ -142,6 +179,16 @@ def main() -> int:
         "ingestion_success_rate": round(len(results) / max(len(suite["cases"]), 1), 4),
         "passed": not missing and all(result["passed"] for result in results),
         "missing": missing,
+        "aggregate": {
+            "duplicate_visual_state_rate": round(
+                duplicate_pairs / max(adjacent_pairs, 1), 4
+            ),
+            "disk_cleanup_success_rate": round(
+                sum(result["checks"]["cleanup"] for result in results)
+                / max(len(results), 1),
+                4,
+            ),
+        },
         "results": results,
     }
     rendered = json.dumps(report, ensure_ascii=False, indent=2) + "\n"

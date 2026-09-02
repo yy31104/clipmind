@@ -6,6 +6,7 @@ import unittest
 from contextlib import redirect_stdout
 from io import StringIO
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
 import cli
@@ -13,6 +14,27 @@ from clipmind.jobs import JobStore
 
 
 class CLITests(unittest.IsolatedAsyncioTestCase):
+    async def test_cli_reuses_a_complete_pack_unless_reprocess_is_requested(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            test_store = JobStore(Path(tempdir) / "out")
+            stdout = StringIO()
+            with (
+                patch.object(cli, "JobStore", return_value=test_store),
+                patch.object(cli, "OUT_DIR", Path(tempdir) / "out"),
+                patch.object(
+                    test_store,
+                    "reusable",
+                    return_value=SimpleNamespace(id="cached-job"),
+                ),
+                patch.object(test_store, "submit") as submit,
+                redirect_stdout(stdout),
+            ):
+                status = await cli.main("https://v.douyin.com/example")
+
+        self.assertEqual(status, 0)
+        submit.assert_not_called()
+        self.assertIn("reused", stdout.getvalue())
+
     async def test_cli_uses_durable_job_store_and_reports_evidence_pack(self) -> None:
         async def fake_process(url, workdir, pools, report):
             report("writing", 0.9, "writing evidence")

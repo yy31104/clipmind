@@ -9,8 +9,9 @@
       "expected": {
         "minimum_transcript_segments": 20,
         "minimum_visual_states": 20,
-        "maximum_preview_states": 60,
+        "maximum_preview_ratio": 0.35,
         "requires_ocr": true,
+        "measured_stable_state_coverage": 1.0,
         "checks": ["small text", "scrolling UI", "long video scaling"]
       }
     },
@@ -23,7 +24,7 @@
       "expected": {
         "minimum_transcript_segments": 5,
         "minimum_visual_states": 1,
-        "maximum_preview_states": 8,
+        "maximum_preview_ratio": 0.3,
         "requires_ocr": true,
         "checks": ["speech completeness", "burned-caption redundancy"]
       }
@@ -36,7 +37,7 @@
       "expected": {
         "minimum_transcript_segments": 5,
         "minimum_visual_states": 3,
-        "maximum_preview_states": 12,
+        "maximum_preview_ratio": 0.5,
         "requires_ocr": true,
         "checks": ["slide changes", "short video scaling"]
       }

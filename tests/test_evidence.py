@@ -75,6 +75,7 @@ class EvidencePackTests(unittest.TestCase):
                     preview,
                     groups,
                     candidate_frame_count=20,
+                    timings={"ocr_seconds": 1.25},
                 )
                 artifact_names = [
                     "source.json",
@@ -96,6 +97,7 @@ class EvidencePackTests(unittest.TestCase):
                     preview,
                     groups,
                     candidate_frame_count=20,
+                    timings={"ocr_seconds": 1.25},
                 )
 
             self.assertEqual(
@@ -104,11 +106,12 @@ class EvidencePackTests(unittest.TestCase):
             )
             self.assertEqual(manifest["schema"]["version"], "1.0.0")
             self.assertEqual(manifest["status"], "complete")
+            self.assertEqual(manifest["timings"], {"ocr_seconds": 1.25})
             self.assertEqual(manifest["counts"]["canonical_visual_states"], 2)
             self.assertEqual(manifest["counts"]["preview_visual_states"], 1)
             self.assertEqual(
                 manifest["configuration"]["preview_algorithm"],
-                "adaptive-scene-v1",
+                "adaptive-scene-text-v1",
             )
             self.assertEqual(manifest["completeness"]["transcript"], "complete")
             self.assertEqual(manifest["completeness"]["ocr"], "complete")
@@ -116,11 +119,8 @@ class EvidencePackTests(unittest.TestCase):
                 (Path(__file__).parents[1] / "schemas" / "evidence-pack-v1.schema.json")
                 .read_text(encoding="utf-8")
             )
-            self.assertEqual(
-                set(schema["required"]),
-                set(manifest),
-                "the checked-in manifest schema must track emitted top-level fields",
-            )
+            self.assertTrue(set(schema["required"]).issubset(manifest))
+            self.assertTrue(set(manifest).issubset(schema["properties"]))
             self.assertEqual(
                 schema["properties"]["schema"]["properties"]["version"]["const"],
                 manifest["schema"]["version"],

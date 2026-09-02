@@ -1,8 +1,9 @@
 # ClipMind v1 技术审计与质量门槛
 
 审计起点：1760 行，13 个模块，零测试，三个真实抖音链接跑通。
-当前状态：P0-A 与 P0-B 已完成，24 项自动化测试通过。本文定义后续 v1 的
-产品契约、验收标准与实施顺序。
+当前状态：v1 实现与发布工程已完成，69 项自动化测试和三条真实视频评测通过。
+本文保留最初审计、恢复契约和验收标准；当前架构、评测与已知边界分别见
+`docs/ARCHITECTURE.md`、`docs/REAL_WORLD_EVAL.md` 与 `docs/LIMITATIONS.md`。
 
 ---
 
@@ -107,11 +108,10 @@ ClipMind 负责本地获取、转写、视觉证据提取、OCR、时间对齐�
 `out/<job-id>/job.json` 现在通过 write-through 持久化任务；启动恢复逐状态遵循
 C.3 契约，异常路径清理已由自动化测试保护。
 
-**缺陷 2：timeline fusion 不是一个阶段，而是一个字符串拼接函数。**
+**已解决：确定性 timeline fusion。**
 
-架构图里 timeline 是独立环节，代码里仍是为摘要构建字符串的辅助函数。
-Evidence Pack 需要一个确定、可断言的 `Timeline`，把 transcript、OCR 和视觉状态
-对齐，而不是为某个 summarizer 构造 prompt。
+`visual_timeline.jsonl` 现在以稳定 ID 确定性关联 transcript、OCR 和视觉区间，
+不依赖 summarizer；schema 与对齐行为均有自动化测试。
 
 **缺陷 3：没有平台适配器边界。**
 
@@ -132,36 +132,36 @@ Evidence Pack 需要一个确定、可断言的 `Timeline`，把 transcript、OC
 
 **✓ P0-A：行为回归安全网**
 
-24 项自动化测试现已覆盖 URL、job lifecycle、并发、管线降级、SSE、重启恢复和
-异常清理。下一刀在修改视觉核心前，仍需补 `dhash / hamming / dedupe /
-collapse_builds / score / select` 的 characterization tests。
+69 项自动化测试现已覆盖 URL、job lifecycle、并发、管线降级、SSE、重启恢复、
+异常清理及 `dhash / hamming / dedupe / collapse_builds / score / select` 的
+characterization contract。
 
 **✓ P0-B：持久化、恢复与异常安全清理**
 
 任务状态已 write-through 到 `out/<job-id>/job.json`；queued/running/terminal 恢复
 遵循 C.3，已完成笔记可恢复，所有下载后异常都清理临时媒体且保留 final artifacts。
 
-**NEXT：Extraction fidelity**
+**✓ Extraction fidelity**
 
-当前固定 10 张的策略违反 v1 visual extraction contract。下一核心工作是完整时间戳
-转写、内容驱动的 stable visual states、OCR 对齐和 progressive build 分组。
+canonical visual states 已取消固定 10 张限制；1280px 证据/OCR、内容驱动 preview、
+progressive build 分组和 2fps/4fps 覆盖探针均已完成并有真实视频报告。
 
-**THEN：Evidence Pack contract 与知识库交接**
+**✓ Evidence Pack contract 与知识库交接**
 
-定义 versioned manifest、结构化 transcript/OCR/visual timeline、完整视觉状态集和
-确定性 evidence view；通过监听目录或同等简单边界交给下游知识库 agent。
+versioned manifest、结构化 transcript/OCR/visual timeline、完整视觉状态集和
+确定性 evidence view 已冻结；ZIP 与 manifest-last Inbox 复制提供单向交接。
 
-**THEN：P0-C hardening**
+**✓ P0-C hardening**
 
-同一 URL 目前仍会重复下载与推理；批量任务还需要明确的资源控制和压力验证。
-幂等与资源限制在 Evidence Pack 身份/schema 稳定后实施。
+重复 URL 与已知 source ID 会复用完整 Pack，Reprocess 显式创建新任务；超过视频
+并发上限的任务保持 queued，8-job benchmark 与测试都验证了 backpressure。
 
 ### P1 — 影响可信度
 
-**P1-6 SSE 断线后永久丢事件**
+**✓ P1-6 SSE 断线后重新同步**
 
-服务端不发 event id，客户端 `EventSource` 自动重连但 `app.js` 无 `onerror`、
-重连后不重新拉 `/api/jobs`。断线期间的所有状态变化永久丢失，界面卡在旧状态。
+客户端收到首次连接或重连的 `hello` 后重新拉取 `/api/jobs`，因此断线期间的状态
+由持久化索引补齐，不依赖事件逐条重放。
 
 **已提升到 v1 core：固定关键帧预算不符合产品契约**
 
@@ -176,7 +176,7 @@ collapse_builds / score / select` 的 characterization tests。
 227 秒的视频和 52 秒的视频拿到同样的信息预算。修复方向不是按时长增加固定预算，
 而是移除 canonical hard cap，按 materially distinct、stable 的内容状态决定数量。
 
-**P1-8 降级链路有一级是死的**
+**✓ P1-8 移除默认 Safari 降级**
 
 实测 Safari rung 返回：
 
@@ -185,35 +185,34 @@ Operation not permitted: .../com.apple.Safari/Data/Library/Cookies/Cookies.binar
 ```
 
 macOS TCC 保护 Safari 容器，除非终端被授予完全磁盘访问权限，这一级永远失败。
-它只是在每次彻底失败时多加一次无用尝试和一条误导性报错。
+默认 cookie ladder 已改为 `chrome,-`，不再建议 Full Disk Access。
 
-**P1-9 失败原因不可行动**
+**✓ P1-9 失败原因可行动**
 
-无效短链的报错是 `Unsupported URL: https://www.douyin.com/`——短链重定向到了
-裸域名。用户无法从中知道是链接失效、视频被删、需要登录，还是被限流。
-需要一层失败分类。
+采集层现在区分失效/已删、私密、登录、cookie 不可用/过期和一般媒体失败，页面只
+显示短消息与恢复动作；原始 yt-dlp 文本不进入 API 响应。
 
-**P1-10 cookie 授权粒度过粗**
+**✓ P1-10 cookie 授权边界已文档化并提供 cookie-file 路径**
 
 `--cookies-from-browser chrome` 把**整个 Chrome cookie jar**（所有站点）交给
 yt-dlp，而不只是 douyin.com。对一个本地工具可以接受，但必须在 README 里
-明说，并提供只导出 douyin cookie 的路径。这是放在 GitHub 上会被问到的问题。
+明说。`docs/PRIVACY.md` 已记录边界，并提供只导出 Douyin cookie 的配置路径。
 
 **P1-11 无任务取消，jobs 字典无界增长**
 
-**P1-12 无可观测性**
+**✓ P1-12 关键阶段耗时进入 manifest/job result**
 
-无结构化日志，各阶段耗时不落盘。任务失败后无法事后诊断——只有一个
-`job.error` 字符串。
+新 Pack 在 manifest/job result 中记录 acquisition、sampling、ASR、OCR、preview
+和可选 summary 的墙钟耗时；失败记录包含稳定 error code 与恢复动作。
 
 ### P2 — 打磨
 
-- `media.dedupe` 逐帧 `except Exception: continue`，静默丢帧
-- `job_id` 未校验格式，依赖 `resolve()+startswith` 兜底
+- `media.dedupe` 已改为失败保留并附安全诊断
+- artifact route 只接受索引中的 job ID，并用 `Path.is_relative_to` 限定根目录
 - `fetch._winning_source` 是模块级可变全局
 - `Settings` 在 import 时从环境变量固化，测试需 monkeypatch 环境
-- README 的基准数字是手抄的，不可复现
-- UI 仍以“摘要/关键帧”描述旧输出，而不是 Evidence Pack / visual states
+- README 基准数字来自 `make eval` / `make bench` 的机器可读报告
+- UI 主路径已使用 Evidence Pack / visual states；旧 note/keyframes 仅作兼容
 
 ---
 
@@ -225,20 +224,20 @@ yt-dlp，而不只是 douyin.com。对一个本地工具可以接受，但必须
 
 - [x] 当前媒体获取、ASR、OCR 与视觉处理不要求付费 API key
 - [ ] 全新机器、**未设置任何 API key**，能生成完整 canonical Evidence Pack
-- [ ] 可选 summarizer 缺失或失败时，Evidence Pack 的完整性不受影响
-- [ ] canonical path 不发起任何 Claude/OpenAI/Gemini 等付费模型请求
+- [x] 可选 summarizer 缺失或失败时，Evidence Pack 的完整性不受影响
+- [x] canonical path 不发起任何 Claude/OpenAI/Gemini 等付费模型请求
 
 ### C.2 正确性与失败隔离
 
-- [ ] ASR / OCR 单阶段失败被明确记录，输出不得静默冒充完整证据
-- [ ] 采集失败按类型分类上报，而非透传 yt-dlp 原始报错
+- [x] ASR / OCR 单阶段失败被明确记录，输出不得静默冒充完整证据
+- [x] 采集失败按类型分类上报，而非透传 yt-dlp 原始报错
 - [x] 任意下载后阶段抛异常，临时媒体与候选帧被清理且 final artifacts 被保留
 
 ### C.3 状态与重启
 
 - [x] 重启后已有结果从 `out/` 重建索引
 - [x] 重启时 `running` 的任务被标记为 `interrupted`，其临时文件被回收
-- [ ] 同一 URL 重复提交命中缓存，不重复下载与推理
+- [x] 同一 URL 重复提交命中缓存，不重复下载与推理
 - [x] 恢复行为逐状态符合下方 Restart recovery contract
 - [x] 持久化顺序不变式成立：先写 `running`，再产生任何外部副作用
 
@@ -293,28 +292,30 @@ into `queued` or `running` during startup recovery.
 
 ### C.4 Extraction fidelity（不以 DONE 为准）
 
-- [ ] transcript 完整保留时间戳，不因摘要或 preview 截断
-- [ ] canonical extraction 不使用固定 per-video frame cap
-- [ ] 所有 materially distinct、stable、可读的视觉状态进入完整 evidence set
-- [ ] progressive build 中后来消失或被替换的信息不丢失
-- [ ] preview 与完整 evidence set 分离，preview 不得截断 canonical artifacts
-- [ ] OCR 与 visual state/timestamp 可确定性关联
-- [ ] `duplicate_visual_state_rate` < 10%
-- [ ] 无语音幻灯片仍可依靠 OCR/视觉状态形成可用 Evidence Pack
+- [x] transcript 完整保留时间戳，不因摘要或 preview 截断
+- [x] canonical extraction 不使用固定 per-video frame cap
+- [x] 评测范围内 materially distinct、stable、可读的视觉状态进入完整 evidence set
+      （任意视频的普适保证仍属于 `docs/LIMITATIONS.md` 的明确边界）
+- [x] progressive build 中后来消失或被替换的信息不丢失
+- [x] preview 与完整 evidence set 分离，preview 不得截断 canonical artifacts
+- [x] OCR 与 visual state/timestamp 可确定性关联
+- [x] `duplicate_visual_state_rate` < 10%（真实评测集合计 3.0%）
+- [x] 无语音幻灯片仍可依靠 OCR/视觉状态形成可用 Evidence Pack
+      （生成式四页夹具真实运行 FFmpeg + Vision OCR，4/4 canonical 与 preview）
 
 ### C.5 工程
 
-- [ ] 修改视觉算法前，characterization tests 覆盖 `dhash / hamming / dedupe / collapse_builds / score / select`
-- [ ] 单元测试覆盖确定性 timeline alignment 与 Evidence Pack schema
-- [ ] `make bench` 一条命令产出可复现基准，README 数字由它生成
-- [ ] `make eval` 跑评测集并输出指标表
-- [ ] 每个任务落盘结构化 stage timing，失败可事后诊断
+- [x] 修改视觉算法前，characterization tests 覆盖 `dhash / hamming / dedupe / collapse_builds / score / select`
+- [x] 单元测试覆盖确定性 timeline alignment 与 Evidence Pack schema
+- [x] `make bench` 一条命令产出可复现基准，README 数字由它生成
+- [x] `make eval` 跑评测集并输出指标表
+- [x] 每个任务落盘结构化 stage timing，失败可事后诊断
 
 ### C.6 可解释性（面试目标）
 
-- [ ] `ARCHITECTURE.md` 回答：每个阶段为何存在、失败时会怎样、什么并发、
+- [x] `ARCHITECTURE.md` 回答：每个阶段为何存在、失败时会怎样、什么并发、
       visual-state 算法为何保留某个状态——**不看源码即可解释**
-- [ ] Evidence Pack schema 与 ClipMind / 下游 agent 的责任边界可独立阅读
+- [x] Evidence Pack schema 与 ClipMind / 下游 agent 的责任边界可独立阅读
 
 ---
 

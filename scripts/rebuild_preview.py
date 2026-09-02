@@ -58,7 +58,14 @@ def rebuild(workdir: Path) -> int:
         )
 
     groups = visual_states.group_progressive_builds(frames)
-    selected = visual_states.derive_preview(frames)
+    transcript = read_jsonl(workdir / "transcript.jsonl")
+    selected = visual_states.derive_preview(
+        frames,
+        spoken_intervals=(
+            (float(row["start"]), float(row["end"]), row["text"])
+            for row in transcript
+        ),
+    )
     visual_root = workdir / "visual_states"
     temporary = Path(tempfile.mkdtemp(prefix="preview.next-", dir=visual_root))
     preview = visual_root / "preview"

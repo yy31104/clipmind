@@ -36,6 +36,13 @@ class SubmitBody(BaseModel):
     reprocess: bool = False
 
 
+def _workdir(job_id: str) -> Path:
+    job = store.jobs.get(job_id)
+    if not job:
+        raise HTTPException(404, "no such job")
+    return store.workdir(job.id)
+
+
 @app.post("/api/jobs")
 async def submit(body: SubmitBody):
     urls = extract_urls(body.text)
@@ -99,16 +106,16 @@ async def detail(job_id: str):
 
 @app.get("/api/jobs/{job_id}/keyframes/{name}")
 async def keyframe(job_id: str, name: str):
-    path = (store.workdir(job_id) / "keyframes" / name).resolve()
-    root = (store.workdir(job_id) / "keyframes").resolve()
-    if not str(path).startswith(str(root)) or not path.exists():
+    root = (_workdir(job_id) / "keyframes").resolve()
+    path = (root / name).resolve()
+    if not path.is_relative_to(root) or not path.is_file():
         raise HTTPException(404, "no such frame")
     return FileResponse(path)
 
 
 @app.get("/api/jobs/{job_id}/visual_states/preview/{name}")
 async def visual_preview(job_id: str, name: str):
-    root = (store.workdir(job_id) / "visual_states" / "preview").resolve()
+    root = (_workdir(job_id) / "visual_states" / "preview").resolve()
     path = (root / name).resolve()
     if not path.is_relative_to(root) or not path.is_file():
         raise HTTPException(404, "no such visual state")
@@ -117,7 +124,7 @@ async def visual_preview(job_id: str, name: str):
 
 @app.get("/api/jobs/{job_id}/visual_states/all/{name}")
 async def visual_state(job_id: str, name: str):
-    root = (store.workdir(job_id) / "visual_states" / "all").resolve()
+    root = (_workdir(job_id) / "visual_states" / "all").resolve()
     path = (root / name).resolve()
     if not path.is_relative_to(root) or not path.is_file():
         raise HTTPException(404, "no such visual state")
@@ -126,7 +133,7 @@ async def visual_state(job_id: str, name: str):
 
 @app.get("/api/jobs/{job_id}/evidence.md")
 async def evidence_file(job_id: str):
-    path = store.workdir(job_id) / "evidence.md"
+    path = _workdir(job_id) / "evidence.md"
     if not path.is_file():
         raise HTTPException(404, "evidence pack not ready")
     return FileResponse(
@@ -138,7 +145,7 @@ async def evidence_file(job_id: str):
 
 @app.get("/api/jobs/{job_id}/evidence.zip")
 async def evidence_zip(job_id: str):
-    workdir = store.workdir(job_id)
+    workdir = _workdir(job_id)
     try:
         path = handoff.export_zip(workdir)
     except handoff.EvidencePackError as exc:
@@ -159,7 +166,7 @@ async def send_to_knowledge_base(job_id: str):
         )
     try:
         return handoff.send_to_inbox(
-            store.workdir(job_id), settings.knowledge_base_inbox
+            _workdir(job_id), settings.knowledge_base_inbox
         )
     except handoff.EvidencePackError as exc:
         raise HTTPException(409, str(exc)) from exc
@@ -167,7 +174,7 @@ async def send_to_knowledge_base(job_id: str):
 
 @app.get("/api/jobs/{job_id}/note.md")
 async def note_file(job_id: str):
-    path = store.workdir(job_id) / "note.md"
+    path = _workdir(job_id) / "note.md"
     if not path.exists():
         raise HTTPException(404, "note not ready")
     return FileResponse(path, media_type="text/markdown",

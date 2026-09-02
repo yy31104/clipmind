@@ -256,8 +256,20 @@ $("input").addEventListener("keydown", (e) => {
 });
 
 /* ── live updates ── */
-new EventSource("/api/events").onmessage = (e) => {
+async function refreshJobs() {
+  const data = await fetch("/api/jobs").then((response) => response.json());
+  state.jobs.clear();
+  for (const job of data.jobs) state.jobs.set(job.id, job);
+  if (state.view === "home") render();
+}
+
+const events = new EventSource("/api/events");
+events.onmessage = async (e) => {
   const job = JSON.parse(e.data);
+  if (job.type === "hello") {
+    await refreshJobs();
+    return;
+  }
   if (!job.id) return;
   state.jobs.set(job.id, job);
   if (state.view === "home") render();

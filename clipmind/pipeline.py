@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import asyncio
 import shutil
+import time
 from dataclasses import dataclass, field, replace
 from pathlib import Path
 
@@ -58,19 +59,23 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
     workdir.mkdir(parents=True, exist_ok=True)
     base = 0.0
     completed = False
+    timings: dict[str, float] = {}
 
     try:
         # --- acquire -------------------------------------------------------
         report("fetching", base, "resolving link")
+        stage_started = time.perf_counter()
         async with pools.fetch:
             item = await fetch(
                 url, workdir,
                 on_note=lambda n: report("fetching", base, n),
             )
+        timings["acquisition_seconds"] = round(time.perf_counter() - stage_started, 3)
         base += STAGES[0][1]
         report("sampling", base, item.title)
 
         # --- cheap prep ----------------------------------------------------
+        stage_started = time.perf_counter()
         audio_path = await media.extract_audio(item.video_path, workdir / "audio.wav")
         candidates = await media.sample_frames(item.video_path, workdir / "samples")
         unique = media.dedupe(candidates)
@@ -86,6 +91,7 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
                 frame.index: frame.path for frame in evidence_candidates
             },
         )
+        timings["sampling_seconds"] = round(time.perf_counter() - stage_started, 3)
         dedupe_failure_count = sum(
             frame.dedupe_warning is not None for frame in canonical
         )
@@ -104,21 +110,48 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
         async def speech():
             async with pools.asr:
                 report("analysing", base + 0.05, "transcribing speech")
-                return await asr.transcribe(audio_path)
+                started = time.perf_counter()
+                value = await asr.transcribe(audio_path)
+                return value, round(time.perf_counter() - started, 3)
 
         async def vision():
+            started = time.perf_counter()
             problem = await keyframes.annotate(canonical, pools.ocr)
+            ocr_seconds = round(time.perf_counter() - started, 3)
             report("analysing", base + 0.05, problem or "reading on-screen text")
             build_groups = visual_states.group_progressive_builds(canonical)
-            preview = visual_states.materialize_preview(
-                visual_states.derive_preview(canonical),
-                workdir / "visual_states" / "preview",
-            )
             preview_candidates = [replace(frame) for frame in canonical]
-            return keyframes.select(preview_candidates), preview, build_groups, problem
+            return (
+                keyframes.select(preview_candidates),
+                build_groups,
+                problem,
+                ocr_seconds,
+            )
 
-        transcript, (chosen, preview, build_groups, ocr_error) = await asyncio.gather(
+        (transcript, asr_seconds), (
+            chosen,
+            build_groups,
+            ocr_error,
+            ocr_seconds,
+        ) = await asyncio.gather(
             speech(), vision()
+        )
+        stage_started = time.perf_counter()
+        preview = visual_states.materialize_preview(
+            visual_states.derive_preview(
+                canonical,
+                spoken_intervals=(
+                    (segment.start, segment.end, segment.text)
+                    for segment in transcript.segments
+                ),
+            ),
+            workdir / "visual_states" / "preview",
+        )
+        preview_seconds = round(time.perf_counter() - stage_started, 3)
+        timings.update(
+            asr_seconds=asr_seconds,
+            ocr_seconds=ocr_seconds,
+            preview_seconds=preview_seconds,
         )
         evidence_manifest = evidence.write_pack(
             workdir,
@@ -129,6 +162,7 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
             build_groups,
             candidate_frame_count=len(candidates),
             ocr_error=ocr_error,
+            timings=timings,
         )
         chosen = await keyframes.promote(
             item.video_path, chosen, workdir / "keyframes"
@@ -138,6 +172,7 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
                f"{len(transcript.segments)} speech segments")
 
         # --- fuse ----------------------------------------------------------
+        stage_started = time.perf_counter()
         try:
             summary = await summarize.summarize(
                 transcript, chosen, item.title, item.duration, pools.llm
@@ -148,6 +183,9 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
                 "compatibility fallback",
                 error=f"{type(exc).__name__}: {exc}",
             )
+        timings["optional_summary_seconds"] = round(
+            time.perf_counter() - stage_started, 3
+        )
         base += STAGES[3][1]
         report("writing", base, "writing note")
 
@@ -164,6 +202,7 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
                 build_groups=build_groups,
                 candidate_frame_count=len(candidates),
                 evidence_manifest=evidence_manifest,
+                stage_timings=timings,
             )
         except Exception as exc:  # noqa: BLE001 - legacy output is non-canonical
             metadata = {
@@ -188,6 +227,7 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
                     "completeness": evidence_manifest["completeness"],
                 },
                 "compatibility_error": f"{type(exc).__name__}: {exc}",
+                "stage_timings": timings,
             }
         report("done", 1.0, "complete")
         completed = True

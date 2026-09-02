@@ -27,6 +27,17 @@ class FetchErrorTests(unittest.TestCase):
         self.assertEqual(error.code, "link_unavailable")
         self.assertIn("fresh share link", error.action)
 
+    def test_failure_categories_remain_distinct(self) -> None:
+        cases = {
+            "ERROR: This is a private video": "private_video",
+            "ERROR: login required": "login_required",
+            "ERROR: Operation not permitted while reading cookies": "cookies_unavailable",
+            "ERROR: connection reset": "media_fetch_failed",
+        }
+        for diagnostic, code in cases.items():
+            with self.subTest(code=code):
+                self.assertEqual(fetch._fetch_error([diagnostic]).code, code)
+
     def test_safari_is_not_a_default_cookie_source(self) -> None:
         with patch.dict("os.environ", {}, clear=True):
             configured = Settings()

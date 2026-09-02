@@ -54,6 +54,10 @@
       }
     },
     "diagnostics": {"type": "object"},
+    "timings": {
+      "type": "object",
+      "additionalProperties": {"type": "number", "minimum": 0}
+    },
     "configuration": {"type": "object"}
   }
 }

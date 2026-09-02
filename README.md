@@ -1,172 +1,206 @@
 # ClipMind
 
-本地优先的抖音视频证据提取器。你只需要复制分享链接。
+Local-first Douyin evidence extraction for macOS. Paste one or more share links;
+ClipMind downloads the media through your local session, transcribes speech,
+captures content-driven visual states, runs OCR, aligns everything on a timeline,
+and emits a versioned Evidence Pack for a human or downstream knowledge agent.
 
+```text
+share text → bounded acquisition ─┬→ MLX Whisper transcript ─┐
+                                  └→ visual states + OCR ─────┤
+                                                              ├→ timeline
+                                                              └→ Evidence Pack
 ```
-粘贴分享文字  →  自动取回视频  →  完整语音转写 ┐
-                                            ├→  时间线  →  结构化证据
-                               画面变化 + OCR ┘
-```
 
-不需要手动下载 MP4，不需要录屏，不需要浏览器插件，不需要填账号密码。
+The canonical path is free and requires no API key. It does not decide what is
+important or what belongs in your knowledge base; it preserves the evidence so
+another agent can make that decision with your existing context.
 
----
+![ClipMind paste-to-Evidence-Pack demo](docs/demo.gif)
 
-## 为什么不用录屏
+The demo uses a generated silent four-slide fixture; it contains no downloaded
+video, third-party imagery, creator identity, or account information.
 
-最初的设想是"浏览器能播放就录下来"。实测下来没必要：`yt-dlp` 直接支持抖音，
-配合 `--cookies-from-browser chrome` 借用你已登录的会话，就能拿到原始媒体流。
+## What v1 does
 
-这带来一个关键差别：
+- extracts multiple Douyin links from unedited share text;
+- uses yt-dlp with the local Chrome session—no manual MP4 download or extension;
+- runs MLX Whisper and macOS Vision OCR locally;
+- retains every deduped canonical visual state without a per-video cap;
+- stores readable 1280 px evidence while using 640 px frames for cheap detection;
+- derives an uncapped, content-driven preview and labels progressive builds;
+- writes deterministic transcript, OCR, visual timeline, Markdown, and manifest;
+- survives restarts without silently replaying interrupted work;
+- reuses completed packs for repeated URLs, with an explicit Reprocess action;
+- exports a deterministic ZIP or copies one-way to a configured knowledge-base Inbox.
 
-| | 录屏方案 | 现在的方案 |
-|---|---|---|
-| 3:47 的视频取回耗时 | ≥ 3:47（必须播放完） | 几秒 |
-| 需要 Chrome 扩展 | 是 | 否 |
-| 视频窗口需保持前台 | 是 | 否 |
+## Requirements
 
-所以处理时间由转写和 OCR 决定，而不是由视频时长决定。
+- Apple Silicon Mac running a current macOS release;
+- Python 3.12;
+- Chrome for videos that require a local Douyin session;
+- about 1.6 GB for the first Whisper model download, plus space for Evidence Packs.
 
-## 安装
+Install the system tools and Python environment:
 
 ```bash
-brew install ffmpeg yt-dlp
+brew install ffmpeg yt-dlp uv
 uv venv --python 3.12
 uv pip install -r clipmind/requirements.txt
 ```
 
-macOS 会在首次读取 Chrome cookie 时弹一次钥匙串授权。首次运行还会下载
-Whisper 模型（约 1.6 GB），之后都走本地缓存。
+The first Chrome-cookie read can trigger a macOS Keychain prompt. ClipMind does
+not ask for your Douyin password. See [Privacy](docs/PRIVACY.md) before use—the
+browser-cookie boundary is broader than only `douyin.com` unless you configure a
+dedicated cookie file.
 
-## 使用
-
-```bash
-python run.py
-```
-
-打开 http://127.0.0.1:8420，把分享文字整段粘进去 —— 不用自己把 URL 抠出来，
-一次粘多个也可以，它们会并行处理。
-
-结果页可以直接下载只包含正式 v1 artifacts 的确定性 ZIP。若设置
-`CLIPMIND_KB_INBOX=/absolute/path/to/Inbox`，还会出现“发送到知识库 Inbox”按钮；
-复制过程把 `manifest.json` 最后落盘，因此下游 Codex 可以把它作为完成标记。现有
-同名 Pack 会安全复用，不会覆盖另一份来源。
-
-命令行同样可用：
+## Run
 
 ```bash
-python cli.py "4.66 g@b.nQ ULJ:/ 标题 https://v.douyin.com/xxxx/ 复制此链接…"
+make run
 ```
 
-## 测试
+Open [http://127.0.0.1:8420](http://127.0.0.1:8420), paste the complete share
+text, and choose **提取**. Multiple links in one paste are queued together.
+Overflow stays queued when the configured video limit is reached.
 
-测试全部使用本地 fake，不访问抖音，也不下载真实媒体：
+The CLI uses the same durable queue and cache:
 
 ```bash
-.venv/bin/python -m unittest discover -s tests -v
+.venv/bin/python cli.py "分享文字 https://v.douyin.com/xxxx/"
+.venv/bin/python cli.py --reprocess "https://v.douyin.com/xxxx/"
 ```
 
-## 当前产出
+If Douyin rejects a link, open it in Chrome, refresh the page, copy a fresh share
+link, and retry. v1 reports expired/private links, login requirements, rejected
+cookies, and media failures as separate, actionable errors; raw yt-dlp output is
+kept out of the UI.
 
-每个成功任务都会生成 versioned Evidence Pack；`manifest.json` 最后写入，是可以复用
-这个结果的完成标记：
+## Evidence Pack
 
-```
+Every successful job writes `manifest.json` last:
+
+```text
 out/<job-id>/
-├── manifest.json      # clipmind-evidence-pack@1.0.0
+├── manifest.json                 # clipmind-evidence-pack@1.0.0
 ├── source.json
-├── job.json           # 可恢复的任务状态
-├── transcript.jsonl   # 完整、带时间戳的 ASR segments
+├── job.json                      # durable lifecycle + result
+├── transcript.jsonl
 ├── transcript.md
-├── ocr.jsonl          # 每个 canonical visual state 一条记录
+├── ocr.jsonl
 ├── visual_timeline.jsonl
-├── evidence.md        # 确定性的完整人类可读证据视图
-├── visual_states/
-│   ├── all/            # 当前采样与近重复过滤后保留的完整 canonical 集合
-│   └── preview/        # 内容驱动预览；渐进构建只展示完成态，无固定张数上限
-├── metadata.json      # 以下为迁移期兼容产物
-├── transcript.json
-├── note.md
-└── keyframes/
+├── evidence.md                   # chronological evidence, no semantic ranking
+└── visual_states/
+    ├── all/                      # canonical, content-driven, no fixed cap
+    └── preview/                  # compact derived view, no fixed cap
 ```
 
-源视频和音频在处理完会自动删除（`CLIPMIND_KEEP_VIDEO=1` 可保留）。
+`metadata.json`, `transcript.json`, `note.md`, and `keyframes/` remain as
+migration compatibility artifacts; they are excluded from the canonical ZIP.
+Source video, audio, and sampling frames are deleted after processing unless
+`CLIPMIND_KEEP_VIDEO=1` is set.
 
-Evidence Pack 的字段、ID、完整性状态和责任边界见
-[`docs/EVIDENCE_PACK.md`](docs/EVIDENCE_PACK.md)，manifest 的机器可读定义见
-[`schemas/evidence-pack-v1.schema.json`](schemas/evidence-pack-v1.schema.json)。ClipMind
-只负责提取和组织证据；判断重点、关联已有知识和决定长期保留内容，交给下游知识库
-agent。
+The complete schema and responsibility boundary are documented in
+[Evidence Pack v1](docs/EVIDENCE_PACK.md). `manifest.json` is the completion
+marker; a partial directory is never a cache hit.
 
-## 免费路径
+## Knowledge-base handoff
 
-完整的 canonical extraction pipeline 不需要任何付费 API key：
+Download the ZIP directly, or set an absolute local Inbox path:
 
-| 环节 | 用什么 | 成本 |
-|---|---|---|
-| 取回视频 | yt-dlp | 免费 |
-| 音频/抽帧 | ffmpeg | 免费 |
-| 语音转写 | MLX Whisper（Apple GPU） | 免费 |
-| 画面文字 | macOS Vision OCR | 免费，无需下载模型 |
-| 视觉状态检测 | 图像哈希 + OCR 变化 | 免费 |
-| 时间线与 Evidence Pack | 确定性本地代码 | 免费 |
-
-当前代码保留了一个可选的 Claude 摘要兼容路径，但它不是 v1 的必需能力，也不会
-成为 Evidence Pack 的依赖。没有 `ANTHROPIC_API_KEY` 时，核心提取能力仍应完整成立。
-
-## 视觉提取状态
-
-当前实现先无固定数量上限地保留 canonical 集合，再非破坏性地标注渐进构建并派生预览：
-
-```
-2 fps 采样  →  dHash 近重复过滤  →  visual_states/all/（无固定上限）
-                          ├→ OCR + progressive build 分组
-                          │  └→ visual_states/preview/（无固定上限，每组取完成态）
-                          └→ collapse/score/select
-                             └→ keyframes/（旧笔记格式的最多 10 张兼容产物）
+```dotenv
+CLIPMIND_KB_INBOX=/absolute/path/to/your-knowledge-base/Inbox
 ```
 
-build group 只合并相邻、OCR 内容单调增加的状态；文字被替换或消失就立即断组，因此
-前面的信息仍会进入 preview。这里的 canonical 仍表示“保留所有通过当前采样与安全
-近重复过滤的候选状态”，还没有完整解决转场、稳定性和信息价值。最终 v1 仍应按
-内容识别所有实质不同、稳定且可读的视觉状态；preview 不会截断完整证据集。
+The UI then exposes **发送到知识库 Inbox**. Delivery is atomic and one-way:
+ClipMind writes into that Inbox only and publishes the copied manifest last. It
+does not read or modify the rest of the knowledge base. A downstream Codex task
+can summarize, compare, deduplicate, and decide retention independently.
 
-变化检测使用 640px 候选帧；最终 canonical 图片和 OCR 默认使用 1280px。这个选择来自
-同一条 227 秒代码/UI 视频的对照实验：640px OCR 识别 559 个不同字符，1280px 识别
-1034 个；OCR 总耗时从 24.7 秒增至 36.6 秒，最终图片约从 6.4MB 增至 19.5MB。
-原始结果见 `docs/ocr-resolution-experiment.json`，可用
-`scripts/compare_ocr_resolution.py` 在本地视频上复跑。
+## Visual extraction
 
-## 并发
-
-不同环节用独立的并发池，避免某一环把机器占死：
-
-| 池 | 默认 | 原因 |
-|---|---|---|
-| `CLIPMIND_MAX_VIDEOS` | 4 | 同时处理的视频数 |
-| `CLIPMIND_MAX_FETCH` | 4 | 网络 IO，可以多开 |
-| `CLIPMIND_MAX_ASR` | 1 | 只有一块 GPU |
-| `CLIPMIND_MAX_OCR` | 2 | CPU |
-
-同一个视频内部，语音转写和画面 OCR 也是并行的，只在生成时间线时汇合。
-
-## 采集失败时
-
-`fetch` 按顺序尝试：Chrome cookie → 无 cookie → Safari cookie → 指定的
-cookies.txt。全部失败会把每一层的真实报错显示在界面上，而不是只说"失败"。
-
-不想让程序读浏览器 cookie 的话，在 `.env` 里改成：
-
-```
-CLIPMIND_COOKIE_SOURCES=-
-CLIPMIND_COOKIE_FILE=/path/to/cookies.txt
+```text
+2 fps at 640 px
+  → dHash fail-open dedupe
+  → matching 1280 px canonical images + Vision OCR
+  → visual_states/all/
+      ├→ progressive-build labels
+      └→ adaptive scene clusters → readable representatives → preview/
 ```
 
-## 配置
+Canonical membership depends only on safe near-duplicate filtering. A hash
+failure retains the frame and records a warning. Build grouping and preview
+selection never delete or repoint canonical artifacts. `scripts/rebuild_preview.py`
+can regenerate the derived preview without reacquiring media or rerunning OCR.
 
-见 `.env.example`。
+The 1280 px decision came from a same-source experiment on a 227-second code/UI
+recording: OCR recognized 1034 unique characters instead of 559 at 640 px, while
+OCR wall time increased from 24.7 to 36.6 seconds. The raw measurement is in
+[`docs/ocr-resolution-experiment.json`](docs/ocr-resolution-experiment.json).
 
-## 范围
+## Evaluation
 
-只做抖音 + macOS。ClipMind 提取证据；下游知识库 agent 负责解释、总结、去重、
-关联已有知识和决定保留内容。语义摘要、多平台和复杂知识库集成都不是 v1 核心。
+```bash
+make test
+make eval
+make bench
+```
+
+- `make test` runs deterministic lifecycle, failure-injection, schema, timeline,
+  recovery, cache, concurrency, and visual-algorithm tests without network access.
+- `make eval` evaluates the completed real-video packs listed in
+  `eval/cases.json`; it does not download them implicitly. Reproducing those
+  packs requires a usable local Chrome session, and the third-party source links
+  may expire or disappear.
+- `make bench` checks bounded batch scheduling with deterministic simulated work.
+
+The checked-in three-video evaluation covers long code/UI and scrolling, dense
+small text, talking-head captions, inserted documents, and progressive slides:
+
+| Source type | Canonical | Old preview | v1 preview | End-to-end |
+| --- | ---: | ---: | ---: | ---: |
+| code/UI, 227 s | 243 | 205 | 69 | 41.15 s |
+| talking head + documents, 64 s | 29 | 27 | 6 | 13.22 s |
+| talking head + slides, 52 s | 31 | 23 | 4 | 8.17 s |
+
+The long code/UI video was also probed at 4 fps. Production 2 fps sampling
+covered 105/105 states that stayed dHash-stable for at least 0.5 seconds, so v1
+does not add unmeasured adaptive sampling. See
+[Real-world evaluation](docs/REAL_WORLD_EVAL.md) and
+[Benchmarks](docs/BENCHMARK.md) for methodology and caveats.
+
+`make eval` also generates a silent four-slide fixture and runs the real FFmpeg,
+Vision OCR, no-audio degradation, preview, and packaging path. The recorded run
+recognized all four labels and retained all four canonical and preview states.
+
+## Concurrency and configuration
+
+Independent resource pools prevent network work from occupying GPU capacity:
+
+| Variable | Default | Resource |
+| --- | ---: | --- |
+| `CLIPMIND_MAX_VIDEOS` | 4 | active videos |
+| `CLIPMIND_MAX_FETCH` | 4 | network acquisition |
+| `CLIPMIND_MAX_ASR` | 1 | Apple GPU |
+| `CLIPMIND_MAX_OCR` | 2 | Vision / CPU |
+| `CLIPMIND_SAMPLE_FPS` | 2 | change-detection samples |
+| `CLIPMIND_SAMPLE_WIDTH` | 640 | change-detection width |
+| `CLIPMIND_EVIDENCE_WIDTH` | 1280 | canonical/OCR width |
+
+Copy `.env.example` to `.env` for the complete list. The default cookie order is
+`chrome,-`; Safari is not attempted because its protected cookie container would
+otherwise require misleading Full Disk Access advice.
+
+## Design and scope
+
+- [Architecture](docs/ARCHITECTURE.md)—stage purpose, visual semantics,
+  concurrency, failure isolation, persistence, and cache identity.
+- [Privacy](docs/PRIVACY.md)—network calls, Chrome-cookie access, retained data,
+  optional external summary, and Inbox boundary.
+- [Limitations](docs/LIMITATIONS.md)—what the measured v1 does not claim.
+
+v1 intentionally supports Douyin on macOS only. Semantic summarization,
+multi-platform adapters, bidirectional knowledge-base sync, cancellation, and
+large-library pagination are outside the canonical extraction contract.
+
+Licensed under the [MIT License](LICENSE).

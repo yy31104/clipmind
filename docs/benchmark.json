@@ -1,0 +1,23 @@
+{
+  "batch_parallel_speedup": 3.708,
+  "benchmark": "bounded-job-scheduler",
+  "checks": {
+    "overflow_was_queued": true,
+    "parallel_limit_respected": true
+  },
+  "configuration": {
+    "job_count": 8,
+    "parallel_limit": 4,
+    "simulated_job_seconds": 0.05
+  },
+  "parallel": {
+    "peak_running": 4,
+    "queued_at_capacity": 4,
+    "seconds": 0.1143
+  },
+  "sequential": {
+    "peak_running": 1,
+    "queued_at_capacity": 7,
+    "seconds": 0.4238
+  }
+}

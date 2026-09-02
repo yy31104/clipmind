@@ -250,6 +250,7 @@ def write_pack(
     *,
     candidate_frame_count: int,
     ocr_error: str | None = None,
+    timings: dict[str, float] | None = None,
 ) -> dict:
     """Write every canonical artifact, with manifest.json written last."""
     dest.mkdir(parents=True, exist_ok=True)
@@ -327,6 +328,7 @@ def write_pack(
                 frame.dedupe_warning is not None for frame in canonical
             ),
         },
+        "timings": dict(sorted((timings or {}).items())),
         "configuration": {
             "sample_fps": settings.sample_fps,
             "change_detection_width": settings.sample_width,
