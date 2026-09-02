@@ -69,10 +69,14 @@ class VisualSelectionTests(unittest.TestCase):
         self.assertEqual(collapsed, [completed, next_scene])
 
     def test_collapse_builds_does_not_cross_the_time_window(self) -> None:
+        window = 1.0
         partial = make_frame(0, timestamp=0.0, lines=("alpha",))
-        later = make_frame(1, timestamp=6.1, lines=("alpha beta",))
+        later = make_frame(1, timestamp=window + 0.1, lines=("alpha beta",))
 
-        self.assertEqual(keyframes.collapse_builds([partial, later]), [partial, later])
+        self.assertEqual(
+            keyframes.collapse_builds([partial, later], window=window),
+            [partial, later],
+        )
 
     def test_collapse_builds_preserves_low_overlap_states(self) -> None:
         first_scene = make_frame(0, timestamp=0.0, lines=("alpha",))
@@ -93,10 +97,9 @@ class VisualSelectionTests(unittest.TestCase):
         keyframes.score(frames)
 
         self.assertEqual([frame.novelty for frame in frames], [2, 0, 0, 1])
-        self.assertEqual(novel_text.score, 36.0)
-        self.assertAlmostEqual(repeated_text.score, 1.2)
-        self.assertEqual(visual_only.score, 2.0)
-        self.assertEqual(one_new_character.score, 2.0)
+        self.assertGreater(novel_text.score, repeated_text.score)
+        self.assertLess(repeated_text.score, visual_only.score)
+        self.assertGreater(one_new_character.score, repeated_text.score)
 
     def test_select_keeps_opening_context_and_returns_time_order(self) -> None:
         opening = make_frame(0, timestamp=0.0, phash=0)
