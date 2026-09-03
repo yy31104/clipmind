@@ -9,9 +9,10 @@ from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
 
 from . import evidence
-from .config import OUT_DIR, settings
+from .config import OUT_DIR, Settings, settings
 from .links import normalize_url, source_id_from_url
 from .pipeline import Pools, cleanup_temporary, process
+from .providers import ProviderBundle, default_providers
 from .storage import JobStorage
 
 
@@ -32,6 +33,7 @@ class Job:
     error: str | None = None
     error_code: str | None = None
     error_action: str | None = None
+    options: dict = field(default_factory=dict)
     result: dict | None = None
     created_at: float = field(default_factory=time.time)
     started_at: float | None = None
@@ -64,11 +66,19 @@ class Job:
 
 
 class JobStore:
-    def __init__(self, out_dir: Path | None = None) -> None:
+    def __init__(
+        self,
+        out_dir: Path | None = None,
+        *,
+        config: Settings | None = None,
+        providers: ProviderBundle | None = None,
+    ) -> None:
+        self.config = config or settings
+        self.providers = providers or default_providers(self.config)
         self.jobs: dict[str, Job] = {}
         self.storage = JobStorage(out_dir if out_dir is not None else OUT_DIR)
-        self.pools = Pools()
-        self._slots = asyncio.Semaphore(settings.max_videos)
+        self.pools = Pools.from_settings(self.config)
+        self._slots = asyncio.Semaphore(self.config.max_videos)
         self._subscribers: set[asyncio.Queue] = set()
         self._tasks: set[asyncio.Task] = set()
         self._started = False
@@ -121,8 +131,13 @@ class JobStore:
                 self._persist(job)
                 self._publish(job)
 
-    def submit(self, url: str, title: str) -> Job:
-        job = Job(id=uuid.uuid4().hex[:12], url=url, title=title or url)
+    def submit(self, url: str, title: str, *, options: dict | None = None) -> Job:
+        job = Job(
+            id=uuid.uuid4().hex[:12],
+            url=url,
+            title=title or url,
+            options=dict(options or {}),
+        )
         self._persist(job)
         self.jobs[job.id] = job
         self._schedule(job)
@@ -178,7 +193,12 @@ class JobStore:
 
             try:
                 job.result = await process(
-                    job.url, self.workdir(job.id), self.pools, report
+                    job.url,
+                    self.workdir(job.id),
+                    self.pools,
+                    report,
+                    config=self.config,
+                    providers=self.providers,
                 )
                 job.title = job.result.get("title") or job.title
                 job.status, job.stage, job.progress = "done", "done", 1.0

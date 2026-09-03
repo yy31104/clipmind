@@ -40,9 +40,45 @@ class FetchErrorTests(unittest.TestCase):
 
     def test_safari_is_not_a_default_cookie_source(self) -> None:
         with patch.dict("os.environ", {}, clear=True):
-            configured = Settings()
+            configured = Settings.from_env()
 
         self.assertEqual(configured.cookie_sources, ("chrome", "-"))
+
+    def test_settings_are_rebuilt_from_the_current_environment(self) -> None:
+        with patch.dict(
+            "os.environ",
+            {
+                "CLIPMIND_SAMPLE_FPS": "3.5",
+                "CLIPMIND_OCR_LANGUAGES": "en-US, ja-JP",
+            },
+            clear=True,
+        ):
+            first = Settings.from_env()
+        with patch.dict(
+            "os.environ",
+            {"CLIPMIND_SAMPLE_FPS": "1.25"},
+            clear=True,
+        ):
+            second = Settings.from_env()
+
+        self.assertEqual(first.sample_fps, 3.5)
+        self.assertEqual(first.ocr_languages, ("en-US", "ja-JP"))
+        self.assertEqual(second.sample_fps, 1.25)
+        self.assertNotEqual(first.sample_fps, second.sample_fps)
+
+    def test_invalid_numeric_environment_values_fall_back_safely(self) -> None:
+        with patch.dict(
+            "os.environ",
+            {
+                "CLIPMIND_SAMPLE_FPS": "not-a-number",
+                "CLIPMIND_MAX_VIDEOS": "not-an-integer",
+            },
+            clear=True,
+        ):
+            configured = Settings.from_env()
+
+        self.assertEqual(configured.sample_fps, 2.0)
+        self.assertEqual(configured.max_videos, 4)
 
 
 if __name__ == "__main__":
