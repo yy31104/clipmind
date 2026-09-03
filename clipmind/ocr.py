@@ -12,6 +12,7 @@ Two things this module is careful about:
 from __future__ import annotations
 
 import threading
+import shutil
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -91,6 +92,42 @@ class VisionTextRecognizer:
 
     def read_text(self, image: Path) -> list[str]:
         return read_text(image, languages=self.config.ocr_languages)
+
+
+def tesseract_available() -> bool:
+    if not shutil.which("tesseract"):
+        return False
+    try:
+        import pytesseract  # noqa: F401
+        return True
+    except Exception:
+        return False
+
+
+@dataclass(frozen=True)
+class TesseractTextRecognizer:
+    """Portable OCR fallback for Linux, Windows and non-Vision macOS hosts."""
+
+    config: Settings
+    name: str = "tesseract"
+
+    def available(self) -> bool:
+        return tesseract_available()
+
+    def read_text(self, image: Path) -> list[str]:
+        if not self.available():
+            raise OCRError(
+                "Tesseract unavailable; install tesseract and the portable OCR extra"
+            )
+        import pytesseract
+        from PIL import Image
+
+        with Image.open(image) as source:
+            text = pytesseract.image_to_string(
+                source,
+                lang=self.config.tesseract_languages,
+            )
+        return [line.strip() for line in text.splitlines() if line.strip()]
 
 
 def available() -> bool:

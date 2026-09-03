@@ -69,8 +69,14 @@ class Settings:
     estimated_pack_mb_per_state: float = 0.08
 
     # --- speech ---
+    asr_provider: str = "auto"
     asr_model: str = "mlx-community/whisper-large-v3-turbo"
+    faster_whisper_model: str = "large-v3-turbo"
     asr_language: str | None = "zh"
+
+    # --- OCR provider ---
+    ocr_provider: str = "auto"
+    tesseract_languages: str = "chi_sim+chi_tra+eng"
 
     # --- concurrency ---
     # Distinct resource pools so one heavy stage cannot starve the others.
@@ -113,7 +119,15 @@ class Settings:
             asr_model=os.getenv(
                 "CLIPMIND_ASR_MODEL", "mlx-community/whisper-large-v3-turbo"
             ),
+            asr_provider=os.getenv("CLIPMIND_ASR_PROVIDER", "auto").casefold(),
+            faster_whisper_model=os.getenv(
+                "CLIPMIND_FASTER_WHISPER_MODEL", "large-v3-turbo"
+            ),
             asr_language=os.getenv("CLIPMIND_ASR_LANGUAGE", "zh") or None,
+            ocr_provider=os.getenv("CLIPMIND_OCR_PROVIDER", "auto").casefold(),
+            tesseract_languages=os.getenv(
+                "CLIPMIND_TESSERACT_LANGUAGES", "chi_sim+chi_tra+eng"
+            ),
             max_videos=_int("CLIPMIND_MAX_VIDEOS", 4),
             max_fetch=_int("CLIPMIND_MAX_FETCH", 4),
             max_asr=_int("CLIPMIND_MAX_ASR", 1),

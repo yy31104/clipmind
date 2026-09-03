@@ -80,6 +80,20 @@ class FetchErrorTests(unittest.TestCase):
         self.assertEqual(configured.sample_fps, 2.0)
         self.assertEqual(configured.max_videos, 4)
 
+    def test_provider_choices_are_runtime_configuration(self) -> None:
+        with patch.dict(
+            "os.environ",
+            {
+                "CLIPMIND_ASR_PROVIDER": "FASTER-WHISPER",
+                "CLIPMIND_OCR_PROVIDER": "TESSERACT",
+            },
+            clear=True,
+        ):
+            configured = Settings.from_env()
+
+        self.assertEqual(configured.asr_provider, "faster-whisper")
+        self.assertEqual(configured.ocr_provider, "tesseract")
+
 
 if __name__ == "__main__":
     unittest.main()
