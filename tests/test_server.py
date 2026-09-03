@@ -9,7 +9,7 @@ from fastapi import HTTPException
 
 from clipmind import server
 from clipmind.asr import Segment, Transcript
-from clipmind.config import Settings
+from clipmind.config import Settings, WEB_DIR
 from clipmind.fetch import FetchError
 from clipmind.jobs import Job, JobStore
 from clipmind.media import Frame
@@ -71,9 +71,7 @@ class ServerEventTests(unittest.IsolatedAsyncioTestCase):
             self.assertNotIn(queue, test_store._subscribers)
 
     def test_frontend_refreshes_snapshot_for_hello_and_resync(self) -> None:
-        source = (
-            Path(__file__).resolve().parents[1] / "web" / "app.js"
-        ).read_text(encoding="utf-8")
+        source = (WEB_DIR / "app.js").read_text(encoding="utf-8")
 
         self.assertIn(
             'if (job.type === "hello" || job.type === "resync") {\n'
