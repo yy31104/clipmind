@@ -2,9 +2,9 @@ import asyncio
 import tempfile
 import unittest
 from pathlib import Path
-from types import SimpleNamespace
 from unittest.mock import patch
 
+from clipmind.config import Settings
 from clipmind.jobs import Job, JobStore
 
 
@@ -107,7 +107,7 @@ class JobStoreTests(unittest.IsolatedAsyncioTestCase):
         )
 
     async def test_successful_job_emits_queued_running_done(self) -> None:
-        async def successful_process(url, workdir, pools, report):
+        async def successful_process(url, workdir, pools, report, **kwargs):
             report("fetching", 0.7, "fetching")
             report("analysing", 0.3, "late lower progress")
             report("writing", 0.95, "writing")
@@ -132,8 +132,27 @@ class JobStoreTests(unittest.IsolatedAsyncioTestCase):
         self.assertIsNotNone(job.started_at)
         self.assertIsNotNone(job.finished_at)
 
+    async def test_job_store_passes_its_config_and_providers_to_the_pipeline(self) -> None:
+        observed: dict = {}
+        configured = Settings(sample_fps=3.0)
+        providers = object()
+
+        async def inspect_process(url, workdir, pools, report, **kwargs):
+            observed.update(kwargs)
+            return {"title": "Done"}
+
+        store = JobStore(config=configured, providers=providers)  # type: ignore[arg-type]
+        queue = store.subscribe()
+        with patch("clipmind.jobs.process", new=inspect_process):
+            job = store.submit("https://example.com/video", "Video")
+            await self._events_until_terminal(queue)
+
+        self.assertIs(observed["config"], configured)
+        self.assertIs(observed["providers"], providers)
+        self.assertEqual(job.status, "done")
+
     async def test_fatal_failure_emits_queued_running_error(self) -> None:
-        async def failing_process(url, workdir, pools, report):
+        async def failing_process(url, workdir, pools, report, **kwargs):
             raise RuntimeError("ingestion unavailable")
 
         store = JobStore()
@@ -156,7 +175,7 @@ class JobStoreTests(unittest.IsolatedAsyncioTestCase):
         both_entered = asyncio.Event()
         release = asyncio.Event()
 
-        async def gated_process(url, workdir, pools, report):
+        async def gated_process(url, workdir, pools, report, **kwargs):
             nonlocal entered
             entered += 1
             if entered == 2:
@@ -164,11 +183,8 @@ class JobStoreTests(unittest.IsolatedAsyncioTestCase):
             await release.wait()
             return {"title": url}
 
-        with (
-            patch("clipmind.jobs.settings", SimpleNamespace(max_videos=2)),
-            patch("clipmind.jobs.process", new=gated_process),
-        ):
-            store = JobStore()
+        with patch("clipmind.jobs.process", new=gated_process):
+            store = JobStore(config=Settings(max_videos=2))
             queue = store.subscribe()
             first = store.submit("https://v.douyin.com/first", "First")
             second = store.submit("https://v.douyin.com/second", "Second")
@@ -190,7 +206,7 @@ class JobStoreTests(unittest.IsolatedAsyncioTestCase):
         first_wave = asyncio.Event()
         release = asyncio.Event()
 
-        async def gated_process(url, workdir, pools, report):
+        async def gated_process(url, workdir, pools, report, **kwargs):
             nonlocal running, peak
             running += 1
             peak = max(peak, running)
@@ -200,11 +216,8 @@ class JobStoreTests(unittest.IsolatedAsyncioTestCase):
             running -= 1
             return {"title": url}
 
-        with (
-            patch("clipmind.jobs.settings", SimpleNamespace(max_videos=2)),
-            patch("clipmind.jobs.process", new=gated_process),
-        ):
-            store = JobStore()
+        with patch("clipmind.jobs.process", new=gated_process):
+            store = JobStore(config=Settings(max_videos=2))
             jobs = [
                 store.submit(f"https://v.douyin.com/{index}", str(index))
                 for index in range(5)

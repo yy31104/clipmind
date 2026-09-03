@@ -67,11 +67,12 @@ async def sample_frames(
     video: Path,
     dest_dir: Path,
     *,
+    fps: float | None = None,
     width: int | None = None,
 ) -> list[Frame]:
     """Uniformly sample frames at a requested width."""
     dest_dir.mkdir(parents=True, exist_ok=True)
-    fps = settings.sample_fps
+    fps = settings.sample_fps if fps is None else fps
     width = settings.sample_width if width is None else width
     await _ffmpeg([
         "-i", str(video),

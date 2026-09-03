@@ -3,13 +3,13 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from types import SimpleNamespace
 from unittest.mock import patch
 
 from fastapi import HTTPException
 
 from clipmind import server
 from clipmind.asr import Segment, Transcript
+from clipmind.config import Settings
 from clipmind.fetch import FetchError
 from clipmind.jobs import Job, JobStore
 from clipmind.media import Frame
@@ -83,11 +83,14 @@ class ServerEventTests(unittest.IsolatedAsyncioTestCase):
         )
 
     async def test_handoff_requires_an_explicit_inbox_configuration(self) -> None:
-        with patch.object(
-            server, "settings", SimpleNamespace(knowledge_base_inbox=None)
-        ):
-            with self.assertRaises(HTTPException) as raised:
-                await server.send_to_knowledge_base("job-1")
+        with tempfile.TemporaryDirectory() as tempdir:
+            test_store = JobStore(
+                Path(tempdir) / "out",
+                config=Settings(knowledge_base_inbox=None),
+            )
+            with patch.object(server, "store", test_store):
+                with self.assertRaises(HTTPException) as raised:
+                    await server.send_to_knowledge_base("job-1")
 
         self.assertEqual(raised.exception.status_code, 409)
         self.assertIn("CLIPMIND_KB_INBOX", raised.exception.detail)
@@ -143,7 +146,7 @@ class ServerEventTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(raised.exception.status_code, 404)
 
     async def test_sse_serializes_done_and_error_terminal_events(self) -> None:
-        async def fake_process(url, workdir, pools, report):
+        async def fake_process(url, workdir, pools, report, **kwargs):
             report("fetching", 0.2, "fetching")
             if url.endswith("/error"):
                 raise FetchError(
@@ -201,7 +204,7 @@ class ServerEventTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("fresh share link", error_event["error_action"])
 
     async def test_submit_reuses_a_complete_pack_and_reprocess_is_explicit(self) -> None:
-        async def fake_process(url, workdir, pools, report):
+        async def fake_process(url, workdir, pools, report, **kwargs):
             return {"id": "123", "title": "Reprocessed"}
 
         with tempfile.TemporaryDirectory() as tempdir:
@@ -241,7 +244,7 @@ class ServerEventTests(unittest.IsolatedAsyncioTestCase):
         with tempfile.TemporaryDirectory() as tempdir:
             out_dir = Path(tempdir) / "out"
 
-            async def fake_process(url, workdir, pools, report):
+            async def fake_process(url, workdir, pools, report, **kwargs):
                 (workdir / "note.md").write_text("persisted note", encoding="utf-8")
                 (workdir / "transcript.json").write_text(
                     '[{"start": 0, "end": 1, "text": "persisted"}]',

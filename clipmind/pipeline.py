@@ -13,8 +13,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from . import asr, evidence, media, render, visual_states
-from .config import settings
+from .config import Settings, settings
 from .fetch import fetch
+from .providers import ProviderBundle, default_providers
 
 # (label, share of the bar) - fetch and the two analysis legs dominate.
 STAGES = (
@@ -35,6 +36,14 @@ class Pools:
     ocr: asyncio.Semaphore = field(
         default_factory=lambda: asyncio.Semaphore(settings.max_ocr))
 
+    @classmethod
+    def from_settings(cls, config: Settings) -> Pools:
+        return cls(
+            fetch=asyncio.Semaphore(config.max_fetch),
+            asr=asyncio.Semaphore(config.max_asr),
+            ocr=asyncio.Semaphore(config.max_ocr),
+        )
+
 
 def cleanup_temporary(workdir: Path, keep_source: bool = False) -> None:
     """Remove pipeline-owned temporary files without touching final artifacts."""
@@ -51,12 +60,22 @@ def cleanup_temporary(workdir: Path, keep_source: bool = False) -> None:
             pass
 
 
-async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
+async def process(
+    url: str,
+    workdir: Path,
+    pools: Pools,
+    report,
+    *,
+    config: Settings | None = None,
+    providers: ProviderBundle | None = None,
+) -> dict:
     """Run one video end to end. ``report(stage, progress, note)`` drives the UI."""
+    config = config or settings
     workdir.mkdir(parents=True, exist_ok=True)
     base = 0.0
     completed = False
     timings: dict[str, float] = {}
+    providers = providers or default_providers(config)
 
     try:
         # --- acquire -------------------------------------------------------
@@ -66,6 +85,7 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
             item = await fetch(
                 url, workdir,
                 on_note=lambda n: report("fetching", base, n),
+                config=config,
             )
         timings["acquisition_seconds"] = round(time.perf_counter() - stage_started, 3)
         base += STAGES[0][1]
@@ -74,12 +94,18 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
         # --- cheap prep ----------------------------------------------------
         stage_started = time.perf_counter()
         audio_path = await media.extract_audio(item.video_path, workdir / "audio.wav")
-        candidates = await media.sample_frames(item.video_path, workdir / "samples")
-        unique = media.dedupe(candidates)
+        candidates = await media.sample_frames(
+            item.video_path,
+            workdir / "samples",
+            fps=config.sample_fps,
+            width=config.sample_width,
+        )
+        unique = media.dedupe(candidates, threshold=config.dedupe_threshold)
         evidence_candidates = await media.sample_frames(
             item.video_path,
             workdir / "evidence_samples",
-            width=settings.evidence_width,
+            fps=config.sample_fps,
+            width=config.evidence_width,
         )
         canonical = visual_states.retain_all(
             unique,
@@ -108,12 +134,14 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
             async with pools.asr:
                 report("analysing", base + 0.05, "transcribing speech")
                 started = time.perf_counter()
-                value = await asr.transcribe(audio_path)
+                value = await providers.transcript.transcribe(audio_path)
                 return value, round(time.perf_counter() - started, 3)
 
         async def vision():
             started = time.perf_counter()
-            problem = await visual_states.annotate(canonical, pools.ocr)
+            problem = await visual_states.annotate(
+                canonical, pools.ocr, providers.text
+            )
             ocr_seconds = round(time.perf_counter() - started, 3)
             report("analysing", base + 0.05, problem or "reading on-screen text")
             build_groups = visual_states.group_progressive_builds(canonical)
@@ -152,6 +180,7 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
             candidate_frame_count=len(candidates),
             ocr_error=ocr_error,
             timings=timings,
+            config=config,
         )
         base += STAGES[2][1]
         report("writing", base, f"{len(preview)} preview states, "
@@ -191,7 +220,7 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
         try:
             cleanup_temporary(
                 workdir,
-                keep_source=completed and settings.keep_source_video,
+                keep_source=completed and config.keep_source_video,
             )
         except Exception:  # noqa: BLE001 - cleanup must not replace the root error
             pass

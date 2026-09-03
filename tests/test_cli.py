@@ -36,7 +36,7 @@ class CLITests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("reused", stdout.getvalue())
 
     async def test_cli_uses_durable_job_store_and_reports_evidence_pack(self) -> None:
-        async def fake_process(url, workdir, pools, report):
+        async def fake_process(url, workdir, pools, report, **kwargs):
             report("writing", 0.9, "writing evidence")
             (workdir / "manifest.json").write_text(
                 '{"schema":{"name":"clipmind-evidence-pack","version":"1.0.0"}}',

@@ -12,9 +12,10 @@ Two things this module is careful about:
 from __future__ import annotations
 
 import threading
+from dataclasses import dataclass
 from pathlib import Path
 
-from .config import settings
+from .config import Settings, settings
 
 _IMPORT_ERROR: str | None = None
 try:
@@ -33,7 +34,12 @@ class OCRError(RuntimeError):
     pass
 
 
-def read_text(path: Path, min_confidence: float = 0.4) -> list[str]:
+def read_text(
+    path: Path,
+    min_confidence: float = 0.4,
+    *,
+    languages: tuple[str, ...] | None = None,
+) -> list[str]:
     """Recognised text lines, ordered top-to-bottom.
 
     Raises OCRError so callers can distinguish "no text in this frame" from
@@ -49,7 +55,7 @@ def read_text(path: Path, min_confidence: float = 0.4) -> list[str]:
             raise OCRError(f"could not open image: {path}")
 
         request = Vision.VNRecognizeTextRequest.alloc().init()
-        request.setRecognitionLanguages_(list(settings.ocr_languages))
+        request.setRecognitionLanguages_(list(languages or settings.ocr_languages))
         request.setRecognitionLevel_(0)  # accurate
         request.setUsesLanguageCorrection_(True)
 
@@ -73,6 +79,18 @@ def read_text(path: Path, min_confidence: float = 0.4) -> list[str]:
             if text:
                 lines.append(text)
         return lines
+
+
+@dataclass(frozen=True)
+class VisionTextRecognizer:
+    config: Settings
+    name: str = "apple-vision"
+
+    def available(self) -> bool:
+        return available()
+
+    def read_text(self, image: Path) -> list[str]:
+        return read_text(image, languages=self.config.ocr_languages)
 
 
 def available() -> bool:

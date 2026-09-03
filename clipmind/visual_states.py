@@ -13,6 +13,7 @@ from typing import Iterable
 
 from . import media, ocr
 from .media import Frame
+from .providers import TextRecognizer
 
 PREVIEW_ALGORITHM = "adaptive-scene-text-v1"
 
@@ -193,7 +194,11 @@ def _replaces_visible_text(
 
 
 
-async def annotate(frames: list[Frame], ocr_semaphore: asyncio.Semaphore) -> str | None:
+async def annotate(
+    frames: list[Frame],
+    ocr_semaphore: asyncio.Semaphore,
+    recognizer: TextRecognizer | None = None,
+) -> str | None:
     """Attach OCR text to each frame. Returns an error string if OCR misbehaved.
 
     A frame that fails to OCR simply carries no text; losing on-screen text
@@ -205,7 +210,8 @@ async def annotate(frames: list[Frame], ocr_semaphore: asyncio.Semaphore) -> str
         frame.ocr_warning = None
         async with ocr_semaphore:
             try:
-                lines = await asyncio.to_thread(ocr.read_text, frame.path)
+                reader = recognizer.read_text if recognizer is not None else ocr.read_text
+                lines = await asyncio.to_thread(reader, frame.path)
             except Exception as exc:  # noqa: BLE001
                 frame.ocr_warning = (
                     f"{type(exc).__name__}: Vision OCR failed; image retained"

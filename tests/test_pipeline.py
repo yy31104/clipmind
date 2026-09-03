@@ -32,7 +32,7 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
             ocr=asyncio.Semaphore(2),
         )
 
-    async def fake_fetch(self, url, workdir, on_note=None) -> Media:
+    async def fake_fetch(self, url, workdir, on_note=None, config=None) -> Media:
         workdir.mkdir(parents=True, exist_ok=True)
         self.source_path.write_bytes(b"source media")
         if on_note:
@@ -52,19 +52,21 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         dest.write_bytes(b"audio")
         return dest
 
-    async def fake_sample_frames(self, video, dest_dir, *, width=None) -> list[Frame]:
+    async def fake_sample_frames(
+        self, video, dest_dir, *, fps=None, width=None
+    ) -> list[Frame]:
         dest_dir.mkdir(parents=True, exist_ok=True)
         path = dest_dir / "s_00001.jpg"
         path.write_bytes(b"high-resolution sample" if width else b"sample")
         return [Frame(index=0, timestamp=0.0, path=path)]
 
-    def fake_dedupe(self, frames) -> list[Frame]:
+    def fake_dedupe(self, frames, *, threshold=None) -> list[Frame]:
         return frames
 
     async def fake_transcribe(self, audio) -> Transcript:
         return Transcript([Segment(0.0, 1.0, "spoken text")])
 
-    async def fake_annotate(self, frames, semaphore) -> str | None:
+    async def fake_annotate(self, frames, semaphore, recognizer=None) -> str | None:
         frames[0].lines = ("screen text",)
         frames[0].text = "screen text"
         return None
@@ -116,7 +118,6 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
             "extract_audio": (pipeline.media, "extract_audio"),
             "sample_frames": (pipeline.media, "sample_frames"),
             "dedupe": (pipeline.media, "dedupe"),
-            "transcribe": (pipeline.asr, "transcribe"),
             "annotate": (pipeline.visual_states, "annotate"),
             "materialize": (pipeline.visual_states, "materialize_preview"),
             "write_pack": (pipeline.evidence, "write_pack"),
@@ -124,8 +125,28 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         }
         stack = ExitStack()
         for name, replacement in replacements.items():
+            if name == "transcribe":
+                continue
             target, attribute = targets[name]
             stack.enter_context(patch.object(target, attribute, new=replacement))
+        stack.enter_context(
+            patch.object(
+                pipeline,
+                "default_providers",
+                return_value=SimpleNamespace(
+                    transcript=SimpleNamespace(
+                        name="fake-transcript",
+                        available=lambda: True,
+                        transcribe=replacements["transcribe"],
+                    ),
+                    text=SimpleNamespace(
+                        name="fake-ocr",
+                        available=lambda: True,
+                        read_text=lambda path: [],
+                    ),
+                ),
+            )
+        )
         stack.enter_context(
             patch.object(
                 pipeline,
@@ -159,7 +180,7 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
             speech_done = True
             return Transcript([Segment(0.0, 1.0, "speech")])
 
-        async def gated_annotate(frames, semaphore) -> str | None:
+        async def gated_annotate(frames, semaphore, recognizer=None) -> str | None:
             nonlocal vision_done
             vision_started.set()
             await release.wait()
@@ -194,7 +215,7 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(pack_started.is_set())
 
     async def test_ocr_failure_degrades_without_killing_job(self) -> None:
-        async def failed_ocr(frames, semaphore) -> str:
+        async def failed_ocr(frames, semaphore, recognizer=None) -> str:
             return "OCR failed on 1/1 frames: injected failure"
 
         with self.patched_pipeline(annotate=failed_ocr):
@@ -225,6 +246,40 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(self.audio_path.exists())
         self.assertFalse((self.workdir / "samples").exists())
 
+    async def test_explicit_provider_bundle_controls_the_pipeline(self) -> None:
+        calls: list[Path | None] = []
+
+        class TranscriptProvider:
+            name = "test-transcript"
+
+            def available(self):
+                return True
+
+            async def transcribe(self, audio):
+                calls.append(audio)
+                return Transcript([Segment(0.0, 1.0, "provider transcript")])
+
+        providers = SimpleNamespace(
+            transcript=TranscriptProvider(),
+            text=SimpleNamespace(
+                name="test-ocr",
+                available=lambda: True,
+                read_text=lambda path: ["provider OCR"],
+            ),
+        )
+
+        with self.patched_pipeline():
+            result = await pipeline.process(
+                "https://v.douyin.com/example",
+                self.workdir,
+                self.pools(),
+                self.report,
+                providers=providers,
+            )
+
+        self.assertEqual(calls, [self.audio_path])
+        self.assertEqual(result["title"], "Video title")
+
     async def test_a_successful_job_writes_no_pre_evidence_pack_outputs(self) -> None:
         """The legacy layer is gone; nothing may quietly start writing it again."""
         # The real renderer, not the fake: a fake cannot prove the writer
@@ -246,7 +301,7 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(any((self.workdir / "visual_states" / "all").iterdir()))
 
     async def test_fatal_fetch_failure_raises_pipeline_error(self) -> None:
-        async def failed_fetch(url, workdir, on_note=None):
+        async def failed_fetch(url, workdir, on_note=None, config=None):
             raise FetchError(
                 "media_fetch_failed",
                 "ClipMind could not retrieve this video.",
@@ -293,7 +348,9 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(evidence_sample.parent.exists())
 
     async def test_canonical_and_content_driven_preview_are_not_capped(self) -> None:
-        async def many_samples(video, dest_dir, *, width=None) -> list[Frame]:
+        async def many_samples(
+            video, dest_dir, *, fps=None, width=None
+        ) -> list[Frame]:
             dest_dir.mkdir(parents=True, exist_ok=True)
             frames = []
             for index in range(13):
@@ -304,12 +361,12 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
                 frames.append(Frame(index=index, timestamp=index / 2, path=path))
             return frames
 
-        def dedupe_without_opening(frames) -> list[Frame]:
+        def dedupe_without_opening(frames, *, threshold=None) -> list[Frame]:
             for frame in frames:
                 frame.phash = 0 if frame.index % 2 == 0 else (1 << 64) - 1
             return frames[1:]
 
-        async def annotate_all(frames, semaphore) -> str | None:
+        async def annotate_all(frames, semaphore, recognizer=None) -> str | None:
             # Preview opening-context logic only receives canonical frames.
             self.assertEqual([frame.index for frame in frames], list(range(1, 13)))
             return None
@@ -369,7 +426,9 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse((self.workdir / "evidence_samples").exists())
 
     async def test_dedupe_failure_is_retained_and_serialized(self) -> None:
-        async def two_samples(video, dest_dir, *, width=None) -> list[Frame]:
+        async def two_samples(
+            video, dest_dir, *, fps=None, width=None
+        ) -> list[Frame]:
             dest_dir.mkdir(parents=True, exist_ok=True)
             frames = []
             for index in range(2):
@@ -381,10 +440,10 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
 
         actual_dedupe = pipeline.media.dedupe
 
-        def dedupe_with_explicit_threshold(frames) -> list[Frame]:
+        def dedupe_with_explicit_threshold(frames, *, threshold=None) -> list[Frame]:
             return actual_dedupe(frames, threshold=0)
 
-        async def annotate_all(frames, semaphore) -> str | None:
+        async def annotate_all(frames, semaphore, recognizer=None) -> str | None:
             return None
 
         real_write_all = pipeline.render.write_all
@@ -416,7 +475,9 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         )
 
     async def test_progressive_build_metadata_compacts_only_the_preview(self) -> None:
-        async def build_samples(video, dest_dir, *, width=None) -> list[Frame]:
+        async def build_samples(
+            video, dest_dir, *, fps=None, width=None
+        ) -> list[Frame]:
             dest_dir.mkdir(parents=True, exist_ok=True)
             frames = []
             for index in range(3):
@@ -426,7 +487,7 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
                 frames.append(Frame(index=index, timestamp=float(index), path=path))
             return frames
 
-        async def annotate_build(frames, semaphore) -> str | None:
+        async def annotate_build(frames, semaphore, recognizer=None) -> str | None:
             texts = ("Python", "Python FastAPI", "Python FastAPI PostgreSQL")
             for frame, text in zip(frames, texts):
                 frame.text = text

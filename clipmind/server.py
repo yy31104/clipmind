@@ -12,7 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from . import handoff
-from .config import WEB_DIR, settings
+from .config import WEB_DIR
 from .jobs import JobStore
 from .links import extract_urls, guess_title, normalize_url
 
@@ -86,7 +86,7 @@ async def reprocess(job_id: str):
 
 @app.get("/api/jobs")
 async def listing():
-    return {"jobs": store.listing(), "capacity": settings.max_videos}
+    return {"jobs": store.listing(), "capacity": store.config.max_videos}
 
 
 @app.get("/api/jobs/{job_id}")
@@ -159,14 +159,14 @@ async def evidence_zip(job_id: str):
 
 @app.post("/api/jobs/{job_id}/handoff")
 async def send_to_knowledge_base(job_id: str):
-    if settings.knowledge_base_inbox is None:
+    if store.config.knowledge_base_inbox is None:
         raise HTTPException(
             409,
             "Knowledge Base Inbox is not configured. Set CLIPMIND_KB_INBOX and restart.",
         )
     try:
         return handoff.send_to_inbox(
-            _workdir(job_id), settings.knowledge_base_inbox
+            _workdir(job_id), store.config.knowledge_base_inbox
         )
     except handoff.EvidencePackError as exc:
         raise HTTPException(409, str(exc)) from exc
@@ -203,14 +203,15 @@ async def events():
 
 @app.get("/api/health")
 async def health():
-    from . import asr, ocr
     import shutil
     return {
         "yt_dlp": bool(shutil.which("yt-dlp")),
         "ffmpeg": bool(shutil.which("ffmpeg")),
-        "ocr": ocr.available(),
-        "asr": asr.available(),
-        "knowledge_base_inbox": settings.knowledge_base_inbox is not None,
+        "ocr": store.providers.text.available(),
+        "asr": store.providers.transcript.available(),
+        "ocr_provider": store.providers.text.name,
+        "asr_provider": store.providers.transcript.name,
+        "knowledge_base_inbox": store.config.knowledge_base_inbox is not None,
     }
 
 

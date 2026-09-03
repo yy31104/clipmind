@@ -3,9 +3,9 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from types import SimpleNamespace
 from unittest.mock import patch
 
+from clipmind.config import Settings
 from clipmind.jobs import JobStore
 
 
@@ -32,7 +32,7 @@ class JobRecoveryTests(unittest.IsolatedAsyncioTestCase):
     async def test_running_is_persisted_before_process_starts(self) -> None:
         observed_status: str | None = None
 
-        async def inspect_persisted_state(url, workdir, pools, report):
+        async def inspect_persisted_state(url, workdir, pools, report, **kwargs):
             nonlocal observed_status
             payload = json.loads((workdir / "job.json").read_text(encoding="utf-8"))
             observed_status = payload["job"]["status"]
@@ -50,13 +50,13 @@ class JobRecoveryTests(unittest.IsolatedAsyncioTestCase):
     async def test_queued_job_is_requeued_exactly_once_after_restart(self) -> None:
         process_calls = 0
 
-        async def recovered_process(url, workdir, pools, report):
+        async def recovered_process(url, workdir, pools, report, **kwargs):
             nonlocal process_calls
             process_calls += 1
             return {"title": "Recovered queued job"}
 
-        with patch("clipmind.jobs.settings", SimpleNamespace(max_videos=0)):
-            first = JobStore(self.out_dir)
+        with patch("clipmind.jobs.process", new=recovered_process):
+            first = JobStore(self.out_dir, config=Settings(max_videos=0))
             original = first.submit("https://v.douyin.com/queued", "Queued")
             await asyncio.sleep(0)
             persisted = json.loads(
@@ -79,7 +79,7 @@ class JobRecoveryTests(unittest.IsolatedAsyncioTestCase):
     async def test_running_job_becomes_interrupted_and_only_temp_is_cleaned(self) -> None:
         entered = asyncio.Event()
 
-        async def interrupted_process(url, workdir, pools, report):
+        async def interrupted_process(url, workdir, pools, report, **kwargs):
             (workdir / "samples").mkdir(parents=True)
             (workdir / "keyframes").mkdir()
             (workdir / "visual_states" / "all").mkdir(parents=True)
@@ -106,7 +106,7 @@ class JobRecoveryTests(unittest.IsolatedAsyncioTestCase):
 
         process_calls = 0
 
-        async def must_not_run(url, workdir, pools, report):
+        async def must_not_run(url, workdir, pools, report, **kwargs):
             nonlocal process_calls
             process_calls += 1
 
@@ -135,7 +135,7 @@ class JobRecoveryTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(process_calls, 0)
 
     async def test_done_and_error_jobs_restore_without_reprocessing(self) -> None:
-        async def terminal_process(url, workdir, pools, report):
+        async def terminal_process(url, workdir, pools, report, **kwargs):
             if url.endswith("/error"):
                 raise RuntimeError("persisted diagnostic")
             (workdir / "note.md").write_text("persisted note", encoding="utf-8")
@@ -152,7 +152,7 @@ class JobRecoveryTests(unittest.IsolatedAsyncioTestCase):
 
         process_calls = 0
 
-        async def must_not_run(url, workdir, pools, report):
+        async def must_not_run(url, workdir, pools, report, **kwargs):
             nonlocal process_calls
             process_calls += 1
 
