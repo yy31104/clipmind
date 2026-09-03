@@ -12,10 +12,10 @@ from .media import Frame
 from .visual_states import PREVIEW_ALGORITHM, BuildGroup
 
 SCHEMA_NAME = "clipmind-evidence-pack"
-SCHEMA_VERSION = "1.1.0"
-# 1.1.0 only adds fields to visual_timeline records, so packs written by 1.0.0
-# stay readable and reusable; we simply never backfill their new measurements.
-READABLE_SCHEMA_VERSIONS = frozenset({"1.0.0", "1.1.0"})
+SCHEMA_VERSION = "1.2.0"
+# Every v1 minor has been additive. Older packs remain readable; fields added
+# later are never synthesized because that would fabricate source evidence.
+READABLE_SCHEMA_VERSIONS = frozenset({"1.0.0", "1.1.0", "1.2.0"})
 PACK_ARTIFACTS = (
     "source.json",
     "job.json",
@@ -259,6 +259,7 @@ def write_pack(
     ocr_error: str | None = None,
     timings: dict[str, float] | None = None,
     config: Settings = settings,
+    preflight_result: dict | None = None,
 ) -> dict:
     """Write every canonical artifact, with manifest.json written last."""
     dest.mkdir(parents=True, exist_ok=True)
@@ -280,13 +281,14 @@ def write_pack(
     )
 
     source = {
-        "platform": "douyin",
-        "source_id": item.video_id,
+        "platform": item.platform,
+        "source_id": item.source_id,
         "url": item.webpage_url,
         "title": item.title,
         "uploader": item.uploader,
         "duration": item.duration,
         "acquisition_strategy": item.info.get("_clipmind_strategy"),
+        "source_adapter": item.info.get("_clipmind_source_adapter"),
     }
     _write_json(dest / "source.json", source)
     _write_jsonl(dest / "transcript.jsonl", transcript_records)
@@ -302,7 +304,7 @@ def write_pack(
     ocr_failures = sum(frame.ocr_warning is not None for frame in canonical)
     manifest = {
         "schema": {"name": SCHEMA_NAME, "version": SCHEMA_VERSION},
-        "source": {"platform": "douyin", "id": item.video_id},
+        "source": {"platform": item.platform, "id": item.source_id},
         "status": "complete",
         "artifacts": list(PACK_ARTIFACTS),
         "counts": {
@@ -343,6 +345,7 @@ def write_pack(
             "evidence_width": config.evidence_width,
             "dedupe_threshold": config.dedupe_threshold,
             "preview_algorithm": PREVIEW_ALGORITHM,
+            "preflight": preflight_result,
         },
     }
     _write_json(dest / "manifest.json", manifest)

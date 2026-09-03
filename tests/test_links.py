@@ -1,6 +1,6 @@
 import unittest
 
-from clipmind.links import extract_urls, normalize_url, source_id_from_url
+from clipmind.links import extract_sources, extract_urls, normalize_url, source_id_from_url
 
 
 class ExtractUrlsTests(unittest.TestCase):
@@ -11,6 +11,18 @@ class ExtractUrlsTests(unittest.TestCase):
         )
         self.assertEqual(source_id_from_url("https://www.douyin.com/video/123"), "123")
         self.assertIsNone(source_id_from_url("https://v.douyin.com/AbC-1"))
+        self.assertEqual(
+            normalize_url("https://youtu.be/AbCd123?si=tracking"),
+            "https://youtube.com/watch?v=AbCd123",
+        )
+        self.assertEqual(
+            normalize_url("https://www.youtube.com/watch?v=AbCd123&feature=share"),
+            "https://youtube.com/watch?v=AbCd123",
+        )
+        self.assertEqual(
+            source_id_from_url("https://www.bilibili.com/video/BV1abc123"),
+            "BV1abc123",
+        )
 
     def test_extracts_a_short_link_from_share_text(self) -> None:
         text = (
@@ -34,7 +46,7 @@ class ExtractUrlsTests(unittest.TestCase):
             extract_urls(text),
             [
                 "https://v.douyin.com/zmiAljffS3I",
-                "https://www.douyin.com/video/7461234567890123456",
+                "https://www.douyin.com/video/7461234567890123456?from=share",
                 "https://www.iesdouyin.com/share/note/7461234567890123457",
             ],
         )
@@ -51,9 +63,32 @@ class ExtractUrlsTests(unittest.TestCase):
         )
 
     def test_invalid_or_empty_text_has_no_links(self) -> None:
-        for text in ("", "普通文字", "https://example.com/video/123", None):
+        for text in ("", "普通文字", None):
             with self.subTest(text=text):
                 self.assertEqual(extract_urls(text), [])
+
+    def test_extracts_youtube_bilibili_and_generic_urls(self) -> None:
+        self.assertEqual(
+            extract_urls(
+                "watch https://youtu.be/AbC123, then "
+                "https://www.bilibili.com/video/BV1abc and "
+                "https://cdn.example.com/demo.mp4"
+            ),
+            [
+                "https://youtu.be/AbC123",
+                "https://www.bilibili.com/video/BV1abc",
+                "https://cdn.example.com/demo.mp4",
+            ],
+        )
+
+    def test_accepts_an_explicit_local_file(self) -> None:
+        import tempfile
+        from pathlib import Path
+
+        with tempfile.TemporaryDirectory() as tempdir:
+            source = Path(tempdir) / "clip.mp4"
+            source.write_bytes(b"media")
+            self.assertEqual(extract_sources(str(source)), [str(source.resolve())])
 
 
 if __name__ == "__main__":

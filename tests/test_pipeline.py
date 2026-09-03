@@ -9,6 +9,7 @@ from unittest.mock import patch
 
 from clipmind import pipeline, visual_states
 from clipmind.asr import Segment, Transcript
+from clipmind.config import Settings
 from clipmind.fetch import FetchError, Media
 from clipmind.media import Frame
 
@@ -92,6 +93,7 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         candidate_frame_count=None,
         evidence_manifest=None,
         stage_timings=None,
+        preflight_result=None,
     ) -> dict:
         self.rendered_ocr_error = ocr_error
         return {
@@ -151,7 +153,7 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
             patch.object(
                 pipeline,
                 "settings",
-                SimpleNamespace(
+                Settings(
                     keep_source_video=False,
                     evidence_width=1280,
                     sample_width=640,
@@ -324,6 +326,75 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(self.audio_path.exists())
         self.assertFalse((self.workdir / "samples").exists())
 
+    async def test_over_budget_stops_before_every_expensive_stage(self) -> None:
+        sample_calls = 0
+        expensive_calls: list[str] = []
+
+        async def low_cost_sample(video, dest_dir, *, fps=None, width=None):
+            nonlocal sample_calls
+            sample_calls += 1
+            if sample_calls > 1:
+                expensive_calls.append("high-resolution sampling")
+                raise AssertionError("high-resolution sampling must not start")
+            return await self.fake_sample_frames(
+                video, dest_dir, fps=fps, width=width
+            )
+
+        async def must_not_extract_audio(video, dest):
+            expensive_calls.append("audio")
+            raise AssertionError("audio extraction must not start")
+
+        configured = Settings(
+            max_canonical_states=0,
+            max_estimated_ocr_seconds=0,
+            max_estimated_pack_mb=0,
+        )
+        with self.patched_pipeline(
+            sample_frames=low_cost_sample,
+            extract_audio=must_not_extract_audio,
+        ):
+            with self.assertRaises(pipeline.preflight.CostLimitExceeded) as raised:
+                await pipeline.process(
+                    "https://youtu.be/expensive",
+                    self.workdir,
+                    self.pools(),
+                    self.report,
+                    config=configured,
+                )
+
+        self.assertEqual(expensive_calls, [])
+        self.assertEqual(sample_calls, 1)
+        self.assertEqual(raised.exception.details["estimated_canonical_states"], 1)
+        self.assertTrue((self.workdir / "preflight.json").exists())
+        self.assertFalse((self.workdir / "manifest.json").exists())
+        self.assertFalse((self.workdir / "samples").exists())
+        self.assertFalse(self.source_path.exists())
+
+    async def test_force_produces_a_complete_untruncated_pack(self) -> None:
+        configured = Settings(
+            max_canonical_states=0,
+            max_estimated_ocr_seconds=0,
+            max_estimated_pack_mb=0,
+        )
+        with self.patched_pipeline(write_all=pipeline.render.write_all):
+            result = await pipeline.process(
+                "https://youtu.be/expensive",
+                self.workdir,
+                self.pools(),
+                self.report,
+                config=configured,
+                options={"force": True},
+            )
+
+        self.assertTrue(result["preflight"]["forced"])
+        self.assertFalse(result["preflight"]["within_budget"])
+        self.assertEqual(result["canonical_visual_state_count"], 1)
+        manifest = json.loads(
+            (self.workdir / "manifest.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(manifest["status"], "complete")
+        self.assertTrue(manifest["configuration"]["preflight"]["forced"])
+
     def test_cleanup_preserves_canonical_visual_states(self) -> None:
         canonical = self.workdir / "visual_states" / "all" / "state.jpg"
         canonical.parent.mkdir(parents=True)
@@ -388,7 +459,7 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result["candidate_frame_count"], 13)
         self.assertEqual(result["canonical_visual_state_count"], 12)
         self.assertEqual(result["preview_frame_count"], 12)
-        self.assertEqual(result["evidence_pack"]["schema"]["version"], "1.1.0")
+        self.assertEqual(result["evidence_pack"]["schema"]["version"], "1.2.0")
         self.assertEqual(result["evidence_pack"]["manifest"], "manifest.json")
         self.assertEqual(result["dedupe_failure_count"], 0)
         self.assertEqual(len(result["visual_states"]), 12)

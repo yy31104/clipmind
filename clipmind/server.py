@@ -14,7 +14,7 @@ from pydantic import BaseModel
 from . import handoff
 from .config import WEB_DIR
 from .jobs import JobStore
-from .links import extract_urls, guess_title, normalize_url
+from .links import extract_sources, guess_title, normalize_url
 
 store = JobStore()
 
@@ -34,6 +34,11 @@ app = FastAPI(title="ClipMind", lifespan=lifespan)
 class SubmitBody(BaseModel):
     text: str
     reprocess: bool = False
+    force: bool = False
+
+
+class ReprocessBody(BaseModel):
+    force: bool = False
 
 
 def _workdir(job_id: str) -> Path:
@@ -45,9 +50,9 @@ def _workdir(job_id: str) -> Path:
 
 @app.post("/api/jobs")
 async def submit(body: SubmitBody):
-    urls = extract_urls(body.text)
+    urls = extract_sources(body.text)
     if not urls:
-        raise HTTPException(400, "没有在这段文字里找到抖音链接")
+        raise HTTPException(400, "No supported URL or local media source was found.")
     active = {
         normalize_url(j.url)
         for j in store.jobs.values()
@@ -64,7 +69,13 @@ async def submit(body: SubmitBody):
             jobs.append(cached.public())
             reused += 1
             continue
-        jobs.append(store.submit(url, guess_title(body.text, url) or url).public())
+        jobs.append(
+            store.submit(
+                url,
+                guess_title(body.text, url) or url,
+                options={"force": body.force},
+            ).public()
+        )
         active.add(cache_key)
     return {
         "jobs": jobs,
@@ -75,13 +86,17 @@ async def submit(body: SubmitBody):
 
 
 @app.post("/api/jobs/{job_id}/reprocess")
-async def reprocess(job_id: str):
+async def reprocess(job_id: str, body: ReprocessBody | None = None):
     source = store.jobs.get(job_id)
     if not source:
         raise HTTPException(404, "no such job")
     if source.status in {"queued", "running"}:
         raise HTTPException(409, "This job is already processing.")
-    return store.submit(source.url, source.title).public()
+    return store.submit(
+        source.url,
+        source.title,
+        options={"force": bool(body and body.force)},
+    ).public()
 
 
 @app.get("/api/jobs")

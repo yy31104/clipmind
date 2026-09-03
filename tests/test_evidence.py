@@ -52,6 +52,8 @@ class EvidencePackTests(unittest.TestCase):
                 "duration": 10.0,
                 "webpage_url": "https://www.douyin.com/video/123",
                 "_clipmind_strategy": "test",
+                "_clipmind_platform": "douyin",
+                "_clipmind_source_adapter": "douyin",
             },
         )
         return item, transcript, frames, preview, groups
@@ -104,7 +106,8 @@ class EvidencePackTests(unittest.TestCase):
                 first_bytes,
                 {name: (dest / name).read_bytes() for name in artifact_names},
             )
-            self.assertEqual(manifest["schema"]["version"], "1.1.0")
+            self.assertEqual(manifest["schema"]["version"], "1.2.0")
+            self.assertEqual(manifest["source"]["platform"], "douyin")
             self.assertEqual(manifest["status"], "complete")
             self.assertEqual(manifest["timings"], {"ocr_seconds": 1.25})
             self.assertEqual(manifest["counts"]["canonical_visual_states"], 2)
@@ -225,6 +228,17 @@ class SchemaCompatibilityTests(unittest.TestCase):
             manifest = evidence.load_complete_pack(dest)
 
         self.assertEqual(manifest["schema"]["version"], "1.0.0")
+
+    def test_schema_accepts_contributor_defined_source_platforms(self) -> None:
+        schema = json.loads(
+            (Path(__file__).parents[1] / "schemas" / "evidence-pack-v1.schema.json")
+            .read_text(encoding="utf-8")
+        )
+        platform = schema["properties"]["source"]["properties"]["platform"]
+
+        self.assertEqual(platform["type"], "string")
+        self.assertEqual(platform["minLength"], 1)
+        self.assertNotIn("enum", platform)
 
     def test_an_unknown_schema_version_is_still_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as tempdir:

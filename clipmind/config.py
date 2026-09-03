@@ -59,6 +59,15 @@ class Settings:
     dedupe_threshold: int = 6
     ocr_languages: tuple[str, ...] = ("zh-Hans", "zh-Hant", "en-US")
 
+    # --- complete-pack preflight budget ---
+    # Limits reject before ASR/OCR/high-resolution promotion. A user may
+    # explicitly force the complete job; ClipMind never truncates a pack.
+    max_canonical_states: int = 1000
+    max_estimated_ocr_seconds: float = 180.0
+    max_estimated_pack_mb: float = 150.0
+    estimated_ocr_seconds_per_state: float = 0.15
+    estimated_pack_mb_per_state: float = 0.08
+
     # --- speech ---
     asr_model: str = "mlx-community/whisper-large-v3-turbo"
     asr_language: str | None = "zh"
@@ -86,6 +95,19 @@ class Settings:
             dedupe_threshold=_int("CLIPMIND_DEDUPE_THRESHOLD", 6),
             ocr_languages=_csv(
                 "CLIPMIND_OCR_LANGUAGES", "zh-Hans,zh-Hant,en-US"
+            ),
+            max_canonical_states=_int("CLIPMIND_MAX_CANONICAL_STATES", 1000),
+            max_estimated_ocr_seconds=_float(
+                "CLIPMIND_MAX_ESTIMATED_OCR_SECONDS", 180.0
+            ),
+            max_estimated_pack_mb=_float(
+                "CLIPMIND_MAX_ESTIMATED_PACK_MB", 150.0
+            ),
+            estimated_ocr_seconds_per_state=_float(
+                "CLIPMIND_ESTIMATED_OCR_SECONDS_PER_STATE", 0.15
+            ),
+            estimated_pack_mb_per_state=_float(
+                "CLIPMIND_ESTIMATED_PACK_MB_PER_STATE", 0.08
             ),
             asr_model=os.getenv(
                 "CLIPMIND_ASR_MODEL", "mlx-community/whisper-large-v3-turbo"

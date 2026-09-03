@@ -1,9 +1,8 @@
-"""Acquire media for a share link, trying progressively more privileged routes.
+"""Acquire URL or local media through a platform-neutral source adapter.
 
 Ladder (first success wins, and the winning strategy is cached for the batch):
-    1. yt-dlp with the configured browser's cookies  (handles Douyin's
-       "fresh cookies needed" gate using the session you already have)
-    2. yt-dlp with no cookies at all
+    1. yt-dlp with each configured browser-cookie source
+    2. yt-dlp with no cookies at all (when ``-`` is configured)
     3. yt-dlp with a user-supplied cookies.txt
 
 If every rung fails we raise FetchError carrying the last stderr so the UI can
@@ -12,31 +11,29 @@ tell the user *why* rather than just "failed".
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import json
 import logging
 import shutil
-from dataclasses import dataclass
 from pathlib import Path
+from urllib.parse import quote
 
 from .config import Settings, settings
+from .sources import MediaAsset, SourceError, adapter_for
 
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
 
 
-class FetchError(RuntimeError):
-    def __init__(self, code: str, user_message: str, action: str) -> None:
-        super().__init__(user_message)
-        self.code = code
-        self.user_message = user_message
-        self.action = action
+class FetchError(SourceError):
+    pass
 
 
-def _fetch_error(errors: list[str]) -> FetchError:
+def _fetch_error(errors: list[str], platform: str = "source") -> FetchError:
     diagnostic = "\n".join(errors)
     lowered = diagnostic.lower()
-    logger.warning("Douyin acquisition failed after all strategies: %s", diagnostic)
+    logger.warning("%s acquisition failed after all strategies: %s", platform, diagnostic)
     if (
         "private video" in lowered
         or "video is private" in lowered
@@ -45,20 +42,20 @@ def _fetch_error(errors: list[str]) -> FetchError:
     ):
         return FetchError(
             "private_video",
-            "This Douyin video is private.",
+            f"This {platform} video is private.",
             "Use a public video or change its visibility, then retry.",
         )
     if "fresh cookies" in lowered:
         return FetchError(
             "cookies_stale",
-            "Douyin rejected the browser cookies.",
-            "Open Douyin in Chrome, refresh the page, then copy a fresh share link and retry.",
+            f"{platform.title()} rejected the browser cookies.",
+            f"Open {platform.title()} in Chrome, refresh the page, then copy a fresh share link and retry.",
         )
     if "sign in" in lowered or "login required" in lowered or "log in" in lowered:
         return FetchError(
             "login_required",
-            "Douyin requires a signed-in Chrome session for this video.",
-            "Sign in to Douyin in Chrome, refresh the video, and retry.",
+            f"{platform.title()} requires a signed-in Chrome session for this video.",
+            f"Sign in to {platform.title()} in Chrome, refresh the video, and retry.",
         )
     if (
         "could not copy chrome cookie" in lowered
@@ -74,43 +71,18 @@ def _fetch_error(errors: list[str]) -> FetchError:
     if "unsupported url" in lowered or "not available" in lowered or "removed" in lowered:
         return FetchError(
             "link_unavailable",
-            "This Douyin share link is expired or unavailable.",
-            "Copy a fresh share link from Douyin and try again.",
+            f"This {platform} link is expired or unavailable.",
+            f"Copy a fresh share link from {platform.title()} and try again.",
         )
     return FetchError(
         "media_fetch_failed",
         "ClipMind could not retrieve this video.",
-        "Check that the link opens in Chrome, then copy a fresh share link and retry.",
+        "Check that the URL opens in a browser, then copy a fresh link and retry.",
     )
 
 
-@dataclass
-class Media:
-    video_path: Path
-    info: dict
-
-    @property
-    def video_id(self) -> str:
-        return str(self.info.get("id") or "unknown")
-
-    @property
-    def title(self) -> str:
-        return (self.info.get("title") or "").strip() or self.video_id
-
-    @property
-    def duration(self) -> float:
-        try:
-            return float(self.info.get("duration") or 0.0)
-        except (TypeError, ValueError):
-            return 0.0
-
-    @property
-    def uploader(self) -> str | None:
-        return self.info.get("uploader") or self.info.get("channel")
-
-    @property
-    def webpage_url(self) -> str | None:
-        return self.info.get("webpage_url")
+# Compatibility import used by existing integrations and older tests.
+Media = MediaAsset
 
 
 # Remembering what worked saves a doomed round-trip per video in a batch.
@@ -160,15 +132,23 @@ async def fetch(
     on_note=None,
     *,
     config: Settings = settings,
-) -> Media:
-    """Download the video into ``workdir`` and return it with its metadata."""
+) -> MediaAsset:
+    """Materialize one supported source into ``workdir`` with normalized metadata."""
     global _winning_source
+
+    try:
+        adapter = adapter_for(url)
+    except SourceError as exc:
+        raise FetchError(exc.code, exc.user_message, exc.action) from exc
+
+    if adapter.local:
+        return await _fetch_local(url, workdir, adapter)
 
     if not shutil.which("yt-dlp"):
         raise FetchError(
             "missing_dependency",
             "yt-dlp is not installed.",
-            "Install it with `brew install yt-dlp`, then restart ClipMind.",
+            "Install ClipMind's dependencies (including yt-dlp), then restart ClipMind.",
         )
 
     workdir.mkdir(parents=True, exist_ok=True)
@@ -215,9 +195,70 @@ async def fetch(
         async with _lock:
             _winning_source = source
         info["_clipmind_strategy"] = _describe(source)
-        return Media(video_path=path, info=info)
+        return MediaAsset(
+            media_path=path,
+            info=adapter.normalize_info(url, info),
+        )
 
-    raise _fetch_error(errors[-4:])
+    raise _fetch_error(errors[-4:], adapter.platform)
+
+
+async def _fetch_local(url: str, workdir: Path, adapter) -> MediaAsset:
+    source = Path(url.removeprefix("file://")).expanduser().resolve()
+    if not source.is_file():
+        raise FetchError(
+            "local_file_unavailable",
+            "The selected local media file is unavailable.",
+            "Choose an existing readable media file and retry.",
+        )
+    workdir.mkdir(parents=True, exist_ok=True)
+    suffix = source.suffix.casefold() or ".media"
+    dest = workdir / f"source{suffix}"
+    await asyncio.to_thread(shutil.copy2, source, dest)
+    metadata = await _probe_local(dest)
+    digest = await asyncio.to_thread(_sha256, dest)
+    info = adapter.normalize_info(
+        str(source),
+        {
+            **metadata,
+            "id": digest,
+            "title": source.stem,
+            # Evidence Pack provenance may be shared. Preserve the filename but
+            # never publish the user's absolute local directory.
+            "webpage_url": f"local:///{quote(source.name)}",
+            "_clipmind_strategy": "local file copy",
+        },
+    )
+    return MediaAsset(media_path=dest, info=info)
+
+
+async def _probe_local(path: Path) -> dict:
+    if not shutil.which("ffprobe"):
+        return {"duration": 0.0}
+    code, out, _err = await _run(
+        [
+            "ffprobe",
+            "-v", "error",
+            "-show_entries", "format=duration",
+            "-of", "json",
+            str(path),
+        ]
+    )
+    if code:
+        return {"duration": 0.0}
+    try:
+        payload = json.loads(out)
+        return {"duration": float(payload.get("format", {}).get("duration") or 0.0)}
+    except (json.JSONDecodeError, TypeError, ValueError):
+        return {"duration": 0.0}
+
+
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def _downloaded_path(info: dict, workdir: Path) -> Path | None:

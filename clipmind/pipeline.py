@@ -12,7 +12,7 @@ import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from . import asr, evidence, media, render, visual_states
+from . import evidence, media, preflight, render, visual_states
 from .config import Settings, settings
 from .fetch import fetch
 from .providers import ProviderBundle, default_providers
@@ -68,6 +68,7 @@ async def process(
     *,
     config: Settings | None = None,
     providers: ProviderBundle | None = None,
+    options: dict | None = None,
 ) -> dict:
     """Run one video end to end. ``report(stage, progress, note)`` drives the UI."""
     config = config or settings
@@ -76,6 +77,7 @@ async def process(
     completed = False
     timings: dict[str, float] = {}
     providers = providers or default_providers(config)
+    options = dict(options or {})
 
     try:
         # --- acquire -------------------------------------------------------
@@ -93,7 +95,6 @@ async def process(
 
         # --- cheap prep ----------------------------------------------------
         stage_started = time.perf_counter()
-        audio_path = await media.extract_audio(item.video_path, workdir / "audio.wav")
         candidates = await media.sample_frames(
             item.video_path,
             workdir / "samples",
@@ -101,6 +102,25 @@ async def process(
             width=config.sample_width,
         )
         unique = media.dedupe(candidates, threshold=config.dedupe_threshold)
+        estimate = preflight.estimate(
+            item.duration,
+            candidates,
+            unique,
+            config,
+            forced=bool(options.get("force")),
+        )
+        preflight.write(workdir, estimate)
+        report(
+            "preflight",
+            base,
+            f"preflight: ~{estimate.estimated_canonical_states} states, "
+            f"~{estimate.estimated_ocr_seconds:g}s OCR, "
+            f"~{estimate.estimated_pack_mb:g} MB",
+        )
+        if not estimate.within_budget and not estimate.forced:
+            raise preflight.CostLimitExceeded(estimate)
+
+        audio_path = await media.extract_audio(item.video_path, workdir / "audio.wav")
         evidence_candidates = await media.sample_frames(
             item.video_path,
             workdir / "evidence_samples",
@@ -181,6 +201,7 @@ async def process(
             ocr_error=ocr_error,
             timings=timings,
             config=config,
+            preflight_result=estimate.public(),
         )
         base += STAGES[2][1]
         report("writing", base, f"{len(preview)} preview states, "
@@ -198,6 +219,7 @@ async def process(
                 candidate_frame_count=len(candidates),
                 evidence_manifest=evidence_manifest,
                 stage_timings=timings,
+                preflight_result=estimate.public(),
             )
         except Exception as exc:  # noqa: BLE001 - legacy output is non-canonical
             metadata = render.build_metadata(
@@ -211,6 +233,7 @@ async def process(
                 candidate_frame_count=len(candidates),
                 evidence_manifest=evidence_manifest,
                 stage_timings=timings,
+                preflight_result=estimate.public(),
             )
             metadata["compatibility_error"] = f"{type(exc).__name__}: {exc}"
         report("done", 1.0, "complete")
