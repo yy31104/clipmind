@@ -157,7 +157,9 @@ make bench
 - `make eval-reextract` runs the same cases through the current pipeline in a
   fresh temporary library without cache reuse. It requires usable local
   providers, network access, and possibly a current Chrome session; third-party
-  source links may expire or disappear.
+  source links may expire or disappear. Exact canonical counts are enforced only
+  when the downloaded source SHA-256 matches the reviewed case baseline; source
+  drift is reported separately and falls back to the broad quality bounds.
 - `make bench` checks bounded batch scheduling with deterministic simulated work.
 
 The checked-in three-video evaluation covers long code/UI and scrolling, dense

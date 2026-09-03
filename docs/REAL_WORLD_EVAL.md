@@ -28,12 +28,15 @@ packs for diagnosis; the destination must be empty. Network access, usable
 local ASR/OCR providers, current source credentials, and the full processing
 time may be required.
 
-Both modes require the exact reviewed canonical count (243 / 29 / 31), in
-addition to broad quality floors. A count change therefore fails for review
-instead of remaining hidden above `minimum_visual_states`; the number is a
-drift sentinel, not semantic ground truth. Reports record source SHA-256,
-dedupe identity, and extraction configuration where the pack provides them.
-Older packs correctly report those unavailable fields as unrecorded.
+Existing-pack mode audits the exact reviewed canonical counts (243 / 29 / 31).
+Fresh mode first hashes the downloaded source, then removes it. The exact count
+has veto power only when that SHA-256 matches the case baseline. If the bytes
+changed, or either hash is unavailable, the report says so and applies only the
+broad quality floors. This keeps a source re-encode from impersonating a code
+regression while preserving exact same-byte detection. Counts are drift
+sentinels, not semantic ground truth. Reports also record dedupe identity and
+extraction configuration where the pack provides them; older packs correctly
+report unavailable fields as unrecorded.
 
 The checked-in machine-readable reports are historical suite-v1 snapshots from
 before explicit run modes were added; new runs use suite v2. They are
