@@ -456,16 +456,24 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         )
 
 
-    async def test_legacy_note_write_failure_does_not_invalidate_evidence_pack(self) -> None:
+    async def test_compatibility_write_failure_keeps_the_complete_view_record(self) -> None:
         def failed_write(*args, **kwargs):
-            raise RuntimeError("injected note write failure")
+            raise RuntimeError("injected compatibility write failure")
 
         with self.patched_pipeline(write_all=failed_write):
             result = await pipeline.process(
                 "https://v.douyin.com/example", self.workdir, self.pools(), self.report
             )
 
-        self.assertIn("injected note write failure", result["compatibility_error"])
+        self.assertIn(
+            "injected compatibility write failure", result["compatibility_error"]
+        )
+        self.assertEqual(
+            result["visual_preview"][0]["canonical_file"],
+            "visual_states/all/00-00-00000.jpg",
+        )
+        self.assertEqual(len(result["visual_states"]), 1)
+        self.assertIn("build_groups", result)
         self.assertTrue((self.workdir / "manifest.json").exists())
         self.assertFalse(self.source_path.exists())
         self.assertFalse(self.audio_path.exists())

@@ -94,8 +94,14 @@ class PreviewRebuildTests(unittest.TestCase):
             self.assertEqual(len(list(all_dir.glob("*.jpg"))), 3)
             self.assertEqual(len(list(preview_dir.glob("*.jpg"))), 2)
             job = json.loads((dest / "job.json").read_text(encoding="utf-8"))["job"]
+            metadata = json.loads(
+                (dest / "metadata.json").read_text(encoding="utf-8")
+            )
             self.assertEqual(job["result"]["preview_frame_count"], 2)
             self.assertEqual(len(job["result"]["visual_preview"]), 2)
+            self.assertEqual(
+                job["result"]["visual_preview"], metadata["visual_preview"]
+            )
 
 
 if __name__ == "__main__":
