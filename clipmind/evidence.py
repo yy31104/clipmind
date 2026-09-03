@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Iterable
 
 from .asr import Segment, Transcript
-from .config import settings
+from .config import Settings, settings
 from .fetch import Media
 from .media import Frame
 from .visual_states import PREVIEW_ALGORITHM, BuildGroup
@@ -258,6 +258,7 @@ def write_pack(
     candidate_frame_count: int,
     ocr_error: str | None = None,
     timings: dict[str, float] | None = None,
+    config: Settings = settings,
 ) -> dict:
     """Write every canonical artifact, with manifest.json written last."""
     dest.mkdir(parents=True, exist_ok=True)
@@ -337,10 +338,10 @@ def write_pack(
         },
         "timings": dict(sorted((timings or {}).items())),
         "configuration": {
-            "sample_fps": settings.sample_fps,
-            "change_detection_width": settings.sample_width,
-            "evidence_width": settings.evidence_width,
-            "dedupe_threshold": settings.dedupe_threshold,
+            "sample_fps": config.sample_fps,
+            "change_detection_width": config.sample_width,
+            "evidence_width": config.evidence_width,
+            "dedupe_threshold": config.dedupe_threshold,
             "preview_algorithm": PREVIEW_ALGORITHM,
         },
     }

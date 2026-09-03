@@ -18,7 +18,7 @@ import shutil
 from dataclasses import dataclass
 from pathlib import Path
 
-from .config import settings
+from .config import Settings, settings
 
 
 logger = logging.getLogger(__name__)
@@ -118,23 +118,23 @@ _winning_source: str | None = None
 _lock = asyncio.Lock()
 
 
-def _cookie_args(source: str) -> list[str]:
+def _cookie_args(source: str, config: Settings = settings) -> list[str]:
     if source == "-":
         return []
     if source == "file":
-        if not settings.cookie_file:
+        if not config.cookie_file:
             raise FetchError(
                 "cookies_unavailable",
                 "The configured cookie file is unavailable.",
                 "Set CLIPMIND_COOKIE_FILE to a readable Netscape cookie file.",
             )
-        return ["--cookies", settings.cookie_file]
+        return ["--cookies", config.cookie_file]
     return ["--cookies-from-browser", source]
 
 
-def _ordered_sources() -> list[str]:
-    sources = list(settings.cookie_sources)
-    if settings.cookie_file:
+def _ordered_sources(config: Settings = settings) -> list[str]:
+    sources = list(config.cookie_sources)
+    if config.cookie_file:
         sources.append("file")
     if _winning_source and _winning_source in sources:
         sources.remove(_winning_source)
@@ -154,7 +154,13 @@ async def _run(args: list[str]) -> tuple[int, str, str]:
     return proc.returncode or 0, out.decode(errors="replace"), err.decode(errors="replace")
 
 
-async def fetch(url: str, workdir: Path, on_note=None) -> Media:
+async def fetch(
+    url: str,
+    workdir: Path,
+    on_note=None,
+    *,
+    config: Settings = settings,
+) -> Media:
     """Download the video into ``workdir`` and return it with its metadata."""
     global _winning_source
 
@@ -168,11 +174,11 @@ async def fetch(url: str, workdir: Path, on_note=None) -> Media:
     workdir.mkdir(parents=True, exist_ok=True)
     errors: list[str] = []
 
-    for source in _ordered_sources():
+    for source in _ordered_sources(config):
         if on_note:
             on_note(f"trying {_describe(source)}")
         try:
-            cookie_args = _cookie_args(source)
+            cookie_args = _cookie_args(source, config)
         except FetchError as exc:
             errors.append(str(exc))
             continue
@@ -185,7 +191,7 @@ async def fetch(url: str, workdir: Path, on_note=None) -> Media:
                 "--no-progress",
                 "--no-simulate",
                 "--dump-single-json",
-                "-f", settings.fetch_format,
+                "-f", config.fetch_format,
                 "-o", str(workdir / "source.%(ext)s"),
                 *cookie_args,
                 url,
