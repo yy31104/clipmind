@@ -1,0 +1,162 @@
+from __future__ import annotations
+
+import asyncio
+import json
+import tempfile
+import unittest
+from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
+
+from PIL import Image
+
+from clipmind import evidence
+from scripts import evaluate
+
+
+def write_json(path: Path, value: object) -> None:
+    path.write_text(json.dumps(value), encoding="utf-8")
+
+
+def make_complete_pack(root: Path) -> Path:
+    pack = root / "pack-1"
+    for artifact in evidence.PACK_ARTIFACTS:
+        path = pack / artifact
+        if artifact.endswith("/"):
+            path.mkdir(parents=True)
+        else:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("", encoding="utf-8")
+
+    timeline = {
+        "id": "visual-00001",
+        "start": 2.0,
+        "end": 8.0,
+        "file": "visual_states/all/00-02-00001.jpg",
+        "preview_file": "visual_states/preview/00-02-00001.jpg",
+        "ocr_ref": "ocr-00001",
+        "transcript_refs": ["transcript-00001"],
+        "in_preview": True,
+    }
+    transcript = {"id": "transcript-00001", "start": 1.0, "end": 4.0, "text": "lesson"}
+    ocr = {
+        "id": "ocr-00001",
+        "visual_state_ref": "visual-00001",
+        "timestamp": 2.0,
+        "text": "lesson",
+        "lines": ["lesson"],
+    }
+    write_json(pack / "source.json", {"source_id": "video-1"})
+    write_json(pack / "job.json", {"job": {"id": "pack-1", "status": "done"}})
+    (pack / "transcript.jsonl").write_text(json.dumps(transcript) + "\n", encoding="utf-8")
+    (pack / "ocr.jsonl").write_text(json.dumps(ocr) + "\n", encoding="utf-8")
+    (pack / "visual_timeline.jsonl").write_text(json.dumps(timeline) + "\n", encoding="utf-8")
+    Image.new("RGB", (16, 16), "white").save(pack / timeline["file"])
+    Image.new("RGB", (16, 16), "white").save(pack / timeline["preview_file"])
+    write_json(
+        pack / "manifest.json",
+        {
+            "schema": {"name": evidence.SCHEMA_NAME, "version": evidence.SCHEMA_VERSION},
+            "source": {"platform": "douyin", "id": "video-1"},
+            "status": "complete",
+            "artifacts": list(evidence.PACK_ARTIFACTS),
+            "counts": {"canonical_visual_states": 1},
+            "completeness": {
+                "transcript": "complete",
+                "ocr": "complete",
+                "visual_states": "complete",
+            },
+            "configuration": {"dedupe_threshold": 6},
+        },
+    )
+    return pack
+
+
+class EvaluateTests(unittest.TestCase):
+    def test_exact_canonical_count_fails_above_the_old_quality_floor(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            workdir = make_complete_pack(Path(tempdir))
+            case = {
+                "id": "exact-count-probe",
+                "source_id": "video-1",
+                "content_type": "fixture",
+                "expected": {
+                    "minimum_transcript_segments": 1,
+                    "minimum_visual_states": 1,
+                    "canonical_visual_state_count": 2,
+                    "maximum_preview_ratio": 1.0,
+                    "requires_ocr": True,
+                },
+            }
+
+            result = evaluate.evaluate_case(case, workdir)
+            report = evaluate.evaluate_suite(
+                {"version": 2, "cases": [case]},
+                Path(tempdir),
+                mode="existing",
+            )
+
+        self.assertTrue(result["checks"]["visual_state_minimum"])
+        self.assertFalse(result["checks"]["canonical_visual_state_count_exact"])
+        self.assertFalse(result["passed"])
+        self.assertIsNone(result["metrics"]["candidate_frame_count"])
+        self.assertEqual(result["metrics"]["dedupe_policy"]["threshold"], 6)
+        self.assertEqual(report["mode"], "existing")
+        self.assertEqual(report["pack_origin"], "existing_completed_pack")
+        self.assertFalse(report["passed"])
+
+    def test_reextract_submits_every_case_to_an_empty_job_store(self) -> None:
+        observed: dict[str, object] = {}
+
+        class FakeStore:
+            def __init__(self, out_dir: Path) -> None:
+                observed["out_dir"] = out_dir
+                self._tasks: set[asyncio.Task] = set()
+
+            def submit(self, url: str, title: str) -> SimpleNamespace:
+                observed.setdefault("submissions", []).append((url, title))
+                task = asyncio.create_task(asyncio.sleep(0))
+                self._tasks.add(task)
+                return SimpleNamespace(
+                    id=f"job-{len(self._tasks)}",
+                    status="done",
+                    error=None,
+                    error_code=None,
+                    error_action=None,
+                )
+
+            async def close(self) -> None:
+                return None
+
+        cases = [
+            {"id": "one", "source_id": "source-1", "url": "https://example.com/1"},
+            {"id": "two", "source_id": "source-2", "url": "https://example.com/2"},
+        ]
+        with tempfile.TemporaryDirectory() as tempdir:
+            out_dir = Path(tempdir) / "fresh"
+            with patch.object(evaluate, "JobStore", FakeStore):
+                failures = asyncio.run(evaluate.reextract_cases(cases, out_dir))
+
+        self.assertEqual(failures, [])
+        self.assertEqual(observed["out_dir"], out_dir)
+        self.assertEqual(
+            observed["submissions"],
+            [
+                ("https://example.com/1", "Real-world evaluation: one"),
+                ("https://example.com/2", "Real-world evaluation: two"),
+            ],
+        )
+
+    def test_reextract_refuses_a_nonempty_output_library(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            out_dir = Path(tempdir)
+            (out_dir / "old-pack").mkdir()
+            with patch.object(evaluate, "JobStore") as store:
+                with self.assertRaisesRegex(ValueError, "must be empty"):
+                    asyncio.run(evaluate.reextract_cases([], out_dir))
+
+        store.assert_not_called()
+
+
+if __name__ == "__main__":
+    unittest.main()

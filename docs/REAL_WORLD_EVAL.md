@@ -8,10 +8,35 @@ and a 52-second talking-head/slide presentation.
 Run the checked-in evaluation against completed packs with:
 
 ```bash
-.venv/bin/python scripts/evaluate.py
+make eval
 ```
 
-The machine-readable reports are
+This command reads the newest already-complete pack for each source id. It does
+not download the videos again, and its `mode: existing` result is not evidence
+that the current extraction code reproduced those packs.
+
+Run the same cases through the current pipeline, with no completed-pack reuse,
+using:
+
+```bash
+make eval-reextract
+```
+
+Fresh extraction uses a temporary empty library by default. Pass
+`--run-out PATH` directly to `scripts/evaluate.py --mode reextract` to retain
+packs for diagnosis; the destination must be empty. Network access, usable
+local ASR/OCR providers, current source credentials, and the full processing
+time may be required.
+
+Both modes require the exact reviewed canonical count (243 / 29 / 31), in
+addition to broad quality floors. A count change therefore fails for review
+instead of remaining hidden above `minimum_visual_states`; the number is a
+drift sentinel, not semantic ground truth. Reports record source SHA-256,
+dedupe identity, and extraction configuration where the pack provides them.
+Older packs correctly report those unavailable fields as unrecorded.
+
+The checked-in machine-readable reports are historical suite-v1 snapshots from
+before explicit run modes were added; new runs use suite v2. They are
 [`eval-results-before-preview.json`](eval-results-before-preview.json) and
 [`eval-results.json`](eval-results.json). The production preview changed as
 follows while the canonical evidence sets remained unchanged:
@@ -54,10 +79,11 @@ workdirs passed the temporary-file cleanup check.
 
 ## What this does and does not prove
 
-The current suite directly exercises long code/UI changes, scrolling, dense
+Fresh re-extraction directly exercises long code/UI changes, scrolling, dense
 small text, talking-head caption redundancy, inserted documents, and progressive
-slides. Unit fixtures additionally cover disappearing/replaced text, progressive
-builds, hash failure, and more than ten independent visual scenes.
+slides. Existing-pack mode only audits preserved results. Unit fixtures
+additionally cover disappearing/replaced text, progressive builds, hash failure,
+and more than ten independent visual scenes.
 
 It is not a broad platform benchmark. Silent infographic videos and arbitrary
 whiteboard capture remain explicit real-world corpus gaps; they are listed as
