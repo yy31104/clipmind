@@ -70,6 +70,7 @@ def build_metadata(
 
     metadata = {
         "id": item.video_id,
+        "platform": item.platform,
         "title": item.title,
         "uploader": item.uploader,
         "duration": item.duration,

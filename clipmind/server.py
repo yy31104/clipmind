@@ -3,10 +3,11 @@ from __future__ import annotations
 
 import asyncio
 import json
+import uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -15,6 +16,7 @@ from . import handoff
 from .config import WEB_DIR
 from .jobs import JobStore
 from .links import extract_sources, guess_title, normalize_url
+from .sources import supported_sources
 
 store = JobStore()
 
@@ -39,6 +41,14 @@ class SubmitBody(BaseModel):
 
 class ReprocessBody(BaseModel):
     force: bool = False
+
+
+MEDIA_EXTENSIONS = frozenset(
+    {
+        ".mp4", ".mov", ".mkv", ".webm", ".avi", ".m4v",
+        ".mp3", ".wav", ".m4a", ".aac", ".flac", ".ogg", ".opus",
+    }
+)
 
 
 def _workdir(job_id: str) -> Path:
@@ -85,6 +95,44 @@ async def submit(body: SubmitBody):
     }
 
 
+@app.post("/api/uploads")
+async def upload(request: Request, filename: str, force: bool = False):
+    """Stream one browser-selected local file into the durable local library."""
+    safe_name = Path(filename).name
+    suffix = Path(safe_name).suffix.casefold()
+    if not safe_name or suffix not in MEDIA_EXTENSIONS:
+        raise HTTPException(
+            415,
+            "Unsupported media type. Choose a video or audio file supported by FFmpeg.",
+        )
+    upload_root = store.storage.root / ".uploads"
+    upload_root.mkdir(parents=True, exist_ok=True)
+    destination = upload_root / f"{uuid.uuid4().hex}{suffix}"
+    maximum = store.config.max_upload_mb * 1024 * 1024
+    written = 0
+    try:
+        with destination.open("xb") as handle:
+            async for chunk in request.stream():
+                written += len(chunk)
+                if written > maximum:
+                    raise HTTPException(
+                        413,
+                        f"File exceeds the configured {store.config.max_upload_mb} MB upload limit.",
+                    )
+                handle.write(chunk)
+        if written == 0:
+            raise HTTPException(400, "The uploaded file is empty.")
+        job = store.submit(
+            str(destination),
+            Path(safe_name).stem,
+            options={"force": force, "uploaded_filename": safe_name},
+        )
+        return job.public()
+    except Exception:
+        destination.unlink(missing_ok=True)
+        raise
+
+
 @app.post("/api/jobs/{job_id}/reprocess")
 async def reprocess(job_id: str, body: ReprocessBody | None = None):
     source = store.jobs.get(job_id)
@@ -102,6 +150,11 @@ async def reprocess(job_id: str, body: ReprocessBody | None = None):
 @app.get("/api/jobs")
 async def listing():
     return {"jobs": store.listing(), "capacity": store.config.max_videos}
+
+
+@app.get("/api/search")
+async def search(q: str, limit: int = 20):
+    return {"query": q, "results": store.search(q, limit=limit)}
 
 
 @app.get("/api/jobs/{job_id}")
@@ -227,6 +280,8 @@ async def health():
         "ocr_provider": store.providers.text.name,
         "asr_provider": store.providers.transcript.name,
         "knowledge_base_inbox": store.config.knowledge_base_inbox is not None,
+        "supported_sources": supported_sources(),
+        "max_upload_mb": store.config.max_upload_mb,
     }
 
 
