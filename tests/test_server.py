@@ -13,6 +13,7 @@ from clipmind.config import Settings
 from clipmind.fetch import FetchError
 from clipmind.jobs import Job, JobStore
 from clipmind.media import Frame
+from tests.pack_fixture import make_complete_pack
 
 
 def sse_payload(chunk: str | bytes) -> dict:
@@ -158,6 +159,26 @@ class ServerEventTests(unittest.IsolatedAsyncioTestCase):
                     await server.evidence_file("unknown")
 
         self.assertEqual(raised.exception.status_code, 404)
+
+    async def test_agent_api_reads_only_complete_pack_artifacts(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            root = Path(tempdir) / "out"
+            make_complete_pack(root)
+            test_store = JobStore(root)
+            with patch.object(server, "store", test_store):
+                listing = await server.packs()
+                detail = await server.pack_detail("pack-1")
+                transcript = await server.pack_transcript("pack-1")
+                timeline = await server.pack_timeline("pack-1")
+                search = await server.pack_search("pack-1", "向量")
+                frame = await server.pack_frame("pack-1", timestamp=3.0)
+
+        self.assertEqual(listing["packs"][0]["pack_id"], "pack-1")
+        self.assertEqual(detail["platform"], "youtube")
+        self.assertEqual(transcript["segments"][0]["text"], "vector retrieval pipeline")
+        self.assertEqual(timeline["visual_states"][0]["id"], "visual-00001")
+        self.assertEqual(search["hits"][0]["kind"], "ocr")
+        self.assertEqual(Path(frame.path).name, "00-02-00001.jpg")
 
     async def test_sse_serializes_done_and_error_terminal_events(self) -> None:
         async def fake_process(url, workdir, pools, report, **kwargs):
