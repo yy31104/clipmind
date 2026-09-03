@@ -115,6 +115,30 @@ class CanonicalVisualStateTests(unittest.TestCase):
 
         self.assertEqual(preview, [document])
 
+    def test_preview_prefers_a_stable_readable_state_over_a_transition_sample(self) -> None:
+        stable = Frame(
+            0,
+            0.0,
+            Path("a.jpg"),
+            phash=0,
+            lines=("complete document",),
+            observed_sample_count=4,
+            stable_duration=1.5,
+        )
+        transition = Frame(
+            1,
+            1.0,
+            Path("b.jpg"),
+            phash=1,
+            lines=("complete document",),
+        )
+
+        preview = visual_states.derive_preview(
+            [stable, transition], scene_floor=10, activity_margin=0
+        )
+
+        self.assertEqual(preview, [stable])
+
     def test_preview_splits_same_layout_when_visible_text_is_replaced(self) -> None:
         first = Frame(0, 0.0, Path("a.jpg"), phash=0, lines=("ALPHA PLAN",))
         second = Frame(1, 1.0, Path("b.jpg"), phash=127, lines=("BETA SYSTEM",))
@@ -187,6 +211,47 @@ class CanonicalVisualStateTests(unittest.TestCase):
             self.assertEqual(retained[0].path.read_bytes(), b"high")
             self.assertTrue(low.exists(), "low-resolution detector input remains temporary")
             self.assertFalse(high.exists())
+
+    def test_scroll_sequence_labels_overlap_without_removing_any_state(self) -> None:
+        frames = [
+            Frame(0, 0.0, Path("a.jpg"), lines=("alpha beta gamma delta epsilon zeta eta theta iota kappa",)),
+            Frame(1, 1.0, Path("b.jpg"), lines=("gamma delta epsilon zeta eta theta iota kappa lambda mu",)),
+            Frame(2, 2.0, Path("c.jpg"), lines=("epsilon zeta eta theta iota kappa lambda mu nu xi",)),
+        ]
+
+        groups = visual_states.group_scroll_sequences(frames)
+
+        self.assertEqual(len(groups), 1)
+        self.assertEqual(groups[0].frames, tuple(frames))
+        self.assertEqual([frame.scroll_position for frame in frames], [0, 1, 2])
+        self.assertEqual(len(frames), 3)
+
+    def test_scene_and_content_labels_are_measurements_not_membership_filters(self) -> None:
+        caption = Frame(
+            0,
+            0.0,
+            Path("a.jpg"),
+            phash=0,
+            lines=("hello world",),
+            ocr_char_count=10,
+            transcript_overlap=1.0,
+        )
+        code = Frame(
+            1,
+            1.0,
+            Path("b.jpg"),
+            phash=(1 << 64) - 1,
+            lines=("async def load():", "return client.fetch()"),
+            ocr_char_count=35,
+        )
+
+        preview = visual_states.derive_preview([caption, code])
+
+        self.assertEqual(preview, [caption, code])
+        self.assertEqual(caption.content_hint, "caption")
+        self.assertEqual(code.content_hint, "code_ui")
+        self.assertEqual([caption.scene_id, code.scene_id], ["scene-00001", "scene-00002"])
+        self.assertTrue(code.scene_boundary)
 
 
 if __name__ == "__main__":

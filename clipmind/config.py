@@ -92,6 +92,11 @@ class Settings:
     faster_whisper_model: str = "large-v3-turbo"
     asr_language: str | None = "zh"
 
+    # --- optional speaker diarization ---
+    diarization_provider: str = "none"
+    diarization_model: str = "pyannote/speaker-diarization-3.1"
+    diarization_token: str | None = None
+
     # --- OCR provider ---
     ocr_provider: str = "auto"
     tesseract_languages: str = "chi_sim+chi_tra+eng"
@@ -142,6 +147,14 @@ class Settings:
                 "CLIPMIND_FASTER_WHISPER_MODEL", "large-v3-turbo"
             ),
             asr_language=os.getenv("CLIPMIND_ASR_LANGUAGE", "zh") or None,
+            diarization_provider=os.getenv(
+                "CLIPMIND_DIARIZATION_PROVIDER", "none"
+            ).casefold(),
+            diarization_model=os.getenv(
+                "CLIPMIND_DIARIZATION_MODEL",
+                "pyannote/speaker-diarization-3.1",
+            ),
+            diarization_token=os.getenv("HF_TOKEN") or None,
             ocr_provider=os.getenv("CLIPMIND_OCR_PROVIDER", "auto").casefold(),
             tesseract_languages=os.getenv(
                 "CLIPMIND_TESSERACT_LANGUAGES", "chi_sim+chi_tra+eng"

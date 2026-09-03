@@ -37,6 +37,7 @@ dependencies = [
 test = ["fastapi>=0.115,<1", "numpy>=2,<3", "pillow>=10.4,<13", "python-dotenv>=1,<2"]
 build = ["build>=1.2", "pyinstaller>=6.11"]
 portable = ["faster-whisper>=1.1", "pytesseract>=0.3.13"]
+diarization = ["pyannote.audio>=3.3,<4"]
 
 [project.scripts]
 clipmind = "clipmind.cli:entrypoint"

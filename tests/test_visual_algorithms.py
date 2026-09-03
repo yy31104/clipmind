@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 from PIL import Image
 
-from clipmind import media, visual_states
+from clipmind import media, ocr, visual_states
 from clipmind.media import Frame
 
 
@@ -84,9 +84,28 @@ class OCRAnnotationTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(frame.text, "")
         self.assertEqual(
             frame.ocr_warning,
-            "RuntimeError: Vision OCR failed; image retained",
+            "RuntimeError: OCR failed; image retained",
         )
         self.assertIn("OCR failed on 1/1 frames", error)
+
+    async def test_rich_ocr_provider_preserves_normalized_layout(self) -> None:
+        class Recognizer:
+            def recognize(self, _path):
+                return ocr.OCRResult(
+                    (ocr.OCRBlock("hello", 0.9, (0.1, 0.2, 0.3, 0.1)),)
+                )
+
+        frame = make_frame(0)
+        error = await visual_states.annotate(
+            [frame], asyncio.Semaphore(1), Recognizer()
+        )
+
+        self.assertIsNone(error)
+        self.assertEqual(frame.lines, ("hello",))
+        self.assertEqual(
+            frame.ocr_layout,
+            ({"text": "hello", "confidence": 0.9, "bbox": [0.1, 0.2, 0.3, 0.1]},),
+        )
 
 
 class DedupeTests(unittest.TestCase):
@@ -106,6 +125,21 @@ class DedupeTests(unittest.TestCase):
             kept = media.dedupe(frames, threshold=1)
 
         self.assertEqual(kept, [frames[0], frames[3]])
+
+    def test_duplicate_run_records_observed_stability_without_retaining_copies(self) -> None:
+        frames = [
+            make_frame(0, timestamp=1.0),
+            make_frame(1, timestamp=1.5),
+            make_frame(2, timestamp=2.0),
+            make_frame(3, timestamp=2.5),
+        ]
+
+        with patch.object(media, "dhash", side_effect=[0b000, 0b000, 0b001, 0b111]):
+            kept = media.dedupe(frames, threshold=1)
+
+        self.assertEqual(kept, [frames[0], frames[3]])
+        self.assertEqual(frames[0].observed_sample_count, 3)
+        self.assertEqual(frames[0].stable_duration, 1.0)
 
     def test_hash_failure_retains_evidence_and_records_a_safe_warning(self) -> None:
         frames = [make_frame(index) for index in range(3)]

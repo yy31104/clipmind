@@ -36,6 +36,19 @@ class Frame:
     build_group_id: str | None = None
     build_position: int | None = None
     build_size: int | None = None
+    # Safe measurements and grouping labels. None of these decide canonical
+    # membership; they enrich the pack and the derived preview only.
+    observed_sample_count: int = 1
+    stable_duration: float = 0.0
+    ocr_layout: tuple[dict, ...] = ()
+    scene_id: str | None = None
+    scene_boundary: bool = False
+    scene_boundary_reason: str | None = None
+    scene_change_score: float | None = None
+    scroll_group_id: str | None = None
+    scroll_position: int | None = None
+    scroll_size: int | None = None
+    content_hint: str = "visual"
 
 
 async def _ffmpeg(args: list[str]) -> None:
@@ -114,6 +127,8 @@ def dedupe(frames: list[Frame], threshold: int | None = None) -> list[Frame]:
     last_hash: int | None = None
     for frame in frames:
         frame.dedupe_warning = None
+        frame.observed_sample_count = 1
+        frame.stable_duration = 0.0
         try:
             frame.phash = dhash(frame.path)
         except Exception as exc:  # noqa: BLE001 - fail open to preserve evidence
@@ -134,6 +149,12 @@ def dedupe(frames: list[Frame], threshold: int | None = None) -> list[Frame]:
                 last_hash = None
                 continue
             if duplicate:
+                if kept:
+                    kept[-1].observed_sample_count += 1
+                    kept[-1].stable_duration = max(
+                        kept[-1].stable_duration,
+                        frame.timestamp - kept[-1].timestamp,
+                    )
                 continue
         kept.append(frame)
         last_hash = frame.phash

@@ -30,6 +30,14 @@ class BuildGroup:
         return self.frames[-1]
 
 
+@dataclass(frozen=True)
+class ScrollGroup:
+    """Adjacent states that preserve a text viewport while replacing edges."""
+
+    id: str
+    frames: tuple[Frame, ...]
+
+
 def _characters(frame: Frame) -> set[str]:
     return {
         character
@@ -208,13 +216,22 @@ async def annotate(
 
     async def run(frame: Frame) -> None:
         frame.ocr_warning = None
+        frame.ocr_layout = ()
         async with ocr_semaphore:
             try:
-                reader = recognizer.read_text if recognizer is not None else ocr.read_text
-                lines = await asyncio.to_thread(reader, frame.path)
+                rich_reader = getattr(recognizer, "recognize", None)
+                if rich_reader is not None:
+                    result = await asyncio.to_thread(rich_reader, frame.path)
+                    lines = list(result.lines)
+                    frame.ocr_layout = tuple(
+                        block.public() for block in result.blocks
+                    )
+                else:
+                    reader = recognizer.read_text if recognizer is not None else ocr.read_text
+                    lines = await asyncio.to_thread(reader, frame.path)
             except Exception as exc:  # noqa: BLE001
                 frame.ocr_warning = (
-                    f"{type(exc).__name__}: Vision OCR failed; image retained"
+                    f"{type(exc).__name__}: OCR failed; image retained"
                 )
                 failures.append(frame.ocr_warning)
                 return
@@ -290,6 +307,95 @@ def group_progressive_builds(
     return groups
 
 
+def _scrolls(
+    earlier: Frame,
+    later: Frame,
+    *,
+    window: float,
+    minimum_terms: int,
+    minimum_overlap: float,
+    maximum_overlap: float,
+) -> bool:
+    earlier_terms = _terms(earlier)
+    later_terms = _terms(later)
+    smaller = min(len(earlier_terms), len(later_terms))
+    if smaller < minimum_terms or later.timestamp - earlier.timestamp > window:
+        return False
+    shared = len(earlier_terms & later_terms) / smaller
+    return (
+        minimum_overlap <= shared < maximum_overlap
+        and len(earlier_terms - later_terms) >= 2
+        and len(later_terms - earlier_terms) >= 2
+    )
+
+
+def group_scroll_sequences(
+    frames: list[Frame],
+    *,
+    window: float = 6.0,
+    minimum_terms: int = 8,
+    minimum_overlap: float = 0.4,
+    maximum_overlap: float = 0.9,
+) -> list[ScrollGroup]:
+    """Label conservative OCR-overlap scroll sequences without dropping states."""
+    ordered = sorted(frames, key=lambda frame: (frame.timestamp, frame.index))
+    for frame in ordered:
+        frame.scroll_group_id = None
+        frame.scroll_position = None
+        frame.scroll_size = None
+
+    chains: list[list[Frame]] = []
+    current: list[Frame] = []
+    for frame in ordered:
+        if current and _scrolls(
+            current[-1],
+            frame,
+            window=window,
+            minimum_terms=minimum_terms,
+            minimum_overlap=minimum_overlap,
+            maximum_overlap=maximum_overlap,
+        ):
+            current.append(frame)
+            continue
+        if len(current) > 1:
+            chains.append(current)
+        current = [frame]
+    if len(current) > 1:
+        chains.append(current)
+
+    groups = []
+    for number, chain in enumerate(chains, start=1):
+        group_id = f"scroll-{number:05d}"
+        for position, frame in enumerate(chain):
+            frame.scroll_group_id = group_id
+            frame.scroll_position = position
+            frame.scroll_size = len(chain)
+        groups.append(ScrollGroup(group_id, tuple(chain)))
+    return groups
+
+
+def annotate_content_hints(frames: list[Frame]) -> None:
+    """Attach conservative, non-semantic content hints for humans and agents."""
+    code_markers = re.compile(
+        r"(?:\b(?:def|class|import|from|return|const|function|async|await)\b|"
+        r"[{}();]|</?[a-z][^>]*>|[a-z_][a-z0-9_]*\.[a-z_][a-z0-9_]*)",
+        re.IGNORECASE,
+    )
+    for frame in frames:
+        text = "\n".join(frame.lines)
+        marker_count = len(code_markers.findall(text))
+        if not text.strip():
+            frame.content_hint = "visual"
+        elif frame.transcript_overlap >= 0.65 and frame.ocr_char_count < 120:
+            frame.content_hint = "caption"
+        elif marker_count >= 2:
+            frame.content_hint = "code_ui"
+        elif frame.ocr_char_count >= 80 or len(frame.lines) >= 8:
+            frame.content_hint = "document_slide"
+        else:
+            frame.content_hint = "textual"
+
+
 def derive_preview(
     frames: list[Frame],
     *,
@@ -310,6 +416,17 @@ def derive_preview(
     """
     speech = tuple(spoken_intervals)
     ordered = sorted(frames, key=lambda frame: (frame.timestamp, frame.index))
+    annotate_content_hints(ordered)
+    for position, frame in enumerate(ordered):
+        frame.scene_id = None
+        frame.scene_boundary = False
+        frame.scene_boundary_reason = None
+        frame.scene_change_score = None
+        if position and frame.dedupe_warning is None and ordered[position - 1].dedupe_warning is None:
+            frame.scene_change_score = round(
+                media.hamming(ordered[position - 1].phash, frame.phash) / 64.0,
+                4,
+            )
     candidates = [
         frame
         for frame in ordered
@@ -317,6 +434,10 @@ def derive_preview(
         or frame.build_position == frame.build_size - 1
     ]
     if len(candidates) < 2:
+        for position, frame in enumerate(ordered):
+            frame.scene_id = "scene-00001"
+            frame.scene_boundary = position == 0
+            frame.scene_boundary_reason = "initial" if position == 0 else None
         return candidates
 
     comparable_pairs = [
@@ -331,35 +452,62 @@ def derive_preview(
     threshold = min(scene_ceiling, max(scene_floor, activity + activity_margin))
 
     scenes: list[list[Frame]] = []
+    scene_reasons: list[str] = []
     for frame in candidates:
-        if frame.dedupe_warning is not None:
-            scenes.append([frame])
-            continue
-        if (
-            not scenes
-            or scenes[-1][-1].dedupe_warning is not None
-            or (
-                media.hamming(scenes[-1][-1].phash, frame.phash)
-                > replacement_visual_floor
-                and _replaces_visible_text(scenes[-1][-1], frame, speech)
-            )
-            or media.hamming(scenes[-1][0].phash, frame.phash) >= threshold
+        reason = None
+        if not scenes:
+            reason = "initial"
+        elif frame.dedupe_warning is not None:
+            reason = "hash_warning"
+        elif scenes[-1][-1].dedupe_warning is not None:
+            reason = "hash_recovery"
+        elif (
+            media.hamming(scenes[-1][-1].phash, frame.phash)
+            > replacement_visual_floor
+            and _replaces_visible_text(scenes[-1][-1], frame, speech)
         ):
+            reason = "text_replacement"
+        elif media.hamming(scenes[-1][0].phash, frame.phash) >= threshold:
+            reason = "visual_change"
+        if reason is not None:
             scenes.append([frame])
+            scene_reasons.append(reason)
         else:
             scenes[-1].append(frame)
+
+    for number, (scene, reason) in enumerate(zip(scenes, scene_reasons), start=1):
+        scene_id = f"scene-{number:05d}"
+        for position, frame in enumerate(scene):
+            frame.scene_id = scene_id
+            frame.scene_boundary = position == 0
+            frame.scene_boundary_reason = reason if position == 0 else None
+    group_scenes = {
+        frame.build_group_id: frame.scene_id
+        for frame in candidates
+        if frame.build_group_id and frame.scene_id
+    }
+    for frame in ordered:
+        if frame.scene_id is None and frame.build_group_id in group_scenes:
+            frame.scene_id = group_scenes[frame.build_group_id]
 
     preview = []
     for scene in scenes:
         richest = max(
             scene,
-            key=lambda frame: (len(_characters(frame)), frame.timestamp, frame.index),
+            key=lambda frame: (
+                len(_characters(frame)),
+                frame.observed_sample_count,
+                frame.stable_duration,
+                frame.timestamp,
+                frame.index,
+            ),
         )
         latest = scene[-1]
         preview.append(
             latest
             if len(_characters(latest))
             >= latest_readability_ratio * len(_characters(richest))
+            and latest.observed_sample_count * 2 >= richest.observed_sample_count
             else richest
         )
 
