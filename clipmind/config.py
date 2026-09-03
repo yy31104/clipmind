@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -9,9 +10,26 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-ROOT = Path(__file__).resolve().parent.parent
-OUT_DIR = Path(os.getenv("CLIPMIND_OUT", ROOT / "out"))
-WEB_DIR = ROOT / "web"
+PACKAGE_DIR = Path(__file__).resolve().parent
+ROOT = PACKAGE_DIR.parent
+WEB_DIR = PACKAGE_DIR / "web"
+
+
+def _default_out_dir() -> Path:
+    # A source checkout keeps the familiar ./out library. Installed builds use
+    # a writable per-user data directory instead of writing into site-packages.
+    if (ROOT / ".git").exists():
+        return ROOT / "out"
+    if sys.platform == "darwin":
+        return Path.home() / "Library" / "Application Support" / "ClipMind"
+    if sys.platform == "win32":
+        base = Path(os.getenv("LOCALAPPDATA", Path.home() / "AppData" / "Local"))
+        return base / "ClipMind"
+    base = Path(os.getenv("XDG_DATA_HOME", Path.home() / ".local" / "share"))
+    return base / "clipmind"
+
+
+OUT_DIR = Path(os.getenv("CLIPMIND_OUT", _default_out_dir())).expanduser()
 
 
 def _optional_path(name: str) -> Path | None:

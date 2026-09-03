@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "clipmind"
+version = "1.2.0.dev0"
+description = "Local-first multimodal video ingestion for humans and AI agents"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{name = "ClipMind contributors"}]
+keywords = ["video", "evidence", "multimodal", "ocr", "asr", "mcp"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Multimedia :: Video",
+]
+dependencies = [
+  "fastapi>=0.115,<1",
+  "uvicorn[standard]>=0.32,<1",
+  "python-dotenv>=1,<2",
+  "yt-dlp>=2025.1.1",
+  "pillow>=10.4,<13",
+  "numpy>=2,<3",
+  "pyobjc-framework-Vision>=10.3; sys_platform == 'darwin'",
+  "pyobjc-framework-Quartz>=10.3; sys_platform == 'darwin'",
+  "mlx-whisper>=0.4.2; sys_platform == 'darwin' and platform_machine == 'arm64'",
+  "faster-whisper>=1.1; sys_platform != 'darwin' or platform_machine != 'arm64'",
+  "pytesseract>=0.3.13; sys_platform != 'darwin'",
+]
+
+[project.optional-dependencies]
+test = ["fastapi>=0.115,<1", "numpy>=2,<3", "pillow>=10.4,<13", "python-dotenv>=1,<2"]
+build = ["build>=1.2", "pyinstaller>=6.11"]
+
+[project.scripts]
+clipmind = "clipmind.cli:entrypoint"
+clipmind-mcp = "clipmind.mcp:entrypoint"
+clipmind-app = "clipmind.desktop:entrypoint"
+
+[project.urls]
+Homepage = "https://github.com/yy31104/clipmind"
+Documentation = "https://github.com/yy31104/clipmind#readme"
+Issues = "https://github.com/yy31104/clipmind/issues"
+
+[tool.setuptools.packages.find]
+include = ["clipmind*"]
+
+[tool.setuptools.package-data]
+clipmind = ["web/*.html", "web/*.css", "web/*.js"]
