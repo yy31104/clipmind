@@ -10,6 +10,7 @@
         "minimum_transcript_segments": 20,
         "minimum_visual_states": 20,
         "canonical_visual_state_count": 243,
+        "source_content_sha256": null,
         "maximum_preview_ratio": 0.35,
         "requires_ocr": true,
         "measured_stable_state_coverage": 1.0,
@@ -26,6 +27,7 @@
         "minimum_transcript_segments": 5,
         "minimum_visual_states": 1,
         "canonical_visual_state_count": 29,
+        "source_content_sha256": null,
         "maximum_preview_ratio": 0.3,
         "requires_ocr": true,
         "checks": ["speech completeness", "burned-caption redundancy"]
@@ -40,6 +42,7 @@
         "minimum_transcript_segments": 5,
         "minimum_visual_states": 3,
         "canonical_visual_state_count": 31,
+        "source_content_sha256": "8ecf3bee96916f2d83fe7107a4bf99ec672714c8c0e436875a948c3c23f25432",
         "maximum_preview_ratio": 0.5,
         "requires_ocr": true,
         "checks": ["slide changes", "short video scaling"]

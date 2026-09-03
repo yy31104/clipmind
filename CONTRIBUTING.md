@@ -27,8 +27,10 @@ make eval-reextract
 
 That target uses the current pipeline and a fresh temporary library, so cached
 packs cannot satisfy it. It may require network access, working local providers,
-and a current browser session. A changed exact count is a review alarm, not a
-reason to rewrite the baseline: inspect the source hash and visual differences
-before accepting or rejecting the new behavior.
+and a current browser session. The evaluator hashes the downloaded source before
+removing it. It enforces the exact canonical count only when that hash matches
+the case baseline; changed or unavailable source identity is reported explicitly
+and only the broad quality bounds apply. Source drift is a review signal, not a
+reason to rewrite the count or hash baseline.
 
 Use `make eval-synthetic` for the generated silent-slide end-to-end fixture.
