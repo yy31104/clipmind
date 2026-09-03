@@ -62,6 +62,7 @@ def build_metadata(
     candidate_frame_count: int | None = None,
     evidence_manifest: dict | None = None,
     stage_timings: dict[str, float] | None = None,
+    preflight_result: dict | None = None,
 ) -> dict:
     canonical = sorted(
         visual_states or [], key=lambda frame: (frame.timestamp, frame.index)
@@ -78,6 +79,7 @@ def build_metadata(
         "asr_error": transcript.error,
         "ocr_error": ocr_error,
         "stage_timings": dict(sorted((stage_timings or {}).items())),
+        "preflight": preflight_result,
     }
     if visual_states is not None:
         states = []
@@ -137,6 +139,7 @@ def write_all(
     candidate_frame_count: int | None = None,
     evidence_manifest: dict | None = None,
     stage_timings: dict[str, float] | None = None,
+    preflight_result: dict | None = None,
 ) -> dict:
     dest.mkdir(parents=True, exist_ok=True)
     metadata = build_metadata(
@@ -150,6 +153,7 @@ def write_all(
         candidate_frame_count=candidate_frame_count,
         evidence_manifest=evidence_manifest,
         stage_timings=stage_timings,
+        preflight_result=preflight_result,
     )
     (dest / "metadata.json").write_text(
         json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8"

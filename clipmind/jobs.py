@@ -33,6 +33,7 @@ class Job:
     error: str | None = None
     error_code: str | None = None
     error_action: str | None = None
+    error_details: dict | None = None
     options: dict = field(default_factory=dict)
     result: dict | None = None
     created_at: float = field(default_factory=time.time)
@@ -199,6 +200,7 @@ class JobStore:
                     report,
                     config=self.config,
                     providers=self.providers,
+                    options=job.options,
                 )
                 job.title = job.result.get("title") or job.title
                 job.status, job.stage, job.progress = "done", "done", 1.0
@@ -216,6 +218,7 @@ class JobStore:
                     "action",
                     "Check the local server log, then retry.",
                 )
+                job.error_details = getattr(exc, "details", None)
             job.finished_at = time.time()
             self._persist(job)
             self._publish(job)

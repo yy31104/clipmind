@@ -238,6 +238,27 @@ class ServerEventTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(response["jobs"][0]["id"], cached.id)
         self.assertEqual(stable_response["jobs"][0]["id"], cached.id)
         self.assertNotEqual(replacement["id"], cached.id)
+
+    async def test_process_anyway_is_a_per_job_override(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            test_store = JobStore(Path(tempdir) / "out")
+            source = Job(
+                id="expensive",
+                url="https://youtu.be/expensive",
+                title="Expensive",
+                status="error",
+                error_code="cost_limit_exceeded",
+            )
+            test_store.jobs[source.id] = source
+            with (
+                patch.object(server, "store", test_store),
+                patch.object(test_store, "_schedule"),
+            ):
+                replacement = await server.reprocess(
+                    source.id, server.ReprocessBody(force=True)
+                )
+
+        self.assertEqual(replacement["options"], {"force": True})
         self.assertEqual(replacement["status"], "queued")
 
     async def test_recovered_done_job_is_listed_and_readable(self) -> None:

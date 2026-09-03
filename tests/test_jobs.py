@@ -6,6 +6,8 @@ from unittest.mock import patch
 
 from clipmind.config import Settings
 from clipmind.jobs import Job, JobStore
+from clipmind.media import Frame
+from clipmind.preflight import CostLimitExceeded, estimate
 
 
 class JobStoreTests(unittest.IsolatedAsyncioTestCase):
@@ -169,6 +171,28 @@ class JobStoreTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(job.error_code, "processing_failed")
         self.assertIn("retry", job.error_action)
         self.assertIsNotNone(job.finished_at)
+
+    async def test_cost_failure_persists_actionable_estimate(self) -> None:
+        configured = Settings(max_canonical_states=0)
+        cost = estimate(
+            3600,
+            [Frame(0, 0.0, Path("candidate.jpg"))],
+            [Frame(0, 0.0, Path("canonical.jpg"))],
+            configured,
+        )
+
+        async def expensive_process(url, workdir, pools, report, **kwargs):
+            raise CostLimitExceeded(cost)
+
+        store = JobStore(config=configured)
+        queue = store.subscribe()
+        with patch("clipmind.jobs.process", new=expensive_process):
+            job = store.submit("https://youtu.be/expensive", "Expensive")
+            await self._events_until_terminal(queue)
+
+        self.assertEqual(job.error_code, "cost_limit_exceeded")
+        self.assertEqual(job.error_details["estimated_canonical_states"], 1)
+        self.assertIn("Process anyway", job.error_action)
 
     async def test_two_independent_jobs_can_enter_process_together(self) -> None:
         entered = 0
