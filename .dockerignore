@@ -1,0 +1,11 @@
+.git
+.github
+.venv
+out
+dist
+build
+*.egg-info
+__pycache__
+*.pyc
+.env
+ARCHITECTURE_REVIEW_2Y.md

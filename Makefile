@@ -4,7 +4,7 @@ OUT ?= out
 .PHONY: test eval eval-reextract eval-synthetic bench run
 
 test:
-	node --check web/app.js
+	node --check clipmind/web/app.js
 	$(PYTHON) -m unittest discover -s tests -v
 
 eval:
