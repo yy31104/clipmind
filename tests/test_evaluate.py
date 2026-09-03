@@ -157,8 +157,9 @@ class EvaluateTests(unittest.TestCase):
         observed: dict[str, object] = {}
 
         class FakeStore:
-            def __init__(self, out_dir: Path) -> None:
+            def __init__(self, out_dir: Path, *, config) -> None:
                 observed["out_dir"] = out_dir
+                observed["keep_source_video"] = config.keep_source_video
                 self.out_dir = out_dir
                 self._tasks: set[asyncio.Task] = set()
                 self._counter = 0
@@ -199,6 +200,7 @@ class EvaluateTests(unittest.TestCase):
 
         self.assertEqual(failures, [])
         self.assertEqual(observed["out_dir"], out_dir)
+        self.assertTrue(observed["keep_source_video"])
         self.assertEqual(
             observed["submissions"],
             [

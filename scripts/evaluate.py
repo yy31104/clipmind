@@ -261,9 +261,8 @@ async def reextract_cases(
         raise ValueError(f"re-extraction output must be empty: {out_dir}")
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    original_settings = pipeline.settings
-    pipeline.settings = replace(original_settings, keep_source_video=True)
-    store = JobStore(out_dir)
+    config = replace(pipeline.settings, keep_source_video=True)
+    store = JobStore(out_dir, config=config)
     jobs = []
     source_hashes: dict[str, str] = {}
     try:
@@ -290,7 +289,6 @@ async def reextract_cases(
         await store.close()
         for _, job in jobs:
             pipeline.cleanup_temporary(store.workdir(job.id), keep_source=False)
-        pipeline.settings = original_settings
 
     return (
         [
