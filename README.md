@@ -1,143 +1,249 @@
 # ClipMind
 
-Local-first Douyin evidence extraction for macOS. Paste one or more share links;
-ClipMind downloads the media through your local session, transcribes speech,
-captures content-driven visual states, runs OCR, aligns everything on a timeline,
-and emits a versioned Evidence Pack for a human or downstream knowledge agent.
+**Turn videos into evidence that humans and AI agents can actually use.**
+
+ClipMind is a local-first multimodal ingestion engine. Paste a verified YouTube
+or Douyin URL, or drop a local file; it extracts timestamped speech, on-screen
+text, visual states, layout, scene/build/scroll structure, and provenance into a
+versioned Evidence Pack. The result is useful on its own and directly consumable
+from a CLI, REST API, Python SDK, or MCP server.
+
+No paid model API is required. ClipMind does not generate a confident-looking
+summary from incomplete input: it either publishes a structurally complete pack
+or refuses before the expensive stages and shows the estimate.
 
 ```text
-share text → bounded acquisition ─┬→ MLX Whisper transcript ─┐
-                                  └→ visual states + OCR ─────┤
-                                                              ├→ timeline
-                                                              └→ Evidence Pack
+URL or local file
+       │
+       ▼
+SourceAdapter → temporary MediaAsset ─┬→ local ASR + word timing ──┐
+                                      └→ visual states + local OCR ┤
+                                                                  ▼
+                                              deterministic timeline fusion
+                                                                  │
+                                                                  ▼
+                                                        Evidence Pack v1
+                                          ┌───────────────┼───────────────┐
+                                          ▼               ▼               ▼
+                                      human UI       CLI / REST       MCP / agents
 ```
-
-The canonical path is free and requires no API key. It does not decide what is
-important or what belongs in your knowledge base; it preserves the evidence so
-another agent can make that decision with your existing context.
 
 ![ClipMind paste-to-Evidence-Pack demo](docs/demo.gif)
 
-The demo uses a generated silent four-slide fixture; it contains no downloaded
+The demo uses a synthetic silent four-slide fixture. It contains no downloaded
 video, third-party imagery, creator identity, or account information.
 
-## What v1 does
+## Why ClipMind
 
-- extracts multiple Douyin links from unedited share text;
-- uses yt-dlp with the local Chrome session—no manual MP4 download or extension;
-- runs MLX Whisper and macOS Vision OCR locally;
-- retains every deduped canonical visual state without a per-video cap;
-- stores readable 1280 px evidence while using 640 px frames for cheap detection;
-- derives an uncapped, content-driven preview and labels progressive builds;
-- writes deterministic transcript, OCR, visual timeline, Markdown, and manifest;
-- survives restarts without silently replaying interrupted work;
-- reuses completed packs for repeated URLs, with an explicit Reprocess action;
-- exports a deterministic ZIP or copies one-way to a configured knowledge-base Inbox.
+Most video tools optimize for a transcript or a generated summary. ClipMind
+preserves the source evidence first:
 
-## Requirements
+- `visual_states/all/` is the canonical, uncapped evidence set. A comparison
+  failure keeps the frame and records a warning instead of silently dropping it.
+- `visual_states/preview/` is a smaller derived view for humans. It can collapse
+  progressive builds and choose stable representatives without changing the
+  canonical set.
+- burned-in captions and documents are distinguished using transcript overlap;
+  unspoken slide, code, or UI text gets an explicit novelty measurement.
+- `manifest.json` is written last. Partial work is never advertised as a
+  reusable pack.
+- the output is deterministic evidence, not an opinion about what is worth
+  saving. A human or downstream agent makes that decision with its own context.
 
-- Apple Silicon Mac running a current macOS release;
-- Python 3.12;
-- Chrome for videos that require a local Douyin session;
-- about 1.6 GB for the first Whisper model download, plus space for Evidence Packs.
+## Verified inputs
 
-Install the system tools and Python environment:
+| Input | Built-in adapter | Acquisition note |
+| --- | --- | --- |
+| YouTube / Shorts | `youtube` | yt-dlp; cookies are tried only as configured |
+| Douyin | `douyin` | some media requires a current signed-in session |
+| MP4, MOV, MKV, WebM, AVI, audio, and other FFmpeg media | `local-file` | copied without modification; shared provenance omits the original directory |
+| Third-party packages | `clipmind.sources` entry point | see [Source adapters](docs/SOURCE_ADAPTERS.md) |
 
-```bash
-brew install ffmpeg yt-dlp uv
-uv venv --python 3.12
-uv pip install -r clipmind/requirements.txt
-```
+Only YouTube, Douyin, and local files are advertised as verified built-ins.
+An adapter means ClipMind recognizes and normalizes a source; it is not a
+promise that private, removed, region-locked, DRM-protected, or upstream-changed
+media can be downloaded.
 
-The first Chrome-cookie read can trigger a macOS Keychain prompt. ClipMind does
-not ask for your Douyin password. See [Privacy](docs/PRIVACY.md) before use—the
-browser-cookie boundary is broader than only `douyin.com` unless you configure a
-dedicated cookie file.
+## Install
 
-## Run
-
-```bash
-make run
-```
-
-Open [http://127.0.0.1:8420](http://127.0.0.1:8420), paste the complete share
-text, and choose **提取**. Multiple links in one paste are queued together.
-Overflow stays queued when the configured video limit is reached.
-
-The CLI uses the same durable queue and cache:
+ClipMind is not yet published to PyPI and the repository does not claim a signed
+public `.dmg`. Install the current development build from a checkout:
 
 ```bash
-.venv/bin/python cli.py "分享文字 https://v.douyin.com/xxxx/"
-.venv/bin/python cli.py --reprocess "https://v.douyin.com/xxxx/"
+git clone https://github.com/yy31104/clipmind.git
+cd clipmind
+
+# macOS
+brew install ffmpeg uv
+
+# Linux: install FFmpeg, Tesseract, and uv with your package manager first
+./scripts/install.sh .
+clipmind doctor
+clipmind-app
 ```
 
-If Douyin rejects a link, open it in Chrome, refresh the page, copy a fresh share
-link, and retry. v1 reports expired/private links, login requirements, rejected
-cookies, and media failures as separate, actionable errors; raw yt-dlp output is
-kept out of the UI.
+The browser opens at [http://127.0.0.1:8420](http://127.0.0.1:8420). A source
+checkout can also run `make run` after creating `.venv` and installing
+`clipmind/requirements.txt`.
+
+Windows and Linux use faster-whisper plus Tesseract by default. Apple Silicon
+macOS uses MLX Whisper plus Vision. Run `clipmind doctor` before the first job;
+model weights may be downloaded by the selected local provider on first use.
+
+For setup details, platform dependencies, Docker, and the unsigned local macOS
+build, see [Installation](docs/INSTALL.md).
+
+### Docker
+
+```bash
+docker build -t clipmind .
+docker run --rm -p 127.0.0.1:8420:8420 -v "$PWD/clipmind-data:/data" clipmind
+```
+
+The image uses faster-whisper and Tesseract. It does not bundle browser cookies,
+GPU drivers, or model weights.
+
+## Use it
+
+### Web app
+
+Paste one or more links, or drop local media. Inbox shows live jobs, Library
+searches complete packs, and the detail view exposes Overview, Visuals,
+Transcript, and Evidence. Over-budget work is refused with an estimate; only an
+explicit **Process anyway** starts the full untruncated job.
+
+### CLI
+
+```bash
+clipmind analyze "https://youtu.be/..."
+clipmind analyze --force "/path/to/local-video.mp4"
+clipmind list
+clipmind search "retrieval augmented generation"
+clipmind transcript PACK_ID
+clipmind timeline PACK_ID --json
+clipmind export PACK_ID --output evidence.zip
+clipmind doctor
+```
+
+`--force` means “process the complete source despite the estimate.” It never
+means truncate, lower resolution, or manufacture a partial pack.
+
+### Python SDK
+
+```python
+from clipmind.sdk import ClipMind, PackLibrary
+
+packs = ClipMind().analyze_sync("https://youtu.be/...")
+pack = packs[0]
+print(pack.id, pack.summary())
+
+hits = PackLibrary().search("vector database")
+frame_path, state = pack.frame(timestamp=143.0)
+```
+
+### REST API
+
+Start `clipmind serve`, then use the canonical read API:
+
+```text
+GET /api/packs
+GET /api/packs/{pack_id}
+GET /api/packs/{pack_id}/transcript
+GET /api/packs/{pack_id}/timeline
+GET /api/packs/{pack_id}/ocr
+GET /api/packs/{pack_id}/search?q=...
+GET /api/packs/{pack_id}/frame?timestamp=143
+```
+
+Extraction and browser uploads use `POST /api/jobs` and `POST /api/uploads`.
+The local server binds to loopback by default and has no authentication; do not
+expose it to a LAN or the public internet.
+
+### MCP for agents
+
+```bash
+clipmind-mcp
+# or: clipmind mcp
+```
+
+The stdio server exposes:
+
+```text
+clipmind.extract_video
+clipmind.get_transcript
+clipmind.get_visual_timeline
+clipmind.search_evidence
+clipmind.get_frame
+clipmind.export_pack
+```
+
+It also exposes complete evidence documents as read-only
+`clipmind://packs/<pack-id>/evidence` resources. See [MCP integration](docs/MCP.md)
+for configuration and tool contracts.
 
 ## Evidence Pack
 
-Every successful job writes `manifest.json` last:
+Every successful job publishes `manifest.json` last. The current writer emits
+`clipmind-evidence-pack@1.3.0`; readers accept every additive v1 minor from
+`1.0.0` through `1.3.0`.
 
 ```text
-out/<job-id>/
-├── manifest.json                 # clipmind-evidence-pack@1.0.0
-├── source.json
-├── job.json                      # durable lifecycle + result
-├── transcript.jsonl
+<library>/<pack-id>/
+├── manifest.json                 # completion marker, written last
+├── source.json                   # normalized provenance
+├── job.json                      # durable lifecycle and result view
+├── preflight.json                # local estimate; outside the exported contract
+├── transcript.jsonl              # segments, optional words/speakers
 ├── transcript.md
-├── ocr.jsonl
-├── visual_timeline.jsonl
-├── evidence.md                   # chronological evidence, no semantic ranking
+├── ocr.jsonl                     # text plus optional normalized layout boxes
+├── visual_timeline.jsonl         # timing, scenes, builds, scrolls, novelty
+├── evidence.md                   # deterministic chronological rendering
 └── visual_states/
-    ├── all/                      # canonical, content-driven, no fixed cap
-    └── preview/                  # compact derived view, no fixed cap
+    ├── all/                      # canonical; no count cap
+    └── preview/                  # compact derived view; no fixed budget
 ```
 
-`metadata.json` and `transcript.json` remain as compatibility artifacts and are
-excluded from the canonical ZIP. `note.md` and `keyframes/` survive only in
-packs written before the Evidence Pack became canonical.
-Source video, audio, and sampling frames are deleted after processing unless
-`CLIPMIND_KEEP_VIDEO=1` is set.
+`metadata.json` and `transcript.json` are UI/migration artifacts outside the
+canonical ZIP. `note.md` and `keyframes/` are read only for packs created before
+the Evidence Pack became canonical; current jobs do not write them.
 
-The complete schema and responsibility boundary are documented in
-[Evidence Pack v1](docs/EVIDENCE_PACK.md). `manifest.json` is the completion
-marker; a partial directory is never a cache hit.
+See [Evidence Pack v1](docs/EVIDENCE_PACK.md) and the machine-readable
+[JSON Schema](schemas/evidence-pack-v1.schema.json).
 
-## Knowledge-base handoff
+## Local providers
 
-Download the ZIP directly, or set an absolute local Inbox path:
+| Capability | macOS Apple Silicon | Linux / Windows | Optional |
+| --- | --- | --- | --- |
+| ASR | MLX Whisper | faster-whisper | explicit provider/model selection |
+| OCR | Apple Vision | Tesseract | normalized layout boxes where available |
+| speaker diarization | off | off | local pyannote with extra + `HF_TOKEN` |
 
-```dotenv
-CLIPMIND_KB_INBOX=/absolute/path/to/your-knowledge-base/Inbox
-```
+Provider failures are explicit modality states. ASR can be unavailable while
+visual evidence still completes; per-frame OCR errors retain the image and mark
+the record partial. Speaker labels are never invented when diarization is off.
 
-The UI then exposes **发送到知识库 Inbox**. Delivery is atomic and one-way:
-ClipMind writes into that Inbox only and publishes the copied manifest last. It
-does not read or modify the rest of the knowledge base. A downstream Codex task
-can summarize, compare, deduplicate, and decide retention independently.
+## Extraction invariants
 
-## Visual extraction
+- canonical evidence is never capped, truncated, or silently dropped to meet a
+  budget;
+- preview derivation cannot remove or repoint canonical artifacts;
+- a hash/comparison failure fails open and remains observable;
+- `queued` persists before scheduling and `running` persists before acquisition;
+- interrupted work is not replayed automatically;
+- final media is retained, temporary media is cleaned, and `manifest.json` is
+  the only completion marker;
+- search uses a rebuildable SQLite index; Evidence Pack files remain the source
+  of truth.
 
-```text
-2 fps at 640 px
-  → dHash fail-open dedupe
-  → matching 1280 px canonical images + Vision OCR
-  → visual_states/all/
-      ├→ progressive-build labels
-      └→ adaptive scene clusters → readable representatives → preview/
-```
+These contracts and their failure behavior are detailed in
+[Architecture](docs/ARCHITECTURE.md).
 
-Canonical membership depends only on safe near-duplicate filtering. A hash
-failure retains the frame and records a warning. Build grouping and preview
-selection never delete or repoint canonical artifacts. `scripts/rebuild_preview.py`
-can regenerate the derived preview without reacquiring media or rerunning OCR.
+## Measured quality
 
-The 1280 px decision came from a same-source experiment on a 227-second code/UI
-recording: OCR recognized 1034 unique characters instead of 559 at 640 px, while
-OCR wall time increased from 24.7 to 36.6 seconds. The raw measurement is in
-[`docs/ocr-resolution-experiment.json`](docs/ocr-resolution-experiment.json).
+The checked-in extraction-quality corpus measures three public Douyin sources
+plus a synthetic silent-slide fixture. YouTube and local-file ingestion have
+separate real/synthetic smoke coverage; the corpus is not evidence for any
+other source platform.
 
 ## Evaluation
 
@@ -171,45 +277,39 @@ small text, talking-head captions, inserted documents, and progressive slides:
 | talking head + documents, 64 s | 29 | 27 | 6 | 13.22 s |
 | talking head + slides, 52 s | 31 | 23 | 4 | 8.17 s |
 
-The long code/UI video was also probed at 4 fps. Production 2 fps sampling
-covered 105/105 states that stayed dHash-stable for at least 0.5 seconds, so v1
-does not add unmeasured adaptive sampling. See
-[Real-world evaluation](docs/REAL_WORLD_EVAL.md) and
-[Benchmarks](docs/BENCHMARK.md) for methodology and caveats.
+A same-source resolution experiment recognized 1,034 unique OCR characters at
+1280 px versus 559 at 640 px; OCR time rose from 24.7 to 36.6 seconds. A 4 fps
+probe found production 2 fps covered 105/105 states stable for at least 0.5 s.
+See [Real-world evaluation](docs/REAL_WORLD_EVAL.md),
+[Benchmarks](docs/BENCHMARK.md), and the checked-in raw JSON measurements.
 
 `make eval-synthetic` generates a silent four-slide fixture and runs the real
 FFmpeg, Vision OCR, no-audio degradation, preview, and packaging path. The
 recorded run recognized all four labels and retained all four canonical and
 preview states.
 
-## Concurrency and configuration
+## Privacy
 
-Independent resource pools prevent network work from occupying GPU capacity:
+Speech recognition, OCR, visual analysis, indexing, and pack generation run
+locally. URL acquisition and first-use model downloads are network operations.
+Browser-cookie access is optional but broad: when enabled, yt-dlp reads the
+configured browser cookie store, not only one domain. Evidence Packs can contain
+faces, voices, usernames, URLs, and personal information from the source.
 
-| Variable | Default | Resource |
-| --- | ---: | --- |
-| `CLIPMIND_MAX_VIDEOS` | 4 | active videos |
-| `CLIPMIND_MAX_FETCH` | 4 | network acquisition |
-| `CLIPMIND_MAX_ASR` | 1 | Apple GPU |
-| `CLIPMIND_MAX_OCR` | 2 | Vision / CPU |
-| `CLIPMIND_SAMPLE_FPS` | 2 | change-detection samples |
-| `CLIPMIND_SAMPLE_WIDTH` | 640 | change-detection width |
-| `CLIPMIND_EVIDENCE_WIDTH` | 1280 | canonical/OCR width |
+Read [Privacy](docs/PRIVACY.md), [Limitations](docs/LIMITATIONS.md), and
+[Security policy](SECURITY.md) before exposing or sharing output.
 
-Copy `.env.example` to `.env` for the complete list. The default cookie order is
-`chrome,-`; Safari is not attempted because its protected cookie container would
-otherwise require misleading Full Disk Access advice.
+## Contributing
 
-## Design and scope
+The easiest independent contribution is a source adapter: publish an object
+implementing the small protocol under the `clipmind.sources` Python entry-point
+group; no core `if/elif` chain is required. Extraction providers and Evidence
+Pack readers also have stable boundaries.
 
-- [Architecture](docs/ARCHITECTURE.md)—stage purpose, visual semantics,
-  concurrency, failure isolation, persistence, and cache identity.
-- [Privacy](docs/PRIVACY.md)—network calls, Chrome-cookie access, retained data,
-  optional external summary, and Inbox boundary.
-- [Limitations](docs/LIMITATIONS.md)—what the measured v1 does not claim.
-
-v1 intentionally supports Douyin on macOS only. Semantic summarization,
-multi-platform adapters, bidirectional knowledge-base sync, cancellation, and
-large-library pagination are outside the canonical extraction contract.
+Start with [CONTRIBUTING.md](CONTRIBUTING.md), the
+[source-adapter guide](docs/SOURCE_ADAPTERS.md), and the
+[roadmap](docs/ROADMAP.md). Release history is in the
+[changelog](CHANGELOG.md). Please use the issue templates for reproducible bugs
+and source requests. Security reports follow [SECURITY.md](SECURITY.md).
 
 Licensed under the [MIT License](LICENSE).

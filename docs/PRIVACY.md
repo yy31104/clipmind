@@ -1,55 +1,116 @@
 # Privacy and local data
 
-ClipMind's canonical extraction path runs on the Mac and requires no paid API
-key. The web server binds to `127.0.0.1`; it has no authentication and should not
-be exposed to a LAN or the public internet.
+ClipMind's canonical analysis path is local-first and requires no paid model API
+key. Speech recognition, OCR, visual analysis, search indexing, timeline fusion,
+and Evidence Pack generation run on the user's machine.
+
+The web server binds to `127.0.0.1` by default. It has no authentication and must
+not be exposed to a LAN, reverse proxy, shared host, or the public internet
+without a separate security layer.
 
 ## Network access
 
-The application contacts Douyin through yt-dlp to resolve and download the
-submitted media. MLX Whisper may contact its model host on first use to download
-the configured model; later runs use the local cache.
+URL ingestion uses yt-dlp to resolve and download only the submitted source.
+What upstream hosts are contacted depends on the platform, redirects, and media
+delivery network.
 
-No transcript, image, or OCR text is sent to any model provider. Extraction is
-local end to end, and there is no configuration that changes that.
+Local model providers may contact their model registry on first use:
+
+- MLX Whisper and faster-whisper can download configured ASR weights;
+- optional pyannote diarization can contact Hugging Face and requires `HF_TOKEN`;
+- later runs normally use provider-managed local caches.
+
+ClipMind does not send transcript, OCR, images, or Evidence Packs to a paid or
+hosted inference API. There is no semantic-summary provider in the canonical
+pipeline. Installing a third-party source/provider plugin extends the trust
+boundary to that package's code; review plugins before installing them.
 
 ## Browser cookies
 
-The default acquisition order is `chrome,-`: yt-dlp first asks Chrome for its
-cookie database, then tries without cookies. `--cookies-from-browser chrome`
-gives yt-dlp access to the browser cookie store, not only Douyin cookies. It can
-therefore trigger a macOS Keychain prompt and has a broader read boundary than
-the final network request.
+The default URL acquisition order is `chrome,-`: yt-dlp first tries the local
+Chrome cookie store and then an unauthenticated request. Browser-cookie access is
+broader than the final source domain—yt-dlp reads the configured browser store,
+not only cookies for YouTube, Douyin, or another submitted site. On macOS this
+can trigger a Keychain prompt.
 
-To avoid browser-cookie access, export only the required Douyin cookies to a
-Netscape-format file and configure:
+To disable browser-cookie access, configure only the unauthenticated path:
 
 ```dotenv
 CLIPMIND_COOKIE_SOURCES=-
-CLIPMIND_COOKIE_FILE=/absolute/path/to/douyin-cookies.txt
 ```
 
-Protect that file like a password. It is never included in an Evidence Pack.
-Safari is intentionally not a default fallback because its cookie container is
-normally blocked by macOS privacy controls; ClipMind does not ask for Full Disk
-Access to work around that boundary.
+For an account-gated source, a narrower alternative is a Netscape-format cookie
+file containing only the required cookies:
 
-## Files retained
+```dotenv
+CLIPMIND_COOKIE_SOURCES=-
+CLIPMIND_COOKIE_FILE=/absolute/path/to/cookies.txt
+```
 
-Successful jobs retain the Evidence Pack and legacy compatibility files under
-`out/<job-id>/`. Source video, extracted audio, and sampling directories are
-deleted unless `CLIPMIND_KEEP_VIDEO=1` is set. Failed/interrupted jobs retain
-their state record and any already-published final artifacts but clean temporary
-pipeline files.
+Protect that file like a password. It is passed to yt-dlp and is never copied
+into an Evidence Pack. Safari is intentionally not a default fallback because
+its protected cookie container would otherwise encourage misleading Full Disk
+Access guidance.
 
-Evidence Packs can contain faces, voices, usernames, source URLs, transcript
-text, and on-screen personal information from the source video. Review a pack
-before sharing its ZIP or committing it to another repository. The checked-in
-evaluation reports contain aggregate metrics, not downloaded media or frames.
+## Local uploads and files
+
+The browser upload endpoint streams the selected file into a randomized private
+path inside the ClipMind library and enforces the configured size limit. Direct
+CLI/SDK local-file ingestion copies the original into the job directory before
+processing. ClipMind never edits the original. The durable library `job.json`
+keeps the original path so an explicit local retry can work; exported ZIPs and
+Inbox copies replace it with `local:///filename` and remove internal job options.
+
+Temporary source media, extracted audio, and sampling frames are deleted after
+success or failure unless `CLIPMIND_KEEP_VIDEO=1` is configured. Interrupted
+jobs retain their durable state plus any already-published final artifacts while
+cleaning only recognized temporary paths.
+
+## Retained data
+
+Successful jobs retain the Evidence Pack under the configured library root.
+Installed builds use a per-user data directory; a source checkout uses `./out`
+unless `CLIPMIND_OUT` overrides it.
+
+Evidence Packs can contain:
+
+- faces, voices, and speaker-turn labels;
+- usernames, titles, source URLs, and upstream metadata;
+- complete speech transcripts and word timing;
+- screenshots, OCR text, and layout revealing personal or confidential data;
+- filenames and local-file provenance.
+
+Review a pack before sharing its ZIP, sending it to an agent, or committing it
+to another repository. The checked-in evaluation reports contain aggregate
+metrics and source identifiers/URLs used for reproducibility, not downloaded
+video, frames, transcripts, or OCR text.
+
+## Local search index
+
+`.evidence-index.sqlite3` stores derived searchable copies of title, transcript,
+and OCR text inside the library. It is not canonical and can be rebuilt from
+complete packs, but it carries the same local sensitivity while present. The
+index is never uploaded by ClipMind.
+
+## Agent interfaces
+
+The REST API, Python SDK, CLI, and MCP server can expose complete local evidence
+to the caller. MCP uses stdio and returns image bytes for frame requests. An
+agent with access to these interfaces can read the requested pack content; its
+own provider/privacy policy is outside ClipMind's control.
 
 ## Knowledge-base delivery
 
 `CLIPMIND_KB_INBOX` authorizes writes only to that configured Inbox. Delivery
-copies a complete pack into a private temporary directory and publishes its
-manifest last. ClipMind does not scan, interpret, edit, or delete the rest of
-the knowledge base.
+copies a complete canonical pack through a private temporary directory and
+publishes `manifest.json` last. ClipMind does not scan, interpret, edit, or
+delete the rest of the knowledge base.
+
+## Deletion and disclosure
+
+ClipMind currently has no UI delete action and no telemetry. To remove data,
+stop the app and delete the desired pack directory and derived SQLite index from
+the local library. Security issues involving credentials, path boundaries, or
+unexpected disclosure should be reported privately as described in
+[`SECURITY.md`](../SECURITY.md), not posted with sensitive artifacts in a public
+issue.
