@@ -3,71 +3,109 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Local-first multimodal video ingestion for humans and AI agents.">
 <title>ClipMind</title>
-<link rel="stylesheet" href="/static/style.css">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/static/style.css?v=3">
 </head>
 <body>
 <div id="app">
-
   <header class="topbar">
-    <button class="brand" id="home-btn">
-      <span class="mark"></span>
+    <button class="brand" id="home-btn" aria-label="ClipMind 首页">
+      <span class="mark" aria-hidden="true"></span>
       <span>ClipMind</span>
     </button>
-    <div class="health" id="health"></div>
+    <nav class="main-nav" aria-label="主导航">
+      <button class="nav-item active" data-mode="inbox">Inbox</button>
+      <button class="nav-item" data-mode="library">Library</button>
+      <button class="nav-item" data-mode="settings">Settings</button>
+    </nav>
   </header>
 
-  <!-- ───────────────── home ───────────────── -->
   <main class="view" id="view-home">
-    <section class="hero">
-      <h1>把短视频变成证据包</h1>
-      <p class="sub">粘贴抖音分享文字，完整转写、画面和 OCR 会在本地提取。多个链接可并行处理。</p>
+    <section class="hero" id="hero">
+      <div class="hero-copy">
+        <h1>把视频变成可用证据</h1>
+        <p class="sub">粘贴链接或拖入文件，在本地提取语音、文字和完整视觉状态。</p>
+        <div class="source-list" id="source-list">YouTube, 抖音, 本地文件</div>
+      </div>
 
-      <div class="composer">
+      <div class="composer" id="composer">
+        <label for="input">视频链接</label>
         <textarea id="input" rows="4" spellcheck="false"
-          placeholder="复制的抖音分享文字 https://v.douyin.com/xxxx/ 复制此链接…"></textarea>
+          placeholder="https://youtube.com/watch?v=...&#10;也可以粘贴分享文字或多个链接"></textarea>
+        <div class="drop-message" id="drop-message" hidden>松开以添加本地媒体</div>
         <div class="composer-foot">
-          <span class="hint" id="detected">等待粘贴</span>
-          <button class="primary" id="analyze">提取</button>
+          <span class="hint" id="detected" aria-live="polite">等待链接或文件</span>
+          <div class="composer-actions">
+            <input id="file-input" type="file" multiple hidden
+              accept="video/*,audio/*,.mkv,.webm,.flac,.opus">
+            <button class="secondary" id="choose-file">选择文件</button>
+            <button class="primary" id="analyze">提取</button>
+          </div>
         </div>
       </div>
-      <p class="error" id="error" hidden></p>
+      <p class="error" id="error" role="alert" hidden></p>
     </section>
 
     <section class="board">
-      <h2 class="section-label" id="active-label" hidden>正在处理</h2>
-      <div class="stack" id="active"></div>
+      <div id="active-section">
+        <h2 class="section-label" id="active-label" hidden>正在处理</h2>
+        <div class="stack" id="active"></div>
+      </div>
 
-      <h2 class="section-label" id="library-label" hidden>Evidence Packs</h2>
+      <div class="library-head" id="library-head">
+        <h2 id="library-label" hidden>Evidence Packs</h2>
+        <label class="search-field" id="search-field">
+          <span>搜索证据</span>
+          <input id="library-search" type="search"
+            placeholder="搜索转写、OCR 或标题" autocomplete="off">
+        </label>
+      </div>
+      <div class="search-results" id="search-results" hidden></div>
       <div class="grid" id="library"></div>
 
-      <button class="fold" id="failed-toggle" aria-expanded="false" hidden></button>
-      <div class="stack" id="failed" hidden></div>
+      <div id="failed-section">
+        <button class="fold" id="failed-toggle" aria-expanded="false" hidden></button>
+        <div class="stack" id="failed" hidden></div>
+      </div>
 
-      <div class="empty" id="empty">
-        <p>还没有 Evidence Pack。上面粘贴一个链接开始。</p>
+      <div class="empty" id="loading" aria-live="polite">
+        <strong>正在读取本地 Evidence Packs</strong>
+      </div>
+      <div class="empty" id="empty" hidden>
+        <strong>还没有 Evidence Pack</strong>
+        <p>粘贴一个链接，或把本地视频拖到上面的输入区域。</p>
       </div>
     </section>
   </main>
 
-  <!-- ───────────────── detail ───────────────── -->
+  <main class="view settings-view" id="view-settings" hidden>
+    <header class="view-heading">
+      <h1>本地运行状态</h1>
+      <p>ClipMind 只在这台电脑上处理和保存媒体。</p>
+    </header>
+    <section class="settings-grid" id="settings-grid"></section>
+  </main>
+
   <main class="view" id="view-detail" hidden>
-    <button class="back" id="back">← 返回</button>
+    <button class="back" id="back">返回 Library</button>
     <h1 class="detail-title" id="d-title"></h1>
     <div class="meta" id="d-meta"></div>
 
-    <nav class="tabs" id="tabs">
-      <button class="tab active" data-tab="summary">证据包</button>
-      <button class="tab" data-tab="frames">画面证据</button>
-      <button class="tab" data-tab="transcript">转写</button>
+    <nav class="tabs" id="tabs" aria-label="Evidence Pack 内容" role="tablist">
+      <button class="tab active" data-tab="summary" role="tab" aria-selected="true">概览</button>
+      <button class="tab" data-tab="timeline" role="tab" aria-selected="false">时间线</button>
+      <button class="tab" data-tab="frames" role="tab" aria-selected="false">画面</button>
+      <button class="tab" data-tab="transcript" role="tab" aria-selected="false">转写</button>
     </nav>
 
-    <section class="pane" id="pane-summary"></section>
-    <section class="pane" id="pane-frames" hidden></section>
-    <section class="pane" id="pane-transcript" hidden></section>
+    <section class="pane" id="pane-summary" role="tabpanel"></section>
+    <section class="pane" id="pane-timeline" role="tabpanel" hidden></section>
+    <section class="pane" id="pane-frames" role="tabpanel" hidden></section>
+    <section class="pane" id="pane-transcript" role="tabpanel" hidden></section>
   </main>
-
 </div>
-<script src="/static/app.js"></script>
+<script src="/static/app.js?v=3"></script>
 </body>
 </html>

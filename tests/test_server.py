@@ -82,6 +82,20 @@ class ServerEventTests(unittest.IsolatedAsyncioTestCase):
             source,
         )
 
+    def test_frontend_only_claims_verified_builtin_sources(self) -> None:
+        root = Path(__file__).resolve().parents[1] / "web"
+        html = (root / "index.html").read_text(encoding="utf-8")
+        javascript = (root / "app.js").read_text(encoding="utf-8")
+
+        self.assertIn("YouTube, 抖音, 本地文件", html)
+        self.assertNotIn("Bilibili", html)
+        self.assertNotIn("TikTok", html)
+        self.assertNotIn("小红书", html)
+        self.assertIn('/static/style.css?v=3', html)
+        self.assertIn('/static/app.js?v=3', html)
+        self.assertIn('SOURCE_LABEL[item.platform] || item.platform', javascript)
+        self.assertIn('supportedSourceLabels(health.supported_sources)', javascript)
+
     async def test_handoff_requires_an_explicit_inbox_configuration(self) -> None:
         with tempfile.TemporaryDirectory() as tempdir:
             test_store = JobStore(
@@ -260,6 +274,62 @@ class ServerEventTests(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(replacement["options"], {"force": True})
         self.assertEqual(replacement["status"], "queued")
+
+    async def test_browser_upload_is_streamed_to_a_safe_durable_path(self) -> None:
+        class Request:
+            async def stream(self):
+                yield b"first"
+                yield b" second"
+
+        with tempfile.TemporaryDirectory() as tempdir:
+            test_store = JobStore(Path(tempdir) / "out")
+            with (
+                patch.object(server, "store", test_store),
+                patch.object(test_store, "_schedule"),
+            ):
+                uploaded = await server.upload(
+                    Request(),
+                    filename="../../My Recording.MOV",
+                )
+            source = Path(uploaded["url"])
+
+            self.assertTrue(source.is_relative_to(test_store.storage.root / ".uploads"))
+            self.assertEqual(source.suffix, ".mov")
+            self.assertEqual(source.read_bytes(), b"first second")
+            self.assertEqual(uploaded["title"], "My Recording")
+            self.assertEqual(uploaded["options"]["uploaded_filename"], "My Recording.MOV")
+
+    async def test_browser_upload_rejects_unsupported_files_without_residue(self) -> None:
+        class Request:
+            async def stream(self):
+                yield b"not media"
+
+        with tempfile.TemporaryDirectory() as tempdir:
+            test_store = JobStore(Path(tempdir) / "out")
+            with patch.object(server, "store", test_store):
+                with self.assertRaises(HTTPException) as raised:
+                    await server.upload(Request(), filename="notes.txt")
+
+            self.assertEqual(raised.exception.status_code, 415)
+            self.assertFalse((test_store.storage.root / ".uploads").exists())
+
+    async def test_browser_upload_limit_removes_the_partial_file(self) -> None:
+        class Request:
+            async def stream(self):
+                yield b"too large"
+
+        with tempfile.TemporaryDirectory() as tempdir:
+            test_store = JobStore(
+                Path(tempdir) / "out",
+                config=Settings(max_upload_mb=0),
+            )
+            with patch.object(server, "store", test_store):
+                with self.assertRaises(HTTPException) as raised:
+                    await server.upload(Request(), filename="recording.mp4")
+
+            upload_root = test_store.storage.root / ".uploads"
+            self.assertEqual(raised.exception.status_code, 413)
+            self.assertEqual(list(upload_root.iterdir()), [])
 
     async def test_recovered_done_job_is_listed_and_readable(self) -> None:
         with tempfile.TemporaryDirectory() as tempdir:
