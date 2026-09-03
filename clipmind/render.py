@@ -28,6 +28,10 @@ def preview_records(frames: list[Frame]) -> list[dict]:
             "build_group_id": frame.build_group_id,
             "transcript_novelty_char_count": frame.transcript_novelty,
             "ocr_char_count": frame.ocr_char_count,
+            "content_hint": frame.content_hint,
+            "scene_id": frame.scene_id,
+            "observed_sample_count": frame.observed_sample_count,
+            "stable_duration_seconds": round(frame.stable_duration, 3),
         }
         for frame in sorted(frames, key=lambda frame: (frame.timestamp, frame.index))
     ]
@@ -90,6 +94,10 @@ def build_metadata(
                 "clock": clock(frame.timestamp),
                 "file": frame.path.relative_to(dest).as_posix(),
                 "text": frame.text,
+                "content_hint": frame.content_hint,
+                "scene_id": frame.scene_id,
+                "observed_sample_count": frame.observed_sample_count,
+                "stable_duration_seconds": round(frame.stable_duration, 3),
             }
             if frame.dedupe_warning:
                 state["dedupe_warning"] = frame.dedupe_warning
@@ -99,6 +107,14 @@ def build_metadata(
                         "build_group_id": frame.build_group_id,
                         "build_position": frame.build_position,
                         "build_size": frame.build_size,
+                    }
+                )
+            if frame.scroll_group_id:
+                state.update(
+                    {
+                        "scroll_group_id": frame.scroll_group_id,
+                        "scroll_position": frame.scroll_position,
+                        "scroll_size": frame.scroll_size,
                     }
                 )
             states.append(state)
@@ -161,7 +177,29 @@ def write_all(
     )
     (dest / "transcript.json").write_text(
         json.dumps(
-            [{"start": s.start, "end": s.end, "text": s.text} for s in transcript.segments],
+            [
+                {
+                    "start": segment.start,
+                    "end": segment.end,
+                    "text": segment.text,
+                    **({"speaker": segment.speaker} if segment.speaker else {}),
+                    **(
+                        {
+                            "words": [
+                                {
+                                    "start": word.start,
+                                    "end": word.end,
+                                    "text": word.text,
+                                }
+                                for word in segment.words
+                            ]
+                        }
+                        if segment.words
+                        else {}
+                    ),
+                }
+                for segment in transcript.segments
+            ],
             ensure_ascii=False, indent=2,
         ),
         encoding="utf-8",

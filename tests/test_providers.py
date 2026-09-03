@@ -19,6 +19,7 @@ class ProviderSelectionTests(unittest.TestCase):
 
         self.assertEqual(bundle.transcript.name, "mlx-whisper")
         self.assertEqual(bundle.text.name, "apple-vision")
+        self.assertEqual(bundle.diarization.name, "none")
 
     def test_auto_selects_portable_boundaries_off_apple(self) -> None:
         with (
@@ -62,6 +63,46 @@ class PortableProviderDegradationTests(unittest.IsolatedAsyncioTestCase):
         with patch.object(ocr, "tesseract_available", return_value=False):
             with self.assertRaisesRegex(ocr.OCRError, "Tesseract unavailable"):
                 provider.read_text(Path("frame.jpg"))
+
+    async def test_default_diarizer_never_invents_speaker_labels(self) -> None:
+        transcript = asr.Transcript([asr.Segment(0, 1, "hello")])
+        provider = providers.NoSpeakerDiarizer()
+
+        result = await provider.assign(Path("audio.wav"), transcript)
+
+        self.assertIs(result, transcript)
+        self.assertFalse(result.has_speakers)
+
+    def test_word_timestamps_are_normalized_at_the_provider_boundary(self) -> None:
+        words = asr._mapping_words(
+            {
+                "words": [
+                    {"start": 0.1, "end": 0.6, "word": " hello", "probability": 0.9}
+                ]
+            }
+        )
+
+        self.assertEqual(words[0].text, "hello")
+        self.assertEqual((words[0].start, words[0].end), (0.1, 0.6))
+
+    def test_diarization_assigns_the_speaker_with_the_greatest_overlap(self) -> None:
+        transcript = asr.Transcript(
+            [
+                asr.Segment(0.0, 2.0, "first"),
+                asr.Segment(2.0, 4.0, "second"),
+            ]
+        )
+
+        assigned = providers.assign_speakers(
+            transcript,
+            [(0.0, 1.5, "SPEAKER_00"), (1.5, 4.0, "SPEAKER_01")],
+        )
+
+        self.assertEqual(
+            [segment.speaker for segment in assigned.segments],
+            ["SPEAKER_00", "SPEAKER_01"],
+        )
+        self.assertTrue(assigned.has_speakers)
 
 
 if __name__ == "__main__":

@@ -35,13 +35,38 @@ class OCRError(RuntimeError):
     pass
 
 
-def read_text(
+@dataclass(frozen=True)
+class OCRBlock:
+    text: str
+    confidence: float | None = None
+    # Normalized top-left coordinates: x, y, width, height.
+    bbox: tuple[float, float, float, float] | None = None
+
+    def public(self) -> dict:
+        value: dict = {"text": self.text}
+        if self.confidence is not None:
+            value["confidence"] = round(self.confidence, 4)
+        if self.bbox is not None:
+            value["bbox"] = [round(number, 6) for number in self.bbox]
+        return value
+
+
+@dataclass(frozen=True)
+class OCRResult:
+    blocks: tuple[OCRBlock, ...]
+
+    @property
+    def lines(self) -> list[str]:
+        return [block.text for block in self.blocks if block.text]
+
+
+def recognize(
     path: Path,
     min_confidence: float = 0.4,
     *,
     languages: tuple[str, ...] | None = None,
-) -> list[str]:
-    """Recognised text lines, ordered top-to-bottom.
+) -> OCRResult:
+    """Recognized text and normalized layout, ordered top-to-bottom.
 
     Raises OCRError so callers can distinguish "no text in this frame" from
     "OCR is broken"; the caller decides whether that is fatal (it is not).
@@ -68,7 +93,7 @@ def read_text(
         # Vision uses a bottom-left origin, so descending y is visual top-down.
         observations.sort(key=lambda o: -o.boundingBox().origin.y)
 
-        lines: list[str] = []
+        blocks: list[OCRBlock] = []
         for obs in observations:
             candidates = obs.topCandidates_(1)
             if not candidates:
@@ -78,8 +103,34 @@ def read_text(
                 continue
             text = (candidate.string() or "").strip()
             if text:
-                lines.append(text)
-        return lines
+                box = obs.boundingBox()
+                blocks.append(
+                    OCRBlock(
+                        text=text,
+                        confidence=float(candidate.confidence()),
+                        bbox=(
+                            float(box.origin.x),
+                            1.0 - float(box.origin.y) - float(box.size.height),
+                            float(box.size.width),
+                            float(box.size.height),
+                        ),
+                    )
+                )
+        return OCRResult(tuple(blocks))
+
+
+def read_text(
+    path: Path,
+    min_confidence: float = 0.4,
+    *,
+    languages: tuple[str, ...] | None = None,
+) -> list[str]:
+    """Compatibility view containing only recognized lines."""
+    return recognize(
+        path,
+        min_confidence=min_confidence,
+        languages=languages,
+    ).lines
 
 
 @dataclass(frozen=True)
@@ -92,6 +143,9 @@ class VisionTextRecognizer:
 
     def read_text(self, image: Path) -> list[str]:
         return read_text(image, languages=self.config.ocr_languages)
+
+    def recognize(self, image: Path) -> OCRResult:
+        return recognize(image, languages=self.config.ocr_languages)
 
 
 def tesseract_available() -> bool:
@@ -115,6 +169,9 @@ class TesseractTextRecognizer:
         return tesseract_available()
 
     def read_text(self, image: Path) -> list[str]:
+        return self.recognize(image).lines
+
+    def recognize(self, image: Path) -> OCRResult:
         if not self.available():
             raise OCRError(
                 "Tesseract unavailable; install tesseract and the portable OCR extra"
@@ -123,11 +180,49 @@ class TesseractTextRecognizer:
         from PIL import Image
 
         with Image.open(image) as source:
-            text = pytesseract.image_to_string(
+            width, height = source.size
+            data = pytesseract.image_to_data(
                 source,
                 lang=self.config.tesseract_languages,
+                output_type=pytesseract.Output.DICT,
             )
-        return [line.strip() for line in text.splitlines() if line.strip()]
+        grouped: dict[tuple[int, int, int], list[int]] = {}
+        for index, text in enumerate(data.get("text", [])):
+            if not str(text).strip():
+                continue
+            key = (
+                int(data["block_num"][index]),
+                int(data["par_num"][index]),
+                int(data["line_num"][index]),
+            )
+            grouped.setdefault(key, []).append(index)
+
+        blocks: list[OCRBlock] = []
+        for indices in grouped.values():
+            words = [str(data["text"][index]).strip() for index in indices]
+            left = min(int(data["left"][index]) for index in indices)
+            top = min(int(data["top"][index]) for index in indices)
+            right = max(
+                int(data["left"][index]) + int(data["width"][index])
+                for index in indices
+            )
+            bottom = max(
+                int(data["top"][index]) + int(data["height"][index])
+                for index in indices
+            )
+            confidences = [
+                float(data["conf"][index]) / 100.0
+                for index in indices
+                if float(data["conf"][index]) >= 0
+            ]
+            blocks.append(
+                OCRBlock(
+                    text=" ".join(words),
+                    confidence=(sum(confidences) / len(confidences)) if confidences else None,
+                    bbox=(left / width, top / height, (right - left) / width, (bottom - top) / height),
+                )
+            )
+        return OCRResult(tuple(blocks))
 
 
 def available() -> bool:

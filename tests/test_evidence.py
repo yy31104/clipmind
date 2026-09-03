@@ -8,7 +8,7 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 from clipmind import evidence, pipeline, visual_states
-from clipmind.asr import Segment, Transcript
+from clipmind.asr import Segment, Transcript, Word
 from clipmind.fetch import Media
 from clipmind.media import Frame
 
@@ -106,7 +106,7 @@ class EvidencePackTests(unittest.TestCase):
                 first_bytes,
                 {name: (dest / name).read_bytes() for name in artifact_names},
             )
-            self.assertEqual(manifest["schema"]["version"], "1.2.0")
+            self.assertEqual(manifest["schema"]["version"], "1.3.0")
             self.assertEqual(manifest["source"]["platform"], "douyin")
             self.assertEqual(manifest["status"], "complete")
             self.assertEqual(manifest["timings"], {"ocr_seconds": 1.25})
@@ -118,6 +118,10 @@ class EvidencePackTests(unittest.TestCase):
             )
             self.assertEqual(manifest["completeness"]["transcript"], "complete")
             self.assertEqual(manifest["completeness"]["ocr"], "complete")
+            self.assertEqual(manifest["completeness"]["word_timing"], "unavailable")
+            self.assertEqual(
+                manifest["completeness"]["speaker_diarization"], "unavailable"
+            )
             schema = json.loads(
                 (Path(__file__).parents[1] / "schemas" / "evidence-pack-v1.schema.json")
                 .read_text(encoding="utf-8")
@@ -181,6 +185,38 @@ class EvidencePackTests(unittest.TestCase):
             self.assertEqual(manifest["completeness"]["ocr"], "partial")
             self.assertEqual(jsonl(dest / "ocr.jsonl")[0]["error"], frames[0].ocr_warning)
             self.assertIn("Transcript unavailable", (dest / "transcript.md").read_text())
+
+    def test_serializes_word_timing_and_speaker_only_when_provider_supplies_them(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            dest = Path(tempdir)
+            item, _transcript, frames, preview, groups = self.make_fixture(dest)
+            transcript = Transcript(
+                [
+                    Segment(
+                        0.0,
+                        1.0,
+                        "hello",
+                        words=(Word(0.1, 0.7, "hello", 0.95),),
+                        speaker="speaker-1",
+                    )
+                ]
+            )
+
+            manifest = evidence.write_pack(
+                dest,
+                item,
+                transcript,
+                frames,
+                preview,
+                groups,
+                candidate_frame_count=20,
+            )
+            row = jsonl(dest / "transcript.jsonl")[0]
+
+        self.assertEqual(row["speaker"], "speaker-1")
+        self.assertEqual(row["words"][0]["text"], "hello")
+        self.assertEqual(manifest["completeness"]["word_timing"], "complete")
+        self.assertEqual(manifest["completeness"]["speaker_diarization"], "complete")
 
     def test_manifest_is_not_written_when_an_artifact_write_fails(self) -> None:
         with tempfile.TemporaryDirectory() as tempdir:

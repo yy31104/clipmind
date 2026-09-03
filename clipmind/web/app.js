@@ -244,6 +244,21 @@ function unspokenBadge(frame) {
   return `<span class="unspoken">${novel} 字仅在画面中</span>`;
 }
 
+function contentBadge(frame) {
+  const labels = {
+    caption: "字幕",
+    code_ui: "代码 / UI",
+    document_slide: "文档 / 幻灯片",
+    textual: "画面文字",
+  };
+  const label = labels[frame.content_hint];
+  return label ? `<span class="content-hint">${label}</span>` : "";
+}
+
+function frameBadges(frame) {
+  return `${contentBadge(frame)}${unspokenBadge(frame)}`;
+}
+
 async function openDetail(id) {
   const response = await fetch(`/api/jobs/${id}`);
   if (!response.ok) return;
@@ -294,7 +309,7 @@ async function openDetail(id) {
 
   $("pane-frames").innerHTML = frames.map((frame) => `
     <article class="frame">
-      <div class="frame-cap"><span class="ts">${esc(frame.clock || clock(frame.timestamp))}</span>${unspokenBadge(frame)}</div>
+      <div class="frame-cap"><span class="ts">${esc(frame.clock || clock(frame.timestamp))}</span>${frameBadges(frame)}</div>
       <img loading="lazy" src="${frameUrl(job.id, frame, modernFrames)}" alt="${esc(frame.clock || clock(frame.timestamp))} 的视觉证据">
       ${frame.text ? `<div class="frame-ocr">${esc(frame.text)}</div>` : ""}
     </article>`).join("") || `<p class="hint">没有提取到可预览的画面证据。</p>`;
@@ -329,7 +344,7 @@ function timeline(job, frames, modernFrames) {
     const frame = event.frame;
     return `<article class="timeline-row visual-row">
       <time>${clock(event.at)}</time><div>
-        <span class="kind">画面</span>${unspokenBadge(frame)}
+        <span class="kind">画面</span>${frameBadges(frame)}
         <img loading="lazy" src="${frameUrl(job.id, frame, modernFrames)}" alt="${clock(event.at)} 的视觉证据">
         ${frame.text ? `<p>${esc(frame.text)}</p>` : ""}
       </div>
@@ -424,6 +439,7 @@ function renderSettings() {
     ["FFmpeg", health.ffmpeg, "提取音频和画面"],
     [health.asr_provider || "ASR", health.asr, "转写语音"],
     [health.ocr_provider || "OCR", health.ocr, "识别画面文字"],
+    [health.diarization_provider || "说话人分离", health.diarization, "可选的说话人标签"],
   ];
   $("settings-grid").innerHTML = checks.map(([name, ready, purpose]) => `
     <article class="setting-row">

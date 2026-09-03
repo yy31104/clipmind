@@ -155,6 +155,9 @@ async def process(
                 report("analysing", base + 0.05, "transcribing speech")
                 started = time.perf_counter()
                 value = await providers.transcript.transcribe(audio_path)
+                diarizer = getattr(providers, "diarization", None)
+                if diarizer is not None and diarizer.available():
+                    value = await diarizer.assign(audio_path, value)
                 return value, round(time.perf_counter() - started, 3)
 
         async def vision():
@@ -165,10 +168,12 @@ async def process(
             ocr_seconds = round(time.perf_counter() - started, 3)
             report("analysing", base + 0.05, problem or "reading on-screen text")
             build_groups = visual_states.group_progressive_builds(canonical)
-            return build_groups, problem, ocr_seconds
+            scroll_groups = visual_states.group_scroll_sequences(canonical)
+            return build_groups, scroll_groups, problem, ocr_seconds
 
         (transcript, asr_seconds), (
             build_groups,
+            scroll_groups,
             ocr_error,
             ocr_seconds,
         ) = await asyncio.gather(speech(), vision())
@@ -198,6 +203,7 @@ async def process(
             preview,
             build_groups,
             candidate_frame_count=len(candidates),
+            scroll_groups=scroll_groups,
             ocr_error=ocr_error,
             timings=timings,
             config=config,

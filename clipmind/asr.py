@@ -15,10 +15,20 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
+class Word:
+    start: float
+    end: float
+    text: str
+    probability: float | None = None
+
+
+@dataclass
 class Segment:
     start: float
     end: float
     text: str
+    words: tuple[Word, ...] = ()
+    speaker: str | None = None
 
 
 @dataclass
@@ -27,6 +37,7 @@ class Transcript:
     language: str | None = None
     engine: str = "mlx-whisper"
     error: str | None = None
+    diarization_error: str | None = None
 
     @property
     def text(self) -> str:
@@ -35,6 +46,27 @@ class Transcript:
     @property
     def is_empty(self) -> bool:
         return not self.text
+
+    @property
+    def has_word_timing(self) -> bool:
+        return bool(self.segments) and all(segment.words for segment in self.segments)
+
+    @property
+    def has_speakers(self) -> bool:
+        return bool(self.segments) and all(segment.speaker for segment in self.segments)
+
+
+def _mapping_words(value: dict) -> tuple[Word, ...]:
+    return tuple(
+        Word(
+            float(item.get("start") or 0),
+            float(item.get("end") or item.get("start") or 0),
+            str(item.get("word") or item.get("text") or "").strip(),
+            float(item["probability"]) if item.get("probability") is not None else None,
+        )
+        for item in value.get("words") or []
+        if str(item.get("word") or item.get("text") or "").strip()
+    )
 
 
 @lru_cache(maxsize=1)
@@ -60,15 +92,26 @@ def faster_whisper_available() -> bool:
 def _transcribe_sync(audio: Path, config: Settings) -> Transcript:
     import mlx_whisper
 
-    result = mlx_whisper.transcribe(
-        str(audio),
-        path_or_hf_repo=config.asr_model,
-        language=config.asr_language,
-        condition_on_previous_text=False,  # avoids runaway repetition on short clips
-        verbose=None,
-    )
+    options = {
+        "path_or_hf_repo": config.asr_model,
+        "language": config.asr_language,
+        "condition_on_previous_text": False,
+        "verbose": None,
+    }
+    try:
+        result = mlx_whisper.transcribe(
+            str(audio), word_timestamps=True, **options
+        )
+    except TypeError:
+        # Older mlx-whisper builds still produce valid segment timing.
+        result = mlx_whisper.transcribe(str(audio), **options)
     segments = [
-        Segment(float(s["start"]), float(s["end"]), (s.get("text") or "").strip())
+        Segment(
+            float(s["start"]),
+            float(s["end"]),
+            (s.get("text") or "").strip(),
+            _mapping_words(s),
+        )
         for s in result.get("segments", [])
         if (s.get("text") or "").strip()
     ]
@@ -132,9 +175,24 @@ class FasterWhisperProvider:
             str(audio),
             language=self.config.asr_language,
             condition_on_previous_text=False,
+            word_timestamps=True,
         )
         records = [
-            Segment(float(segment.start), float(segment.end), segment.text.strip())
+            Segment(
+                float(segment.start),
+                float(segment.end),
+                segment.text.strip(),
+                tuple(
+                    Word(
+                        float(word.start),
+                        float(word.end),
+                        word.word.strip(),
+                        float(word.probability) if word.probability is not None else None,
+                    )
+                    for word in (segment.words or ())
+                    if word.word.strip()
+                ),
+            )
             for segment in segments
             if segment.text.strip()
         ]

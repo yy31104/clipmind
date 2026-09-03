@@ -9,13 +9,13 @@ from .asr import Segment, Transcript
 from .config import Settings, settings
 from .fetch import Media
 from .media import Frame
-from .visual_states import PREVIEW_ALGORITHM, BuildGroup
+from .visual_states import PREVIEW_ALGORITHM, BuildGroup, ScrollGroup
 
 SCHEMA_NAME = "clipmind-evidence-pack"
-SCHEMA_VERSION = "1.2.0"
+SCHEMA_VERSION = "1.3.0"
 # Every v1 minor has been additive. Older packs remain readable; fields added
 # later are never synthesized because that would fabricate source evidence.
-READABLE_SCHEMA_VERSIONS = frozenset({"1.0.0", "1.1.0", "1.2.0"})
+READABLE_SCHEMA_VERSIONS = frozenset({"1.0.0", "1.1.0", "1.2.0", "1.3.0"})
 PACK_ARTIFACTS = (
     "source.json",
     "job.json",
@@ -81,15 +81,32 @@ def _write_jsonl(path: Path, records: Iterable[dict]) -> None:
 
 
 def _transcript_records(transcript: Transcript) -> list[dict]:
-    return [
-        {
+    records = []
+    for position, segment in enumerate(transcript.segments, start=1):
+        record = {
             "id": f"transcript-{position:05d}",
             "start": segment.start,
             "end": segment.end,
             "text": segment.text,
         }
-        for position, segment in enumerate(transcript.segments, start=1)
-    ]
+        if segment.words:
+            record["words"] = [
+                {
+                    "start": word.start,
+                    "end": word.end,
+                    "text": word.text,
+                    **(
+                        {"probability": round(word.probability, 6)}
+                        if word.probability is not None
+                        else {}
+                    ),
+                }
+                for word in segment.words
+            ]
+        if segment.speaker:
+            record["speaker"] = segment.speaker
+        records.append(record)
+    return records
 
 
 def _ocr_records(frames: list[Frame]) -> list[dict]:
@@ -102,6 +119,8 @@ def _ocr_records(frames: list[Frame]) -> list[dict]:
             "lines": list(frame.lines),
             "text": frame.text,
         }
+        if frame.ocr_layout:
+            record["layout"] = list(frame.ocr_layout)
         if frame.ocr_warning:
             record["error"] = frame.ocr_warning
         records.append(record)
@@ -154,6 +173,9 @@ def _timeline_records(
             "ocr_char_count": frame.ocr_char_count,
             "transcript_novelty_char_count": frame.transcript_novelty,
             "transcript_overlap_ratio": frame.transcript_overlap,
+            "observed_sample_count": frame.observed_sample_count,
+            "stable_duration_seconds": round(frame.stable_duration, 3),
+            "content_hint": frame.content_hint,
         }
         if preview_frame is not None:
             record["preview_file"] = preview_frame.path.relative_to(dest).as_posix()
@@ -165,6 +187,24 @@ def _timeline_records(
                     "build_size": frame.build_size,
                 }
             )
+        if frame.scroll_group_id:
+            record.update(
+                {
+                    "scroll_group_id": frame.scroll_group_id,
+                    "scroll_position": frame.scroll_position,
+                    "scroll_size": frame.scroll_size,
+                }
+            )
+        if frame.scene_id:
+            record.update(
+                {
+                    "scene_id": frame.scene_id,
+                    "scene_boundary": frame.scene_boundary,
+                    "scene_change_score": frame.scene_change_score,
+                }
+            )
+            if frame.scene_boundary_reason:
+                record["scene_boundary_reason"] = frame.scene_boundary_reason
         if frame.dedupe_warning:
             record["dedupe_warning"] = frame.dedupe_warning
         records.append(record)
@@ -177,7 +217,8 @@ def _transcript_markdown(item: Media, transcript: Transcript) -> str:
         lines.extend([f"> Transcript unavailable or incomplete: {transcript.error}", ""])
     if transcript.segments:
         lines.extend(
-            f"**{_timestamp(segment.start)}–{_timestamp(segment.end)}** {segment.text}"
+            f"**{_timestamp(segment.start)}–{_timestamp(segment.end)}** "
+            f"{f'[{segment.speaker}] ' if segment.speaker else ''}{segment.text}"
             for segment in transcript.segments
         )
     else:
@@ -228,6 +269,8 @@ def _evidence_markdown(
                         "",
                     ]
                 )
+            if frame.content_hint != "visual":
+                lines.extend([f"Content hint: `{frame.content_hint}`", ""])
             if frame.lines:
                 lines.extend(["### OCR", "", "```text", *frame.lines, "```", ""])
             elif frame.ocr_warning:
@@ -256,6 +299,7 @@ def write_pack(
     build_groups: list[BuildGroup],
     *,
     candidate_frame_count: int,
+    scroll_groups: list[ScrollGroup] | None = None,
     ocr_error: str | None = None,
     timings: dict[str, float] | None = None,
     config: Settings = settings,
@@ -312,11 +356,15 @@ def write_pack(
             "canonical_visual_states": len(canonical),
             "preview_visual_states": len(preview),
             "progressive_build_groups": len(build_groups),
+            "scroll_groups": len(scroll_groups or []),
+            "scenes": len({frame.scene_id for frame in canonical if frame.scene_id}),
             "transcript_segments": len(transcript_records),
             "ocr_records": len(ocr_records),
         },
         "completeness": {
             "transcript": "unavailable" if transcript.error else "complete",
+            "word_timing": "complete" if transcript.has_word_timing else "unavailable",
+            "speaker_diarization": "complete" if transcript.has_speakers else "unavailable",
             "ocr": (
                 "unavailable"
                 if canonical and ocr_failures == len(canonical)
@@ -332,6 +380,7 @@ def write_pack(
         },
         "diagnostics": {
             "asr_error": transcript.error,
+            "diarization_error": transcript.diarization_error,
             "ocr_error": ocr_error,
             "ocr_failure_count": ocr_failures,
             "dedupe_failure_count": sum(

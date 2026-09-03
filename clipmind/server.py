@@ -338,6 +338,7 @@ async def events():
 @app.get("/api/health")
 async def health():
     import shutil
+    diarizer = getattr(store.providers, "diarization", None)
     return {
         "yt_dlp": bool(shutil.which("yt-dlp")),
         "ffmpeg": bool(shutil.which("ffmpeg")),
@@ -345,6 +346,8 @@ async def health():
         "asr": store.providers.transcript.available(),
         "ocr_provider": store.providers.text.name,
         "asr_provider": store.providers.transcript.name,
+        "diarization": bool(diarizer and diarizer.available()),
+        "diarization_provider": diarizer.name if diarizer else "none",
         "knowledge_base_inbox": store.config.knowledge_base_inbox is not None,
         "supported_sources": supported_sources(),
         "max_upload_mb": store.config.max_upload_mb,
