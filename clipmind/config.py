@@ -82,6 +82,7 @@ class Settings:
     # --- housekeeping ---
     keep_source_video: bool = False
     knowledge_base_inbox: Path | None = None
+    max_upload_mb: int = 10_240
 
     @classmethod
     def from_env(cls) -> Settings:
@@ -119,6 +120,7 @@ class Settings:
             max_ocr=_int("CLIPMIND_MAX_OCR", 2),
             keep_source_video=os.getenv("CLIPMIND_KEEP_VIDEO", "0") == "1",
             knowledge_base_inbox=_optional_path("CLIPMIND_KB_INBOX"),
+            max_upload_mb=_int("CLIPMIND_MAX_UPLOAD_MB", 10_240),
         )
 
 

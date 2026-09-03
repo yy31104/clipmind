@@ -11,6 +11,7 @@ from pathlib import Path
 from . import evidence
 from .config import OUT_DIR, Settings, settings
 from .links import normalize_url, source_id_from_url
+from .index import EvidenceIndex
 from .pipeline import Pools, cleanup_temporary, process
 from .providers import ProviderBundle, default_providers
 from .storage import JobStorage
@@ -78,6 +79,7 @@ class JobStore:
         self.providers = providers or default_providers(self.config)
         self.jobs: dict[str, Job] = {}
         self.storage = JobStorage(out_dir if out_dir is not None else OUT_DIR)
+        self.index = EvidenceIndex(self.storage.root / ".evidence-index.sqlite3")
         self.pools = Pools.from_settings(self.config)
         self._slots = asyncio.Semaphore(self.config.max_videos)
         self._subscribers: set[asyncio.Queue] = set()
@@ -131,6 +133,8 @@ class JobStore:
                 job.finished_at = time.time()
                 self._persist(job)
                 self._publish(job)
+            elif job.status == "done":
+                self._sync_index(job)
 
     def submit(self, url: str, title: str, *, options: dict | None = None) -> Job:
         job = Job(
@@ -204,6 +208,7 @@ class JobStore:
                 )
                 job.title = job.result.get("title") or job.title
                 job.status, job.stage, job.progress = "done", "done", 1.0
+                self._sync_index(job)
             except asyncio.CancelledError:
                 # Leave the durable state as running; restart recovery owns the
                 # transition to interrupted and must not accidentally requeue it.
@@ -239,3 +244,15 @@ class JobStore:
 
     def workdir(self, job_id: str) -> Path:
         return self.storage.workdir(job_id)
+
+    def search(self, query: str, *, limit: int = 20) -> list[dict]:
+        for job in self.jobs.values():
+            if job.status == "done":
+                self._sync_index(job)
+        return self.index.search(query, limit=limit)
+
+    def _sync_index(self, job: Job) -> None:
+        try:
+            self.index.sync(job.id, self.workdir(job.id))
+        except Exception:  # noqa: BLE001 - search is a rebuildable derived view
+            logger.exception("Could not update the search index for job %s", job.id)
