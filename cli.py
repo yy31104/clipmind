@@ -7,13 +7,18 @@ import sys
 
 from clipmind.config import OUT_DIR
 from clipmind.jobs import JobStore
-from clipmind.links import extract_urls, guess_title
+from clipmind.links import extract_sources, guess_title
 
 
-async def main(text: str, *, reprocess: bool = False) -> int:
-    urls = extract_urls(text)
+async def main(
+    text: str,
+    *,
+    reprocess: bool = False,
+    force: bool = False,
+) -> int:
+    urls = extract_sources(text)
     if not urls:
-        print("no Douyin links found in that text", file=sys.stderr)
+        print("no supported URL or local media file found", file=sys.stderr)
         return 1
 
     store = JobStore()
@@ -28,7 +33,11 @@ async def main(text: str, *, reprocess: bool = False) -> int:
             succeeded += 1
             print(f"[{index}] reused -> {OUT_DIR / cached.id / 'evidence.md'}\n")
             continue
-        job = store.submit(url, guess_title(text, url) or url)
+        job = store.submit(
+            url,
+            guess_title(text, url) or url,
+            options={"force": force},
+        )
         labels[job.id] = f"[{index}]"
         pending.add(job.id)
 
@@ -61,6 +70,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("text", nargs="*")
     parser.add_argument("--reprocess", action="store_true")
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="process a complete source even when the preflight budget is exceeded",
+    )
     args = parser.parse_args()
     source = " ".join(args.text) or sys.stdin.read()
-    raise SystemExit(asyncio.run(main(source, reprocess=args.reprocess)))
+    raise SystemExit(
+        asyncio.run(main(source, reprocess=args.reprocess, force=args.force))
+    )
