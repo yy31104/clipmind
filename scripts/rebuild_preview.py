@@ -116,31 +116,8 @@ def rebuild(workdir: Path) -> int:
         manifest["counts"]["preview_visual_states"] = len(selected)
         manifest["counts"]["progressive_build_groups"] = len(groups)
         manifest["configuration"]["preview_algorithm"] = visual_states.PREVIEW_ALGORITHM
-        preview_records = [
-            {
-                "timestamp": frame.timestamp,
-                "clock": render.clock(frame.timestamp),
-                "file": f"visual_states/preview/{frame.path.name}",
-                "canonical_file": f"visual_states/all/{frame.path.name}",
-                "text": frame.text,
-                "build_group_id": frame.build_group_id,
-                "transcript_novelty_char_count": frame.transcript_novelty,
-                "ocr_char_count": frame.ocr_char_count,
-            }
-            for frame in selected
-        ]
-        group_records = [
-            {
-                "id": group.id,
-                "members": [
-                    f"visual_states/all/{frame.path.name}" for frame in group.frames
-                ],
-                "representative": (
-                    f"visual_states/all/{group.representative.path.name}"
-                ),
-            }
-            for group in groups
-        ]
+        preview_records = render.preview_records(selected)
+        group_records = render.build_group_records(groups)
         metadata = (
             json.loads(metadata_path.read_text(encoding="utf-8"))
             if metadata_path.exists()

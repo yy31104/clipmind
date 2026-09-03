@@ -171,32 +171,19 @@ async def process(url: str, workdir: Path, pools: Pools, report) -> dict:
                 stage_timings=timings,
             )
         except Exception as exc:  # noqa: BLE001 - legacy output is non-canonical
-            metadata = {
-                "id": item.video_id,
-                "title": item.title,
-                "uploader": item.uploader,
-                "duration": item.duration,
-                "url": item.webpage_url,
-                "visual_preview": [
-                    {
-                        "timestamp": frame.timestamp,
-                        "clock": render.clock(frame.timestamp),
-                        "file": frame.path.relative_to(workdir).as_posix(),
-                        "text": frame.text,
-                        "transcript_novelty_char_count": frame.transcript_novelty,
-                        "ocr_char_count": frame.ocr_char_count,
-                    }
-                    for frame in preview
-                ],
-                "evidence_pack": {
-                    "manifest": "manifest.json",
-                    "evidence": "evidence.md",
-                    "schema": evidence_manifest["schema"],
-                    "completeness": evidence_manifest["completeness"],
-                },
-                "compatibility_error": f"{type(exc).__name__}: {exc}",
-                "stage_timings": timings,
-            }
+            metadata = render.build_metadata(
+                workdir,
+                item,
+                transcript,
+                ocr_error=ocr_error,
+                visual_states=canonical,
+                visual_preview=preview,
+                build_groups=build_groups,
+                candidate_frame_count=len(candidates),
+                evidence_manifest=evidence_manifest,
+                stage_timings=timings,
+            )
+            metadata["compatibility_error"] = f"{type(exc).__name__}: {exc}"
         report("done", 1.0, "complete")
         completed = True
         return metadata
