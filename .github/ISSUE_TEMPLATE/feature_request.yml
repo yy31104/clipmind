@@ -1,0 +1,51 @@
+name: Feature request
+description: Propose a focused improvement to ingestion, evidence fidelity, or human/agent use.
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: User problem
+      description: Describe the workflow gap before proposing an implementation.
+    validations:
+      required: true
+  - type: dropdown
+    id: outcome
+    attributes:
+      label: Product outcome
+      options:
+        - More universal ingestion
+        - More faithful extraction
+        - Easier human use
+        - Easier agent use
+        - Installation / packaging
+        - Contributor experience
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Include the smallest useful scope and an example interaction or output.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence or measurement
+      description: What fixture, benchmark, or real workflow would show that this improves the product?
+  - type: textarea
+    id: invariants
+    attributes:
+      label: Contract impact
+      description: Discuss canonical retention, complete-or-refuse, schema compatibility, privacy, and local resource use.
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope check
+      options:
+        - label: This request improves ingestion, evidence fidelity, or human/agent evidence use.
+          required: true
+        - label: It does not require silently partial output or paid cloud inference on the canonical path.
+          required: true

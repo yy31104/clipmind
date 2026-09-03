@@ -1,23 +1,44 @@
 # ClipMind Evidence Pack v1
 
-An Evidence Pack is the canonical output of one successfully ingested video.
-It preserves source evidence without deciding what is important, summarising it,
-or changing a downstream knowledge base.
+An Evidence Pack is the canonical output of one successfully ingested media
+source. It preserves provenance, speech, on-screen text, visual states, timing,
+and extraction diagnostics without deciding what is important or generating a
+semantic summary.
 
-## Completion marker
+The machine-readable manifest schema lives at
+[`schemas/evidence-pack-v1.schema.json`](../schemas/evidence-pack-v1.schema.json).
 
-`manifest.json` is written last. Its presence with
-`schema.name = "clipmind-evidence-pack"`, `schema.version = "1.0.0"`, and
-`status = "complete"` means the pack is reusable. A directory without a valid
-completion marker is partial and must not be treated as a cache hit.
+## Completion and compatibility
+
+`manifest.json` is written last. A reusable pack must have:
+
+```json
+{
+  "schema": {
+    "name": "clipmind-evidence-pack",
+    "version": "1.3.0"
+  },
+  "status": "complete"
+}
+```
+
+The current writer emits `1.3.0`. Readers accept `1.0.0`, `1.1.0`, `1.2.0`, and
+`1.3.0`; every v1 minor has been additive. Missing newer fields mean “not
+recorded by that writer,” not zero and not an inferred value. Unknown versions,
+invalid manifests, or missing required artifacts are rejected.
+
+A partial directory is never a cache hit, library item, search result, SDK pack,
+or MCP resource. Structural completion does not imply that every source
+modality was available; modality completeness is explicit in the manifest.
 
 ## Layout
 
 ```text
-out/<job-id>/
+<library>/<pack-id>/
 ├── manifest.json
 ├── source.json
 ├── job.json
+├── preflight.json
 ├── transcript.jsonl
 ├── transcript.md
 ├── ocr.jsonl
@@ -28,12 +49,15 @@ out/<job-id>/
     └── preview/
 ```
 
-`metadata.json` and `transcript.json` are compatibility artifacts for the
-current UI and are not part of the v1 contract. `note.md` and `keyframes/`
-appear only in packs written before the Evidence Pack became canonical; they
-are still readable, but nothing writes them any more.
+The canonical ZIP includes the artifacts named by the contract and the
+manifest. `preflight.json` and compatibility views can remain in the local job
+directory without becoming canonical exported evidence.
 
-## Record identities
+`metadata.json` and `transcript.json` are UI/migration views outside the v1
+contract. `note.md` and `keyframes/` can appear in older libraries and remain
+readable, but current jobs do not write them.
+
+## Stable record identities
 
 IDs are deterministic within a pack and follow chronological order:
 
@@ -41,113 +65,171 @@ IDs are deterministic within a pack and follow chronological order:
 - `ocr-00001`, `ocr-00002`, …
 - `visual-00001`, `visual-00002`, …
 - `build-00001`, `build-00002`, …
+- `scroll-00001`, `scroll-00002`, …
+- `scene-00001`, `scene-00002`, …
 
-The Nth OCR record always refers to the Nth canonical visual state. Preview
-membership never changes canonical IDs.
+The Nth OCR record refers to the Nth canonical visual state. Preview membership,
+scene grouping, and rebuilds never change canonical IDs or file targets.
 
 ## Files
 
 ### `source.json`
 
-Source identity and provenance: platform, source ID, canonical URL, title,
-uploader, duration, and acquisition strategy. It does not contain browser
-cookies or credentials.
+Normalized provenance:
+
+- platform and source adapter;
+- source ID and canonical/source URL;
+- title, uploader, and duration when upstream supplies them;
+- acquisition strategy, without cookies or credentials.
+
+Local files use a content digest for identity and a `local:///filename` source
+URL that does not reveal the original absolute directory. The original is copied
+before processing and is never modified.
+
+### `job.json`
+
+Durable local lifecycle state and a result view used for restart recovery and
+the UI. The containing directory, not an ID inside this file, owns pack identity.
+Consumers interested only in canonical evidence should start from
+`manifest.json` and the named artifacts. The library copy can contain the
+original local path required for an explicit retry. ZIP/Inbox delivery replaces
+that path with the portable `source.json` URL and removes internal job options.
+
+### `preflight.json`
+
+The estimate generated after cheap visual sampling and before expensive ASR,
+OCR, and readable-frame promotion. It includes candidate/canonical counts,
+estimated OCR time and pack size, configured limits, exceeded dimensions, and
+whether the user explicitly forced the complete run. Its policy is always
+`complete_or_refuse`.
 
 ### `transcript.jsonl`
 
-One complete ASR segment per line:
+One normalized ASR segment per line:
 
 ```json
 {"id":"transcript-00001","start":3.42,"end":7.18,"text":"..."}
 ```
 
+Schema 1.3 can add `words`, each with start/end/text and optional probability,
+and `speaker` when a configured diarizer actually supplied a label. Their
+absence is honest unavailability; ClipMind never fabricates them.
+
+### `transcript.md`
+
+A deterministic human-readable rendering of the same segments. It identifies
+an unavailable transcript instead of silently presenting an empty success.
+
 ### `ocr.jsonl`
 
 Exactly one OCR record per canonical visual state. An empty `lines` array means
-no text was recognised. If OCR itself failed, the record also contains `error`;
-these two cases are intentionally distinct.
+the recognizer found no text. An `error` field means OCR failed for that frame;
+these cases are intentionally distinct.
+
+Providers that expose geometry add a `layout` array with normalized bounding
+boxes. Coordinates are provider-normalized rather than raw OS pixel units, so
+consumers do not need an Apple Vision-specific data model.
 
 ### `visual_timeline.jsonl`
 
-One record per canonical visual state. `start` is the sample timestamp and
-`end` is the next canonical state timestamp (or source duration for the last
-state). `transcript_refs` contains every speech segment overlapping that
-interval. Build metadata is additive and never removes an `all/` artifact.
+One record per canonical visual state. `start` is the sample timestamp; `end` is
+the next canonical state's timestamp or source duration for the last state.
+Every record points to its canonical image and OCR record, lists overlapping
+transcript IDs, and may point to a derived preview image.
+
+Additive measurements include:
+
+- observed duplicate sample count and stable duration;
+- content hint (`visual`, text-rich document/code/UI categories, and related
+  heuristic labels);
+- scene ID, boundary flag, change score, and boundary reason;
+- progressive-build group, position, and size;
+- scroll group, position, and size;
+- dHash/comparison warning;
+- OCR character count, transcript novelty count, and overlap ratio.
+
+All of these describe a retained state. None controls canonical membership.
 
 ### `evidence.md`
 
 A deterministic chronological rendering of every transcript segment and every
-canonical visual state. It contains no semantic ranking or generated summary.
+canonical visual state. It contains source provenance, images, OCR, timing, and
+available labels, but no semantic ranking or generated summary.
 
+### `visual_states/all/`
 
-## Transcript alignment (schema 1.1.0)
+The canonical visual evidence set. It has no per-video frame budget. Membership
+is decided by fail-open near-duplicate filtering before OCR, transcript novelty,
+scene grouping, or preview logic. If a comparison cannot be trusted, evidence is
+kept and the warning is serialized.
 
-Every `visual_timeline.jsonl` record carries three measurements describing how
-much of the frame's on-screen text the nearby speech does **not** already
-carry:
+### `visual_states/preview/`
 
-| field | meaning |
+A derived chronological view optimized for browsing. It prefers stable/readable
+states, collapses intermediate progressive builds, uses adaptive scene grouping,
+and guarantees a slot for sufficiently novel unspoken text unless an equivalent
+state is already represented. It has no fixed count limit and cannot remove or
+repoint canonical files.
+
+## Transcript alignment (introduced in 1.1)
+
+Every timeline record can carry:
+
+| Field | Meaning |
 | --- | --- |
-| `ocr_char_count` | characters across recognised tokens, excluding whitespace and punctuation |
-| `transcript_novelty_char_count` | characters in tokens the nearby speech does not cover |
-| `transcript_overlap_ratio` | `1 - novelty / total`, `0.0` when the frame has no text |
+| `ocr_char_count` | recognized characters excluding whitespace/punctuation |
+| `transcript_novelty_char_count` | characters in OCR tokens not covered by nearby speech |
+| `transcript_overlap_ratio` | `1 - novelty / total`, or `0.0` for no OCR text |
 
-Comparison is a multiset over tokens — one token per CJK ideograph, one per
-latin word — after NFKC normalisation and case folding, against speech within
-a small window around the state's own interval. A term shown three times but
-spoken once is not treated as fully covered.
+Comparison uses a normalized multiset: individual CJK ideographs and Latin
+words are matched against speech around the visual interval. Burned-in captions
+usually overlap heavily; slide, document, or code text nobody reads aloud does
+not. This is an extraction signal, not an importance score. Silent videos, ASR
+mistakes, and identifiers can all raise novelty.
 
-**This measures information novelty, not importance.** Burned-in captions
-repeat what is being said, so the transcript already holds that information and
-the ratio approaches `1.0`. A slide, document or code pane shows text nobody
-reads aloud, so the ratio approaches `0.0` and the frame is the only place that
-information exists. But a silent video makes every frame novel, code
-identifiers are novel because nobody says them out loud, and an ASR mistake
-manufactures novelty. Consumers decide what that is worth.
+## Structural measurements (introduced in 1.2 and 1.3)
 
-The measurement never affects canonical retention. `visual_states/all/` is
-chosen before alignment runs, so an ASR or OCR slip can never delete evidence.
-It does give preview derivation one safety net: a state carrying enough
-unspoken text earns its own preview slot even when the whole video reads as a
-single visual scene, unless an already-selected state shows substantially the
-same terms.
+Later additive v1 fields expose why a preview representative was useful without
+pretending to perform semantic understanding:
 
-Packs written under schema `1.0.0` do not carry these fields and remain
-readable. Running `scripts/rebuild_preview.py` on such a pack adds them and
-upgrades its manifest.
+- duplicate-run stability says how long a nearly unchanged state was observed;
+- scene boundaries quantify visual changes;
+- progressive builds model monotonic text addition;
+- scroll groups connect overlapping text windows;
+- normalized OCR layout preserves reading geometry where supported;
+- word timing and optional speakers make transcript evidence more addressable.
+
+Older v1 packs remain valid and these fields are not synthesized during reads.
 
 ## Completeness
 
-`manifest.json.completeness` reports each independent modality:
+`manifest.json.completeness` reports independent modalities:
 
-- `complete`: the stage ran without a recorded failure;
-- `partial`: some OCR records failed;
-- `unavailable`: ASR/OCR produced no usable stage result because the stage failed;
-- `complete_with_warnings`: visual comparison failed open, so evidence was
-  retained and the diagnostic is attached.
+- transcript: `complete` or `unavailable`;
+- OCR: `complete`, `partial`, or `unavailable`;
+- visual states: `complete` or `complete_with_warnings`;
+- word timing: `complete` or `unavailable` when recorded;
+- speaker diarization: `complete` or `unavailable` when recorded.
 
-A pack can be structurally `complete` while a source modality is unavailable.
-That means packaging completed and the absence is explicit; it does not claim
-the unavailable evidence was extracted.
-
-Newly created packs also include an optional `timings` object with wall-clock
-seconds for acquisition, sampling, ASR, OCR, and preview derivation. The field
-is additive: v1 packs created before timing instrumentation remain valid.
+The manifest can also include wall-clock timings, counts, configuration needed
+to interpret extraction, and safe diagnostics. “Complete pack” means the package
+transaction completed and all absences are explicit—not that an unavailable
+modality was somehow extracted.
 
 ## Responsibility boundary
 
-ClipMind owns acquisition, timestamped transcription, visual-state capture,
-OCR, deterministic alignment, and packaging. A downstream knowledge-base agent
-owns interpretation, summarisation, relevance, deduplication, learning tasks,
-and long-term retention decisions.
+ClipMind owns acquisition, transcription, visual-state capture, OCR, timing,
+alignment, diagnostics, and packaging. A downstream human or agent owns
+interpretation, summarization, relevance, comparison, deduplication, learning
+tasks, and long-term retention decisions.
 
-## Delivery
+## Export and delivery
 
-`GET /api/jobs/<job-id>/evidence.zip` exports only the files in this contract;
-legacy notes and temporary media are excluded. ZIP metadata uses fixed timestamps,
-so identical pack bytes produce identical archives.
+`clipmind export`, the SDK, MCP, and `GET /api/jobs/<job-id>/evidence.zip`
+produce a deterministic ZIP of canonical contract files. ZIP metadata uses
+fixed timestamps so identical pack bytes produce identical archives.
 
-When `CLIPMIND_KB_INBOX` is configured, the UI can copy the same canonical files
-to `<Inbox>/<job-id>/`. Copying occurs through a private temporary directory and
-publishes `manifest.json` last. Delivery is one-way: ClipMind never reads or
-modifies the downstream knowledge base beyond that Inbox directory.
+When `CLIPMIND_KB_INBOX` is configured, one-way delivery copies the same
+canonical files to `<Inbox>/<job-id>/` through a private temporary directory and
+publishes its manifest last. ClipMind never reads or modifies the rest of the
+knowledge base.

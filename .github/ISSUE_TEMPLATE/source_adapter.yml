@@ -1,0 +1,57 @@
+name: Source adapter request or contribution
+description: Propose a platform adapter without forking the core pipeline.
+title: "[Source]: "
+labels: ["source-adapter", "needs-triage"]
+body:
+  - type: input
+    id: platform
+    attributes:
+      label: Platform and public domains
+      placeholder: Example Video — video.example, exm.pl
+    validations:
+      required: true
+  - type: textarea
+    id: examples
+    attributes:
+      label: Permission-safe example URLs
+      description: Use public, non-sensitive examples you are allowed to share. Do not include cookies or private URLs.
+    validations:
+      required: true
+  - type: textarea
+    id: upstream
+    attributes:
+      label: Upstream acquisition behavior
+      description: Does current yt-dlp support it? Which cases require login, cookies, region access, or fail entirely?
+    validations:
+      required: true
+  - type: textarea
+    id: identity
+    attributes:
+      label: Stable identity and metadata
+      description: Describe source ID, canonical URL, title, uploader, duration, and short-link normalization.
+    validations:
+      required: true
+  - type: dropdown
+    id: form
+    attributes:
+      label: Proposed form
+      options:
+        - Independent clipmind.sources plugin
+        - Built-in adapter
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: tests
+    attributes:
+      label: Synthetic/offline test plan
+      description: Explain matching, lookalike rejection, normalization, safe errors, and schema coverage.
+  - type: checkboxes
+    id: policy
+    attributes:
+      label: Policy
+      options:
+        - label: This request does not ask ClipMind to bypass DRM or access controls.
+          required: true
+        - label: No credentials, private media, transcripts, OCR, or creator screenshots are attached.
+          required: true

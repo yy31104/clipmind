@@ -1,7 +1,8 @@
 # Real-world extraction evaluation
 
-The v1 visual pipeline was checked against the three public Douyin videos that
-originally exposed the product gaps. They cover a 227-second code/UI recording,
+The visual pipeline was checked against the three public Douyin videos that
+originally exposed the product gaps. This is the current measured corpus, not a
+broad source-platform benchmark. The cases cover a 227-second code/UI recording,
 a 64-second talking-head explanation with burned captions and inserted documents,
 and a 52-second talking-head/slide presentation.
 

@@ -1,0 +1,79 @@
+name: Bug report
+description: Report a reproducible ClipMind failure without sharing private source evidence.
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Remove credentials, cookies, private URLs, local usernames, transcripts, OCR text, and creator imagery. Use the private security form for vulnerabilities.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the observed and expected behavior.
+      placeholder: ClipMind refused/failed/returned… I expected…
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Safe reproduction
+      description: Use a public permission-safe URL or synthetic/local fixture where possible.
+      placeholder: |
+        1. Run clipmind doctor --json
+        2. Run…
+        3. Observe…
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Surface
+      options:
+        - Web app
+        - CLI
+        - Python SDK
+        - REST API
+        - MCP
+        - Packaging / installation
+        - Evidence Pack / extraction
+        - Source adapter
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      placeholder: v1.x.y or git SHA
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Operating system and Python
+      placeholder: macOS 15 arm64, Python 3.12
+    validations:
+      required: true
+  - type: textarea
+    id: doctor
+    attributes:
+      label: Redacted doctor output
+      description: Paste `clipmind doctor --json` after removing paths or sensitive values.
+      render: json
+  - type: textarea
+    id: logs
+    attributes:
+      label: Minimal redacted logs
+      description: Do not paste raw yt-dlp output, cookies, tokens, private URLs, transcript/OCR content, or images.
+      render: shell
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Safety check
+      options:
+        - label: I removed credentials, personal data, and private media/evidence.
+          required: true
+        - label: This is not a security vulnerability requiring private disclosure.
+          required: true
