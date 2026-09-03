@@ -16,6 +16,8 @@ from . import handoff
 from .config import WEB_DIR
 from .jobs import JobStore
 from .links import extract_sources, guess_title, normalize_url
+from .evidence import EvidencePackError
+from .sdk import PackLibrary
 from .sources import supported_sources
 
 store = JobStore()
@@ -56,6 +58,17 @@ def _workdir(job_id: str) -> Path:
     if not job:
         raise HTTPException(404, "no such job")
     return store.workdir(job.id)
+
+
+def _library() -> PackLibrary:
+    return PackLibrary(store.storage.root)
+
+
+def _pack(pack_id: str):
+    try:
+        return _library().get(pack_id)
+    except EvidencePackError as exc:
+        raise HTTPException(404, str(exc)) from exc
 
 
 @app.post("/api/jobs")
@@ -155,6 +168,59 @@ async def listing():
 @app.get("/api/search")
 async def search(q: str, limit: int = 20):
     return {"query": q, "results": store.search(q, limit=limit)}
+
+
+@app.get("/api/packs")
+async def packs():
+    return {"packs": [pack.summary() for pack in _library().list()]}
+
+
+@app.get("/api/packs/{pack_id}")
+async def pack_detail(pack_id: str):
+    return _pack(pack_id).summary()
+
+
+@app.get("/api/packs/{pack_id}/transcript")
+async def pack_transcript(pack_id: str):
+    return {"pack_id": pack_id, "segments": _pack(pack_id).transcript}
+
+
+@app.get("/api/packs/{pack_id}/timeline")
+async def pack_timeline(pack_id: str):
+    return {"pack_id": pack_id, "visual_states": _pack(pack_id).visual_timeline}
+
+
+@app.get("/api/packs/{pack_id}/ocr")
+async def pack_ocr(pack_id: str):
+    return {"pack_id": pack_id, "records": _pack(pack_id).ocr}
+
+
+@app.get("/api/packs/{pack_id}/search")
+async def pack_search(pack_id: str, q: str, limit: int = 50):
+    pack = _pack(pack_id)
+    return {
+        "pack_id": pack.id,
+        "query": q,
+        "hits": pack.search(q, limit=limit),
+    }
+
+
+@app.get("/api/packs/{pack_id}/frame")
+async def pack_frame(
+    pack_id: str,
+    visual_state_id: str | None = None,
+    timestamp: float | None = None,
+    preview: bool = False,
+):
+    try:
+        path, _record = _pack(pack_id).frame(
+            visual_state_id=visual_state_id,
+            timestamp=timestamp,
+            preview=preview,
+        )
+    except EvidencePackError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    return FileResponse(path)
 
 
 @app.get("/api/jobs/{job_id}")

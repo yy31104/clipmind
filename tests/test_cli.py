@@ -9,7 +9,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
-import cli
+from clipmind import cli
 from clipmind.jobs import JobStore
 
 
