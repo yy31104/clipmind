@@ -142,17 +142,22 @@ OCR wall time increased from 24.7 to 36.6 seconds. The raw measurement is in
 ## Evaluation
 
 ```bash
-make test
-make eval
+make test            # deterministic offline tests
+make eval            # audit existing real-video packs; no re-extraction
+make eval-reextract  # fresh real-source extraction; network/providers required
+make eval-synthetic  # generated silent-slide end-to-end fixture
 make bench
 ```
 
 - `make test` runs deterministic lifecycle, failure-injection, schema, timeline,
   recovery, cache, concurrency, and visual-algorithm tests without network access.
-- `make eval` evaluates the completed real-video packs listed in
-  `eval/cases.json`; it does not download them implicitly. Reproducing those
-  packs requires a usable local Chrome session, and the third-party source links
-  may expire or disappear.
+- `make eval` audits completed real-video packs listed in `eval/cases.json`.
+  It is fast and normally offline, but does not prove that the current pipeline
+  can reproduce those packs.
+- `make eval-reextract` runs the same cases through the current pipeline in a
+  fresh temporary library without cache reuse. It requires usable local
+  providers, network access, and possibly a current Chrome session; third-party
+  source links may expire or disappear.
 - `make bench` checks bounded batch scheduling with deterministic simulated work.
 
 The checked-in three-video evaluation covers long code/UI and scrolling, dense
@@ -170,9 +175,10 @@ does not add unmeasured adaptive sampling. See
 [Real-world evaluation](docs/REAL_WORLD_EVAL.md) and
 [Benchmarks](docs/BENCHMARK.md) for methodology and caveats.
 
-`make eval` also generates a silent four-slide fixture and runs the real FFmpeg,
-Vision OCR, no-audio degradation, preview, and packaging path. The recorded run
-recognized all four labels and retained all four canonical and preview states.
+`make eval-synthetic` generates a silent four-slide fixture and runs the real
+FFmpeg, Vision OCR, no-audio degradation, preview, and packaging path. The
+recorded run recognized all four labels and retained all four canonical and
+preview states.
 
 ## Concurrency and configuration
 
