@@ -27,6 +27,32 @@ def _files(pack_dir: Path) -> list[tuple[Path, Path]]:
     return files
 
 
+def _portable_job_bytes(pack_dir: Path) -> bytes:
+    """Remove machine-local retry state from the exported job view."""
+    try:
+        payload = json.loads((pack_dir / "job.json").read_text(encoding="utf-8"))
+        source = json.loads((pack_dir / "source.json").read_text(encoding="utf-8"))
+        job = dict(payload["job"])
+    except (OSError, json.JSONDecodeError, KeyError, TypeError) as exc:
+        raise EvidencePackError("missing or invalid job.json") from exc
+
+    portable_url = str(source.get("url") or "")
+    job["url"] = portable_url
+    job["options"] = {}
+    if isinstance(job.get("result"), dict):
+        job["result"] = {**job["result"], "url": portable_url}
+    payload = {**payload, "job": job}
+    return (
+        json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
+    ).encode("utf-8")
+
+
+def _artifact_bytes(pack_dir: Path, source: Path, relative: Path) -> bytes:
+    if relative == Path("job.json"):
+        return _portable_job_bytes(pack_dir)
+    return source.read_bytes()
+
+
 def export_zip(pack_dir: Path, destination: Path | None = None) -> Path:
     """Create a deterministic ZIP containing only canonical v1 artifacts."""
     load_complete_pack(pack_dir)
@@ -55,7 +81,7 @@ def export_zip(pack_dir: Path, destination: Path | None = None) -> Path:
                 )
                 info.compress_type = zipfile.ZIP_DEFLATED
                 info.external_attr = 0o100644 << 16
-                archive.writestr(info, source.read_bytes())
+                archive.writestr(info, _artifact_bytes(pack_dir, source, relative))
         os.replace(temporary, destination)
     finally:
         temporary.unlink(missing_ok=True)
@@ -84,7 +110,10 @@ def send_to_inbox(pack_dir: Path, inbox: Path) -> dict:
                 continue
             target = temporary / relative
             target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(source, target)
+            if relative == Path("job.json"):
+                target.write_bytes(_portable_job_bytes(pack_dir))
+            else:
+                shutil.copy2(source, target)
         shutil.copy2(pack_dir / "manifest.json", temporary / "manifest.json")
         os.replace(temporary, destination)
     finally:
