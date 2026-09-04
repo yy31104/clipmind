@@ -1,6 +1,8 @@
 """Small durable search index derived entirely from complete Evidence Packs."""
 from __future__ import annotations
 
+from collections.abc import Iterator
+from contextlib import contextmanager
 import json
 import sqlite3
 from pathlib import Path
@@ -26,7 +28,7 @@ class EvidenceIndex:
     def __init__(self, path: Path) -> None:
         self.path = path
         path.parent.mkdir(parents=True, exist_ok=True)
-        with self._connect() as database:
+        with self._database() as database:
             database.executescript(
                 """
                 PRAGMA journal_mode=WAL;
@@ -75,6 +77,16 @@ class EvidenceIndex:
         database.execute("PRAGMA foreign_keys=ON")
         return database
 
+    @contextmanager
+    def _database(self) -> Iterator[sqlite3.Connection]:
+        """Commit or roll back the operation, then always release its handle."""
+        database = self._connect()
+        try:
+            with database:
+                yield database
+        finally:
+            database.close()
+
     def sync(self, job_id: str, workdir: Path) -> bool:
         """Index one complete pack. Returns False when no work was needed."""
         try:
@@ -88,7 +100,7 @@ class EvidenceIndex:
         except (EvidencePackError, OSError, json.JSONDecodeError, TypeError):
             return False
 
-        with self._connect() as database:
+        with self._database() as database:
             current = database.execute(
                 "SELECT fingerprint FROM packs WHERE job_id = ?", (job_id,)
             ).fetchone()
@@ -140,7 +152,7 @@ class EvidenceIndex:
         needle = query.strip().casefold()
         if not needle:
             return []
-        with self._connect() as database:
+        with self._database() as database:
             packs = database.execute(
                 """
                 SELECT job_id, title, platform, source_id, source_url, updated_ns
