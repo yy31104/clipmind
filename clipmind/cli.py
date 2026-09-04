@@ -7,10 +7,12 @@ import json
 import os
 import shutil
 import sys
+import tempfile
 from pathlib import Path
 
 from .config import OUT_DIR, Settings
 from .evidence import EvidencePackError
+from .demo import build_sample_video
 from .jobs import JobStore
 from .links import extract_sources, guess_title
 from .providers import default_providers
@@ -156,6 +158,11 @@ def _parser() -> argparse.ArgumentParser:
     export.add_argument("pack_id")
     export.add_argument("--output", "-o")
 
+    demo = commands.add_parser(
+        "demo", help="extract a generated sample video; no network or account"
+    )
+    demo.add_argument("--json", dest="json_output", action="store_true")
+
     diagnostic = commands.add_parser("doctor", help="check local dependencies and providers")
     diagnostic.add_argument("--json", action="store_true")
 
@@ -167,11 +174,22 @@ def _parser() -> argparse.ArgumentParser:
     return parser
 
 
+
+def normalize_argv(argv: list[str]) -> list[str]:
+    """Let a bare link or media path stand in for `analyze`.
+
+    Deciding by asking whether the argument *is* a source, rather than
+    checking it against a hand-listed set of command names, keeps this from
+    silently swallowing any subcommand added later.
+    """
+    if argv and extract_sources(argv[0]):
+        return ["analyze", *argv]
+    return list(argv)
+
+
 def entrypoint(argv: list[str] | None = None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
-    commands = {"analyze", "list", "show", "search", "transcript", "timeline", "export", "doctor", "serve", "mcp"}
-    if argv and argv[0] not in commands and argv[0] not in {"-h", "--help"}:
-        argv.insert(0, "analyze")
+    argv = normalize_argv(argv)
     parser = _parser()
     args = parser.parse_args(argv)
     library = PackLibrary()
@@ -186,6 +204,18 @@ def entrypoint(argv: list[str] | None = None) -> int:
                     json_output=args.json_output,
                 )
             )
+        if args.command == "demo":
+            with tempfile.TemporaryDirectory(prefix="clipmind-demo-") as tempdir:
+                video = build_sample_video(Path(tempdir))
+                if not args.json_output:
+                    print("Extracting a generated four-slide sample.\n")
+                code = asyncio.run(main(str(video), json_output=args.json_output))
+            if code == 0 and not args.json_output:
+                print(
+                    "\nNothing was downloaded and no account was used.\n"
+                    "Next: `clipmind list` to see it, or `clipmind serve` to browse."
+                )
+            return code
         if args.command == "list":
             values = [pack.summary() for pack in library.list()]
             if args.json:

@@ -9,75 +9,31 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
-from unittest.mock import patch
 
-from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from clipmind import evidence, pipeline  # noqa: E402
-from clipmind.fetch import Media  # noqa: E402
+from clipmind.demo import build_sample_video  # noqa: E402
 from clipmind.jobs import JobStore  # noqa: E402
 
-
-def make_video(root: Path) -> Path:
-    font = ImageFont.truetype("Arial.ttf", 68)
-    labels = ("ALPHA PLAN", "BETA SYSTEM", "GAMMA DATA", "DELTA REVIEW")
-    colors = ("#28536b", "#7b2d26", "#355834", "#654f6f")
-    slides = []
-    for index, (label, color) in enumerate(zip(labels, colors)):
-        image = Image.new("RGB", (1280, 720), "white")
-        draw = ImageDraw.Draw(image)
-        draw.rectangle((0, 0, 170 + index * 90, 720), fill=color)
-        draw.text((260, 280), label, fill="black", font=font)
-        path = root / f"slide-{index}.png"
-        image.save(path)
-        slides.append(path)
-    concat = root / "slides.txt"
-    concat.write_text(
-        "".join(f"file '{path}'\nduration 1.5\n" for path in slides)
-        + f"file '{slides[-1]}'\n",
-        encoding="utf-8",
-    )
-    video = root / "silent-slides.mp4"
-    subprocess.run(
-        [
-            "ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
-            "-f", "concat", "-safe", "0", "-i", str(concat),
-            "-vf", "fps=30,format=yuv420p", "-c:v", "libx264", str(video),
-        ],
-        check=True,
-    )
-    return video
 
 
 async def evaluate() -> dict:
     with tempfile.TemporaryDirectory(prefix="clipmind-silent-eval-") as tempdir:
         root = Path(tempdir)
-        video = make_video(root)
+        video = build_sample_video(root)
         out_dir = root / "out"
 
-        async def local_fetch(url, destination, on_note=None):
-            return Media(
-                video,
-                {
-                    "id": "synthetic-silent-slides",
-                    "title": "Synthetic silent slides",
-                    "duration": 6.0,
-                    "webpage_url": "local://synthetic-silent-slides",
-                    "_clipmind_strategy": "generated evaluation fixture",
-                },
-            )
-
-        with patch.object(pipeline, "fetch", new=local_fetch):
-            store = JobStore(out_dir)
-            job = store.submit(
-                "local://synthetic-silent-slides", "Synthetic silent slides"
-            )
-            await asyncio.gather(*list(store._tasks))
-            await store.close()
+        # Submit the real file. A `local://` pseudo-URI is not a source the
+        # adapter registry recognizes, so stubbing the fetch never ran: the
+        # job was rejected before reaching it, and this gate stayed red.
+        store = JobStore(out_dir)
+        job = store.submit(str(video), "Synthetic silent slides")
+        await asyncio.gather(*list(store._tasks))
+        await store.close()
         if job.status != "done":
             raise RuntimeError(job.error or "silent slide fixture failed")
         workdir = store.workdir(job.id)
