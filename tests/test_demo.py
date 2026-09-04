@@ -1,6 +1,7 @@
 """The generated sample and the routing that lets `clipmind demo` reach it."""
 from __future__ import annotations
 
+import shutil
 import subprocess
 import tempfile
 import unittest
@@ -10,6 +11,15 @@ from clipmind import cli, demo
 from clipmind.links import extract_sources
 
 
+# Rendering the sample shells out to ffmpeg. The unit suite stays hermetic and
+# runs on machines without it; `make eval-synthetic` covers the real render.
+needs_ffmpeg = unittest.skipUnless(
+    shutil.which("ffmpeg") and shutil.which("ffprobe"),
+    "ffmpeg/ffprobe not installed",
+)
+
+
+@needs_ffmpeg
 class SampleVideoTests(unittest.TestCase):
     def test_the_sample_is_a_real_decodable_video(self) -> None:
         with tempfile.TemporaryDirectory() as tempdir:
@@ -55,10 +65,12 @@ class CommandRoutingTests(unittest.TestCase):
         self.assertEqual(self._routed("https://youtu.be/jNQXAC9IVRw"), "analyze")
 
     def test_an_existing_media_path_is_routed_to_analyze(self) -> None:
+        # Routing only asks whether the path exists, so this needs no encoder.
         with tempfile.TemporaryDirectory() as tempdir:
-            video = demo.build_sample_video(Path(tempdir))
+            media = Path(tempdir) / "clip.mp4"
+            media.write_bytes(b"not a real encode")
 
-            self.assertEqual(self._routed(str(video)), "analyze")
+            self.assertEqual(self._routed(str(media)), "analyze")
 
 
 if __name__ == "__main__":
