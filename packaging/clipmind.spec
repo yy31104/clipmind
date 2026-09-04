@@ -1,16 +1,28 @@
 from pathlib import Path
 
-from PyInstaller.utils.hooks import collect_submodules
+from PyInstaller.utils.hooks import collect_all, collect_submodules
 
 
-root = Path(SPECPATH).parent.parent
-hidden = collect_submodules("uvicorn") + collect_submodules("clipmind.sources")
+# PyInstaller exposes SPECPATH as the directory containing this spec file.
+root = Path(SPECPATH).parent
+mlx_data, mlx_binaries, mlx_hidden = collect_all("mlx")
+whisper_data, whisper_binaries, whisper_hidden = collect_all("mlx_whisper")
+hidden = (
+    collect_submodules("uvicorn")
+    + collect_submodules("clipmind.sources")
+    + mlx_hidden
+    + whisper_hidden
+)
 
 analysis = Analysis(
     [str(root / "packaging" / "desktop_entry.py")],
     pathex=[str(root)],
-    binaries=[],
-    datas=[(str(root / "clipmind" / "web"), "clipmind/web")],
+    binaries=[*mlx_binaries, *whisper_binaries],
+    datas=[
+        (str(root / "clipmind" / "web"), "clipmind/web"),
+        *mlx_data,
+        *whisper_data,
+    ],
     hiddenimports=hidden,
     hookspath=[],
     hooksconfig={},

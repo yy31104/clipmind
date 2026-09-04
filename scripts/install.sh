@@ -17,6 +17,11 @@ if ! command -v ffmpeg >/dev/null 2>&1; then
   exit 1
 fi
 
+if [ "$(uname -s)" != "Darwin" ] && ! command -v tesseract >/dev/null 2>&1; then
+  echo "Tesseract is required for portable OCR. Install it with your system package manager." >&2
+  exit 1
+fi
+
 uv tool install --force "$source_path"
 echo "ClipMind installed. Run: clipmind doctor"
 echo "Then launch the app with: clipmind-app"
