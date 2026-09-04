@@ -16,7 +16,11 @@ class DesktopLauncherTests(unittest.TestCase):
     def test_macos_launcher_makes_homebrew_dependencies_visible(self) -> None:
         with (
             patch.object(desktop.sys, "platform", "darwin"),
-            patch.dict(desktop.os.environ, {"PATH": "/usr/bin:/bin"}, clear=True),
+            patch.dict(
+                desktop.os.environ,
+                {"PATH": desktop.os.pathsep.join(("/usr/bin", "/bin"))},
+                clear=True,
+            ),
         ):
             desktop._prepare_dependency_path()
             entries = desktop.os.environ["PATH"].split(desktop.os.pathsep)
