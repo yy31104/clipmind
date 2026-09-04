@@ -88,8 +88,20 @@ checkout can also run `make run` after creating `.venv` and installing
 `clipmind/requirements.txt`.
 
 Windows and Linux use faster-whisper plus Tesseract by default. Apple Silicon
-macOS uses MLX Whisper plus Vision. Run `clipmind doctor` before the first job;
-model weights may be downloaded by the selected local provider on first use.
+macOS uses MLX Whisper plus Vision. Model weights may be downloaded by the
+selected local provider on first use.
+
+### First run
+
+```bash
+clipmind doctor   # are ffmpeg, yt-dlp and the local providers available?
+clipmind demo     # extract a generated sample: no network, no account
+clipmind serve    # browse the result at 127.0.0.1:8420
+```
+
+`clipmind demo` renders a short silent slideshow locally and runs it through
+the real pipeline, so a first run proves extraction works without depending on
+a live site, a signed-in browser, or a link that has not expired.
 
 For setup details, platform dependencies, Docker, and the unsigned local macOS
 build, see [Installation](docs/INSTALL.md).
