@@ -17,7 +17,6 @@ class HandoffTests(unittest.TestCase):
         (pack / "visual_states" / "all" / "state.jpg").write_bytes(b"canonical")
         (pack / "visual_states" / "preview" / "state.jpg").write_bytes(b"preview")
         for name in (
-            "job.json",
             "transcript.jsonl",
             "transcript.md",
             "ocr.jsonl",
@@ -26,7 +25,34 @@ class HandoffTests(unittest.TestCase):
         ):
             (pack / name).write_text(f"{name}\n", encoding="utf-8")
         (pack / "source.json").write_text(
-            json.dumps({"platform": "douyin", "source_id": "123"}),
+            json.dumps(
+                {
+                    "platform": "local",
+                    "source_id": "123",
+                    "url": "local:///private-demo.mp4",
+                }
+            ),
+            encoding="utf-8",
+        )
+        (pack / "job.json").write_text(
+            json.dumps(
+                {
+                    "version": 1,
+                    "job": {
+                        "id": "job-123",
+                        "url": "/Users/private/secret/private-demo.mp4",
+                        "title": "private-demo",
+                        "status": "done",
+                        "options": {
+                            "uploaded_filename": "private-demo.mp4",
+                            "local_source_path": "/Users/private/secret/private-demo.mp4",
+                        },
+                        "result": {
+                            "url": "file:///Users/private/secret/private-demo.mp4"
+                        },
+                    },
+                }
+            ),
             encoding="utf-8",
         )
         (pack / "manifest.json").write_text(
@@ -36,7 +62,7 @@ class HandoffTests(unittest.TestCase):
                         "name": evidence.SCHEMA_NAME,
                         "version": evidence.SCHEMA_VERSION,
                     },
-                    "source": {"platform": "douyin", "id": "123"},
+                    "source": {"platform": "local", "id": "123"},
                     "status": "complete",
                 }
             ),
@@ -55,6 +81,7 @@ class HandoffTests(unittest.TestCase):
             second = second_path.read_bytes()
             with zipfile.ZipFile(second_path) as archive:
                 names = set(archive.namelist())
+                exported_job = json.loads(archive.read("job-123/job.json"))
 
         self.assertEqual(first, second)
         self.assertIn("job-123/manifest.json", names)
@@ -62,6 +89,9 @@ class HandoffTests(unittest.TestCase):
         self.assertIn("job-123/visual_states/preview/state.jpg", names)
         self.assertNotIn("job-123/note.md", names)
         self.assertNotIn("job-123/source.mp4", names)
+        self.assertEqual(exported_job["job"]["url"], "local:///private-demo.mp4")
+        self.assertEqual(exported_job["job"]["options"], {})
+        self.assertNotIn("/Users/private", json.dumps(exported_job))
 
     def test_inbox_copy_is_complete_idempotent_and_excludes_legacy_files(self) -> None:
         with tempfile.TemporaryDirectory() as tempdir:
@@ -72,13 +102,17 @@ class HandoffTests(unittest.TestCase):
             first = handoff.send_to_inbox(pack, inbox)
             second = handoff.send_to_inbox(pack, inbox)
             delivered = inbox / pack.name
+            delivered_job = json.loads(
+                (delivered / "job.json").read_text(encoding="utf-8")
+            )
 
             self.assertEqual(first["status"], "sent")
             self.assertEqual(second["status"], "already_present")
-            self.assertEqual(handoff.source_identity(delivered), ("douyin", "123"))
+            self.assertEqual(handoff.source_identity(delivered), ("local", "123"))
             self.assertEqual(
                 handoff.load_complete_pack(delivered)["source"]["id"], "123"
             )
+            self.assertNotIn("/Users/private", json.dumps(delivered_job))
             self.assertFalse((delivered / "note.md").exists())
             self.assertFalse((delivered / "source.mp4").exists())
 

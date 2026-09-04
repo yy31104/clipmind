@@ -232,6 +232,24 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         )
         self.assertFalse(self.source_path.exists())
         self.assertFalse(self.audio_path.exists())
+
+    async def test_uploaded_filename_replaces_random_storage_provenance(self) -> None:
+        with self.patched_pipeline():
+            result = await pipeline.process(
+                "/private/random-upload-id.mov",
+                self.workdir,
+                self.pools(),
+                self.report,
+                options={"uploaded_filename": "../My Recording.MOV"},
+            )
+
+        source = json.loads(
+            (self.workdir / "source.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(result["title"], "My Recording")
+        self.assertEqual(source["title"], "My Recording")
+        self.assertEqual(source["url"], "local:///My%20Recording.MOV")
+        self.assertNotIn("random-upload-id", json.dumps(source))
         self.assertFalse((self.workdir / "samples").exists())
 
     async def test_asr_failure_degrades_and_cleans_temporary_media(self) -> None:

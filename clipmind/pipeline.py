@@ -11,6 +11,7 @@ import shutil
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
+from urllib.parse import quote
 
 from . import evidence, media, preflight, render, visual_states
 from .config import Settings, settings
@@ -24,6 +25,17 @@ STAGES = (
     ("analysing", 0.55),
     ("writing", 0.13),
 )
+
+
+def _apply_uploaded_filename(item, options: dict) -> None:
+    """Replace randomized upload storage names with safe user-facing provenance."""
+    uploaded = Path(str(options.get("uploaded_filename") or "")).name
+    if not uploaded:
+        return
+    title = Path(uploaded).stem.strip()
+    if title:
+        item.info["title"] = title
+    item.info["webpage_url"] = f"local:///{quote(uploaded)}"
 
 
 @dataclass
@@ -89,6 +101,7 @@ async def process(
                 on_note=lambda n: report("fetching", base, n),
                 config=config,
             )
+        _apply_uploaded_filename(item, options)
         timings["acquisition_seconds"] = round(time.perf_counter() - stage_started, 3)
         base += STAGES[0][1]
         report("sampling", base, item.title)
