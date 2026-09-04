@@ -3,7 +3,7 @@
 Notable user-visible changes are recorded here. Evidence Pack schema versions
 are documented separately and do not have to equal the application version.
 
-## Unreleased — 1.2.0 development
+## 1.2.0 — 2026-09-04
 
 ### Added
 

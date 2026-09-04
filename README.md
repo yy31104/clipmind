@@ -66,8 +66,9 @@ media can be downloaded.
 
 ## Install
 
-ClipMind is not yet published to PyPI and the repository does not claim a signed
-public `.dmg`. Install the current development build from a checkout:
+ClipMind is not published to PyPI and the release does not ship a signed public
+`.dmg`; the macOS app build path produces unsigned development artifacts. Install
+v1.2.0 from a checkout:
 
 ```bash
 git clone https://github.com/yy31104/clipmind.git
