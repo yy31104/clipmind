@@ -2,11 +2,16 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 import threading
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 
 from .config import Settings, settings
+
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -32,19 +37,23 @@ class Transcript:
         return not self.text
 
 
+@lru_cache(maxsize=1)
 def available() -> bool:
     try:
         import mlx_whisper  # noqa: F401
         return True
-    except Exception:
+    except Exception as exc:  # noqa: BLE001 - provider imports include native libraries
+        logger.warning("MLX Whisper is unavailable (%s): %s", type(exc).__name__, exc)
         return False
 
 
+@lru_cache(maxsize=1)
 def faster_whisper_available() -> bool:
     try:
         import faster_whisper  # noqa: F401
         return True
-    except Exception:
+    except Exception as exc:  # noqa: BLE001 - provider imports include native libraries
+        logger.warning("faster-whisper is unavailable (%s): %s", type(exc).__name__, exc)
         return False
 
 

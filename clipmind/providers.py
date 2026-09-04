@@ -44,20 +44,32 @@ def default_providers(config: Settings) -> ProviderBundle:
 
 
 def _transcript_provider(config: Settings) -> TranscriptProvider:
-    if config.asr_provider == "mlx":
+    choice = config.asr_provider.casefold()
+    if choice == "mlx":
         return asr.MLXWhisperProvider(config)
-    if config.asr_provider in {"faster-whisper", "faster_whisper"}:
+    if choice in {"faster-whisper", "faster_whisper"}:
         return asr.FasterWhisperProvider(config)
+    if choice != "auto":
+        raise ValueError(
+            f"Unsupported ASR provider {config.asr_provider!r}; "
+            "choose auto, mlx, or faster-whisper."
+        )
     if _native_apple_silicon():
         return asr.MLXWhisperProvider(config)
     return asr.FasterWhisperProvider(config)
 
 
 def _text_provider(config: Settings) -> TextRecognizer:
-    if config.ocr_provider == "vision":
+    choice = config.ocr_provider.casefold()
+    if choice == "vision":
         return ocr.VisionTextRecognizer(config)
-    if config.ocr_provider == "tesseract":
+    if choice == "tesseract":
         return ocr.TesseractTextRecognizer(config)
+    if choice != "auto":
+        raise ValueError(
+            f"Unsupported OCR provider {config.ocr_provider!r}; "
+            "choose auto, vision, or tesseract."
+        )
     if sys.platform == "darwin":
         return ocr.VisionTextRecognizer(config)
     return ocr.TesseractTextRecognizer(config)

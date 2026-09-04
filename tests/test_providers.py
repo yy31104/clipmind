@@ -41,6 +41,12 @@ class ProviderSelectionTests(unittest.TestCase):
         self.assertEqual(bundle.transcript.name, "faster-whisper")
         self.assertEqual(bundle.text.name, "tesseract")
 
+    def test_unknown_provider_names_are_not_silently_treated_as_auto(self) -> None:
+        with self.assertRaisesRegex(ValueError, "Unsupported ASR provider"):
+            default_providers(Settings(asr_provider="remote-magic"))
+        with self.assertRaisesRegex(ValueError, "Unsupported OCR provider"):
+            default_providers(Settings(ocr_provider="remote-magic"))
+
 
 class PortableProviderDegradationTests(unittest.IsolatedAsyncioTestCase):
     async def test_missing_faster_whisper_degrades_without_import_failure(self) -> None:
