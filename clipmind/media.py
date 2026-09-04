@@ -104,6 +104,11 @@ async def extract_still(video: Path, timestamp: float, dest: Path) -> Path:
     return dest
 
 
+# Identifies how canonical membership was decided, so a later evaluation can
+# tell "the algorithm changed" apart from "the source bytes changed".
+DEDUPE_ALGORITHM = "single-dhash-v1"
+
+
 def dhash(path: Path, size: int = 8) -> int:
     """Difference hash: robust to compression, sensitive to real content change."""
     with Image.open(path) as im:

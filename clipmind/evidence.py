@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 from typing import Iterable
 
+from . import media
 from .asr import Segment, Transcript
 from .config import Settings, settings
 from .fetch import Media
@@ -393,6 +394,7 @@ def write_pack(
             "change_detection_width": config.sample_width,
             "evidence_width": config.evidence_width,
             "dedupe_threshold": config.dedupe_threshold,
+            "dedupe_algorithm": media.DEDUPE_ALGORITHM,
             "preview_algorithm": PREVIEW_ALGORITHM,
             "preflight": preflight_result,
         },

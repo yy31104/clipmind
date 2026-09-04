@@ -7,7 +7,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from clipmind import evidence, pipeline, visual_states
+from clipmind import evidence, media, pipeline, visual_states
 from clipmind.asr import Segment, Transcript, Word
 from clipmind.fetch import Media
 from clipmind.media import Frame
@@ -112,6 +112,12 @@ class EvidencePackTests(unittest.TestCase):
             self.assertEqual(manifest["timings"], {"ocr_seconds": 1.25})
             self.assertEqual(manifest["counts"]["canonical_visual_states"], 2)
             self.assertEqual(manifest["counts"]["preview_visual_states"], 1)
+            # Provenance: an evaluation must be able to tell a changed
+            # algorithm apart from changed source bytes.
+            self.assertEqual(
+                manifest["configuration"]["dedupe_algorithm"],
+                media.DEDUPE_ALGORITHM,
+            )
             self.assertEqual(
                 manifest["configuration"]["preview_algorithm"],
                 "adaptive-scene-text-v1",
@@ -294,6 +300,16 @@ class SchemaCompatibilityTests(unittest.TestCase):
 
             with self.assertRaises(evidence.EvidencePackError):
                 evidence.load_complete_pack(dest)
+
+
+
+class DedupeProvenanceTests(unittest.TestCase):
+    def test_the_manifest_names_the_algorithm_that_chose_canonical_states(self) -> None:
+        """Without this, an evaluation cannot tell a changed algorithm from
+        changed source bytes - it only sees a different canonical count."""
+        from clipmind import media
+
+        self.assertTrue(media.DEDUPE_ALGORITHM)
 
 
 if __name__ == "__main__":
