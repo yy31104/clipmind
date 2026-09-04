@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import json
+import sqlite3
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from clipmind import evidence
 from clipmind.index import EvidenceIndex
@@ -101,6 +103,29 @@ class EvidenceIndexTests(unittest.TestCase):
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]["job_id"], "new-job")
         self.assertEqual(results[0]["hits"][0]["text"], "shared current wording")
+
+    def test_every_operation_closes_its_sqlite_connection(self) -> None:
+        real_connect = sqlite3.connect
+        opened: list[sqlite3.Connection] = []
+
+        def tracking_connect(*args, **kwargs) -> sqlite3.Connection:
+            connection = real_connect(*args, **kwargs)
+            opened.append(connection)
+            return connection
+
+        with tempfile.TemporaryDirectory() as tempdir, patch(
+            "clipmind.index.sqlite3.connect", side_effect=tracking_connect
+        ):
+            root = Path(tempdir)
+            pack = self.make_pack(root)
+            index = EvidenceIndex(root / "index.sqlite3")
+            self.assertTrue(index.sync("job-1", pack))
+            index.search("retrieval")
+
+        self.assertEqual(len(opened), 3)
+        for connection in opened:
+            with self.assertRaisesRegex(sqlite3.ProgrammingError, "closed"):
+                connection.execute("SELECT 1")
 
 
 if __name__ == "__main__":
