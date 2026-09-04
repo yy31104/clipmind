@@ -29,10 +29,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: python -m pip install build
-      - run: python -m build
-      - run: python -m pip install dist/*.whl
-      - run: clipmind --help
-      - run: python -c "from clipmind.config import WEB_DIR; assert all((WEB_DIR / name).is_file() for name in ('index.html', 'app.js', 'style.css'))"
+      - run: python scripts/build_release_assets.py
       - uses: actions/upload-artifact@v4
         with:
           name: python-package

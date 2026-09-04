@@ -154,6 +154,18 @@ uv build --wheel
 The wheel includes `clipmind/web/*.html`, `*.css`, and `*.js`. Test an artifact
 in a clean environment and run `clipmind doctor` before distributing it.
 
+## Publish Python release assets
+
+Publishing a GitHub Release is the explicit authorization boundary. The
+`release assets` workflow checks out that release's tag, requires the tag to
+match the version in `pyproject.toml`, and builds one wheel and one source
+distribution. It installs the wheel with its dependencies in a clean virtual
+environment outside the checkout, verifies the CLI and packaged web assets,
+then attaches the two distributions and `SHA256SUMS` to the existing Release.
+
+The workflow does not create a Release and does not upload the unsigned macOS
+app or DMG.
+
 ## Build the macOS app and DMG
 
 ```bash
