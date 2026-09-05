@@ -3,6 +3,16 @@
 Notable user-visible changes are recorded here. Evidence Pack schema versions
 are documented separately and do not have to equal the application version.
 
+## Unreleased
+
+### Changed
+
+- acquisition writes into a job-owned `acquisition/` directory whose ownership
+  is recorded on disk before downloading, so completion, failure, cancellation
+  and restart recovery share one cleanup contract and temporary media is removed
+  whatever the acquiring strategy named it. With `CLIPMIND_KEEP_VIDEO=1` the
+  retained media now lives in `acquisition/` instead of at the job root.
+
 ## 1.2.0 — 2026-09-04
 
 ### Added
