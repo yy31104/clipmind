@@ -53,36 +53,41 @@ class AcquisitionLedgerTests(unittest.TestCase):
 
         self.assertFalse(acquisition.workspace(self.workdir).exists())
 
-    def test_purge_survives_a_corrupt_ledger(self) -> None:
-        root = acquisition.open_workspace(self.workdir, strategy="pending")
-        (root / acquisition.LEDGER_NAME).write_text("{ not json", encoding="utf-8")
-        (root / "browser-capture.webm").write_bytes(b"captured media")
+    def test_no_shape_of_corrupt_ledger_can_block_cleanup(self) -> None:
+        corruptions = {
+            "not json": b"{ not json",
+            "not utf-8": b'{"version": 1, "s": "\xff\xfe"}',
+            "wrong shape": b'{"version": 1, "external_artifacts": 42}',
+            "not an object": b"[1, 2, 3]",
+        }
+        for label, payload in corruptions.items():
+            with self.subTest(ledger=label):
+                root = acquisition.open_workspace(self.workdir, strategy="pending")
+                (root / "browser-capture.webm").write_bytes(b"private media")
+                acquisition.ledger_path(self.workdir).write_bytes(payload)
 
-        acquisition.purge(self.workdir)
+                acquisition.purge(self.workdir)
 
-        self.assertFalse(acquisition.workspace(self.workdir).exists())
+                self.assertFalse(acquisition.workspace(self.workdir).exists())
+                self.assertEqual(acquisition.leftovers(self.workdir), [])
 
-    def test_a_path_outside_the_job_directory_cannot_be_owned(self) -> None:
+    def test_purge_ignores_tampered_ledger_entries(self) -> None:
         outside = Path(self.tempdir.name) / "the-users-own-video.mp4"
         outside.write_bytes(b"belongs to the user")
+        (self.workdir / "source.json").write_text("{}", encoding="utf-8")
+        (self.workdir / "manifest.json").write_text("{}", encoding="utf-8")
         acquisition.open_workspace(self.workdir, strategy="pending")
-
-        with self.assertRaises(ValueError):
-            acquisition.record_external(self.workdir, outside)
-
-        acquisition.purge(self.workdir)
-        self.assertTrue(outside.exists())
-
-    def test_purge_ignores_a_tampered_ledger_entry_that_escapes(self) -> None:
-        outside = Path(self.tempdir.name) / "the-users-own-video.mp4"
-        outside.write_bytes(b"belongs to the user")
-        root = acquisition.open_workspace(self.workdir, strategy="pending")
-        (root / acquisition.LEDGER_NAME).write_text(
+        acquisition.ledger_path(self.workdir).write_text(
             json.dumps(
                 {
                     "version": 1,
                     "root": acquisition.ROOT_NAME,
-                    "external_artifacts": ["../the-users-own-video.mp4"],
+                    "external_artifacts": [
+                        "../the-users-own-video.mp4",
+                        ".",
+                        "source.json",
+                        "manifest.json",
+                    ],
                 }
             ),
             encoding="utf-8",
@@ -91,16 +96,90 @@ class AcquisitionLedgerTests(unittest.TestCase):
         acquisition.purge(self.workdir)
 
         self.assertTrue(outside.exists())
+        self.assertTrue(self.workdir.is_dir())
+        self.assertTrue((self.workdir / "source.json").exists())
+        self.assertTrue((self.workdir / "manifest.json").exists())
+
+    def test_the_job_directory_and_final_artifacts_can_never_be_owned(self) -> None:
+        (self.workdir / "source.json").write_text("{}", encoding="utf-8")
+        (self.workdir / "visual_states").mkdir()
+        acquisition.open_workspace(self.workdir, strategy="pending")
+
+        for candidate in (
+            self.workdir,
+            self.workdir / "source.json",
+            self.workdir / "manifest.json",
+            self.workdir / "visual_states",
+            self.workdir / "note.md",
+            Path(self.tempdir.name) / "elsewhere.mp4",
+        ):
+            with self.subTest(path=candidate.name):
+                with self.assertRaises(ValueError):
+                    acquisition.record_external(self.workdir, candidate)
+
+        acquisition.purge(self.workdir)
+        self.assertTrue(self.workdir.is_dir())
+        self.assertTrue((self.workdir / "source.json").exists())
+
+    def test_a_failed_deletion_stays_in_the_ledger_and_is_retried(self) -> None:
+        acquisition.open_workspace(self.workdir, strategy="pending")
+        stray = self.workdir / "acquisition-fragment.part"
+        stray.write_bytes(b"partial download")
+        acquisition.record_external(self.workdir, stray)
+
+        real_unlink = Path.unlink
+
+        def failing_unlink(target, *args, **kwargs):
+            if target.name == "acquisition-fragment.part":
+                raise PermissionError("injected")
+            return real_unlink(target, *args, **kwargs)
+
+        with patch.object(Path, "unlink", failing_unlink):
+            acquisition.purge(self.workdir)
+
+        self.assertTrue(stray.exists())
+        ledger = acquisition.load(self.workdir)
+        self.assertIsNotNone(ledger)
+        self.assertIn("acquisition-fragment.part", ledger["external_artifacts"])
+
+        acquisition.purge(self.workdir)
+
+        self.assertFalse(stray.exists())
+        self.assertEqual(acquisition.leftovers(self.workdir), [])
+
+    def test_a_symlinked_owned_directory_is_refused(self) -> None:
+        outside = Path(self.tempdir.name) / "outside"
+        outside.mkdir()
+        acquisition.workspace(self.workdir).symlink_to(outside, target_is_directory=True)
+
+        with self.assertRaises(ValueError):
+            acquisition.open_workspace(self.workdir, strategy="pending")
+
+        self.assertEqual(list(outside.iterdir()), [])
+
+    def test_purge_removes_a_symlink_without_touching_its_target(self) -> None:
+        outside = Path(self.tempdir.name) / "outside"
+        outside.mkdir()
+        kept = outside / "not-ours.mp4"
+        kept.write_bytes(b"someone else's file")
+        acquisition.workspace(self.workdir).symlink_to(outside, target_is_directory=True)
+
+        acquisition.purge(self.workdir)
+
+        self.assertFalse(acquisition.workspace(self.workdir).is_symlink())
+        self.assertTrue(kept.exists())
+        self.assertEqual(acquisition.leftovers(self.workdir), [])
 
     def test_an_owned_external_artifact_is_removed(self) -> None:
         acquisition.open_workspace(self.workdir, strategy="pending")
-        stray = self.workdir / "capture-fragment.part"
+        stray = self.workdir / "acquisition-fragment.part"
         stray.write_bytes(b"partial download")
 
         acquisition.record_external(self.workdir, stray)
         acquisition.purge(self.workdir)
 
         self.assertFalse(stray.exists())
+        self.assertEqual(acquisition.leftovers(self.workdir), [])
 
 
 class CleanupContractTests(unittest.TestCase):

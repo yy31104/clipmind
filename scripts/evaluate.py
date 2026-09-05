@@ -129,20 +129,13 @@ def evaluate_case(
     dedupe_threshold = int(manifest["configuration"]["dedupe_threshold"])
     duplicate_count = sum(distance <= dedupe_threshold for distance in distances)
     referenced_files = [workdir / row["file"] for row in timeline]
-    # The acquisition directory is checked by the name production code owns,
-    # so a strategy that picks a new media filename cannot slip past this gate.
+    # Acquisition reports its own leftovers, so this gate cannot drift out of
+    # sync with what a strategy actually writes.
     temp_leftovers = [
         name
-        for name in (
-            "samples",
-            "evidence_samples",
-            "audio.wav",
-            "source.mp4",
-            "source.webm",
-            acquisition.ROOT_NAME,
-        )
+        for name in ("samples", "evidence_samples", "audio.wav", "source.mp4", "source.webm")
         if (workdir / name).exists()
-    ]
+    ] + acquisition.leftovers(workdir)
     exact_count_check = (
         len(timeline) == expected["canonical_visual_state_count"]
         if exact_count_enforced
@@ -289,8 +282,8 @@ async def reextract_cases(
         for case, job in jobs:
             sources = sorted(
                 path
-                for path in store.workdir(job.id).glob("source.*")
-                if path.name != "source.json" and path.is_file()
+                for path in acquisition.workspace(store.workdir(job.id)).glob("source.*")
+                if path.is_file()
             )
             if job.status == "done" and len(sources) == 1:
                 source_hashes[case["source_id"]] = sha256(sources[0])

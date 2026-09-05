@@ -70,10 +70,16 @@ directory, along with extracted audio and sampling frames, unless
 `acquisition/` rather than at the job root. Interrupted jobs retain their
 durable state plus any already-published final artifacts.
 
+Ownership is narrow by construction. Being inside the job directory is not what
+makes something deletable -- the Evidence Pack lives there too -- so cleanup may
+only remove the `acquisition/` directory and siblings carrying the same prefix.
+The job directory itself, `source.json`, and every other final artifact are
+refused rather than recorded, and a symlinked `acquisition/` is refused instead
+of followed.
+
 A local file you supply is never owned. ClipMind copies it into the job's
-`acquisition/` directory and only ever deletes that copy; the original is
-outside the job directory, and a request to own a path outside it is refused
-rather than recorded.
+`acquisition/` directory and only ever deletes that copy. Anything that cannot
+be removed stays recorded so a later cleanup retries it.
 
 ## Retained data
 
