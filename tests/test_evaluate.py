@@ -11,7 +11,7 @@ from unittest.mock import patch
 
 from PIL import Image
 
-from clipmind import evidence
+from clipmind import acquisition, evidence
 from scripts import evaluate
 
 
@@ -170,7 +170,11 @@ class EvaluateTests(unittest.TestCase):
                 job_id = f"job-{self._counter}"
                 workdir = self.workdir(job_id)
                 workdir.mkdir(parents=True)
-                (workdir / "source.mp4").write_bytes(url.encode())
+                # Write where acquisition actually puts media, through the
+                # shipped entry point, so this fixture cannot silently drift
+                # away from the layout the evaluator has to read.
+                root = acquisition.open_workspace(workdir, strategy="fake")
+                (root / "source.mp4").write_bytes(url.encode())
                 task = asyncio.create_task(asyncio.sleep(0))
                 self._tasks.add(task)
                 return SimpleNamespace(
