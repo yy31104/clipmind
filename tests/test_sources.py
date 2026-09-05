@@ -3,16 +3,107 @@ from __future__ import annotations
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
+from urllib.parse import parse_qsl, urlsplit
 from unittest.mock import patch
 
+from clipmind import evidence
 from clipmind.config import Settings
 from clipmind.fetch import fetch
+from clipmind.jobs import Job, JobStore
+from clipmind.links import normalize_url, source_id_from_url
 from clipmind.sources import adapter_for, supported_sources
 from clipmind.sources import registry
 from clipmind.sources.base import SourceAdapter
+from tests.pack_fixture import make_complete_pack
 
 
 class SourceRegistryTests(unittest.TestCase):
+    def test_plugin_owned_identity_drives_wrappers_and_real_pack_reuse(self) -> None:
+        class Plugin(SourceAdapter):
+            def canonicalize_source(self, source):
+                return "https://video.example/watch?clip=" + self.source_id(source)
+
+            def source_id(self, source):
+                return dict(parse_qsl(urlsplit(source).query)).get("clip")
+
+        plugin = Plugin(name="example-plugin", platform="example", domains=("video.example",))
+        entry = SimpleNamespace(name=plugin.name, load=lambda: plugin)
+        with patch.object(registry.metadata, "entry_points", return_value=[entry]), \
+                tempfile.TemporaryDirectory() as tempdir:
+            registry.registered_adapters.cache_clear()
+            try:
+                root = Path(tempdir)
+                pack = make_complete_pack(root, source_id="lesson-7")
+                evidence.load_complete_pack(pack)
+                store = JobStore(root)
+                job = Job(
+                    id=pack.name, url="https://video.example/watch?clip=lesson-7",
+                    title="Fixture", status="done", result={"id": "lesson-7"},
+                )
+                store.jobs[job.id] = job
+                url = "https://video.example/share?clip=lesson-7&tracking=discard"
+                self.assertIs(adapter_for(url), plugin)
+                self.assertEqual(normalize_url(url), job.url)
+                self.assertEqual(source_id_from_url(url), "lesson-7")
+                self.assertIs(store.reusable(url), job)
+                self.assertIsNone(store.reusable(url.replace("lesson-7", "lesson-8")))
+            finally:
+                registry.registered_adapters.cache_clear()
+
+    def test_identity_hooks_are_independently_optional_and_none_is_authoritative(self) -> None:
+        adapter = SourceAdapter(name="example", platform="example", domains=("video.example",))
+        plugin = SimpleNamespace(
+            name=adapter.name, platform=adapter.platform, local=False, generic=False,
+            matches=adapter.matches, normalize_info=adapter.normalize_info,
+        )
+        entry = SimpleNamespace(name=plugin.name, load=lambda: plugin)
+        url = "https://video.example/video/123?p=7&utm_source=share"
+        with patch.object(registry.metadata, "entry_points", return_value=[entry]):
+            registry.registered_adapters.cache_clear()
+            try:
+                plugin.canonicalize_source = lambda source: "https://video.example/custom"
+                self.assertEqual(normalize_url(url), "https://video.example/custom")
+                self.assertEqual(source_id_from_url(url), "123")
+                del plugin.canonicalize_source
+                plugin.source_id = lambda source: None
+                self.assertEqual(normalize_url(url), "https://video.example/video/123?p=7")
+                self.assertIsNone(source_id_from_url(url))
+            finally:
+                registry.registered_adapters.cache_clear()
+
+    def test_legacy_plugin_without_identity_hooks_keeps_generic_identity(self) -> None:
+        class LegacyPlugin:
+            name = "legacy-plugin"
+            platform = "example"
+            local = False
+            generic = False
+
+            def matches(self, source):
+                return source.startswith("https://video.example/")
+
+            def normalize_info(self, source, info):
+                return {**info, "webpage_url": source}
+
+        plugin = LegacyPlugin()
+        entry = type("Entry", (), {"name": plugin.name, "load": lambda self: plugin})()
+        self.assertFalse(hasattr(plugin, "canonicalize_source"))
+        self.assertFalse(hasattr(plugin, "source_id"))
+        with patch.object(registry.metadata, "entry_points", return_value=[entry]):
+            registry.registered_adapters.cache_clear()
+            try:
+                for path, expected_id in (("watch", None), ("video/123", "123"), ("BV1abc", "BV1abc")):
+                    url = f"https://video.example/{path}?z=2&p=7&utm_source=share"
+                    with self.subTest(url=url):
+                        self.assertIs(adapter_for(url), plugin)
+                        self.assertEqual(normalize_url(url), f"https://video.example/{path}?p=7&z=2")
+                        self.assertEqual(source_id_from_url(url), expected_id)
+                self.assertIn(
+                    {"name": plugin.name, "platform": plugin.platform}, supported_sources()
+                )
+            finally:
+                registry.registered_adapters.cache_clear()
+
     def test_specific_platforms_win_before_the_generic_url_adapter(self) -> None:
         cases = {
             "https://v.douyin.com/example": "douyin",

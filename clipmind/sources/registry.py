@@ -68,6 +68,27 @@ def adapter_for(source: str) -> SourceAdapter:
     )
 
 
+def _identity_adapter(source: str):
+    try:
+        return adapter_for(source)
+    except SourceError:
+        # Identity helpers historically also accepted unresolved paths, file://
+        # URIs and non-HTTP strings. This does not make them valid acquisitions.
+        return DIRECT
+
+
+def canonicalize_source(source: str) -> str:
+    """Delegate pre-acquisition identity, retaining defaults for old plugins."""
+    hook = getattr(_identity_adapter(source.strip()), "canonicalize_source", None)
+    return hook(source) if callable(hook) else DIRECT.canonicalize_source(source)
+
+
+def source_id(source: str) -> str | None:
+    """Delegate known source IDs independently of metadata normalization."""
+    hook = getattr(_identity_adapter(source), "source_id", None)
+    return hook(source) if callable(hook) else DIRECT.source_id(source)
+
+
 def supported_sources() -> list[dict[str, str]]:
     return [
         {"name": adapter.name, "platform": adapter.platform}

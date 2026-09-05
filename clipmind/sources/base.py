@@ -36,6 +36,18 @@ class SourceAdapter:
         host = parsed.hostname.casefold()
         return any(host == domain or host.endswith(f".{domain}") for domain in self.domains)
 
+    def canonicalize_source(self, source: str) -> str:
+        """Pre-acquisition cache identity; override for platform-specific rules."""
+        from .identity import legacy_canonicalize_source
+
+        return legacy_canonicalize_source(source)
+
+    def source_id(self, source: str) -> str | None:
+        """An ID known before acquisition, or None when metadata is needed."""
+        from .identity import legacy_source_id
+
+        return legacy_source_id(source)
+
     def normalize_info(self, source: str, info: dict) -> dict:
         normalized = dict(info)
         normalized["_clipmind_platform"] = self.platform
@@ -45,6 +57,8 @@ class SourceAdapter:
 
 
 class SourceAdapterProtocol(Protocol):
+    """Required legacy boundary; identity hooks remain optional for plugins."""
+
     name: str
     platform: str
     local: bool
