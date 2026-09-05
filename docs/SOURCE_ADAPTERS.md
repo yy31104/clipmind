@@ -10,6 +10,7 @@ An adapter owns only:
 
 - whether it matches a source string;
 - a stable adapter name and platform identifier;
+- pre-acquisition canonical source and known source ID (optional hooks);
 - normalization of upstream metadata into ClipMind's platform-neutral fields.
 
 It does **not** own yt-dlp execution, cookies, retry/error policy, temporary file
@@ -99,6 +100,49 @@ durable job diagnostics.
 Platform identifiers are open extension values in the manifest schema. Use a
 stable, non-empty, lowercase identifier and never change it after packs have
 been published; consumers can use it for cache and routing decisions.
+
+## Optional source identity hooks
+
+Adapters can define `canonicalize_source(source: str) -> str` and
+`source_id(source: str) -> str | None`. These run **before acquisition** to
+identify reusable complete packs; `normalize_info(source, info)` still handles
+metadata **after acquisition**. The compatibility helpers
+`clipmind.links.normalize_url` and `source_id_from_url` delegate to these hooks.
+
+Subclass `SourceAdapter` to override either method, or add the methods to an
+existing protocol implementation. An installed plugin implementing only the
+original required protocol continues to load and match. Each missing hook uses
+the existing generic identity defaults independently. A supplied `source_id`
+hook returning `None` is authoritative; it does not request fallback parsing.
+
+For a source whose identity lives in a query parameter, an adapter can do:
+
+```python
+from urllib.parse import parse_qsl, urlencode, urlsplit
+
+class LessonAdapter(SourceAdapter):
+    def source_id(self, source: str) -> str | None:
+        return dict(parse_qsl(urlsplit(source).query)).get("lesson")
+
+    def canonicalize_source(self, source: str) -> str:
+        lesson = self.source_id(source)
+        if lesson is None:
+            return super().canonicalize_source(source)
+        return "https://video.example/watch?" + urlencode({"lesson": lesson})
+```
+
+Identity hooks should be deterministic, local operations without acquisition or
+metadata requests. Preserve every parameter needed to identify distinct media
+in both the canonical source and the source ID. `JobStore.reusable()` accepts a
+match on either one, so returning the same ID for distinct parts can alias them.
+
+The migration deliberately retains historic helper behavior: generic defaults
+strip only known tracking keys, sort remaining query pairs, and keep the old
+host-independent numeric video/note and BV/av ID parsing. Some legacy identity
+host rules are wider than acquisition matching, and bare local paths differ
+from explicit `file://` URIs. These quirks do not add acquisition support. See
+[the old/new identity table](SOURCE_IDENTITY_MIGRATION.md) for the preserved
+behavior and known limitations.
 
 ## Test contract
 
