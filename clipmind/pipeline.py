@@ -13,7 +13,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from urllib.parse import quote
 
-from . import evidence, media, preflight, render, visual_states
+from . import acquisition, evidence, media, preflight, render, visual_states
 from .config import Settings, settings
 from .fetch import fetch
 from .providers import ProviderBundle, default_providers
@@ -58,11 +58,20 @@ class Pools:
 
 
 def cleanup_temporary(workdir: Path, keep_source: bool = False) -> None:
-    """Remove pipeline-owned temporary files without touching final artifacts."""
+    """Remove pipeline-owned temporary files without touching final artifacts.
+
+    This is the single cleanup contract. Completion, failure, cancellation and
+    restart recovery all arrive here, and only the first three still hold the
+    ``MediaAsset``, so what acquisition owns is read back from disk rather than
+    from the caller.
+    """
     shutil.rmtree(workdir / "samples", ignore_errors=True)
     shutil.rmtree(workdir / "evidence_samples", ignore_errors=True)
     if keep_source:
         return
+    acquisition.purge(workdir)
+    # Job directories written before acquisition owned its own directory still
+    # hold media at the top level, next to the Evidence Pack's ``source.json``.
     for path in [workdir / "audio.wav", *workdir.glob("source.*")]:
         if path.name == "source.json":
             continue

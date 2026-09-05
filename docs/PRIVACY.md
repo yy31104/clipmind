@@ -61,10 +61,19 @@ processing. ClipMind never edits the original. The durable library `job.json`
 keeps the original path so an explicit local retry can work; exported ZIPs and
 Inbox copies replace it with `local:///filename` and remove internal job options.
 
-Temporary source media, extracted audio, and sampling frames are deleted after
-success or failure unless `CLIPMIND_KEEP_VIDEO=1` is configured. Interrupted
-jobs retain their durable state plus any already-published final artifacts while
-cleaning only recognized temporary paths.
+Acquisition writes into an `acquisition/` directory the job owns. Ownership is
+recorded on disk before the first byte is downloaded, so the media is removable
+whatever the strategy chose to name it, and by a later process that never held
+it. Completion, failure, cancellation and restart recovery all delete that
+directory, along with extracted audio and sampling frames, unless
+`CLIPMIND_KEEP_VIDEO=1` is configured -- which keeps the acquired media inside
+`acquisition/` rather than at the job root. Interrupted jobs retain their
+durable state plus any already-published final artifacts.
+
+A local file you supply is never owned. ClipMind copies it into the job's
+`acquisition/` directory and only ever deletes that copy; the original is
+outside the job directory, and a request to own a path outside it is refused
+rather than recorded.
 
 ## Retained data
 

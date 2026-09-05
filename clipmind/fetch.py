@@ -18,6 +18,7 @@ import shutil
 from pathlib import Path
 from urllib.parse import quote
 
+from . import acquisition
 from .config import Settings, settings
 from .sources import MediaAsset, SourceError, adapter_for
 
@@ -152,6 +153,9 @@ async def fetch(
         )
 
     workdir.mkdir(parents=True, exist_ok=True)
+    # Ownership is recorded before the first byte lands, so a crash at any
+    # later point still leaves a directory restart recovery knows to remove.
+    root = acquisition.open_workspace(workdir, strategy="pending")
     errors: list[str] = []
 
     for source in _ordered_sources(config):
@@ -172,7 +176,7 @@ async def fetch(
                 "--no-simulate",
                 "--dump-single-json",
                 "-f", config.fetch_format,
-                "-o", str(workdir / "source.%(ext)s"),
+                "-o", str(root / "source.%(ext)s"),
                 *cookie_args,
                 url,
             ]
@@ -187,13 +191,14 @@ async def fetch(
             errors.append(f"{_describe(source)}: bad metadata ({exc})")
             continue
 
-        path = _downloaded_path(info, workdir)
+        path = _downloaded_path(info, root)
         if path is None:
             errors.append(f"{_describe(source)}: reported success but wrote no file")
             continue
 
         async with _lock:
             _winning_source = source
+        acquisition.record_strategy(workdir, _describe(source))
         info["_clipmind_strategy"] = _describe(source)
         return MediaAsset(
             media_path=path,
@@ -212,8 +217,11 @@ async def _fetch_local(url: str, workdir: Path, adapter) -> MediaAsset:
             "Choose an existing readable media file and retry.",
         )
     workdir.mkdir(parents=True, exist_ok=True)
+    # Only the copy inside the owned directory belongs to ClipMind. ``source``
+    # is the user's own file and must never become something cleanup deletes.
+    root = acquisition.open_workspace(workdir, strategy="local file copy")
     suffix = source.suffix.casefold() or ".media"
-    dest = workdir / f"source{suffix}"
+    dest = root / f"source{suffix}"
     await asyncio.to_thread(shutil.copy2, source, dest)
     metadata = await _probe_local(dest)
     digest = await asyncio.to_thread(_sha256, dest)
@@ -261,10 +269,10 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _downloaded_path(info: dict, workdir: Path) -> Path | None:
+def _downloaded_path(info: dict, root: Path) -> Path | None:
     for entry in info.get("requested_downloads") or []:
         candidate = entry.get("filepath") or entry.get("_filename")
         if candidate and Path(candidate).exists():
             return Path(candidate)
-    files = sorted(workdir.glob("source.*"), key=lambda p: p.stat().st_size, reverse=True)
+    files = sorted(root.glob("source.*"), key=lambda p: p.stat().st_size, reverse=True)
     return files[0] if files else None

@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from clipmind import evidence, media, pipeline  # noqa: E402
+from clipmind import acquisition, evidence, media, pipeline  # noqa: E402
 from clipmind.jobs import JobStore  # noqa: E402
 
 
@@ -129,9 +129,18 @@ def evaluate_case(
     dedupe_threshold = int(manifest["configuration"]["dedupe_threshold"])
     duplicate_count = sum(distance <= dedupe_threshold for distance in distances)
     referenced_files = [workdir / row["file"] for row in timeline]
+    # The acquisition directory is checked by the name production code owns,
+    # so a strategy that picks a new media filename cannot slip past this gate.
     temp_leftovers = [
         name
-        for name in ("samples", "evidence_samples", "audio.wav", "source.mp4", "source.webm")
+        for name in (
+            "samples",
+            "evidence_samples",
+            "audio.wav",
+            "source.mp4",
+            "source.webm",
+            acquisition.ROOT_NAME,
+        )
         if (workdir / name).exists()
     ]
     exact_count_check = (
