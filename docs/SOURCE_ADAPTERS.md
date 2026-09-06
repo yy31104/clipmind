@@ -144,6 +144,37 @@ from explicit `file://` URIs. These quirks do not add acquisition support. See
 [the old/new identity table](SOURCE_IDENTITY_MIGRATION.md) for the preserved
 behavior and known limitations.
 
+## Optional failure classification hook
+
+Adapters can define `classify_failure(attempt) -> str | None`, called once per
+acquisition attempt before the shared rules. `attempt` carries `strategy`,
+`label`, and `reason` — `reason` is what the tool actually reported, kept apart
+from the label ClipMind gave the rung, because every browser rung is labelled
+`"<browser> cookies"` and matching that would read a platform's own access
+refusal as a cookie problem.
+
+The hook is optional. An adapter without it, including an already-installed
+plugin, keeps the shared classification unchanged. Returning `None` defers to
+the shared rules; a hook that raises is logged and skipped rather than breaking
+classification.
+
+Return one of the established codes — `private_video`, `cookies_stale`,
+`login_required`, `cookies_unavailable`, `link_unavailable`,
+`media_fetch_failed`. Other values are logged and ignored: these codes are a
+public contract that the REST error events, the SDK, and the web app read.
+
+```python
+class LessonAdapter(SourceAdapter):
+    def classify_failure(self, attempt) -> str | None:
+        if "enrolment required" in attempt.reason.lower():
+            return "login_required"
+        return None
+```
+
+Classification is ranked across every attempt, not taken from the last one: the
+rung that explains a failure is often not the rung that ran last. Keep hooks
+free of network access — they receive text that has already been collected.
+
 ## Test contract
 
 A source adapter contribution should prove:
