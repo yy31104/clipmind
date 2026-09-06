@@ -1,9 +1,14 @@
 """Acquire URL or local media through a platform-neutral source adapter.
 
-Ladder (first success wins, and the winning strategy is cached for the batch):
+Ladder (first success wins):
     1. yt-dlp with each configured browser-cookie source
     2. yt-dlp with no cookies at all (when ``-`` is configured)
     3. yt-dlp with a user-supplied cookies.txt
+
+``AcquisitionEngine`` owns the ordering and remembers which rung last worked, so
+a batch does not repeat a doomed round-trip. That memory is keyed per platform,
+and per host for generic URLs: what worked is a property of one site, not of the
+process.
 
 If every rung fails we raise FetchError carrying the last stderr so the UI can
 tell the user *why* rather than just "failed".
@@ -15,8 +20,9 @@ import hashlib
 import json
 import logging
 import shutil
+from dataclasses import dataclass
 from pathlib import Path
-from urllib.parse import quote
+from urllib.parse import quote, urlsplit
 
 from . import acquisition
 from .config import Settings, settings
@@ -86,11 +92,6 @@ def _fetch_error(errors: list[str], platform: str = "source") -> FetchError:
 Media = MediaAsset
 
 
-# Remembering what worked saves a doomed round-trip per video in a batch.
-_winning_source: str | None = None
-_lock = asyncio.Lock()
-
-
 def _cookie_args(source: str, config: Settings = settings) -> list[str]:
     if source == "-":
         return []
@@ -105,16 +106,6 @@ def _cookie_args(source: str, config: Settings = settings) -> list[str]:
     return ["--cookies-from-browser", source]
 
 
-def _ordered_sources(config: Settings = settings) -> list[str]:
-    sources = list(config.cookie_sources)
-    if config.cookie_file:
-        sources.append("file")
-    if _winning_source and _winning_source in sources:
-        sources.remove(_winning_source)
-        sources.insert(0, _winning_source)
-    return sources
-
-
 def _describe(source: str) -> str:
     return {"-": "no cookies", "file": "cookie file"}.get(source, f"{source} cookies")
 
@@ -127,45 +118,35 @@ async def _run(args: list[str]) -> tuple[int, str, str]:
     return proc.returncode or 0, out.decode(errors="replace"), err.decode(errors="replace")
 
 
-async def fetch(
-    url: str,
-    workdir: Path,
-    on_note=None,
-    *,
-    config: Settings = settings,
-) -> MediaAsset:
-    """Materialize one supported source into ``workdir`` with normalized metadata."""
-    global _winning_source
+@dataclass(frozen=True)
+class AcquiredMedia:
+    """What a strategy produced: a local file plus the metadata it came with."""
 
-    try:
-        adapter = adapter_for(url)
-    except SourceError as exc:
-        raise FetchError(exc.code, exc.user_message, exc.action) from exc
+    path: Path
+    info: dict
 
-    if adapter.local:
-        return await _fetch_local(url, workdir, adapter)
 
-    if not shutil.which("yt-dlp"):
-        raise FetchError(
-            "missing_dependency",
-            "yt-dlp is not installed.",
-            "Install ClipMind's dependencies (including yt-dlp), then restart ClipMind.",
-        )
+@dataclass(frozen=True)
+class CookieRung:
+    """One rung of the ladder: yt-dlp with one particular cookie source."""
 
-    workdir.mkdir(parents=True, exist_ok=True)
-    # Ownership is recorded before the first byte lands, so a crash at any
-    # later point still leaves a directory restart recovery knows to remove.
-    root = acquisition.open_workspace(workdir, strategy="pending")
-    errors: list[str] = []
+    source: str
 
-    for source in _ordered_sources(config):
-        if on_note:
-            on_note(f"trying {_describe(source)}")
+    @property
+    def key(self) -> str:
+        return self.source
+
+    def describe(self) -> str:
+        return _describe(self.source)
+
+    async def acquire(
+        self, url: str, root: Path, config: Settings
+    ) -> tuple[AcquiredMedia | None, str | None]:
+        """Acquire, or report why this rung could not. Never raises."""
         try:
-            cookie_args = _cookie_args(source, config)
+            cookie_args = _cookie_args(self.source, config)
         except FetchError as exc:
-            errors.append(str(exc))
-            continue
+            return None, str(exc)
 
         code, out, err = await _run(
             [
@@ -182,30 +163,117 @@ async def fetch(
             ]
         )
         if code != 0 or not out.strip():
-            errors.append(f"{_describe(source)}: {(err or out).strip().splitlines()[-1] if (err or out).strip() else 'failed'}")
-            continue
+            detail = (err or out).strip()
+            reason = detail.splitlines()[-1] if detail else "failed"
+            return None, f"{self.describe()}: {reason}"
 
         try:
             info = json.loads(out.splitlines()[-1])
         except json.JSONDecodeError as exc:
-            errors.append(f"{_describe(source)}: bad metadata ({exc})")
-            continue
+            return None, f"{self.describe()}: bad metadata ({exc})"
 
         path = _downloaded_path(info, root)
         if path is None:
-            errors.append(f"{_describe(source)}: reported success but wrote no file")
-            continue
+            return None, f"{self.describe()}: reported success but wrote no file"
+        return AcquiredMedia(path=path, info=info), None
 
-        async with _lock:
-            _winning_source = source
-        acquisition.record_strategy(workdir, _describe(source))
-        info["_clipmind_strategy"] = _describe(source)
-        return MediaAsset(
-            media_path=path,
-            info=adapter.normalize_info(url, info),
+
+class AcquisitionEngine:
+    """Ordered strategies, plus a memory of which one last worked.
+
+    The memory is keyed rather than shared. "What worked" is a property of one
+    site, not of the process: the generic adapter covers the whole internet, so
+    a single answer would let one host reorder every other host's ladder and
+    spend a doomed round-trip on it.
+    """
+
+    def __init__(self) -> None:
+        self._winning: dict[str, str] = {}
+        self._lock = asyncio.Lock()
+
+    @staticmethod
+    def affinity_key(url: str, adapter) -> str:
+        if getattr(adapter, "generic", False):
+            host = (urlsplit(url).hostname or "").casefold()
+            if host:
+                return f"host:{host}"
+        return f"adapter:{adapter.name}"
+
+    def strategies(self, key: str, config: Settings) -> list[CookieRung]:
+        sources = list(config.cookie_sources)
+        if config.cookie_file:
+            sources.append("file")
+        remembered = self._winning.get(key)
+        if remembered and remembered in sources:
+            sources.remove(remembered)
+            sources.insert(0, remembered)
+        return [CookieRung(source) for source in sources]
+
+    async def acquire(
+        self,
+        url: str,
+        workdir: Path,
+        adapter,
+        on_note=None,
+        *,
+        config: Settings = settings,
+    ) -> MediaAsset:
+        workdir.mkdir(parents=True, exist_ok=True)
+        # Ownership is recorded before the first byte lands, so a crash at any
+        # later point still leaves a directory restart recovery knows to remove.
+        root = acquisition.open_workspace(workdir, strategy="pending")
+        key = self.affinity_key(url, adapter)
+        errors: list[str] = []
+
+        for strategy in self.strategies(key, config):
+            if on_note:
+                on_note(f"trying {strategy.describe()}")
+            acquired, diagnostic = await strategy.acquire(url, root, config)
+            if acquired is None:
+                errors.append(diagnostic or f"{strategy.describe()}: failed")
+                continue
+
+            async with self._lock:
+                self._winning[key] = strategy.key
+            acquisition.record_strategy(workdir, strategy.describe())
+            acquired.info["_clipmind_strategy"] = strategy.describe()
+            return MediaAsset(
+                media_path=acquired.path,
+                info=adapter.normalize_info(url, acquired.info),
+            )
+
+        raise _fetch_error(errors[-4:], adapter.platform)
+
+
+_engine = AcquisitionEngine()
+
+
+async def fetch(
+    url: str,
+    workdir: Path,
+    on_note=None,
+    *,
+    config: Settings = settings,
+) -> MediaAsset:
+    """Materialize one supported source into ``workdir`` with normalized metadata."""
+    try:
+        adapter = adapter_for(url)
+    except SourceError as exc:
+        raise FetchError(exc.code, exc.user_message, exc.action) from exc
+
+    if adapter.local:
+        return await _fetch_local(url, workdir, adapter)
+
+    # Checked here rather than inside the rung: a missing dependency is worth
+    # saying once, not once per rung behind a ladder of failures.
+    if not shutil.which("yt-dlp"):
+        raise FetchError(
+            "missing_dependency",
+            "yt-dlp is not installed.",
+            "Install ClipMind's dependencies (including yt-dlp), then restart ClipMind.",
         )
 
-    raise _fetch_error(errors[-4:], adapter.platform)
+    return await _engine.acquire(url, workdir, adapter, on_note, config=config)
 
 
 async def _fetch_local(url: str, workdir: Path, adapter) -> MediaAsset:
