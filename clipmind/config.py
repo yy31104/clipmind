@@ -108,6 +108,12 @@ class Settings:
     max_asr: int = 1  # single GPU
     max_ocr: int = 2
 
+    # --- probing ---
+    # A probe answers "what is this" without acquiring it, so it gets a wall
+    # clock it cannot exceed rather than the patience acquisition is allowed.
+    probe_timeout: float = 20.0
+    probe_socket_timeout: float = 8.0
+
     # --- housekeeping ---
     keep_source_video: bool = False
     knowledge_base_inbox: Path | None = None
@@ -163,6 +169,8 @@ class Settings:
             max_fetch=_int("CLIPMIND_MAX_FETCH", 4),
             max_asr=_int("CLIPMIND_MAX_ASR", 1),
             max_ocr=_int("CLIPMIND_MAX_OCR", 2),
+            probe_timeout=_float("CLIPMIND_PROBE_TIMEOUT", 20.0),
+            probe_socket_timeout=_float("CLIPMIND_PROBE_SOCKET_TIMEOUT", 8.0),
             keep_source_video=os.getenv("CLIPMIND_KEEP_VIDEO", "0") == "1",
             knowledge_base_inbox=_optional_path("CLIPMIND_KB_INBOX"),
             max_upload_mb=_int("CLIPMIND_MAX_UPLOAD_MB", 10_240),
