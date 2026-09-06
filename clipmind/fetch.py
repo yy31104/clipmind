@@ -21,6 +21,7 @@ import hashlib
 import json
 import logging
 import shutil
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import quote, urlsplit
@@ -381,6 +382,158 @@ async def fetch(
         )
 
     return await _engine.acquire(url, workdir, adapter, on_note, config=config)
+
+
+@dataclass(frozen=True)
+class ProbeResult:
+    """What a source looks like from outside, without acquiring it.
+
+    ``reachable`` means metadata resolved just now. It is not a promise that
+    acquisition will succeed, and nothing here is derived from media bytes.
+    """
+
+    status: str  # reachable | unavailable | unknown
+    platform: str
+    source_id: str | None = None
+    title: str | None = None
+    duration: float | None = None
+    strategy: str | None = None
+    failure_code: str | None = None
+
+
+# Only these say something about the source. The rest say something about us --
+# our cookies, our network, our clock -- and must not be reported as a verdict
+# on the video.
+_PROBE_UNAVAILABLE = frozenset({"private_video", "link_unavailable", "login_required"})
+# A single video's metadata is kilobytes. Far past that means we are reading
+# something a probe was never meant to read.
+_PROBE_OUTPUT_LIMIT = 4 * 1024 * 1024
+
+
+async def _run_budgeted(args: list[str], timeout: float) -> tuple[int, str, str]:
+    """Run a subprocess under a wall clock it cannot exceed.
+
+    Timeout and cancellation both kill the child before propagating, so a probe
+    can never leave yt-dlp running past the budget that bounded it.
+    """
+    proc = await asyncio.create_subprocess_exec(
+        *args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+    )
+    try:
+        out, err = await asyncio.wait_for(proc.communicate(), timeout)
+    except (asyncio.TimeoutError, asyncio.CancelledError):
+        proc.kill()
+        await proc.wait()
+        raise
+    return proc.returncode or 0, out.decode(errors="replace"), err.decode(errors="replace")
+
+
+def _probe_args(url: str, cookie_args: list[str], config: Settings) -> list[str]:
+    # No output template, no format selection, and simulate left on: there is
+    # nowhere for media to land and nothing asking for it.
+    return [
+        "yt-dlp",
+        "--no-warnings",
+        "--no-playlist",
+        "--no-progress",
+        "--skip-download",
+        "--dump-single-json",
+        "--socket-timeout", str(config.probe_socket_timeout),
+        "--retries", "1",
+        *cookie_args,
+        url,
+    ]
+
+
+async def probe(url: str, *, config: Settings = settings) -> ProbeResult:
+    """Ask what a source is, within a budget, without acquiring it.
+
+    Metadata only. No media is downloaded, no transcription or OCR runs, no job
+    directory is created -- this function takes no workdir, so there is nothing
+    for a temporary file to belong to -- and a probe that fails never falls back
+    to acquisition. When the answer cannot be established the status is
+    ``unknown`` rather than a guess in either direction.
+    """
+    try:
+        adapter = adapter_for(url)
+    except SourceError as exc:
+        return ProbeResult(status="unavailable", platform="source", failure_code=exc.code)
+
+    if adapter.local:
+        path = Path(url.removeprefix("file://")).expanduser()
+        if not path.is_file():
+            return ProbeResult(
+                status="unavailable",
+                platform=adapter.platform,
+                failure_code="local_file_unavailable",
+            )
+        return ProbeResult(
+            status="reachable",
+            platform=adapter.platform,
+            title=path.stem,
+            strategy="local file",
+        )
+
+    if not shutil.which("yt-dlp"):
+        return ProbeResult(
+            status="unknown", platform=adapter.platform, failure_code="missing_dependency"
+        )
+
+    deadline = time.monotonic() + max(float(config.probe_timeout), 1.0)
+    failures: list[AttemptFailure] = []
+
+    for strategy in _engine.strategies(_engine.affinity_key(url, adapter), config):
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            break
+        try:
+            cookie_args = _cookie_args(strategy.source, config)
+        except FetchError as exc:
+            failures.append(strategy._failed(str(exc)))
+            continue
+
+        try:
+            code, out, err = await _run_budgeted(
+                _probe_args(url, cookie_args, config), remaining
+            )
+        except asyncio.TimeoutError:
+            return ProbeResult(
+                status="unknown", platform=adapter.platform, failure_code="probe_timeout"
+            )
+
+        if len(out) > _PROBE_OUTPUT_LIMIT:
+            return ProbeResult(
+                status="unknown",
+                platform=adapter.platform,
+                failure_code="probe_budget_exceeded",
+            )
+        if code != 0 or not out.strip():
+            detail = (err or out).strip()
+            failures.append(strategy._failed(detail.splitlines()[-1] if detail else "failed"))
+            continue
+        try:
+            info = json.loads(out.splitlines()[-1])
+        except json.JSONDecodeError as exc:
+            failures.append(strategy._failed(f"bad metadata ({exc})"))
+            continue
+
+        duration = info.get("duration")
+        return ProbeResult(
+            status="reachable",
+            platform=adapter.platform,
+            source_id=adapter.source_id(url) or (str(info["id"]) if info.get("id") else None),
+            title=info.get("title") or None,
+            duration=float(duration) if isinstance(duration, (int, float)) else None,
+            strategy=strategy.describe(),
+        )
+
+    if not failures:
+        return ProbeResult(
+            status="unknown", platform=adapter.platform, failure_code="probe_timeout"
+        )
+    error = classify_failures(failures, adapter=adapter, platform=adapter.platform)
+    status = "unavailable" if error.code in _PROBE_UNAVAILABLE else "unknown"
+    return ProbeResult(status=status, platform=adapter.platform, failure_code=error.code)
 
 
 async def _fetch_local(url: str, workdir: Path, adapter) -> MediaAsset:

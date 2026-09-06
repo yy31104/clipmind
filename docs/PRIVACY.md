@@ -14,6 +14,13 @@ URL ingestion uses yt-dlp to resolve and download only the submitted source.
 What upstream hosts are contacted depends on the platform, redirects, and media
 delivery network.
 
+Probing a URL contacts the same hosts but downloads no media: it resolves
+metadata under an explicit wall clock (`CLIPMIND_PROBE_TIMEOUT`, default 20s)
+and a per-socket timeout, creates no job directory, and never falls back to
+acquisition. Identifying a direct media link still reads the head of the file,
+since that is what says what the file is; measured against a 32 MB fixture a
+probe transferred under 1 MB where acquisition transferred all of it.
+
 Local model providers may contact their model registry on first use:
 
 - MLX Whisper and faster-whisper can download configured ASR weights;
