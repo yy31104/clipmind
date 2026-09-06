@@ -8,6 +8,7 @@ tests drive the shipped entry points (``pipeline.cleanup_temporary`` and
 
 import asyncio
 import json
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -319,6 +320,98 @@ class RestartOwnershipTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(captured.exists())
         self.assertFalse(acquisition.workspace(workdir).exists())
         self.assertTrue((workdir / "note.md").exists())
+
+
+class RestartRetryTests(unittest.IsolatedAsyncioTestCase):
+    """Reaching a terminal state is not evidence the media is gone."""
+
+    def setUp(self) -> None:
+        self.tempdir = tempfile.TemporaryDirectory()
+        self.out_dir = Path(self.tempdir.name) / "out"
+
+    def tearDown(self) -> None:
+        self.tempdir.cleanup()
+
+    async def _interrupted_job(self):
+        entered = asyncio.Event()
+
+        async def acquiring(url, workdir, pools, report, **kwargs):
+            workdir.mkdir(parents=True, exist_ok=True)
+            root = acquisition.open_workspace(workdir, strategy="browser capture")
+            (root / "browser-capture.webm").write_bytes(b"private media")
+            (workdir / "note.md").write_text("published artifact", encoding="utf-8")
+            entered.set()
+            await asyncio.Event().wait()
+
+        store = JobStore(self.out_dir)
+        with patch("clipmind.jobs.process", new=acquiring):
+            job = store.submit("https://v.douyin.com/retry", "Retry")
+            await asyncio.wait_for(entered.wait(), timeout=2)
+            await store.close()
+        return job.id, store.workdir(job.id)
+
+    @staticmethod
+    def _rmtree_failing_on_the_owned_root():
+        real = shutil.rmtree
+
+        def failing(path, *args, **kwargs):
+            if Path(path).name == acquisition.ROOT_NAME:
+                raise PermissionError("injected: directory in use")
+            return real(path, *args, **kwargs)
+
+        return failing
+
+    async def test_a_cleanup_that_could_not_finish_is_retried_on_the_next_start(
+        self,
+    ) -> None:
+        job_id, workdir = await self._interrupted_job()
+        media = acquisition.workspace(workdir) / "browser-capture.webm"
+
+        first = JobStore(self.out_dir)
+        with patch(
+            "clipmind.pipeline.shutil.rmtree",
+            self._rmtree_failing_on_the_owned_root(),
+        ):
+            first.start()
+        after_first = first.jobs[job_id]
+        await first.close()
+
+        self.assertEqual(after_first.status, "interrupted")
+        self.assertTrue(media.exists())
+        self.assertTrue(acquisition.cleanup_pending(workdir))
+
+        reprocessed = 0
+
+        async def must_not_run(url, workdir, pools, report, **kwargs):
+            nonlocal reprocessed
+            reprocessed += 1
+
+        second = JobStore(self.out_dir)
+        with patch("clipmind.jobs.process", new=must_not_run):
+            second.start()
+        after_second = second.jobs[job_id]
+        await second.close()
+
+        self.assertFalse(media.exists())
+        self.assertFalse(acquisition.workspace(workdir).exists())
+        self.assertEqual(acquisition.leftovers(workdir), [])
+        self.assertFalse(acquisition.cleanup_pending(workdir))
+        # The retry must not reprocess the job or rewrite what it ended as.
+        self.assertEqual(reprocessed, 0)
+        self.assertEqual(after_second.status, "interrupted")
+        self.assertTrue((workdir / "note.md").exists())
+
+    def test_media_kept_on_purpose_is_never_flagged_for_retry(self) -> None:
+        workdir = self.out_dir / "kept"
+        workdir.mkdir(parents=True)
+        root = acquisition.open_workspace(workdir, strategy="probe")
+        media = root / "source.mp4"
+        media.write_bytes(b"kept on purpose")
+
+        pipeline.cleanup_temporary(workdir, keep_source=True)
+
+        self.assertTrue(media.exists())
+        self.assertFalse(acquisition.cleanup_pending(workdir))
 
 
 if __name__ == "__main__":

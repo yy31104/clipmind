@@ -78,8 +78,12 @@ refused rather than recorded, and a symlinked `acquisition/` is refused instead
 of followed.
 
 A local file you supply is never owned. ClipMind copies it into the job's
-`acquisition/` directory and only ever deletes that copy. Anything that cannot
-be removed stays recorded so a later cleanup retries it.
+`acquisition/` directory and only ever deletes that copy. Anything that could
+not be removed is recorded with the artifacts themselves, and every application
+start retries the removal until it succeeds -- a job reaching a terminal state
+is not treated as evidence that its temporary media is gone. Media a successful
+job kept through `CLIPMIND_KEEP_VIDEO=1` is never recorded that way, so it is
+never removed by a retry.
 
 ## Retained data
 
