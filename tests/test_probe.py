@@ -6,7 +6,9 @@ we asked for no download; counting bytes proves none arrived.
 """
 
 import asyncio
+import os
 import shutil
+import stat
 import tempfile
 import threading
 import unittest
@@ -31,8 +33,9 @@ has_yt_dlp = shutil.which("yt-dlp") is not None
 class CountingMediaServer:
     """Serves one file and remembers how much of it it actually sent."""
 
-    def __init__(self, payload: bytes) -> None:
+    def __init__(self, payload: bytes, content_type: str = "video/mp4") -> None:
         self.payload = payload
+        self.content_type = content_type
         self.bytes_sent = 0
         self.requests: list[str] = []
         server_self = self
@@ -61,7 +64,7 @@ class CountingMediaServer:
             def do_HEAD(self) -> None:
                 server_self.requests.append(f"HEAD {self.path}")
                 self.send_response(200)
-                self.send_header("Content-Type", "video/mp4")
+                self.send_header("Content-Type", server_self.content_type)
                 self.send_header("Content-Length", str(len(server_self.payload)))
                 self.send_header("Accept-Ranges", "bytes")
                 self.end_headers()
@@ -72,7 +75,7 @@ class CountingMediaServer:
                 body = server_self.payload[first : last + 1]
                 partial = (first, last) != (0, len(server_self.payload) - 1)
                 self.send_response(206 if partial else 200)
-                self.send_header("Content-Type", "video/mp4")
+                self.send_header("Content-Type", server_self.content_type)
                 self.send_header("Content-Length", str(len(body)))
                 self.send_header("Accept-Ranges", "bytes")
                 if partial:
@@ -143,11 +146,40 @@ class ProbeTransfersNoMediaTests(unittest.IsolatedAsyncioTestCase):
 
         self.assertGreaterEqual(acquired_bytes, MEDIA_BYTES)
 
-    async def test_probing_creates_no_job_directory(self) -> None:
-        with CountingMediaServer(b"\0" * MEDIA_BYTES) as server:
-            await fetch.probe(server.url, config=self.config)
+    async def test_a_user_config_cannot_make_a_probe_write_files(self) -> None:
+        # An earlier version of this test planted the config in a directory the
+        # child never ran in, so it passed without exercising anything. The real
+        # exposure is the user's own config, which no working directory hides.
+        home = self.root / "home"
+        (home / "yt-dlp").mkdir(parents=True)
+        (home / "yt-dlp" / "config").write_text(
+            "--no-simulate\n--write-info-json\n", encoding="utf-8"
+        )
 
-        self.assertEqual(list(self.root.iterdir()), [])
+        with patch.dict(os.environ, {"HOME": str(home), "XDG_CONFIG_HOME": str(home)}):
+            with CountingMediaServer(b"\0" * (2 * 1024 * 1024)) as server:
+                # The sandbox reports anything a probe leaves behind. Silence is
+                # the assertion: the config was never allowed to take effect.
+                with self.assertNoLogs("clipmind.fetch", level="WARNING"):
+                    await fetch.probe(server.url, config=self.config)
+
+    async def test_a_large_page_is_read_in_full(self) -> None:
+        # A known limitation, pinned rather than hidden: yt-dlp exposes no cap
+        # on the metadata response it reads, so ClipMind's budget for a page is
+        # the wall clock, not a byte count. Flipping this assertion is what a
+        # real read budget would look like.
+        page = (
+            b"<html><body>"
+            + b"<p>padding padding padding</p>" * 120_000
+            + b'<video src="clip.mp4"></video></body></html>'
+        )
+        with CountingMediaServer(page, content_type="text/html") as server:
+            await fetch.probe(
+                server.url.replace("/video.mp4", "/page.html"), config=self.config
+            )
+            served = server.bytes_sent
+
+        self.assertGreaterEqual(served, len(page))
 
 
 class ProbeContractTests(unittest.IsolatedAsyncioTestCase):
@@ -172,7 +204,7 @@ class ProbeContractTests(unittest.IsolatedAsyncioTestCase):
         self.assertNotIn("-f", args)
 
     async def test_a_probe_that_times_out_reports_unknown(self) -> None:
-        async def never_returns(args, timeout):
+        async def never_returns(args, timeout, **kwargs):
             raise asyncio.TimeoutError
 
         with patch("clipmind.fetch.shutil.which", return_value="/usr/bin/yt-dlp"), \
@@ -183,7 +215,7 @@ class ProbeContractTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result.failure_code, "probe_timeout")
 
     async def test_cancellation_still_propagates(self) -> None:
-        async def cancelled(args, timeout):
+        async def cancelled(args, timeout, **kwargs):
             raise asyncio.CancelledError
 
         with patch("clipmind.fetch.shutil.which", return_value="/usr/bin/yt-dlp"), \
@@ -195,7 +227,7 @@ class ProbeContractTests(unittest.IsolatedAsyncioTestCase):
         async def must_not_acquire(*args, **kwargs):
             raise AssertionError("a probe must never acquire")
 
-        async def refuses(args, timeout):
+        async def refuses(args, timeout, **kwargs):
             return 1, "", "ERROR: This is a private video"
 
         with patch("clipmind.fetch.shutil.which", return_value="/usr/bin/yt-dlp"), \
@@ -207,7 +239,7 @@ class ProbeContractTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result.failure_code, "private_video")
 
     async def test_our_own_cookie_problem_is_not_a_verdict_on_the_video(self) -> None:
-        async def cookie_failure(args, timeout):
+        async def cookie_failure(args, timeout, **kwargs):
             return 1, "", "ERROR: could not copy chrome cookie database"
 
         with patch("clipmind.fetch.shutil.which", return_value="/usr/bin/yt-dlp"), \
@@ -223,7 +255,7 @@ class ProbeContractTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result.status, "unavailable")
 
     async def test_probing_leaves_no_acquisition_ownership_behind(self) -> None:
-        async def refuses(args, timeout):
+        async def refuses(args, timeout, **kwargs):
             return 1, "", "ERROR: connection reset"
 
         with patch("clipmind.fetch.shutil.which", return_value="/usr/bin/yt-dlp"), \
@@ -232,6 +264,98 @@ class ProbeContractTests(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(list(self.root.iterdir()), [])
         self.assertEqual(acquisition.leftovers(self.root), [])
+
+
+@unittest.skipUnless(has_yt_dlp, "needs yt-dlp, which the unit CI job omits")
+class ProbeOutputBudgetTests(unittest.IsolatedAsyncioTestCase):
+    """A child that floods its pipes is killed, not buffered."""
+
+    def setUp(self) -> None:
+        self.tempdir = tempfile.TemporaryDirectory()
+        self.root = Path(self.tempdir.name)
+
+    def tearDown(self) -> None:
+        self.tempdir.cleanup()
+
+    def _flooding_yt_dlp(self, megabytes: int) -> None:
+        fake = self.root / "yt-dlp"
+        fake.write_text(
+            "#!/bin/sh\n"
+            f"python3 -c \"import sys; sys.stderr.write('x'*{megabytes}*1024*1024)\"\n"
+            'echo \'{"id":"abc","title":"T","duration":5}\'\n',
+            encoding="utf-8",
+        )
+        fake.chmod(fake.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
+        os.environ["PATH"] = f"{self.root}{os.pathsep}{os.environ['PATH']}"
+
+    async def test_a_flood_on_stderr_is_capped_not_collected(self) -> None:
+        entered = os.environ["PATH"]
+        self._flooding_yt_dlp(12)
+        try:
+            result = await fetch.probe(
+                "https://example.com/v", config=Settings(cookie_sources=("-",))
+            )
+        finally:
+            os.environ["PATH"] = entered
+
+        # Valid metadata arrived on stdout; the budget still refuses the answer.
+        self.assertEqual(result.status, "unknown")
+        self.assertEqual(result.failure_code, "probe_budget_exceeded")
+
+
+class ProbeMetadataTests(unittest.IsolatedAsyncioTestCase):
+    """Valid JSON is not the same as usable metadata."""
+
+    def setUp(self) -> None:
+        self.engine = patch.object(fetch, "_engine", fetch.AcquisitionEngine())
+        self.engine.start()
+
+    def tearDown(self) -> None:
+        self.engine.stop()
+
+    async def _probe_returning(self, payload: str, adapter=None):
+        async def responds(args, timeout, **kwargs):
+            return 0, payload, ""
+
+        patches = [
+            patch("clipmind.fetch.shutil.which", return_value="/usr/bin/yt-dlp"),
+            patch("clipmind.fetch._run_budgeted", new=responds),
+        ]
+        if adapter is not None:
+            patches.append(patch("clipmind.fetch.adapter_for", return_value=adapter))
+        for entered in patches:
+            entered.start()
+        try:
+            return await fetch.probe("https://example.com/v", config=Settings())
+        finally:
+            for entered in reversed(patches):
+                entered.stop()
+
+    async def test_json_that_identifies_no_source_is_unknown(self) -> None:
+        for payload in ("null", "[]", "{}", '{"id": ""}'):
+            with self.subTest(payload=payload):
+                result = await self._probe_returning(payload)
+                self.assertEqual(result.status, "unknown")
+
+    async def test_an_adapter_without_the_identity_hook_still_probes(self) -> None:
+        class Legacy:
+            """Only the originally required protocol, as a plugin may be."""
+
+            name = platform = "legacy"
+            local = generic = False
+
+            def matches(self, source: str) -> bool:
+                return True
+
+            def normalize_info(self, source: str, info: dict) -> dict:
+                return dict(info)
+
+        result = await self._probe_returning(
+            '{"id": "abc", "title": "T", "duration": 3}', adapter=Legacy()
+        )
+
+        self.assertEqual(result.status, "reachable")
+        self.assertEqual(result.source_id, "abc")
 
 
 if __name__ == "__main__":

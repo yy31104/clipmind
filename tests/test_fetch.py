@@ -207,6 +207,27 @@ class FailureClassificationTests(unittest.TestCase):
 
         self.assertEqual(result.code, "private_video")
 
+    def test_a_hook_returning_a_non_string_is_ignored_not_fatal(self) -> None:
+        # "Unknown values are ignored" has to hold for values that are not even
+        # hashable, or the contract fails on the way to checking it.
+        for value in (["private_video"], {"code": "x"}, 7, object()):
+            with self.subTest(value=type(value).__name__):
+
+                class Adapter:
+                    name = "inventive"
+
+                    def classify_failure(self, attempt, _value=value):
+                        return _value
+
+                with self.assertLogs("clipmind.fetch", level="WARNING"):
+                    result = fetch.classify_failures(
+                        [failure("ERROR: This is a private video")],
+                        adapter=Adapter(),
+                        platform="inventive",
+                    )
+
+                self.assertEqual(result.code, "private_video")
+
     def test_no_attempt_that_explains_anything_yields_the_shared_fallback(self) -> None:
         self.assertEqual(
             fetch.classify_failures([failure("ERROR: connection reset")]).code,

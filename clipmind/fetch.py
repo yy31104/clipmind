@@ -21,6 +21,7 @@ import hashlib
 import json
 import logging
 import shutil
+import tempfile
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -142,7 +143,7 @@ def _code_for(failure: AttemptFailure, adapter) -> str | None:
                 getattr(adapter, "name", "unknown"),
             )
             code = None
-        if code in _RANK:
+        if isinstance(code, str) and code in _RANK:
             return code
         if code is not None:
             logger.warning(
@@ -208,9 +209,12 @@ def _describe(source: str) -> str:
     return {"-": "no cookies", "file": "cookie file"}.get(source, f"{source} cookies")
 
 
-async def _run(args: list[str]) -> tuple[int, str, str]:
+async def _run(args: list[str], *, cwd: Path | None = None) -> tuple[int, str, str]:
     proc = await asyncio.create_subprocess_exec(
-        *args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+        *args,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+        cwd=str(cwd) if cwd is not None else None,
     )
     out, err = await proc.communicate()
     return proc.returncode or 0, out.decode(errors="replace"), err.decode(errors="replace")
@@ -267,7 +271,11 @@ class CookieRung:
                 "-o", str(root / "source.%(ext)s"),
                 *cookie_args,
                 url,
-            ]
+            ],
+            # A user's yt-dlp config may add --write-info-json or similar. Run
+            # inside the owned directory so anything it writes is still ours to
+            # remove rather than landing in whatever directory started ClipMind.
+            cwd=root,
         )
         if code != 0 or not out.strip():
             detail = (err or out).strip()
@@ -410,29 +418,81 @@ _PROBE_UNAVAILABLE = frozenset({"private_video", "link_unavailable", "login_requ
 _PROBE_OUTPUT_LIMIT = 4 * 1024 * 1024
 
 
-async def _run_budgeted(args: list[str], timeout: float) -> tuple[int, str, str]:
-    """Run a subprocess under a wall clock it cannot exceed.
+class BudgetExceeded(Exception):
+    """A child produced more output than the probe agreed to read."""
 
-    Timeout and cancellation both kill the child before propagating, so a probe
-    can never leave yt-dlp running past the budget that bounded it.
+
+async def _run_budgeted(
+    args: list[str],
+    timeout: float,
+    *,
+    output_limit: int,
+    cwd: Path | None = None,
+) -> tuple[int, str, str]:
+    """Run a subprocess under a wall clock and an output cap it cannot exceed.
+
+    Both streams are read incrementally, because ``communicate()`` buffers
+    everything the child writes and only then hands it over -- a cap applied
+    afterwards has already been paid for. Crossing the cap kills the child
+    immediately, and both pipes keep draining afterwards so the child can never
+    block on a write nobody is reading.
     """
     proc = await asyncio.create_subprocess_exec(
-        *args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+        *args,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+        cwd=str(cwd) if cwd is not None else None,
     )
+    overflowed = False
+
+    def stop() -> None:
+        try:
+            proc.kill()
+        except ProcessLookupError:
+            pass
+
+    async def read(stream) -> bytes:
+        nonlocal overflowed
+        chunks: list[bytes] = []
+        total = 0
+        while True:
+            chunk = await stream.read(64 * 1024)
+            if not chunk:
+                return b"".join(chunks)
+            total += len(chunk)
+            if total > output_limit:
+                overflowed = True
+                stop()
+                chunks.clear()
+                continue
+            chunks.append(chunk)
+
+    reader = asyncio.gather(read(proc.stdout), read(proc.stderr))
     try:
-        out, err = await asyncio.wait_for(proc.communicate(), timeout)
+        out, err = await asyncio.wait_for(reader, timeout)
     except (asyncio.TimeoutError, asyncio.CancelledError):
-        proc.kill()
+        reader.cancel()
+        stop()
         await proc.wait()
         raise
+    await proc.wait()
+    if overflowed:
+        raise BudgetExceeded()
     return proc.returncode or 0, out.decode(errors="replace"), err.decode(errors="replace")
 
 
 def _probe_args(url: str, cookie_args: list[str], config: Settings) -> list[str]:
     # No output template, no format selection, and simulate left on: there is
     # nowhere for media to land and nothing asking for it.
+    #
+    # The user's yt-dlp config is ignored, which is not a preference: a config
+    # carrying --write-info-json or --no-simulate turns a probe into something
+    # that writes to disk, outside any acquisition directory that would own the
+    # result. A promise of "no media, no files" cannot be left to configuration.
     return [
         "yt-dlp",
+        "--ignore-config",
+        "--no-config-locations",
         "--no-warnings",
         "--no-playlist",
         "--no-progress",
@@ -453,6 +513,11 @@ async def probe(url: str, *, config: Settings = settings) -> ProbeResult:
     for a temporary file to belong to -- and a probe that fails never falls back
     to acquisition. When the answer cannot be established the status is
     ``unknown`` rather than a guess in either direction.
+
+    Bounded by elapsed time, the number of attempts, and the child's own output.
+    Not bounded by network bytes: yt-dlp offers no cap on the metadata response
+    it reads, so a very large page is read in full within the wall clock. That
+    limit is pinned by a test rather than left to be discovered.
     """
     try:
         adapter = adapter_for(url)
@@ -481,7 +546,29 @@ async def probe(url: str, *, config: Settings = settings) -> ProbeResult:
 
     deadline = time.monotonic() + max(float(config.probe_timeout), 1.0)
     failures: list[AttemptFailure] = []
+    # Belt and braces for the promise above: even with config ignored, the child
+    # runs somewhere it cannot pollute, and that somewhere is removed either way.
+    sandbox = Path(tempfile.mkdtemp(prefix="clipmind-probe-"))
 
+    try:
+        return await _probe_strategies(
+            url, adapter, config, deadline, failures, sandbox
+        )
+    finally:
+        stray = sorted(path.name for path in sandbox.iterdir())
+        if stray:
+            logger.warning("Probe wrote unexpected files and they were removed: %s", stray)
+        shutil.rmtree(sandbox, ignore_errors=True)
+
+
+async def _probe_strategies(
+    url: str,
+    adapter,
+    config: Settings,
+    deadline: float,
+    failures: list[AttemptFailure],
+    sandbox: Path,
+) -> ProbeResult:
     for strategy in _engine.strategies(_engine.affinity_key(url, adapter), config):
         remaining = deadline - time.monotonic()
         if remaining <= 0:
@@ -494,19 +581,22 @@ async def probe(url: str, *, config: Settings = settings) -> ProbeResult:
 
         try:
             code, out, err = await _run_budgeted(
-                _probe_args(url, cookie_args, config), remaining
+                _probe_args(url, cookie_args, config),
+                remaining,
+                output_limit=_PROBE_OUTPUT_LIMIT,
+                cwd=sandbox,
             )
         except asyncio.TimeoutError:
             return ProbeResult(
                 status="unknown", platform=adapter.platform, failure_code="probe_timeout"
             )
-
-        if len(out) > _PROBE_OUTPUT_LIMIT:
+        except BudgetExceeded:
             return ProbeResult(
                 status="unknown",
                 platform=adapter.platform,
                 failure_code="probe_budget_exceeded",
             )
+
         if code != 0 or not out.strip():
             detail = (err or out).strip()
             failures.append(strategy._failed(detail.splitlines()[-1] if detail else "failed"))
@@ -517,11 +607,21 @@ async def probe(url: str, *, config: Settings = settings) -> ProbeResult:
             failures.append(strategy._failed(f"bad metadata ({exc})"))
             continue
 
+        # Valid JSON is not usable metadata. ``null``, a list, or an object that
+        # identifies nothing all parse; none of them answer what this source is.
+        if not isinstance(info, dict) or not any(
+            info.get(field) for field in ("id", "title", "webpage_url")
+        ):
+            failures.append(strategy._failed("metadata identified no source"))
+            continue
+
+        identity = getattr(adapter, "source_id", None)
         duration = info.get("duration")
         return ProbeResult(
             status="reachable",
             platform=adapter.platform,
-            source_id=adapter.source_id(url) or (str(info["id"]) if info.get("id") else None),
+            source_id=(identity(url) if callable(identity) else None)
+            or (str(info["id"]) if info.get("id") else None),
             title=info.get("title") or None,
             duration=float(duration) if isinstance(duration, (int, float)) else None,
             strategy=strategy.describe(),
