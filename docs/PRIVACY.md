@@ -14,6 +14,22 @@ URL ingestion uses yt-dlp to resolve and download only the submitted source.
 What upstream hosts are contacted depends on the platform, redirects, and media
 delivery network.
 
+Probing a URL contacts the same hosts but downloads no media: it resolves
+metadata under an explicit wall clock (`CLIPMIND_PROBE_TIMEOUT`, default 20s)
+and a per-socket timeout, ignores your yt-dlp config so no configured option can
+make it write files, runs in a sandbox directory that is removed either way,
+creates no job directory, and never falls back to acquisition. Identifying a
+direct media link still reads the head of the file, since that is what says what
+the file is; measured against a 32 MB fixture a probe transferred under 1 MB
+where acquisition transferred all of it.
+
+**What is not bounded:** the size of a metadata response. yt-dlp exposes no cap
+on how much of a page it reads while extracting, so probing a URL that serves a
+very large HTML page reads that page in full, bounded only by the wall clock and
+socket timeout. ClipMind bounds what it can enforce -- elapsed time, the number
+of attempts, and the child process's own output -- and does not claim a network
+byte budget it cannot impose.
+
 Local model providers may contact their model registry on first use:
 
 - MLX Whisper and faster-whisper can download configured ASR weights;

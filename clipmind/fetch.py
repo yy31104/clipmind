@@ -10,8 +10,9 @@ a batch does not repeat a doomed round-trip. That memory is keyed per platform,
 and per host for generic URLs: what worked is a property of one site, not of the
 process.
 
-If every rung fails we raise FetchError carrying the last stderr so the UI can
-tell the user *why* rather than just "failed".
+If every rung fails we raise a FetchError classified across every attempt, so
+the UI can tell the user *why* rather than just "failed". The raw diagnostic is
+logged, never shown: it can carry local paths.
 """
 from __future__ import annotations
 
@@ -20,6 +21,8 @@ import hashlib
 import json
 import logging
 import shutil
+import tempfile
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import quote, urlsplit
@@ -37,54 +40,150 @@ class FetchError(SourceError):
     pass
 
 
-def _fetch_error(errors: list[str], platform: str = "source") -> FetchError:
-    diagnostic = "\n".join(errors)
-    lowered = diagnostic.lower()
-    logger.warning("%s acquisition failed after all strategies: %s", platform, diagnostic)
+@dataclass(frozen=True)
+class AttemptFailure:
+    """Why one rung could not acquire, kept apart from how we labelled it.
+
+    ``reason`` is what the tool actually said. Keeping our own label out of it
+    matters: every browser rung is labelled "<browser> cookies", so matching a
+    joined string would read a platform's "permission denied" as a cookie
+    problem for the whole ladder.
+    """
+
+    strategy: str
+    label: str
+    reason: str
+
+    @property
+    def diagnostic(self) -> str:
+        return f"{self.label}: {self.reason}" if self.label else self.reason
+
+
+# Most actionable first. This is the order the previous if-chain applied, kept
+# so classification does not shift while it gains structure.
+_RANKED_CODES = (
+    "private_video",
+    "cookies_stale",
+    "login_required",
+    "cookies_unavailable",
+    "link_unavailable",
+    "media_fetch_failed",
+)
+_RANK = {code: index for index, code in enumerate(_RANKED_CODES)}
+
+
+def _message_for(code: str, platform: str) -> tuple[str, str]:
+    return {
+        "private_video": (
+            f"This {platform} video is private.",
+            "Use a public video or change its visibility, then retry.",
+        ),
+        "cookies_stale": (
+            f"{platform.title()} rejected the browser cookies.",
+            f"Open {platform.title()} in Chrome, refresh the page, then copy a fresh share link and retry.",
+        ),
+        "login_required": (
+            f"{platform.title()} requires a signed-in Chrome session for this video.",
+            f"Sign in to {platform.title()} in Chrome, refresh the video, and retry.",
+        ),
+        "cookies_unavailable": (
+            "ClipMind could not read Chrome cookies.",
+            "Keep Chrome installed and readable, or configure CLIPMIND_COOKIE_FILE.",
+        ),
+        "link_unavailable": (
+            f"This {platform} link is expired or unavailable.",
+            f"Copy a fresh share link from {platform.title()} and try again.",
+        ),
+    }.get(
+        code,
+        (
+            "ClipMind could not retrieve this video.",
+            "Check that the URL opens in a browser, then copy a fresh link and retry.",
+        ),
+    )
+
+
+def classify_generic(failure: AttemptFailure) -> str | None:
+    """Transport and tool-level classification every adapter shares."""
+    reason = failure.reason
+    lowered = reason.lower()
     if (
         "private video" in lowered
         or "video is private" in lowered
         or "private account" in lowered
-        or "仅自己" in diagnostic
+        or "仅自己" in reason
     ):
-        return FetchError(
-            "private_video",
-            f"This {platform} video is private.",
-            "Use a public video or change its visibility, then retry.",
-        )
+        return "private_video"
     if "fresh cookies" in lowered:
-        return FetchError(
-            "cookies_stale",
-            f"{platform.title()} rejected the browser cookies.",
-            f"Open {platform.title()} in Chrome, refresh the page, then copy a fresh share link and retry.",
-        )
+        return "cookies_stale"
     if "sign in" in lowered or "login required" in lowered or "log in" in lowered:
-        return FetchError(
-            "login_required",
-            f"{platform.title()} requires a signed-in Chrome session for this video.",
-            f"Sign in to {platform.title()} in Chrome, refresh the video, and retry.",
-        )
+        return "login_required"
+    if "could not copy chrome cookie" in lowered or "failed to decrypt" in lowered:
+        return "cookies_unavailable"
+    # A bare "permission denied" is only a cookie problem when the tool says
+    # cookies. Platforms use the same word for their own access refusals.
     if (
-        "could not copy chrome cookie" in lowered
-        or "failed to decrypt" in lowered
-        or "permission" in lowered
-        or "operation not permitted" in lowered
-    ):
-        return FetchError(
-            "cookies_unavailable",
-            "ClipMind could not read Chrome cookies.",
-            "Keep Chrome installed and readable, or configure CLIPMIND_COOKIE_FILE.",
-        )
+        "permission" in lowered or "operation not permitted" in lowered
+    ) and "cookie" in lowered:
+        return "cookies_unavailable"
     if "unsupported url" in lowered or "not available" in lowered or "removed" in lowered:
-        return FetchError(
-            "link_unavailable",
-            f"This {platform} link is expired or unavailable.",
-            f"Copy a fresh share link from {platform.title()} and try again.",
-        )
-    return FetchError(
-        "media_fetch_failed",
-        "ClipMind could not retrieve this video.",
-        "Check that the URL opens in a browser, then copy a fresh link and retry.",
+        return "link_unavailable"
+    return None
+
+
+def _code_for(failure: AttemptFailure, adapter) -> str | None:
+    """Adapter knowledge first, shared rules second; neither may raise."""
+    hook = getattr(adapter, "classify_failure", None) if adapter is not None else None
+    if callable(hook):
+        try:
+            code = hook(failure)
+        except Exception:  # noqa: BLE001 - a plugin must not break classification
+            logger.exception(
+                "Source adapter %s failed while classifying a failure",
+                getattr(adapter, "name", "unknown"),
+            )
+            code = None
+        if isinstance(code, str) and code in _RANK:
+            return code
+        if code is not None:
+            logger.warning(
+                "Source adapter %s returned an unknown failure code %r",
+                getattr(adapter, "name", "unknown"),
+                code,
+            )
+    return classify_generic(failure)
+
+
+def classify_failures(
+    failures: list[AttemptFailure],
+    *,
+    adapter=None,
+    platform: str = "source",
+) -> FetchError:
+    """Pick the most actionable classification across *every* attempt.
+
+    Ranked rather than positional: the rung that explains the failure is often
+    not the last one tried, and with more strategies it can fall outside any
+    fixed window entirely.
+    """
+    diagnostic = "\n".join(failure.diagnostic for failure in failures)
+    logger.warning("%s acquisition failed after all strategies: %s", platform, diagnostic)
+    best: str | None = None
+    for failure in failures:
+        code = _code_for(failure, adapter)
+        if code is None:
+            continue
+        if best is None or _RANK[code] < _RANK[best]:
+            best = code
+    message, action = _message_for(best or "media_fetch_failed", platform)
+    return FetchError(best or "media_fetch_failed", message, action)
+
+
+def _fetch_error(errors: list[str], platform: str = "source") -> FetchError:
+    """Compatibility entry for callers that only have diagnostic strings."""
+    return classify_failures(
+        [AttemptFailure(strategy="", label="", reason=error) for error in errors],
+        platform=platform,
     )
 
 
@@ -110,9 +209,12 @@ def _describe(source: str) -> str:
     return {"-": "no cookies", "file": "cookie file"}.get(source, f"{source} cookies")
 
 
-async def _run(args: list[str]) -> tuple[int, str, str]:
+async def _run(args: list[str], *, cwd: Path | None = None) -> tuple[int, str, str]:
     proc = await asyncio.create_subprocess_exec(
-        *args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+        *args,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+        cwd=str(cwd) if cwd is not None else None,
     )
     out, err = await proc.communicate()
     return proc.returncode or 0, out.decode(errors="replace"), err.decode(errors="replace")
@@ -139,9 +241,12 @@ class CookieRung:
     def describe(self) -> str:
         return _describe(self.source)
 
+    def _failed(self, reason: str) -> AttemptFailure:
+        return AttemptFailure(strategy=self.key, label=self.describe(), reason=reason)
+
     async def acquire(
         self, url: str, root: Path, config: Settings
-    ) -> tuple[AcquiredMedia | None, str | None]:
+    ) -> tuple[AcquiredMedia | None, AttemptFailure | None]:
         """Acquire, or report why this rung could not, so the ladder continues.
 
         Only the failures the ladder is meant to survive become diagnostics.
@@ -152,7 +257,7 @@ class CookieRung:
         try:
             cookie_args = _cookie_args(self.source, config)
         except FetchError as exc:
-            return None, str(exc)
+            return None, self._failed(str(exc))
 
         code, out, err = await _run(
             [
@@ -166,21 +271,24 @@ class CookieRung:
                 "-o", str(root / "source.%(ext)s"),
                 *cookie_args,
                 url,
-            ]
+            ],
+            # A user's yt-dlp config may add --write-info-json or similar. Run
+            # inside the owned directory so anything it writes is still ours to
+            # remove rather than landing in whatever directory started ClipMind.
+            cwd=root,
         )
         if code != 0 or not out.strip():
             detail = (err or out).strip()
-            reason = detail.splitlines()[-1] if detail else "failed"
-            return None, f"{self.describe()}: {reason}"
+            return None, self._failed(detail.splitlines()[-1] if detail else "failed")
 
         try:
             info = json.loads(out.splitlines()[-1])
         except json.JSONDecodeError as exc:
-            return None, f"{self.describe()}: bad metadata ({exc})"
+            return None, self._failed(f"bad metadata ({exc})")
 
         path = _downloaded_path(info, root)
         if path is None:
-            return None, f"{self.describe()}: reported success but wrote no file"
+            return None, self._failed("reported success but wrote no file")
         return AcquiredMedia(path=path, info=info), None
 
 
@@ -229,14 +337,16 @@ class AcquisitionEngine:
         # later point still leaves a directory restart recovery knows to remove.
         root = acquisition.open_workspace(workdir, strategy="pending")
         key = self.affinity_key(url, adapter)
-        errors: list[str] = []
+        failures: list[AttemptFailure] = []
 
         for strategy in self.strategies(key, config):
             if on_note:
                 on_note(f"trying {strategy.describe()}")
-            acquired, diagnostic = await strategy.acquire(url, root, config)
+            acquired, failure = await strategy.acquire(url, root, config)
             if acquired is None:
-                errors.append(diagnostic or f"{strategy.describe()}: failed")
+                # Every attempt is kept. The rung that explains the failure is
+                # often not the last one, and a fixed window can drop it.
+                failures.append(failure or strategy._failed("failed"))
                 continue
 
             async with self._lock:
@@ -248,7 +358,7 @@ class AcquisitionEngine:
                 info=adapter.normalize_info(url, acquired.info),
             )
 
-        raise _fetch_error(errors[-4:], adapter.platform)
+        raise classify_failures(failures, adapter=adapter, platform=adapter.platform)
 
 
 _engine = AcquisitionEngine()
@@ -280,6 +390,250 @@ async def fetch(
         )
 
     return await _engine.acquire(url, workdir, adapter, on_note, config=config)
+
+
+@dataclass(frozen=True)
+class ProbeResult:
+    """What a source looks like from outside, without acquiring it.
+
+    ``reachable`` means metadata resolved just now. It is not a promise that
+    acquisition will succeed, and nothing here is derived from media bytes.
+    """
+
+    status: str  # reachable | unavailable | unknown
+    platform: str
+    source_id: str | None = None
+    title: str | None = None
+    duration: float | None = None
+    strategy: str | None = None
+    failure_code: str | None = None
+
+
+# Only these say something about the source. The rest say something about us --
+# our cookies, our network, our clock -- and must not be reported as a verdict
+# on the video.
+_PROBE_UNAVAILABLE = frozenset({"private_video", "link_unavailable", "login_required"})
+# A single video's metadata is kilobytes. Far past that means we are reading
+# something a probe was never meant to read.
+_PROBE_OUTPUT_LIMIT = 4 * 1024 * 1024
+
+
+class BudgetExceeded(Exception):
+    """A child produced more output than the probe agreed to read."""
+
+
+async def _run_budgeted(
+    args: list[str],
+    timeout: float,
+    *,
+    output_limit: int,
+    cwd: Path | None = None,
+) -> tuple[int, str, str]:
+    """Run a subprocess under a wall clock and an output cap it cannot exceed.
+
+    Both streams are read incrementally, because ``communicate()`` buffers
+    everything the child writes and only then hands it over -- a cap applied
+    afterwards has already been paid for. Crossing the cap kills the child
+    immediately, and both pipes keep draining afterwards so the child can never
+    block on a write nobody is reading.
+    """
+    proc = await asyncio.create_subprocess_exec(
+        *args,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+        cwd=str(cwd) if cwd is not None else None,
+    )
+    overflowed = False
+
+    def stop() -> None:
+        try:
+            proc.kill()
+        except ProcessLookupError:
+            pass
+
+    async def read(stream) -> bytes:
+        nonlocal overflowed
+        chunks: list[bytes] = []
+        total = 0
+        while True:
+            chunk = await stream.read(64 * 1024)
+            if not chunk:
+                return b"".join(chunks)
+            total += len(chunk)
+            if total > output_limit:
+                overflowed = True
+                stop()
+                chunks.clear()
+                continue
+            chunks.append(chunk)
+
+    reader = asyncio.gather(read(proc.stdout), read(proc.stderr))
+    try:
+        out, err = await asyncio.wait_for(reader, timeout)
+    except (asyncio.TimeoutError, asyncio.CancelledError):
+        reader.cancel()
+        stop()
+        await proc.wait()
+        raise
+    await proc.wait()
+    if overflowed:
+        raise BudgetExceeded()
+    return proc.returncode or 0, out.decode(errors="replace"), err.decode(errors="replace")
+
+
+def _probe_args(url: str, cookie_args: list[str], config: Settings) -> list[str]:
+    # No output template, no format selection, and simulate left on: there is
+    # nowhere for media to land and nothing asking for it.
+    #
+    # The user's yt-dlp config is ignored, which is not a preference: a config
+    # carrying --write-info-json or --no-simulate turns a probe into something
+    # that writes to disk, outside any acquisition directory that would own the
+    # result. A promise of "no media, no files" cannot be left to configuration.
+    return [
+        "yt-dlp",
+        "--ignore-config",
+        "--no-config-locations",
+        "--no-warnings",
+        "--no-playlist",
+        "--no-progress",
+        "--skip-download",
+        "--dump-single-json",
+        "--socket-timeout", str(config.probe_socket_timeout),
+        "--retries", "1",
+        *cookie_args,
+        url,
+    ]
+
+
+async def probe(url: str, *, config: Settings = settings) -> ProbeResult:
+    """Ask what a source is, within a budget, without acquiring it.
+
+    Metadata only. No media is downloaded, no transcription or OCR runs, no job
+    directory is created -- this function takes no workdir, so there is nothing
+    for a temporary file to belong to -- and a probe that fails never falls back
+    to acquisition. When the answer cannot be established the status is
+    ``unknown`` rather than a guess in either direction.
+
+    Bounded by elapsed time, the number of attempts, and the child's own output.
+    Not bounded by network bytes: yt-dlp offers no cap on the metadata response
+    it reads, so a very large page is read in full within the wall clock. That
+    limit is pinned by a test rather than left to be discovered.
+    """
+    try:
+        adapter = adapter_for(url)
+    except SourceError as exc:
+        return ProbeResult(status="unavailable", platform="source", failure_code=exc.code)
+
+    if adapter.local:
+        path = Path(url.removeprefix("file://")).expanduser()
+        if not path.is_file():
+            return ProbeResult(
+                status="unavailable",
+                platform=adapter.platform,
+                failure_code="local_file_unavailable",
+            )
+        return ProbeResult(
+            status="reachable",
+            platform=adapter.platform,
+            title=path.stem,
+            strategy="local file",
+        )
+
+    if not shutil.which("yt-dlp"):
+        return ProbeResult(
+            status="unknown", platform=adapter.platform, failure_code="missing_dependency"
+        )
+
+    deadline = time.monotonic() + max(float(config.probe_timeout), 1.0)
+    failures: list[AttemptFailure] = []
+    # Belt and braces for the promise above: even with config ignored, the child
+    # runs somewhere it cannot pollute, and that somewhere is removed either way.
+    sandbox = Path(tempfile.mkdtemp(prefix="clipmind-probe-"))
+
+    try:
+        return await _probe_strategies(
+            url, adapter, config, deadline, failures, sandbox
+        )
+    finally:
+        stray = sorted(path.name for path in sandbox.iterdir())
+        if stray:
+            logger.warning("Probe wrote unexpected files and they were removed: %s", stray)
+        shutil.rmtree(sandbox, ignore_errors=True)
+
+
+async def _probe_strategies(
+    url: str,
+    adapter,
+    config: Settings,
+    deadline: float,
+    failures: list[AttemptFailure],
+    sandbox: Path,
+) -> ProbeResult:
+    for strategy in _engine.strategies(_engine.affinity_key(url, adapter), config):
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            break
+        try:
+            cookie_args = _cookie_args(strategy.source, config)
+        except FetchError as exc:
+            failures.append(strategy._failed(str(exc)))
+            continue
+
+        try:
+            code, out, err = await _run_budgeted(
+                _probe_args(url, cookie_args, config),
+                remaining,
+                output_limit=_PROBE_OUTPUT_LIMIT,
+                cwd=sandbox,
+            )
+        except asyncio.TimeoutError:
+            return ProbeResult(
+                status="unknown", platform=adapter.platform, failure_code="probe_timeout"
+            )
+        except BudgetExceeded:
+            return ProbeResult(
+                status="unknown",
+                platform=adapter.platform,
+                failure_code="probe_budget_exceeded",
+            )
+
+        if code != 0 or not out.strip():
+            detail = (err or out).strip()
+            failures.append(strategy._failed(detail.splitlines()[-1] if detail else "failed"))
+            continue
+        try:
+            info = json.loads(out.splitlines()[-1])
+        except json.JSONDecodeError as exc:
+            failures.append(strategy._failed(f"bad metadata ({exc})"))
+            continue
+
+        # Valid JSON is not usable metadata. ``null``, a list, or an object that
+        # identifies nothing all parse; none of them answer what this source is.
+        if not isinstance(info, dict) or not any(
+            info.get(field) for field in ("id", "title", "webpage_url")
+        ):
+            failures.append(strategy._failed("metadata identified no source"))
+            continue
+
+        identity = getattr(adapter, "source_id", None)
+        duration = info.get("duration")
+        return ProbeResult(
+            status="reachable",
+            platform=adapter.platform,
+            source_id=(identity(url) if callable(identity) else None)
+            or (str(info["id"]) if info.get("id") else None),
+            title=info.get("title") or None,
+            duration=float(duration) if isinstance(duration, (int, float)) else None,
+            strategy=strategy.describe(),
+        )
+
+    if not failures:
+        return ProbeResult(
+            status="unknown", platform=adapter.platform, failure_code="probe_timeout"
+        )
+    error = classify_failures(failures, adapter=adapter, platform=adapter.platform)
+    status = "unavailable" if error.code in _PROBE_UNAVAILABLE else "unknown"
+    return ProbeResult(status=status, platform=adapter.platform, failure_code=error.code)
 
 
 async def _fetch_local(url: str, workdir: Path, adapter) -> MediaAsset:

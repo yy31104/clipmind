@@ -30,7 +30,7 @@ def cookie_source(args: list[str]) -> str:
 def fake_run(attempts: list[str], succeeds: str | None):
     """Stand in for yt-dlp: record the rung, and write media when it wins."""
 
-    async def run(args: list[str]):
+    async def run(args: list[str], **kwargs):
         source = cookie_source(args)
         attempts.append(source)
         if source != succeeds:
@@ -122,6 +122,40 @@ class CookieLadderTests(unittest.IsolatedAsyncioTestCase):
             await self.attempt("https://other.example.org/b.mp4", succeeds="chrome"),
             ["chrome"],
         )
+
+
+class LadderFailureTests(unittest.IsolatedAsyncioTestCase):
+    """Classification has to see the whole ladder, not a window on its tail."""
+
+    def setUp(self) -> None:
+        self.tempdir = tempfile.TemporaryDirectory()
+        self.root = Path(self.tempdir.name)
+        self.engine = patch.object(fetch, "_engine", fetch.AcquisitionEngine())
+        self.engine.start()
+
+    def tearDown(self) -> None:
+        self.engine.stop()
+        self.tempdir.cleanup()
+
+    async def test_the_explaining_rung_survives_a_long_ladder(self) -> None:
+        # Six rungs; only the first says anything useful. This is the shape a
+        # window over the tail silently drops.
+        config = Settings(
+            cookie_sources=("chrome", "firefox", "edge", "brave", "-"),
+            cookie_file="/tmp/cookies.txt",
+        )
+
+        async def run(args: list[str], **kwargs):
+            if cookie_source(args) == "chrome":
+                return 1, "", "ERROR: This is a private video"
+            return 1, "", "ERROR: connection reset"
+
+        with patch("clipmind.fetch.shutil.which", return_value="/usr/bin/yt-dlp"), \
+             patch("clipmind.fetch._run", new=run):
+            with self.assertRaises(fetch.FetchError) as raised:
+                await fetch.fetch(YOUTUBE, self.root / "job", config=config)
+
+        self.assertEqual(raised.exception.code, "private_video")
 
 
 if __name__ == "__main__":
