@@ -142,7 +142,13 @@ class CookieRung:
     async def acquire(
         self, url: str, root: Path, config: Settings
     ) -> tuple[AcquiredMedia | None, str | None]:
-        """Acquire, or report why this rung could not. Never raises."""
+        """Acquire, or report why this rung could not, so the ladder continues.
+
+        Only the failures the ladder is meant to survive become diagnostics.
+        Cancellation and genuine environment errors still propagate: swallowing
+        them would turn a stopped job into a silent rung failure and strand the
+        cleanup that cancellation is supposed to trigger.
+        """
         try:
             cookie_args = _cookie_args(self.source, config)
         except FetchError as exc:
