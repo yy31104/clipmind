@@ -30,7 +30,7 @@ def cookie_source(args: list[str]) -> str:
 def fake_run(attempts: list[str], succeeds: str | None):
     """Stand in for yt-dlp: record the rung, and write media when it wins."""
 
-    async def run(args: list[str]):
+    async def run(args: list[str], **kwargs):
         source = cookie_source(args)
         attempts.append(source)
         if source != succeeds:
@@ -145,7 +145,7 @@ class LadderFailureTests(unittest.IsolatedAsyncioTestCase):
             cookie_file="/tmp/cookies.txt",
         )
 
-        async def run(args: list[str]):
+        async def run(args: list[str], **kwargs):
             if cookie_source(args) == "chrome":
                 return 1, "", "ERROR: This is a private video"
             return 1, "", "ERROR: connection reset"
