@@ -119,6 +119,16 @@ def load(workdir: Path) -> dict | None:
     return ledger
 
 
+def cleanup_pending(workdir: Path) -> bool:
+    """Whether a previous cleanup left work behind.
+
+    Recorded with the artifacts rather than on the job record, so it survives a
+    lost job record and can never be confused with media a successful job kept
+    on purpose: ``keep_source`` skips purging entirely and so never sets it.
+    """
+    return bool((load(workdir) or {}).get("cleanup_pending"))
+
+
 def leftovers(workdir: Path) -> list[str]:
     """Acquisition artifacts a finished job should no longer have.
 
@@ -134,12 +144,13 @@ def leftovers(workdir: Path) -> list[str]:
     return found
 
 
-def purge(workdir: Path) -> None:
+def purge(workdir: Path) -> bool:
     """Delete everything acquisition owns for this job.
 
     Safe to call when nothing was acquired, twice in a row, and from restart
     recovery with no live ``MediaAsset``. Anything that could not be deleted
-    stays in the ledger so a later cleanup retries it.
+    stays in the ledger, flagged so restart recovery retries it. Returns whether
+    everything acquisition owned is gone.
     """
     ledger = load(workdir)
     unfinished: list[str] = []
@@ -163,10 +174,11 @@ def purge(workdir: Path) -> None:
                 "strategy": (ledger or {}).get("strategy", "unknown"),
                 "external_artifacts": unfinished,
                 "opened_at": (ledger or {}).get("opened_at", time.time()),
+                "cleanup_pending": True,
             },
         )
-        return
-    _remove(ledger_path(workdir))
+        return False
+    return _remove(ledger_path(workdir))
 
 
 def _remove(path: Path) -> bool:

@@ -8,7 +8,7 @@ import uuid
 from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
 
-from . import evidence
+from . import acquisition, evidence
 from .config import OUT_DIR, Settings, settings
 from .links import normalize_url, source_id_from_url
 from .index import EvidenceIndex
@@ -125,7 +125,8 @@ class JobStore:
         for job in list(self.jobs.values()):
             if job.status == "queued":
                 self._schedule(job)
-            elif job.status == "running":
+                continue
+            if job.status == "running":
                 cleanup_temporary(self.workdir(job.id), keep_source=False)
                 job.status = job.stage = "interrupted"
                 job.note = "interrupted by application restart"
@@ -133,8 +134,14 @@ class JobStore:
                 job.finished_at = time.time()
                 self._persist(job)
                 self._publish(job)
-            elif job.status == "done":
+                continue
+            if job.status == "done":
                 self._sync_index(job)
+            # Reaching a terminal state is not evidence the media is gone. A
+            # cleanup that could not finish is retried on every start until it
+            # does, without reprocessing the job or changing what it ended as.
+            if acquisition.cleanup_pending(self.workdir(job.id)):
+                cleanup_temporary(self.workdir(job.id), keep_source=False)
 
     def submit(self, url: str, title: str, *, options: dict | None = None) -> Job:
         job = Job(
