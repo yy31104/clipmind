@@ -10,8 +10,9 @@ a batch does not repeat a doomed round-trip. That memory is keyed per platform,
 and per host for generic URLs: what worked is a property of one site, not of the
 process.
 
-If every rung fails we raise FetchError carrying the last stderr so the UI can
-tell the user *why* rather than just "failed".
+If every rung fails we raise a FetchError classified across every attempt, so
+the UI can tell the user *why* rather than just "failed". The raw diagnostic is
+logged, never shown: it can carry local paths.
 """
 from __future__ import annotations
 
@@ -37,54 +38,150 @@ class FetchError(SourceError):
     pass
 
 
-def _fetch_error(errors: list[str], platform: str = "source") -> FetchError:
-    diagnostic = "\n".join(errors)
-    lowered = diagnostic.lower()
-    logger.warning("%s acquisition failed after all strategies: %s", platform, diagnostic)
+@dataclass(frozen=True)
+class AttemptFailure:
+    """Why one rung could not acquire, kept apart from how we labelled it.
+
+    ``reason`` is what the tool actually said. Keeping our own label out of it
+    matters: every browser rung is labelled "<browser> cookies", so matching a
+    joined string would read a platform's "permission denied" as a cookie
+    problem for the whole ladder.
+    """
+
+    strategy: str
+    label: str
+    reason: str
+
+    @property
+    def diagnostic(self) -> str:
+        return f"{self.label}: {self.reason}" if self.label else self.reason
+
+
+# Most actionable first. This is the order the previous if-chain applied, kept
+# so classification does not shift while it gains structure.
+_RANKED_CODES = (
+    "private_video",
+    "cookies_stale",
+    "login_required",
+    "cookies_unavailable",
+    "link_unavailable",
+    "media_fetch_failed",
+)
+_RANK = {code: index for index, code in enumerate(_RANKED_CODES)}
+
+
+def _message_for(code: str, platform: str) -> tuple[str, str]:
+    return {
+        "private_video": (
+            f"This {platform} video is private.",
+            "Use a public video or change its visibility, then retry.",
+        ),
+        "cookies_stale": (
+            f"{platform.title()} rejected the browser cookies.",
+            f"Open {platform.title()} in Chrome, refresh the page, then copy a fresh share link and retry.",
+        ),
+        "login_required": (
+            f"{platform.title()} requires a signed-in Chrome session for this video.",
+            f"Sign in to {platform.title()} in Chrome, refresh the video, and retry.",
+        ),
+        "cookies_unavailable": (
+            "ClipMind could not read Chrome cookies.",
+            "Keep Chrome installed and readable, or configure CLIPMIND_COOKIE_FILE.",
+        ),
+        "link_unavailable": (
+            f"This {platform} link is expired or unavailable.",
+            f"Copy a fresh share link from {platform.title()} and try again.",
+        ),
+    }.get(
+        code,
+        (
+            "ClipMind could not retrieve this video.",
+            "Check that the URL opens in a browser, then copy a fresh link and retry.",
+        ),
+    )
+
+
+def classify_generic(failure: AttemptFailure) -> str | None:
+    """Transport and tool-level classification every adapter shares."""
+    reason = failure.reason
+    lowered = reason.lower()
     if (
         "private video" in lowered
         or "video is private" in lowered
         or "private account" in lowered
-        or "仅自己" in diagnostic
+        or "仅自己" in reason
     ):
-        return FetchError(
-            "private_video",
-            f"This {platform} video is private.",
-            "Use a public video or change its visibility, then retry.",
-        )
+        return "private_video"
     if "fresh cookies" in lowered:
-        return FetchError(
-            "cookies_stale",
-            f"{platform.title()} rejected the browser cookies.",
-            f"Open {platform.title()} in Chrome, refresh the page, then copy a fresh share link and retry.",
-        )
+        return "cookies_stale"
     if "sign in" in lowered or "login required" in lowered or "log in" in lowered:
-        return FetchError(
-            "login_required",
-            f"{platform.title()} requires a signed-in Chrome session for this video.",
-            f"Sign in to {platform.title()} in Chrome, refresh the video, and retry.",
-        )
+        return "login_required"
+    if "could not copy chrome cookie" in lowered or "failed to decrypt" in lowered:
+        return "cookies_unavailable"
+    # A bare "permission denied" is only a cookie problem when the tool says
+    # cookies. Platforms use the same word for their own access refusals.
     if (
-        "could not copy chrome cookie" in lowered
-        or "failed to decrypt" in lowered
-        or "permission" in lowered
-        or "operation not permitted" in lowered
-    ):
-        return FetchError(
-            "cookies_unavailable",
-            "ClipMind could not read Chrome cookies.",
-            "Keep Chrome installed and readable, or configure CLIPMIND_COOKIE_FILE.",
-        )
+        "permission" in lowered or "operation not permitted" in lowered
+    ) and "cookie" in lowered:
+        return "cookies_unavailable"
     if "unsupported url" in lowered or "not available" in lowered or "removed" in lowered:
-        return FetchError(
-            "link_unavailable",
-            f"This {platform} link is expired or unavailable.",
-            f"Copy a fresh share link from {platform.title()} and try again.",
-        )
-    return FetchError(
-        "media_fetch_failed",
-        "ClipMind could not retrieve this video.",
-        "Check that the URL opens in a browser, then copy a fresh link and retry.",
+        return "link_unavailable"
+    return None
+
+
+def _code_for(failure: AttemptFailure, adapter) -> str | None:
+    """Adapter knowledge first, shared rules second; neither may raise."""
+    hook = getattr(adapter, "classify_failure", None) if adapter is not None else None
+    if callable(hook):
+        try:
+            code = hook(failure)
+        except Exception:  # noqa: BLE001 - a plugin must not break classification
+            logger.exception(
+                "Source adapter %s failed while classifying a failure",
+                getattr(adapter, "name", "unknown"),
+            )
+            code = None
+        if code in _RANK:
+            return code
+        if code is not None:
+            logger.warning(
+                "Source adapter %s returned an unknown failure code %r",
+                getattr(adapter, "name", "unknown"),
+                code,
+            )
+    return classify_generic(failure)
+
+
+def classify_failures(
+    failures: list[AttemptFailure],
+    *,
+    adapter=None,
+    platform: str = "source",
+) -> FetchError:
+    """Pick the most actionable classification across *every* attempt.
+
+    Ranked rather than positional: the rung that explains the failure is often
+    not the last one tried, and with more strategies it can fall outside any
+    fixed window entirely.
+    """
+    diagnostic = "\n".join(failure.diagnostic for failure in failures)
+    logger.warning("%s acquisition failed after all strategies: %s", platform, diagnostic)
+    best: str | None = None
+    for failure in failures:
+        code = _code_for(failure, adapter)
+        if code is None:
+            continue
+        if best is None or _RANK[code] < _RANK[best]:
+            best = code
+    message, action = _message_for(best or "media_fetch_failed", platform)
+    return FetchError(best or "media_fetch_failed", message, action)
+
+
+def _fetch_error(errors: list[str], platform: str = "source") -> FetchError:
+    """Compatibility entry for callers that only have diagnostic strings."""
+    return classify_failures(
+        [AttemptFailure(strategy="", label="", reason=error) for error in errors],
+        platform=platform,
     )
 
 
@@ -139,9 +236,12 @@ class CookieRung:
     def describe(self) -> str:
         return _describe(self.source)
 
+    def _failed(self, reason: str) -> AttemptFailure:
+        return AttemptFailure(strategy=self.key, label=self.describe(), reason=reason)
+
     async def acquire(
         self, url: str, root: Path, config: Settings
-    ) -> tuple[AcquiredMedia | None, str | None]:
+    ) -> tuple[AcquiredMedia | None, AttemptFailure | None]:
         """Acquire, or report why this rung could not, so the ladder continues.
 
         Only the failures the ladder is meant to survive become diagnostics.
@@ -152,7 +252,7 @@ class CookieRung:
         try:
             cookie_args = _cookie_args(self.source, config)
         except FetchError as exc:
-            return None, str(exc)
+            return None, self._failed(str(exc))
 
         code, out, err = await _run(
             [
@@ -170,17 +270,16 @@ class CookieRung:
         )
         if code != 0 or not out.strip():
             detail = (err or out).strip()
-            reason = detail.splitlines()[-1] if detail else "failed"
-            return None, f"{self.describe()}: {reason}"
+            return None, self._failed(detail.splitlines()[-1] if detail else "failed")
 
         try:
             info = json.loads(out.splitlines()[-1])
         except json.JSONDecodeError as exc:
-            return None, f"{self.describe()}: bad metadata ({exc})"
+            return None, self._failed(f"bad metadata ({exc})")
 
         path = _downloaded_path(info, root)
         if path is None:
-            return None, f"{self.describe()}: reported success but wrote no file"
+            return None, self._failed("reported success but wrote no file")
         return AcquiredMedia(path=path, info=info), None
 
 
@@ -229,14 +328,16 @@ class AcquisitionEngine:
         # later point still leaves a directory restart recovery knows to remove.
         root = acquisition.open_workspace(workdir, strategy="pending")
         key = self.affinity_key(url, adapter)
-        errors: list[str] = []
+        failures: list[AttemptFailure] = []
 
         for strategy in self.strategies(key, config):
             if on_note:
                 on_note(f"trying {strategy.describe()}")
-            acquired, diagnostic = await strategy.acquire(url, root, config)
+            acquired, failure = await strategy.acquire(url, root, config)
             if acquired is None:
-                errors.append(diagnostic or f"{strategy.describe()}: failed")
+                # Every attempt is kept. The rung that explains the failure is
+                # often not the last one, and a fixed window can drop it.
+                failures.append(failure or strategy._failed("failed"))
                 continue
 
             async with self._lock:
@@ -248,7 +349,7 @@ class AcquisitionEngine:
                 info=adapter.normalize_info(url, acquired.info),
             )
 
-        raise _fetch_error(errors[-4:], adapter.platform)
+        raise classify_failures(failures, adapter=adapter, platform=adapter.platform)
 
 
 _engine = AcquisitionEngine()
