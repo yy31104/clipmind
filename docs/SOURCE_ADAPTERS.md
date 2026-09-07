@@ -191,6 +191,81 @@ Network recordings, cookies, copyrighted video, transcripts, OCR text, or
 creator screenshots must not be committed as fixtures. Prefer synthetic
 metadata and tiny generated local media.
 
+### Reusable offline conformance checks
+
+Third-party packages can import the conformance kit directly; it has no test
+framework dependency and raises `AssertionError` for a failed contract case:
+
+```python
+from clipmind.sources.conformance import (
+    NormalizationCase,
+    assert_adapter_conformance,
+)
+from example_clipmind_source.adapter import ADAPTER
+
+source = "https://video.example/watch?lesson=7&p=1"
+assert_adapter_conformance(
+    ADAPTER,
+    matching_sources=[source, "https://cdn.video.example/watch?lesson=8"],
+    nonmatching_sources=[
+        "https://notvideo.example/watch",
+        "https://video.example.evil.invalid/watch",
+        "https://video.example@evil.invalid/watch",
+        "ftp://video.example/watch",
+    ],
+    normalization_cases=[NormalizationCase(
+        source=source,
+        info={
+            "id": "lesson-7-part-1", "title": "Synthetic lesson",
+            "uploader": "Fixture", "duration": 12.5,
+        },
+        expected={
+            "title": "Synthetic lesson", "uploader": "Fixture",
+            "duration": 12.5, "webpage_url": source,
+        },
+    )],
+    distinct_sources=[
+        (source, "https://video.example/watch?lesson=7&p=2"),
+        (source, "https://video.example/watch?lesson=8&p=1"),
+    ],
+)
+```
+
+Supply cases appropriate to your adapter. At least one matching source,
+nonmatching source, and normalization case are required. `expected` is a subset
+of normalized field values, so a plugin can declare intentional transformations.
+The kit always checks the real required protocol, boolean match results,
+platform/adapter tags, preservation of an upstream `id`, a URL when omitted by
+upstream, and a separate returned dictionary without changing the input,
+including nested metadata. Caller-owned fixtures are copied before invocation.
+
+The optional identity hooks are checked independently when present: repeated
+calls must agree, canonicalization must be idempotent, and return types must
+match the contract. Existing plugins without either hook can use the kit.
+For each explicitly supplied `distinct_sources` pair, both sources must match
+and neither their canonical sources nor their nonempty source IDs may collide.
+Missing hooks use the same legacy defaults as the registry; a `source_id` hook
+returning `None` remains authoritative. An empty distinct-pair list makes no
+claim about identity separation.
+
+These checks can expose preserved identity limitations. For example, the generic
+adapter keeps different Bilibili `?p=1` and `?p=7` canonical URLs but returns the
+same BV/av ID for both, so that distinct pair fails. The kit does not change
+legacy identities or add Bilibili acquisition support. Local-path and other
+historic identity quirks described in the migration table also remain in place.
+
+The kit calls adapter methods without registering plugins or acquiring media.
+It is not a sandbox: use trusted adapters and synthetic cases, and stub any
+external dependencies in your own tests. Passing the supplied cases does not
+prove uniqueness for untested URLs, secret removal, registry precedence,
+failure classification, or complete-pack serialization; keep the integration
+tests from the test contract above. The kit's own positive and deliberately
+broken-adapter tests run with:
+
+```bash
+python -m unittest tests.test_source_conformance -v
+```
+
 ## When core code is appropriate
 
 Open a design issue before changing core acquisition for a platform. A core
