@@ -20,7 +20,11 @@ import asyncio
 import hashlib
 import json
 import logging
+import math
+import os
 import shutil
+import signal
+import sys
 import tempfile
 import time
 from dataclasses import dataclass
@@ -201,7 +205,7 @@ def _cookie_args(source: str, config: Settings = settings) -> list[str]:
                 "The configured cookie file is unavailable.",
                 "Set CLIPMIND_COOKIE_FILE to a readable Netscape cookie file.",
             )
-        return ["--cookies", config.cookie_file]
+        return ["--cookies", str(Path(config.cookie_file).expanduser().resolve())]
     return ["--cookies-from-browser", source]
 
 
@@ -254,6 +258,7 @@ class CookieRung:
         them would turn a stopped job into a silent rung failure and strand the
         cleanup that cancellation is supposed to trigger.
         """
+        root = root.resolve()
         try:
             cookie_args = _cookie_args(self.source, config)
         except FetchError as exc:
@@ -262,6 +267,8 @@ class CookieRung:
         code, out, err = await _run(
             [
                 "yt-dlp",
+                "--ignore-config",
+                "--no-config-locations",
                 "--no-warnings",
                 "--no-playlist",
                 "--no-progress",
@@ -272,9 +279,8 @@ class CookieRung:
                 *cookie_args,
                 url,
             ],
-            # A user's yt-dlp config may add --write-info-json or similar. Run
-            # inside the owned directory so anything it writes is still ours to
-            # remove rather than landing in whatever directory started ClipMind.
+            # Explicit settings only. A user config can specify absolute output
+            # paths or exec hooks; changing cwd alone is not an ownership guard.
             cwd=root,
         )
         if code != 0 or not out.strip():
@@ -407,6 +413,8 @@ class ProbeResult:
     duration: float | None = None
     strategy: str | None = None
     failure_code: str | None = None
+    network_bytes: int = 0
+    network_requests: int = 0
 
 
 # Only these say something about the source. The rest say something about us --
@@ -442,19 +450,30 @@ async def _run_budgeted(
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
         cwd=str(cwd) if cwd is not None else None,
+        start_new_session=os.name == "posix",
     )
     overflowed = False
+    total = 0
 
     def stop() -> None:
         try:
-            proc.kill()
+            if os.name == "posix":
+                os.killpg(proc.pid, signal.SIGKILL)
+            else:
+                proc.kill()
+        except PermissionError:
+            # Some macOS execution policies deny signalling a process group
+            # that has already exited while its buffered output is draining.
+            try:
+                proc.kill()
+            except ProcessLookupError:
+                pass
         except ProcessLookupError:
             pass
 
     async def read(stream) -> bytes:
-        nonlocal overflowed
+        nonlocal overflowed, total
         chunks: list[bytes] = []
-        total = 0
         while True:
             chunk = await stream.read(64 * 1024)
             if not chunk:
@@ -467,15 +486,18 @@ async def _run_budgeted(
                 continue
             chunks.append(chunk)
 
-    reader = asyncio.gather(read(proc.stdout), read(proc.stderr))
-    try:
-        out, err = await asyncio.wait_for(reader, timeout)
-    except (asyncio.TimeoutError, asyncio.CancelledError):
-        reader.cancel()
-        stop()
+    async def collect():
+        out, err = await asyncio.gather(read(proc.stdout), read(proc.stderr))
         await proc.wait()
+        return out, err
+
+    reader = asyncio.create_task(collect())
+    try:
+        out, err = await asyncio.wait_for(asyncio.shield(reader), timeout)
+    except (asyncio.TimeoutError, asyncio.CancelledError):
+        stop()
+        await reader
         raise
-    await proc.wait()
     if overflowed:
         raise BudgetExceeded()
     return proc.returncode or 0, out.decode(errors="replace"), err.decode(errors="replace")
@@ -514,10 +536,10 @@ async def probe(url: str, *, config: Settings = settings) -> ProbeResult:
     to acquisition. When the answer cannot be established the status is
     ``unknown`` rather than a guess in either direction.
 
-    Bounded by elapsed time, the number of attempts, and the child's own output.
-    Not bounded by network bytes: yt-dlp offers no cap on the metadata response
-    it reads, so a very large page is read in full within the wall clock. That
-    limit is pinned by a test rather than left to be discovered.
+    Bounded by elapsed time, HTTP requests, response body bytes read and child
+    output. HTTP/TLS headers and kernel socket buffering are not body bytes.
+    Unsupported transports or compressed responses are refused, never retried
+    through an unbounded backend. yt-dlp still supplies the metadata parsers.
     """
     try:
         adapter = adapter_for(url)
@@ -544,6 +566,13 @@ async def probe(url: str, *, config: Settings = settings) -> ProbeResult:
             status="unknown", platform=adapter.platform, failure_code="missing_dependency"
         )
 
+    if getattr(sys, "frozen", False):
+        # A frozen desktop executable cannot launch a Python worker script.
+        # Probe is currently a library-only capability; never fall back to an
+        # unbounded CLI backend in a build that cannot execute this boundary.
+        return ProbeResult(status="unknown", platform=adapter.platform,
+                           failure_code="probe_transport_unsupported")
+
     deadline = time.monotonic() + max(float(config.probe_timeout), 1.0)
     failures: list[AttemptFailure] = []
     # Belt and braces for the promise above: even with config ignored, the child
@@ -555,10 +584,10 @@ async def probe(url: str, *, config: Settings = settings) -> ProbeResult:
             url, adapter, config, deadline, failures, sandbox
         )
     finally:
-        stray = sorted(path.name for path in sandbox.iterdir())
+        stray = list(sandbox.iterdir())
         if stray:
-            logger.warning("Probe wrote unexpected files and they were removed: %s", stray)
-        shutil.rmtree(sandbox, ignore_errors=True)
+            logger.warning("Probe wrote %d unexpected files; removing temporary workspace", len(stray))
+        shutil.rmtree(sandbox)
 
 
 async def _probe_strategies(
@@ -569,10 +598,20 @@ async def _probe_strategies(
     failures: list[AttemptFailure],
     sandbox: Path,
 ) -> ProbeResult:
+    bytes_used = requests_used = 0
+
+    def result(**values):
+        return ProbeResult(platform=adapter.platform, network_bytes=bytes_used,
+                           network_requests=requests_used, **values)
+
     for strategy in _engine.strategies(_engine.affinity_key(url, adapter), config):
         remaining = deadline - time.monotonic()
         if remaining <= 0:
             break
+        byte_limit = config.probe_max_bytes - bytes_used
+        request_limit = config.probe_max_requests - requests_used
+        if byte_limit <= 0 or request_limit <= 0:
+            return result(status="unknown", failure_code="probe_budget_exceeded")
         try:
             cookie_args = _cookie_args(strategy.source, config)
         except FetchError as exc:
@@ -581,59 +620,77 @@ async def _probe_strategies(
 
         try:
             code, out, err = await _run_budgeted(
-                _probe_args(url, cookie_args, config),
+                [sys.executable, str(Path(__file__).with_name("probe_worker.py")),
+                 str(byte_limit), str(request_limit), *_probe_args(url, cookie_args, config)[1:]],
                 remaining,
                 output_limit=_PROBE_OUTPUT_LIMIT,
                 cwd=sandbox,
             )
         except asyncio.TimeoutError:
-            return ProbeResult(
-                status="unknown", platform=adapter.platform, failure_code="probe_timeout"
-            )
+            return result(status="unknown", failure_code="probe_timeout")
         except BudgetExceeded:
-            return ProbeResult(
-                status="unknown",
-                platform=adapter.platform,
-                failure_code="probe_budget_exceeded",
-            )
+            return result(status="unknown", failure_code="probe_budget_exceeded")
 
         if code != 0 or not out.strip():
-            detail = (err or out).strip()
-            failures.append(strategy._failed(detail.splitlines()[-1] if detail else "failed"))
-            continue
+            # Without the worker's accounting envelope we cannot safely spend
+            # the same quota again on the next rung.
+            return result(status="unknown", failure_code="probe_invalid_response")
         try:
-            info = json.loads(out.splitlines()[-1])
+            envelope = json.loads(out.splitlines()[-1])
         except json.JSONDecodeError as exc:
             failures.append(strategy._failed(f"bad metadata ({exc})"))
+            continue
+
+        if not isinstance(envelope, dict):
+            return result(status="unknown", failure_code="probe_invalid_response")
+        usage = [envelope.get("network_bytes"), envelope.get("network_requests")]
+        if any(type(value) is not int or value < 0 for value in usage):
+            return result(status="unknown", failure_code="probe_invalid_response")
+        bytes_used += usage[0]
+        requests_used += usage[1]
+        if bytes_used > config.probe_max_bytes or requests_used > config.probe_max_requests:
+            return result(status="unknown", failure_code="probe_budget_exceeded")
+        refusal = envelope.get("failure_code")
+        if refusal:
+            return result(status="unknown", failure_code=refusal if isinstance(refusal, str) and refusal in {
+                "probe_budget_exceeded", "probe_transport_unsupported", "probe_invalid_response"
+            } else "probe_invalid_response")
+        info = envelope.get("metadata")
+        if info is None:
+            failures.append(strategy._failed(str(envelope.get("error") or "missing metadata")))
             continue
 
         # Valid JSON is not usable metadata. ``null``, a list, or an object that
         # identifies nothing all parse; none of them answer what this source is.
         if not isinstance(info, dict) or not any(
-            info.get(field) for field in ("id", "title", "webpage_url")
+            isinstance(info.get(field), str) and info[field].strip()
+            for field in ("id", "title", "webpage_url")
         ):
             failures.append(strategy._failed("metadata identified no source"))
             continue
 
         identity = getattr(adapter, "source_id", None)
+        try:
+            source_id = identity(url) if callable(identity) else None
+        except Exception:
+            source_id = None
+        if not isinstance(source_id, str):
+            source_id = None
         duration = info.get("duration")
-        return ProbeResult(
+        return result(
             status="reachable",
-            platform=adapter.platform,
-            source_id=(identity(url) if callable(identity) else None)
-            or (str(info["id"]) if info.get("id") else None),
-            title=info.get("title") or None,
-            duration=float(duration) if isinstance(duration, (int, float)) else None,
+            source_id=source_id or (info.get("id") if isinstance(info.get("id"), str) else None),
+            title=info.get("title") if isinstance(info.get("title"), str) else None,
+            duration=float(duration) if type(duration) in {int, float}
+            and math.isfinite(duration) and duration >= 0 else None,
             strategy=strategy.describe(),
         )
 
     if not failures:
-        return ProbeResult(
-            status="unknown", platform=adapter.platform, failure_code="probe_timeout"
-        )
+        return result(status="unknown", failure_code="probe_timeout")
     error = classify_failures(failures, adapter=adapter, platform=adapter.platform)
     status = "unavailable" if error.code in _PROBE_UNAVAILABLE else "unknown"
-    return ProbeResult(status=status, platform=adapter.platform, failure_code=error.code)
+    return result(status=status, failure_code=error.code)
 
 
 async def _fetch_local(url: str, workdir: Path, adapter) -> MediaAsset:

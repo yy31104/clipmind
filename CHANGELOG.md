@@ -7,6 +7,14 @@ are documented separately and do not have to equal the application version.
 
 ### Changed
 
+- URL probes now share HTTP response-body and request budgets across cookie
+  attempts. Large pages, compressed responses and unsupported transports fail
+  conservatively with `unknown`; child output and process lifetime are bounded.
+- Probe cookie files are read-only. URL acquisition and probes ignore yt-dlp
+  config files, and relative workdir/cookie paths resolve before child cwd changes.
+- Acquisition failures are classified across all attempts, preserving existing
+  public error codes and optional adapter hooks.
+
 - acquisition writes into a job-owned `acquisition/` directory whose ownership
   is recorded on disk before downloading, so completion, failure, cancellation
   and restart recovery share one cleanup contract and temporary media is removed
