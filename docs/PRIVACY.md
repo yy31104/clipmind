@@ -14,21 +14,41 @@ URL ingestion uses yt-dlp to resolve and download only the submitted source.
 What upstream hosts are contacted depends on the platform, redirects, and media
 delivery network.
 
-Probing a URL contacts the same hosts but downloads no media: it resolves
-metadata under an explicit wall clock (`CLIPMIND_PROBE_TIMEOUT`, default 20s)
-and a per-socket timeout, ignores your yt-dlp config so no configured option can
-make it write files, runs in a sandbox directory that is removed either way,
-creates no job directory, and never falls back to acquisition. Identifying a
-direct media link still reads the head of the file, since that is what says what
-the file is; measured against a 32 MB fixture a probe transferred under 1 MB
-where acquisition transferred all of it.
+Probing a URL uses yt-dlp's metadata parsers, with HTTP(S) reads owned by a
+separate ClipMind worker. The standalone library probe has these limits:
 
-**What is not bounded:** the size of a metadata response. yt-dlp exposes no cap
-on how much of a page it reads while extracting, so probing a URL that serves a
-very large HTML page reads that page in full, bounded only by the wall clock and
-socket timeout. ClipMind bounds what it can enforce -- elapsed time, the number
-of attempts, and the child process's own output -- and does not claim a network
-byte budget it cannot impose.
+- wall clock: `CLIPMIND_PROBE_TIMEOUT` (20 seconds); socket timeout: 8 seconds;
+- total HTTP response body bytes read: `CLIPMIND_PROBE_MAX_BYTES` (4 MiB);
+- total HTTP requests, including redirects: `CLIPMIND_PROBE_MAX_REQUESTS` (12);
+- combined worker stdout/stderr: 4 MiB, read incrementally.
+
+Body and request budgets are shared across cookie attempts. At a limit the
+result is `unknown`, never partial metadata presented as success. HTTP error
+bodies use the same byte counter; redirect bodies are closed without draining.
+HTTPS certificate verification remains enabled. HTTP headers, TLS/TCP overhead
+and bytes buffered by the OS are not response body bytes, so a server may send
+more than the worker consumes. This is not a wire-traffic or process-memory cap.
+
+The worker requests identity encoding and refuses compressed responses before
+reading/decompressing them. Proxy-dependent, impersonated, non-HTTP, and
+JS-runtime-dependent sources may return `unknown`; it does not fall back to an
+unbounded transport. Third-party yt-dlp plugins, JS runtimes, remote components
+and caches are disabled for probes. Frozen desktop builds currently return
+`unknown` rather than launching an unsupported worker. Normal acquisition is
+separate and is not constrained by these probe budgets.
+
+A probe does not materialize media or invoke ASR/OCR, creates no job, and never
+falls back to acquisition. Container sniffing can read a prefix of media (or all
+of a very small file); it is not a promise of zero media bytes. The worker runs
+in a temporary directory removed after exit. This is working-directory
+isolation, not an OS filesystem sandbox. yt-dlp config files are ignored,
+cookie files are read without saving changes, and leftover files are reported
+by count rather than potentially sensitive names.
+
+Acquisition also ignores yt-dlp configuration files: output and cookie settings
+come from ClipMind's explicit settings. This prevents config-defined absolute
+sidecar paths or exec hooks from bypassing the owned acquisition directory.
+Existing custom yt-dlp config options are no longer implicitly applied.
 
 Local model providers may contact their model registry on first use:
 
