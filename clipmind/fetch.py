@@ -416,6 +416,20 @@ class ProbeResult:
     network_bytes: int = 0
     network_requests: int = 0
 
+    @property
+    def user_message(self) -> str:
+        """Explain the result without changing its source-reachability status."""
+        if self.status == "reachable":
+            return "Source metadata resolved. This does not guarantee acquisition will succeed."
+        if self.status == "unavailable":
+            return "This probe reported the source as unavailable."
+        if self.failure_code == "probe_budget_exceeded":
+            return (
+                "ClipMind stopped this probe at a configured resource limit. "
+                "Source reachability remains unknown."
+            )
+        return "ClipMind could not determine whether this source is reachable."
+
 
 # Only these say something about the source. The rest say something about us --
 # our cookies, our network, our clock -- and must not be reported as a verdict

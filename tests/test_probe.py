@@ -13,7 +13,7 @@ import sys
 import tempfile
 import threading
 import unittest
-from dataclasses import replace
+from dataclasses import asdict, fields, replace
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from unittest.mock import patch
@@ -186,6 +186,29 @@ class ProbeTransfersNoMediaTests(unittest.IsolatedAsyncioTestCase):
         self.assertLess(served, len(page))
 
 
+class ProbeResultMessageTests(unittest.TestCase):
+    def test_explanations_preserve_result_fields_and_serialization(self) -> None:
+        result = fetch.ProbeResult("unknown", "generic", failure_code="probe_budget_exceeded")
+        expected = {
+            "status": "unknown", "platform": "generic", "source_id": None,
+            "title": None, "duration": None, "strategy": None,
+            "failure_code": "probe_budget_exceeded", "network_bytes": 0,
+            "network_requests": 0,
+        }
+        self.assertEqual({field.name for field in fields(result)}, set(expected))
+        self.assertEqual(asdict(result), expected)
+        self.assertIn("ClipMind stopped this probe", result.user_message)
+        with self.assertRaises(AttributeError):
+            result.user_message = "A different explanation"
+
+    def test_source_status_explanations_make_no_acquisition_promise(self) -> None:
+        reachable = fetch.ProbeResult("reachable", "generic")
+        self.assertIn("metadata resolved", reachable.user_message)
+        self.assertIn("does not guarantee acquisition", reachable.user_message)
+        unavailable = fetch.ProbeResult("unavailable", "generic", failure_code="private_video")
+        self.assertEqual(unavailable.user_message, "This probe reported the source as unavailable.")
+
+
 class ProbeContractTests(unittest.IsolatedAsyncioTestCase):
     """The parts that hold with no network and no yt-dlp."""
 
@@ -217,6 +240,28 @@ class ProbeContractTests(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(result.status, "unknown")
         self.assertEqual(result.failure_code, "probe_timeout")
+        self.assertEqual(
+            result.user_message,
+            "ClipMind could not determine whether this source is reachable.",
+        )
+
+    async def test_worker_output_limit_explains_our_refusal_not_source_availability(self) -> None:
+        async def excessive_output(args, timeout, **kwargs):
+            raise fetch.BudgetExceeded
+
+        with patch("clipmind.fetch.shutil.which", return_value="/usr/bin/yt-dlp"), \
+             patch("clipmind.fetch._run_budgeted", new=excessive_output):
+            result = await fetch.probe("https://example.com/v", config=Settings())
+
+        self.assertEqual(result.status, "unknown")
+        self.assertEqual(result.failure_code, "probe_budget_exceeded")
+        self.assertEqual(result.network_bytes, 0)
+        self.assertEqual(result.network_requests, 0)
+        self.assertEqual(
+            result.user_message,
+            "ClipMind stopped this probe at a configured resource limit. "
+            "Source reachability remains unknown.",
+        )
 
     async def test_cancellation_still_propagates(self) -> None:
         async def cancelled(args, timeout, **kwargs):
