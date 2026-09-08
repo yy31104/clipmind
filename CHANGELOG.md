@@ -7,6 +7,10 @@ are documented separately and do not have to equal the application version.
 
 ### Changed
 
+- Raise the default cumulative probe response-body budget from 4 MiB to 32 MiB
+  to restore YouTube metadata probing with headroom for multiple resources.
+  Request, wall-clock and child-output limits are unchanged; smaller explicit
+  body budgets are still enforced across resources and cookie attempts.
 - URL probes now share HTTP response-body and request budgets across cookie
   attempts. Large pages, compressed responses and unsupported transports fail
   conservatively with `unknown`; child output and process lifetime are bounded.

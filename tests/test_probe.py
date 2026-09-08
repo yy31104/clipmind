@@ -13,6 +13,7 @@ import sys
 import tempfile
 import threading
 import unittest
+from dataclasses import replace
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from unittest.mock import patch
@@ -165,6 +166,9 @@ class ProbeTransfersNoMediaTests(unittest.IsolatedAsyncioTestCase):
                     await fetch.probe(server.url, config=self.config)
 
     async def test_a_large_page_is_refused_before_full_read(self) -> None:
+        # Test the configured read boundary with ample server-buffer margin;
+        # default-budget compatibility is covered by the multi-resource test.
+        config = replace(self.config, probe_max_bytes=4 * 1024 * 1024)
         page = (
             b"<html><body>"
             + b"<p>padding padding padding</p>" * 1_200_000
@@ -172,13 +176,13 @@ class ProbeTransfersNoMediaTests(unittest.IsolatedAsyncioTestCase):
         )
         with CountingMediaServer(page, content_type="text/html") as server:
             result = await fetch.probe(
-                server.url.replace("/video.mp4", "/page.html"), config=self.config
+                server.url.replace("/video.mp4", "/page.html"), config=config
             )
             served = server.bytes_sent
 
         self.assertEqual(result.status, "unknown")
         self.assertEqual(result.failure_code, "probe_budget_exceeded")
-        self.assertEqual(result.network_bytes, self.config.probe_max_bytes)
+        self.assertEqual(result.network_bytes, config.probe_max_bytes)
         self.assertLess(served, len(page))
 
 

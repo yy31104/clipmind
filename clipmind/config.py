@@ -113,7 +113,7 @@ class Settings:
     # clock it cannot exceed rather than the patience acquisition is allowed.
     probe_timeout: float = 20.0
     probe_socket_timeout: float = 8.0
-    probe_max_bytes: int = 4 * 1024 * 1024
+    probe_max_bytes: int = 32 * 1024 * 1024
     probe_max_requests: int = 12
 
     # --- housekeeping ---
@@ -173,7 +173,7 @@ class Settings:
             max_ocr=_int("CLIPMIND_MAX_OCR", 2),
             probe_timeout=_float("CLIPMIND_PROBE_TIMEOUT", 20.0),
             probe_socket_timeout=_float("CLIPMIND_PROBE_SOCKET_TIMEOUT", 8.0),
-            probe_max_bytes=_int("CLIPMIND_PROBE_MAX_BYTES", 4 * 1024 * 1024),
+            probe_max_bytes=_int("CLIPMIND_PROBE_MAX_BYTES", 32 * 1024 * 1024),
             probe_max_requests=_int("CLIPMIND_PROBE_MAX_REQUESTS", 12),
             keep_source_video=os.getenv("CLIPMIND_KEEP_VIDEO", "0") == "1",
             knowledge_base_inbox=_optional_path("CLIPMIND_KB_INBOX"),

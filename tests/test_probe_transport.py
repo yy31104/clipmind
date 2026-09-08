@@ -49,10 +49,12 @@ class BudgetIOTests(unittest.TestCase):
 
 
 class FixtureServer:
-    def __init__(self, tls=None):
+    def __init__(self, tls=None, resources=None):
         self.paths = []
         self.headers = []
         self.chunked_bytes = 0
+        self.resources = resources or {}
+        self.served_bytes = {}
         owner = self
 
         class Handler(BaseHTTPRequestHandler):
@@ -63,7 +65,20 @@ class FixtureServer:
                 owner.paths.append(self.path)
                 owner.headers.append(dict(self.headers))
                 try:
-                    if self.path == '/escaped':
+                    if self.path in owner.resources:
+                        content_type, payload = owner.resources[self.path]
+                        self.send_response(200)
+                        self.send_header('Content-Type', content_type)
+                        self.send_header('Content-Length', str(len(payload)))
+                        self.end_headers()
+                        for offset in range(0, len(payload), 16 * 1024):
+                            chunk = payload[offset:offset + 16 * 1024]
+                            self.wfile.write(chunk)
+                            self.wfile.flush()
+                            owner.served_bytes[self.path] = (
+                                owner.served_bytes.get(self.path, 0) + len(chunk)
+                            )
+                    elif self.path == '/escaped':
                         self.send_response(302)
                         self.send_header('Location', '/media file%20caf\xe9.mp4')
                         self.end_headers()
@@ -134,6 +149,57 @@ class TransportIntegrationTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result.status, 'reachable')
         self.assertIn('Fixture video', result.title)
         self.assertGreater(result.network_bytes, 0)
+
+    @staticmethod
+    def multi_resource_metadata():
+        # Real yt-dlp generic parsing follows both HLS sources. An arbitrary
+        # <script> tag would NOT make that extractor fetch a player script, so
+        # it would be a vacuous fixture for the cumulative-budget regression.
+        page = (b'<html><head><title>Multi-resource fixture</title></head><body><video>'
+                b'<source src="/a.m3u8" type="application/x-mpegURL">'
+                b'<source src="/b.m3u8" type="application/x-mpegURL">'
+                b'</video></body></html>')
+        playlist = (b'#EXTM3U\n#' + b'padding ' * (320 * 1024)
+                    + b'\n#EXT-X-TARGETDURATION:1\n#EXTINF:1.0,\n/segment.ts\n#EXT-X-ENDLIST\n')
+        return {'/multi': ('text/html', page),
+                '/a.m3u8': ('application/vnd.apple.mpegurl', playlist),
+                '/b.m3u8': ('application/vnd.apple.mpegurl', playlist)}
+
+    async def test_defaults_allow_cumulative_metadata_above_four_mib(self):
+        with patch.dict(os.environ, {}, clear=True):
+            environment_defaults = Settings.from_env()
+        # Exercise both production default construction paths, with no byte
+        # override that could hide a return to the insufficient 4 MiB default.
+        for construction, config in (('direct', Settings()), ('environment', environment_defaults)):
+            resources = self.multi_resource_metadata()
+            expected_bytes = sum(len(payload) for _, payload in resources.values())
+            self.assertTrue(all(
+                len(payload) < 4 * 1024 * 1024 for _, payload in resources.values()
+            ))
+            self.assertGreater(expected_bytes, 4 * 1024 * 1024)
+            with self.subTest(construction=construction):
+                with FixtureServer(resources=resources) as server:
+                    result = await fetch.probe(
+                        server.url + '/multi', config=replace(config, cookie_sources=('-',))
+                    )
+                self.assertEqual(result.status, 'reachable', result)
+                self.assertEqual(server.paths, ['/multi', '/a.m3u8', '/b.m3u8'])
+                self.assertEqual(sum(server.served_bytes.values()), expected_bytes)
+                self.assertEqual(result.network_bytes, expected_bytes)
+                self.assertEqual(result.network_requests, 3)
+                self.assertLess(result.network_requests, config.probe_max_requests)
+
+    async def test_explicit_small_budget_still_refuses_across_resources(self):
+        resources = self.multi_resource_metadata()
+        with patch.dict(os.environ, {'CLIPMIND_PROBE_MAX_BYTES': '4194304'}, clear=True):
+            config = replace(Settings.from_env(), cookie_sources=('-',))
+        with FixtureServer(resources=resources) as server:
+            result = await fetch.probe(server.url + '/multi', config=config)
+        self.assertEqual(result.status, 'unknown')
+        self.assertEqual(result.failure_code, 'probe_budget_exceeded')
+        self.assertEqual(result.network_bytes, config.probe_max_bytes)
+        self.assertEqual(server.paths, ['/multi', '/a.m3u8', '/b.m3u8'])
+        self.assertEqual(result.network_requests, 3)
 
     async def test_legacy_runtime_or_direct_socket_cannot_bypass_transport(self):
         # Both operations run inside a real worker, at the extractor boundary.
