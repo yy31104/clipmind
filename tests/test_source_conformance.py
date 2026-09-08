@@ -1,19 +1,26 @@
 from __future__ import annotations
 
 from copy import deepcopy
+import json
+from pathlib import Path
+import tempfile
 from types import SimpleNamespace
 import unittest
 from urllib.parse import parse_qsl, urlencode, urlsplit
 
+from clipmind import evidence
+from clipmind.asr import Segment, Transcript
+from clipmind.sources import MediaAsset
+from clipmind.storage import JobStorage
 from clipmind.sources import SourceAdapter
-from clipmind.sources.conformance import NormalizationCase, assert_adapter_conformance
+from clipmind.sources.conformance import IdentityCase, NormalizationCase, assert_adapter_conformance
 from clipmind.sources.direct import ADAPTER as DIRECT
 from clipmind.sources.douyin import ADAPTER as DOUYIN
 from clipmind.sources.youtube import ADAPTER as YOUTUBE
 
 
 SOURCE = "https://video.example/watch?lesson=7&p=1&utm_source=share"
-OTHER_PART = "https://video.example/watch?lesson=7&p=2"
+OTHER_PART = "https://video.example/watch?lesson=7&p=2&utm_source=share"
 INFO = {"id": "lesson-7-part-1", "title": "Synthetic lesson", "uploader": "Fixture", "duration": 12.5}
 
 
@@ -52,6 +59,97 @@ def check(adapter, **overrides) -> None:
 
 
 class SourceConformanceTests(unittest.TestCase):
+    def test_explicit_identity_cases_cover_tracking_and_identity_queries(self) -> None:
+        adapter = LessonAdapter(name="fixture", platform="example", domains=("video.example",))
+        canonical = "https://video.example/watch?lesson=7&p=1"
+        check(adapter, identity_cases=[
+            IdentityCase(SOURCE, canonical, "lesson-7-part-1"),
+            IdentityCase(SOURCE.replace("utm_source=share", "utm_source=other"), canonical, "lesson-7-part-1"),
+            IdentityCase(OTHER_PART, canonical.replace("p=1", "p=2"), "lesson-7-part-2"),
+        ], distinct_sources=[(SOURCE, OTHER_PART)])
+
+    def test_identity_cases_reject_tracking_retention_and_wrong_ids(self) -> None:
+        canonical = "https://video.example/watch?lesson=7&p=1"
+        for hooks, message in (
+            ({"canonicalize_source": lambda source: source}, "unexpected canonical source"),
+            ({"canonicalize_source": lambda source: canonical, "source_id": lambda source: "wrong-id"}, "unexpected source_id"),
+        ):
+            with self.subTest(message=message), self.assertRaisesRegex(AssertionError, message):
+                check(legacy_plugin(**hooks), identity_cases=[IdentityCase(SOURCE, canonical, "lesson-7-part-1")])
+
+    def test_identity_cases_use_optional_hook_fallbacks_and_authoritative_none(self) -> None:
+        source = "https://video.example/video/123?p=1&utm_source=share"
+        canonical = "https://video.example/video/123?p=1"
+        check(legacy_plugin(), identity_cases=[IdentityCase(source, canonical, "123")])
+        check(legacy_plugin(source_id=lambda source: None), identity_cases=[IdentityCase(source, canonical, None)])
+        with self.assertRaisesRegex(AssertionError, "identity case 0 must match"):
+            check(legacy_plugin(), identity_cases=[IdentityCase("https://elsewhere.example", canonical, None)])
+
+    def test_part_distinction_cannot_be_masked_by_tracking(self) -> None:
+        def drop_part(source):
+            values = parse_qsl(urlsplit(source).query)
+            return "https://video.example/watch?" + urlencode([(key, value) for key, value in values if key != "p"])
+
+        with self.assertRaisesRegex(AssertionError, "share canonical source"):
+            check(legacy_plugin(canonicalize_source=drop_part, source_id=lambda source: None),
+                  distinct_sources=[(SOURCE, OTHER_PART)])
+
+    def test_privacy_cases_accept_sanitized_metadata_without_changing_fixture(self) -> None:
+        secret = "synthetic-secret-marker"
+        info = {**INFO, "http_headers": {"Authorization": secret}, "webpage_url": SOURCE + "&token=" + secret}
+        original = deepcopy(info)
+
+        def normalize(source, supplied):
+            clean = {key: value for key, value in supplied.items() if key not in {"http_headers", "webpage_url"}}
+            return legacy_plugin().normalize_info(source, clean)
+
+        check(legacy_plugin(normalize_info=normalize), normalization_cases=[
+            NormalizationCase(SOURCE, info, {**INFO, "webpage_url": SOURCE}, forbidden_text=(secret,)),
+        ])
+        self.assertEqual(info, original)
+
+    def test_privacy_cases_reject_nested_and_exportable_secret_values(self) -> None:
+        secret = "synthetic-secret-marker"
+        for extra in (
+            {"http_headers": {"Authorization": secret}},
+            {"chapters": [{"url": "https://video.example/?token=" + secret}]},
+            {"webpage_url": SOURCE + "&token=" + secret},
+            {secret: "a secret in a dictionary key"},
+        ):
+            with self.subTest(field=next(iter(extra))):
+                with self.assertRaisesRegex(AssertionError, "retained forbidden text") as caught:
+                    check(legacy_plugin(), normalization_cases=[
+                        NormalizationCase(SOURCE, {**INFO, **extra}, forbidden_text=(secret,)),
+                    ])
+                self.assertNotIn(secret, str(caught.exception))
+
+    def test_invalid_privacy_sentinels_are_not_vacuous(self) -> None:
+        for secret in ("", 123, None):
+            with self.subTest(secret=secret), self.assertRaisesRegex(AssertionError, "non-empty strings"):
+                check(legacy_plugin(), normalization_cases=[NormalizationCase(SOURCE, INFO, forbidden_text=(secret,))])
+
+    def test_real_pack_writer_accepts_plugin_platform_without_exporting_raw_headers(self) -> None:
+        secret = "synthetic-header-marker"
+        normalized = legacy_plugin().normalize_info(SOURCE, {**INFO, "http_headers": {"Authorization": secret}})
+        with tempfile.TemporaryDirectory() as temporary:
+            storage = JobStorage(Path(temporary))
+            root = storage.workdir("plugin-pack")
+            record = {"id": "plugin-pack", "url": SOURCE, "status": "running"}
+            storage.save("plugin-pack", record)
+            (root / "visual_states" / "all").mkdir(parents=True)
+            (root / "visual_states" / "preview").mkdir()
+            item = MediaAsset(root / "unused.mp4", normalized)
+            evidence.write_pack(root, item, Transcript([Segment(0, 1, "Synthetic speech")]),
+                                [], [], [], candidate_frame_count=0)
+            storage.save("plugin-pack", {**record, "status": "done"})
+            manifest = evidence.load_complete_pack(root)
+            self.assertEqual(manifest["source"]["platform"], "example")
+            source = json.loads((root / "source.json").read_text(encoding="utf-8"))
+            self.assertEqual(source["url"], SOURCE)
+            self.assertNotIn("http_headers", source)
+            for artifact in ("source.json", "evidence.md", "transcript.md", "manifest.json"):
+                self.assertNotIn(secret, (root / artifact).read_text(encoding="utf-8"))
+
     def test_third_party_adapter_preserves_multipart_identity(self) -> None:
         adapter = LessonAdapter(name="fixture", platform="example", domains=("video.example",))
         check(adapter, distinct_sources=[(SOURCE, OTHER_PART)])

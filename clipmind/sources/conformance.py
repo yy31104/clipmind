@@ -14,17 +14,38 @@ from .identity import legacy_canonicalize_source, legacy_source_id
 
 
 @dataclass(frozen=True)
+class IdentityCase:
+    """An explicit semantic oracle, not an identity derived by the adapter."""
+
+    source: str
+    canonical: str
+    source_id: str | None
+
+
+@dataclass(frozen=True)
 class NormalizationCase:
     """Synthetic upstream metadata and expected normalized field values."""
 
     source: str
     info: dict
     expected: dict = field(default_factory=dict)
+    forbidden_text: Sequence[str] = ()
 
 
 def _require(condition: bool, message: str) -> None:
     if not condition:
         raise AssertionError(message)
+
+
+def _contains_text(value, text: str) -> bool:
+    """Search synthetic JSON-like metadata, including nested keys and values."""
+    if isinstance(value, str):
+        return text in value
+    if isinstance(value, dict):
+        return any(_contains_text(key, text) or _contains_text(item, text) for key, item in value.items())
+    if isinstance(value, (list, tuple)):
+        return any(_contains_text(item, text) for item in value)
+    return False
 
 
 def assert_adapter_conformance(
@@ -34,6 +55,7 @@ def assert_adapter_conformance(
     nonmatching_sources: Sequence[str],
     normalization_cases: Sequence[NormalizationCase],
     distinct_sources: Sequence[tuple[str, str]] = (),
+    identity_cases: Sequence[IdentityCase] = (),
 ) -> None:
     """Raise AssertionError when an adapter violates a supplied contract case.
 
@@ -45,7 +67,8 @@ def assert_adapter_conformance(
     canonicalization must be idempotent. Distinct pairs test the effective
     identity (including legacy defaults for missing hooks): neither canonical
     sources nor nonempty IDs may collide, since either can trigger pack reuse.
-    No claim is made about distinctness beyond the pairs the caller supplies.
+    Identity cases check expected URLs and IDs, including tracking-only variants.
+    No identity or privacy claim extends beyond the supplied cases and sentinels.
     """
     for attribute in ("name", "platform"):
         value = getattr(adapter, attribute, None)
@@ -96,6 +119,13 @@ def assert_adapter_conformance(
             _require(isinstance(value, str) and bool(value.strip()), "normalize_info must provide webpage_url")
         for key, value in case.expected.items():
             _require(key in normalized and normalized[key] == value, f"normalize_info unexpected {key} for case {index}")
+        for text in case.forbidden_text:
+            _require(isinstance(text, str) and bool(text), "forbidden_text must contain non-empty strings")
+            # Never echo a sentinel or normalized content into the failure text.
+            _require(not _contains_text(normalized, text), f"normalize_info retained forbidden text for case {index}")
+
+    for index, case in enumerate(identity_cases):
+        _require(adapter.matches(case.source) is True, f"identity case {index} must match")
 
     for index, (left, right) in enumerate(distinct_sources):
         _require(
@@ -105,6 +135,7 @@ def assert_adapter_conformance(
     sources = dict.fromkeys([
         *matching_sources,
         *(case.source for case in normalization_cases),
+        *(case.source for case in identity_cases),
         *(source for pair in distinct_sources for source in pair),
     ])
     for index, source in enumerate(sources):
@@ -122,6 +153,9 @@ def assert_adapter_conformance(
 
     canonicalize = identity_hooks.get("canonicalize_source", legacy_canonicalize_source)
     identify = identity_hooks.get("source_id", legacy_source_id)
+    for index, case in enumerate(identity_cases):
+        _require(canonicalize(case.source) == case.canonical, f"unexpected canonical source for identity case {index}")
+        _require(identify(case.source) == case.source_id, f"unexpected source_id for identity case {index}")
     for index, (left, right) in enumerate(distinct_sources):
         _require(canonicalize(left) != canonicalize(right), f"distinct sources share canonical source for pair {index}")
         left_id, right_id = identify(left), identify(right)

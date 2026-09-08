@@ -198,6 +198,7 @@ framework dependency and raises `AssertionError` for a failed contract case:
 
 ```python
 from clipmind.sources.conformance import (
+    IdentityCase,
     NormalizationCase,
     assert_adapter_conformance,
 )
@@ -228,6 +229,11 @@ assert_adapter_conformance(
         (source, "https://video.example/watch?lesson=7&p=2"),
         (source, "https://video.example/watch?lesson=8&p=1"),
     ],
+    identity_cases=[
+        IdentityCase(source, source, None),
+        IdentityCase(source + "&utm_source=share", source, None),
+        IdentityCase(source.replace("p=1", "p=2"), source.replace("p=1", "p=2"), None),
+    ],
 )
 ```
 
@@ -248,6 +254,27 @@ Missing hooks use the same legacy defaults as the registry; a `source_id` hook
 returning `None` remains authoritative. An empty distinct-pair list makes no
 claim about identity separation.
 
+Supply `IdentityCase` values with independently specified expected canonical
+sources and IDs. Determinism alone cannot detect retained tracking keys or a
+consistently wrong ID. Tracking-only variants should have identical expected
+identities; distinct-media pairs should differ **only** in the identity-bearing
+parameter, so incidental tracking differences cannot hide a lost part number.
+This example uses the simplest declarative adapter above: its generic identity
+parser returns `None` for these query-based URLs until acquisition supplies the
+upstream ID. A custom adapter with explicit lesson/part hooks should instead
+specify its own composite expected IDs, such as `lesson-7-part-1`.
+
+For privacy cases, pass synthetic sentinels using
+`NormalizationCase(..., forbidden_text=("synthetic-token-marker",))`. Put the
+marker in the supplied upstream fields, then require your normalizer to remove
+it. The kit checks nested string keys/values in dictionaries, lists and tuples,
+and does not echo the forbidden value when an assertion fails. Include both
+raw headers and exportable fields such as `webpage_url`, title and uploader.
+The real writer excludes raw headers, but deliberately preserves those public
+fields; its whitelist is not a substitute for sanitizing a credential-bearing
+URL. This is a check for the literal sentinels supplied, not a generic secret
+detector or proof about encoded values, plugin logs, or arbitrary objects.
+
 These checks can expose preserved identity limitations. For example, the generic
 adapter keeps different Bilibili `?p=1` and `?p=7` canonical URLs but returns the
 same BV/av ID for both, so that distinct pair fails. The kit does not change
@@ -257,7 +284,7 @@ historic identity quirks described in the migration table also remain in place.
 The kit calls adapter methods without registering plugins or acquiring media.
 It is not a sandbox: use trusted adapters and synthetic cases, and stub any
 external dependencies in your own tests. Passing the supplied cases does not
-prove uniqueness for untested URLs, secret removal, registry precedence,
+prove uniqueness for untested URLs, removal of untested secrets, registry precedence,
 failure classification, or complete-pack serialization; keep the integration
 tests from the test contract above. The kit's own positive and deliberately
 broken-adapter tests run with:
@@ -265,6 +292,17 @@ broken-adapter tests run with:
 ```bash
 python -m unittest tests.test_source_conformance -v
 ```
+
+The framework integration side of the same contract is covered by real registry
+entry-point dispatch, broken-plugin fallback, safe actionable failure selection,
+and the real pack writer, without contacting a platform:
+
+```bash
+python -m unittest tests.test_source_conformance tests.test_sources tests.test_source_identity tests.test_fetch -v
+```
+
+Keep corresponding integration cases in a third-party plugin project; the
+standalone value checker does not install a plugin or mock the host registry.
 
 ## When core code is appropriate
 
