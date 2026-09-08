@@ -197,6 +197,11 @@ class TransportIntegrationTests(unittest.IsolatedAsyncioTestCase):
             result = await fetch.probe(server.url + '/multi', config=config)
         self.assertEqual(result.status, 'unknown')
         self.assertEqual(result.failure_code, 'probe_budget_exceeded')
+        self.assertEqual(
+            result.user_message,
+            'ClipMind stopped this probe at a configured resource limit. '
+            'Source reachability remains unknown.',
+        )
         self.assertEqual(result.network_bytes, config.probe_max_bytes)
         self.assertEqual(server.paths, ['/multi', '/a.m3u8', '/b.m3u8'])
         self.assertEqual(result.network_requests, 3)

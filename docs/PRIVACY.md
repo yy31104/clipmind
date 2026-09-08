@@ -28,8 +28,19 @@ default rejected this verified source. It is a configurable resource limit,
 not a guarantee that every source fits or that every media file is larger.
 
 Body and request budgets are shared across cookie attempts. At a limit the
-result is `unknown`, never partial metadata presented as success. HTTP error
-bodies use the same byte counter; redirect bodies are closed without draining.
+result has `status="unknown"` and `failure_code="probe_budget_exceeded"`, never
+partial metadata presented as success. The status describes source reachability;
+the failure code records ClipMind's own decision to stop at a resource limit,
+including the worker output cap. The library result's read-only `user_message`
+property makes that distinction explicit:
+
+```text
+ClipMind stopped this probe at a configured resource limit. Source reachability remains unknown.
+```
+
+The message is derived from the existing status and failure code; serialized
+dataclass fields are unchanged. HTTP error bodies use the same byte counter;
+redirect bodies are closed without draining.
 HTTPS certificate verification remains enabled. HTTP headers, TLS/TCP overhead
 and bytes buffered by the OS are not response body bytes, so a server may send
 more than the worker consumes. This is not a wire-traffic or process-memory cap.
