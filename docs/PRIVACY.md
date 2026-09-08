@@ -18,9 +18,14 @@ Probing a URL uses yt-dlp's metadata parsers, with HTTP(S) reads owned by a
 separate ClipMind worker. The standalone library probe has these limits:
 
 - wall clock: `CLIPMIND_PROBE_TIMEOUT` (20 seconds); socket timeout: 8 seconds;
-- total HTTP response body bytes read: `CLIPMIND_PROBE_MAX_BYTES` (4 MiB);
+- total HTTP response body bytes read: `CLIPMIND_PROBE_MAX_BYTES` (32 MiB);
 - total HTTP requests, including redirects: `CLIPMIND_PROBE_MAX_REQUESTS` (12);
 - combined worker stdout/stderr: 4 MiB, read incrementally.
+
+The body default leaves headroom for multi-resource metadata extraction, such
+as a YouTube page plus player scripts and API responses. The previous 4 MiB
+default rejected this verified source. It is a configurable resource limit,
+not a guarantee that every source fits or that every media file is larger.
 
 Body and request budgets are shared across cookie attempts. At a limit the
 result is `unknown`, never partial metadata presented as success. HTTP error
