@@ -168,9 +168,9 @@ class JobStore:
         )
         for job in candidates:
             media_id = str((job.result or {}).get("id") or "")
-            if not allows_source_reuse(url, job.url, media_id):
-                continue
             same_url = normalize_url(job.url) == key
+            if not allows_source_reuse(url, job.url, media_id, same_canonical=same_url):
+                continue
             same_source = bool(
                 source_id
                 and media_id == source_id

@@ -42,12 +42,20 @@ An explicit `p=7` contributes `_p7` to the request-side ID. A missing `p`
 remains an unspecified part, never an inferred `p=1`. BV and av IDs are not
 aliased. The host-independent legacy ID fallback on other hosts is unchanged.
 
-Reuse requires agreement between the request identity, the stored request
-identity, and the stored downloader ID. This eligibility check also applies
-when canonical URLs match, before the complete-pack check. Therefore a bare
-or missing legacy ID cannot satisfy an explicit part request. An unspecified
-request cannot use a stored `_p1` ID, even if the old request URL was identical.
-Unresolved short links are not sufficient proof of part identity.
+For different canonical URLs, reuse still requires exact agreement between the
+request identity, stored request identity, and stored downloader ID. Unresolved
+short links are not sufficient proof of part identity; no BV/av alias mapping
+is inferred.
+
+For the same canonical URL with unambiguous part parameters, the URL identifies
+the request and the downloader ID must have a compatible part suffix. An
+unspecified request may reuse its bare ID or `_p1` result (`--no-playlist` can
+select the first part of an anthology). An explicit `p=7` requires `_p7`, but
+the ID prefix need not equal the URL's: yt-dlp resolves av URLs to BV IDs.
+This does not equate different URLs with missing `p` and `p=1`. A bare ID cannot
+satisfy an explicit part; `_p7` cannot satisfy an unspecified request. Missing
+or unrecognized IDs are rejected even at the same URL. All allowed candidates
+must still pass the complete-pack check.
 
 Exactly one positive ASCII-decimal `p` is accepted; leading zeroes normalize
 in the ID only (`p=007` becomes `_p7`). Empty, zero, negative, malformed or
