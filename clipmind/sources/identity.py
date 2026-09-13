@@ -38,7 +38,9 @@ def _bilibili_identity(source: str) -> tuple[str, str | None] | None:
     return video_id, f"{video_id}_p{part}" if part else None
 
 
-def allows_source_reuse(source: str, stored_source: str, media_id: str) -> bool:
+def allows_source_reuse(
+    source: str, stored_source: str, media_id: str, *, same_canonical: bool
+) -> bool:
     """Veto ambiguous legacy multipart identities, including same-URL matches.
 
     This does not authorize reuse: the caller must still match a source and
@@ -51,6 +53,20 @@ def allows_source_reuse(source: str, stored_source: str, media_id: str) -> bool:
         return True
     if requested is None or stored is None:
         return False
+    if not requested[1] or not stored[1]:
+        return False
+    if same_canonical:
+        # The identical request is the identity proof. yt-dlp may resolve av
+        # or lowercase BV URLs to a canonical BV ID, and --no-playlist may
+        # resolve an unspecified anthology request to _p1. Check only the part;
+        # do not infer equivalence between different request URLs.
+        media = re.fullmatch(r"(?:BV[0-9A-Za-z]+|av[0-9]+)(?:_p([1-9][0-9]*))?", media_id, re.IGNORECASE)
+        if media is None:
+            return False
+        requested_part = requested[1][len(requested[0]):]
+        if not requested_part:
+            return media.group(1) in {None, "1"}
+        return requested_part == f"_p{media.group(1)}"
     return bool(requested[1] and requested == stored and requested[1] == media_id)
 
 

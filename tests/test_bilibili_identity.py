@@ -14,6 +14,8 @@ from clipmind.storage import JobStorage
 
 
 IDS = ("BV1fixture", "av123")
+# yt-dlp resolves av URLs to video_data['bvid'] before constructing its ID.
+DOWNLOADER_ID = "BV1fixture"
 PART_CASES = (
     ("", ""), ("?p=1", "_p1"), ("?p=7", "_p7"),
     ("?p=7&utm_source=share", "_p7"), ("?p=007", "_p7"),
@@ -85,13 +87,13 @@ class BilibiliCompletePackReuseTests(unittest.TestCase):
     def test_whole_bare_id_cannot_satisfy_explicit_part(self):
         for video_id in IDS:
             with self.subTest(video_id=video_id):
-                self.assert_reuse(url(video_id), video_id, url(video_id, "?p=7"), False)
+                self.assert_reuse(url(video_id), DOWNLOADER_ID, url(video_id, "?p=7"), False)
 
     def test_part_matrix_through_real_reuse(self):
         for video_id in IDS:
             for query, suffix in PART_CASES:
                 with self.subTest(video_id=video_id, query=query):
-                    media_id = video_id + (suffix or "")
+                    media_id = DOWNLOADER_ID + (suffix or "")
                     self.assert_reuse(url(video_id, query), media_id, url(video_id, query), suffix is not None)
 
     def test_distinct_parts_and_unspecified_part_are_not_inferred(self):
@@ -99,15 +101,55 @@ class BilibiliCompletePackReuseTests(unittest.TestCase):
             for stored, media_suffix, requested in (
                 ("?p=1", "_p1", "?p=7"), ("?p=7", "_p7", ""),
                 ("", "_p1", "?p=1"), ("?p=1", "_p1", ""),
-                ("", "_p1", ""), ("?p=1", "_p7", "?p=1"),
+                ("?p=1", "_p7", "?p=1"),
             ):
                 with self.subTest(video_id=video_id, stored=stored, requested=requested):
-                    self.assert_reuse(url(video_id, stored), video_id + media_suffix, url(video_id, requested), False)
+                    self.assert_reuse(url(video_id, stored), DOWNLOADER_ID + media_suffix, url(video_id, requested), False)
+
+    def test_same_unspecified_url_reuses_its_no_playlist_first_part(self):
+        for video_id in IDS:
+            self.assert_reuse(url(video_id), DOWNLOADER_ID + "_p1", url(video_id), True)
+
+    def test_same_av_or_lowercase_bv_url_reuses_canonical_bv_downloader_id(self):
+        for video_id in ("av123", "bv1fixture"):
+            for query, suffix in (("", ""), ("?p=3", "_p3")):
+                self.assert_reuse(url(video_id, query), DOWNLOADER_ID + suffix, url(video_id, query), True)
+
+    def test_same_url_still_rejects_conflicting_or_unusable_downloader_parts(self):
+        for video_id in IDS:
+            for query, media_id in (
+                ("", DOWNLOADER_ID + "_p7"),
+                ("?p=7", DOWNLOADER_ID + "_p1"),
+                ("?p=7", DOWNLOADER_ID), ("", None),
+                ("", "unknown"), ("?p=7", "unknown_p7"),
+                ("?p=7", DOWNLOADER_ID + "_p7_extra"),
+            ):
+                with self.subTest(video_id=video_id, query=query, media_id=media_id):
+                    self.assert_reuse(url(video_id, query), media_id, url(video_id, query), False)
+
+    def test_ambiguous_requests_are_rejected_even_with_resolved_downloader_parts(self):
+        for video_id in IDS:
+            for query, suffix in (
+                ("?p=1&p=7", "_p7"), ("?p=7&p=7", "_p7"),
+                ("?p=0", "_p1"), ("?p=bad", "_p1"),
+            ):
+                with self.subTest(video_id=video_id, query=query):
+                    self.assert_reuse(url(video_id, query), DOWNLOADER_ID + suffix, url(video_id, query), False)
 
     def test_tracking_variants_reuse_same_explicit_part(self):
         for video_id in IDS:
-            self.assert_reuse(url(video_id, "?p=7"), video_id + "_p7", url(video_id, "?utm_source=share&p=7"), True)
-            self.assert_reuse(url(video_id, "?p=007"), video_id + "_p7", url(video_id, "?p=7"), True)
+            self.assert_reuse(url(video_id, "?p=7"), DOWNLOADER_ID + "_p7", url(video_id, "?utm_source=share&p=7"), True)
+
+    def test_different_canonical_urls_keep_the_existing_strict_gate(self):
+        self.assert_reuse(url("BV1fixture", "?p=007"), "BV1fixture_p7", url("BV1fixture", "?p=7"), True)
+        # p=007 and p=7 have different canonical URLs. Do not extend the new
+        # same-URL exception to av -> BV mappings here.
+        self.assert_reuse(url("av123", "?p=007"), "BV1fixture_p7", url("av123", "?p=7"), False)
+        self.assert_reuse(url("av123", "?p=7&unknown=1"), "BV1fixture_p7", url("av123", "?p=7&unknown=2"), False)
+
+    def test_douyin_same_url_missing_id_reuse_remains_unchanged(self):
+        source = "https://www.douyin.com/video/123"
+        self.assert_reuse(source, None, source + "?utm_source=share", True)
 
     def test_legacy_missing_or_bare_id_never_satisfies_explicit_part_even_same_url(self):
         for video_id in IDS:
@@ -119,7 +161,7 @@ class BilibiliCompletePackReuseTests(unittest.TestCase):
     def test_bv_av_and_unrelated_hosts_are_not_aliased(self):
         # Even apparently matching downloader IDs do not prove BV/av equivalence.
         self.assert_reuse(url("av123", "?p=7"), "BV1fixture_p7", url("BV1fixture", "?p=7"), False)
-        self.assert_reuse(url("BV1fixture", "?p=7"), "av123_p7", url("av123", "?p=7"), False)
+        self.assert_reuse(url("BV1fixture", "?p=7"), "BV1fixture_p7", url("av123", "?p=7"), False)
         self.assert_reuse("https://other.example/video/BV1fixture?p=7", "BV1fixture_p7", url("BV1fixture", "?p=7"), False)
 
 
