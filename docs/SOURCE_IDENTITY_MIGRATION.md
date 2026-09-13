@@ -3,6 +3,10 @@
 Baseline: `01e2719` (post-PR-20 main). This change relocates identity rules;
 it does not establish new normalization semantics or add a verified platform.
 
+This is the historical relocation record, not the current identity contract.
+The later [multipart cache fix](SOURCE_ADAPTERS.md#bilibili-multipart-cache-compatibility)
+changes explicit Bilibili part IDs; the original measurements below are retained.
+
 ## Flow and ownership
 
 Before: callers -> `links.normalize_url / source_id_from_url` -> inline

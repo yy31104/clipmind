@@ -14,6 +14,7 @@ from .links import normalize_url, source_id_from_url
 from .index import EvidenceIndex
 from .pipeline import Pools, cleanup_temporary, process
 from .providers import ProviderBundle, default_providers
+from .sources.identity import allows_source_reuse
 from .storage import JobStorage
 
 
@@ -166,10 +167,13 @@ class JobStore:
             reverse=True,
         )
         for job in candidates:
+            media_id = str((job.result or {}).get("id") or "")
+            if not allows_source_reuse(url, job.url, media_id):
+                continue
             same_url = normalize_url(job.url) == key
             same_source = bool(
                 source_id
-                and str((job.result or {}).get("id") or "") == source_id
+                and media_id == source_id
             )
             if not same_url and not same_source:
                 continue

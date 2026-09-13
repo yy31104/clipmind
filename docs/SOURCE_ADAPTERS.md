@@ -34,6 +34,28 @@ and local files are advertised as verified inputs. Entry points are loaded once
 per process. A plugin that raises during import or fails protocol validation is
 logged and skipped so it cannot disable built-ins.
 
+### Bilibili multipart cache compatibility
+
+The generic identity shim recognizes BV/av paths on HTTP(S) Bilibili hosts;
+this does not register or advertise a verified Bilibili acquisition adapter.
+An explicit `p=7` contributes `_p7` to the request-side ID. A missing `p`
+remains an unspecified part, never an inferred `p=1`. BV and av IDs are not
+aliased. The host-independent legacy ID fallback on other hosts is unchanged.
+
+Reuse requires agreement between the request identity, the stored request
+identity, and the stored downloader ID. This eligibility check also applies
+when canonical URLs match, before the complete-pack check. Therefore a bare
+or missing legacy ID cannot satisfy an explicit part request. An unspecified
+request cannot use a stored `_p1` ID, even if the old request URL was identical.
+Unresolved short links are not sufficient proof of part identity.
+
+Exactly one positive ASCII-decimal `p` is accepted; leading zeroes normalize
+in the ID only (`p=007` becomes `_p7`). Empty, zero, negative, malformed or
+repeated `p` values disable automatic reuse, including equal repetitions.
+Tracking-only URL changes still reuse a complete pack with matching identity.
+Canonical URL rules, persisted downloader IDs, and existing packs are not
+rewritten; ambiguous old packs remain readable but require fresh processing.
+
 ## Simplest plugin
 
 Use the public `SourceAdapter` value type when domain matching and metadata
@@ -275,11 +297,11 @@ fields; its whitelist is not a substitute for sanitizing a credential-bearing
 URL. This is a check for the literal sentinels supplied, not a generic secret
 detector or proof about encoded values, plugin logs, or arbitrary objects.
 
-These checks can expose preserved identity limitations. For example, the generic
-adapter keeps different Bilibili `?p=1` and `?p=7` canonical URLs but returns the
-same BV/av ID for both, so that distinct pair fails. The kit does not change
-legacy identities or add Bilibili acquisition support. Local-path and other
-historic identity quirks described in the migration table also remain in place.
+These checks exposed the former Bilibili part-ID collision: `?p=1` and `?p=7`
+had distinct canonical URLs but the same BV/av request ID. That pair now passes
+after the separate multipart identity fix described above; the kit itself does
+not change production identities or add acquisition support. Local-path and
+other historic identity quirks in the migration table remain in place.
 
 The kit calls adapter methods without registering plugins or acquiring media.
 It is not a sandbox: use trusted adapters and synthetic cases, and stub any

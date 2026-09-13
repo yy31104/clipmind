@@ -14,7 +14,8 @@ from tests.pack_fixture import make_complete_pack
 
 
 # group, input, canonical URL, source ID, acquisition adapter
-# Expected values were captured and checked against main before relocating code.
+# Expected values were captured before relocation. Only the two Bilibili part
+# IDs below intentionally changed later to prevent coarse-ID cache reuse.
 IDENTITY_CASES = [
     ("youtube", "https://youtu.be/AbC123?si=share&t=12", "https://youtube.com/watch?v=AbC123", "AbC123", "youtube"),
     ("youtube", "http://WWW.youtube.com/watch?v=AbC123&feature=share#t=3", "https://youtube.com/watch?v=AbC123", "AbC123", "youtube"),
@@ -49,8 +50,8 @@ IDENTITY_CASES = [
     ("generic", "https://example.org/watch?q=a%20b&unknown=a%2Fb", "https://example.org/watch?q=a+b&unknown=a%2Fb", None, "generic-url"),
     ("generic", "https://user:synthetic@example.org:8443/demo.mp4?quality=hd", "https://example.org/demo.mp4?quality=hd", None, "generic-url"),
     ("generic", "https://example.org/", "https://example.org/", None, "generic-url"),
-    ("legacy", "https://www.bilibili.com/video/BV1abc123?p=7&spm_id_from=share", "https://bilibili.com/video/BV1abc123?p=7", "BV1abc123", "generic-url"),
-    ("legacy", "https://www.bilibili.com/video/av123?p=1", "https://bilibili.com/video/av123?p=1", "av123", "generic-url"),
+    ("legacy", "https://www.bilibili.com/video/BV1abc123?p=7&spm_id_from=share", "https://bilibili.com/video/BV1abc123?p=7", "BV1abc123_p7", "generic-url"),
+    ("legacy", "https://www.bilibili.com/video/av123?p=1", "https://bilibili.com/video/av123?p=1", "av123_p1", "generic-url"),
     ("legacy", "https://other.example/Bv1ABC/part?x=1", "https://other.example/Bv1ABC/part?x=1", "Bv1ABC", "generic-url"),
     ("legacy", "https://other.example/AV123/", "https://other.example/AV123", "AV123", "generic-url"),
     ("legacy", "https://other.example/video/123?x=1", "https://other.example/video/123?x=1", "123", "generic-url"),

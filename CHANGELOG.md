@@ -7,6 +7,11 @@ are documented separately and do not have to equal the application version.
 
 ### Changed
 
+- Bilibili BV/av request identities now include explicit part numbers. Cache
+  reuse rejects ambiguous part queries and legacy packs without matching part
+  identity, including same-URL matches. Unspecified parts are not inferred as
+  part 1; stored downloader IDs and old packs are not migrated. This is an
+  identity fix, not a claim of verified Bilibili acquisition support.
 - Raise the default cumulative probe response-body budget from 4 MiB to 32 MiB
   to restore YouTube metadata probing with headroom for multiple resources.
   Request, wall-clock and child-output limits are unchanged; smaller explicit

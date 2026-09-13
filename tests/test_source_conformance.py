@@ -310,18 +310,17 @@ class SourceConformanceTests(unittest.TestCase):
         with self.assertRaisesRegex(AssertionError, "distinct sources must both match"):
             check(adapter, distinct_sources=[(SOURCE, "https://elsewhere.example/watch")])
 
-    def test_bilibili_multipart_case_surfaces_preserved_legacy_collision(self) -> None:
+    def test_bilibili_multipart_identity_no_longer_collides(self) -> None:
         first = "https://www.bilibili.com/video/BV1fixture?p=1"
         seventh = "https://www.bilibili.com/video/BV1fixture?p=7"
         self.assertNotEqual(DIRECT.canonicalize_source(first), DIRECT.canonicalize_source(seventh))
-        self.assertEqual(DIRECT.source_id(first), DIRECT.source_id(seventh))
-        with self.assertRaisesRegex(AssertionError, "distinct sources share source_id"):
-            assert_adapter_conformance(
-                DIRECT,
-                matching_sources=[first, seventh], nonmatching_sources=["ftp://example.org/watch"],
-                normalization_cases=[NormalizationCase(first, INFO)],
-                distinct_sources=[(first, seventh)],
-            )
+        self.assertNotEqual(DIRECT.source_id(first), DIRECT.source_id(seventh))
+        assert_adapter_conformance(
+            DIRECT,
+            matching_sources=[first, seventh], nonmatching_sources=["ftp://example.org/watch"],
+            normalization_cases=[NormalizationCase(first, INFO)],
+            distinct_sources=[(first, seventh)],
+        )
 
 
 if __name__ == "__main__":
