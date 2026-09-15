@@ -2,10 +2,15 @@ from __future__ import annotations
 
 import hashlib
 import tempfile
+import tomllib
 import unittest
 from pathlib import Path
 
+import clipmind
+from clipmind import mcp
 from scripts import build_release_assets
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 class ReleaseArtifactTests(unittest.TestCase):
@@ -14,6 +19,13 @@ class ReleaseArtifactTests(unittest.TestCase):
 
         with self.assertRaisesRegex(ValueError, "does not match package version"):
             build_release_assets.validate_release_tag("v1.2.0", "1.2.1")
+
+    def test_runtime_versions_match_the_package_version(self) -> None:
+        # Package metadata is absent from frozen desktop builds, so the runtime
+        # keeps a literal; this is what stops it drifting from pyproject again.
+        project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+        self.assertEqual(clipmind.__version__, project["project"]["version"])
+        self.assertEqual(mcp.SERVER_INFO["version"], clipmind.__version__)
 
     def test_checksum_manifest_covers_only_the_built_distributions(self) -> None:
         with tempfile.TemporaryDirectory() as tempdir:

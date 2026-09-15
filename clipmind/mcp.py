@@ -7,12 +7,13 @@ import mimetypes
 import sys
 from pathlib import Path
 
+from . import __version__
 from .config import OUT_DIR
 from .evidence import EvidencePackError
 from .sdk import ClipMind, ClipMindError, PackLibrary
 
 
-SERVER_INFO = {"name": "clipmind", "version": "1.2.0-dev"}
+SERVER_INFO = {"name": "clipmind", "version": __version__}
 SUPPORTED_PROTOCOL_VERSIONS = ("2025-06-18", "2024-11-05")
 
 
