@@ -76,7 +76,7 @@ def recognize(
 
     url = NSURL.fileURLWithPath_(str(path))
     with objc.autorelease_pool():
-        handler = Vision.VNImageRequestHandler.alloc().initWithURL_options_(url, {})
+        handler = Vision.VNImageRequestHandler.alloc().initWithURL_options_(url, None)
         if handler is None:
             raise OCRError(f"could not open image: {path}")
 
