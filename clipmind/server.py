@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import sqlite3
 import uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -10,7 +11,7 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from . import handoff
 from .config import WEB_DIR
@@ -43,6 +44,32 @@ class SubmitBody(BaseModel):
 
 class ReprocessBody(BaseModel):
     force: bool = False
+
+
+class DeleteJobsBody(BaseModel):
+    ids: list[str] = Field(min_length=1, max_length=500)
+
+
+@app.post("/api/jobs/delete")
+async def delete_jobs(body: DeleteJobsBody, request: Request):
+    # A page on another origin must not be able to remove local evidence.
+    origin = request.headers.get("origin")
+    if request.headers.get("sec-fetch-site") == "cross-site" or (
+        origin and origin != str(request.base_url).rstrip("/")
+    ):
+        raise HTTPException(403, "Deletion requires a same-origin request.")
+    deleted, failed = [], []
+    for job_id in dict.fromkeys(body.ids):
+        try:
+            store.remove(job_id)
+            deleted.append(job_id)
+        except KeyError:
+            failed.append({"id": job_id, "message": "任务不存在，请刷新列表。"})
+        except ValueError:
+            failed.append({"id": job_id, "message": "任务正在运行，或目录不可安全移出。"})
+        except (OSError, sqlite3.Error):
+            failed.append({"id": job_id, "message": "文件被占用或无权限，任务未移出，请稍后重试。"})
+    return {"deleted": deleted, "failed": failed, "recoverable": True}
 
 
 MEDIA_EXTENSIONS = frozenset(

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import os
+import uuid
 from pathlib import Path
 
 
@@ -16,6 +17,23 @@ class JobStorage:
 
     def workdir(self, job_id: str) -> Path:
         return self.root / job_id
+
+    def move_to_trash(self, job_id: str) -> Path:
+        """Move only one owned job directory; never follow links or delete media."""
+        if not job_id or job_id.startswith('.') or Path(job_id).name != job_id or '\\' in job_id:
+            raise ValueError("invalid job id")
+        source = self.workdir(job_id)
+        if source.is_symlink() or not source.is_dir():
+            raise ValueError("job directory is missing or unsafe")
+        trash = self.root / '.trash'
+        if trash.is_symlink():
+            raise ValueError("trash directory is unsafe")
+        trash.mkdir(exist_ok=True)
+        batch = trash / uuid.uuid4().hex
+        batch.mkdir()
+        destination = batch / job_id
+        source.rename(destination)
+        return destination
 
     def save(self, job_id: str, record: dict) -> None:
         workdir = self.workdir(job_id)
@@ -38,7 +56,7 @@ class JobStorage:
             return []
         records: list[dict] = []
         for workdir in sorted(self.root.iterdir()):
-            if not workdir.is_dir():
+            if workdir.name.startswith('.') or not workdir.is_dir():
                 continue
             record = self._load_job(workdir) or self._load_legacy_done(workdir)
             if record is not None:

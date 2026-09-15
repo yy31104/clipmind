@@ -87,6 +87,10 @@ class EvidenceIndex:
         finally:
             database.close()
 
+    def remove(self, job_id: str) -> None:
+        with self._database() as database:
+            database.execute("DELETE FROM packs WHERE job_id = ?", (job_id,))
+
     def sync(self, job_id: str, workdir: Path) -> bool:
         """Index one complete pack. Returns False when no work was needed."""
         try:
