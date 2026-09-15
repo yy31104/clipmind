@@ -125,6 +125,12 @@ searches complete packs, and the detail view exposes Overview, Visuals,
 Transcript, and Evidence. Over-budget work is refused with an estimate; only an
 explicit **Process anyway** starts the full untruncated job.
 
+To tidy the list, expand unfinished tasks or open Library, select individual
+entries (including old versions) or select all, then choose **删除所选** and confirm.
+Only terminal jobs can be removed. Files move to the library's `.trash`, remain
+recoverable and still occupy disk space; original media and exports are untouched.
+See [recovery and privacy details](docs/PRIVACY.md#removing-tasks-and-library-versions).
+
 ### CLI
 
 ```bash

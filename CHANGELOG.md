@@ -24,6 +24,11 @@ are documented separately and do not have to equal the application version.
   now a dependency: the lockfile adds Playwright and pyee, and the already
   locked greenlet 3.5.5 now installs on every platform, including macOS arm64.
 
+- Inbox failed/interrupted tasks and Library versions support individual selection,
+  select-all and confirmed bulk removal. Removed job directories are retained in
+  the library's `.trash` (manual recovery), excluded from search and restart recovery.
+  Active jobs, original media and separately exported copies are not removed.
+
 - Bilibili BV/av request identities now include explicit part numbers. Cache
   reuse rejects ambiguous part queries and legacy packs without matching part
   identity, including same-URL matches. Identical canonical URLs can reuse

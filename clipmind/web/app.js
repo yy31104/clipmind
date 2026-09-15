@@ -9,7 +9,79 @@ const state = {
   showFailed: false,
   searchQuery: "",
   searchResults: [],
+  selected: { library: new Set(), failed: new Set() },
+  removing: false,
 };
+
+function selectionControl(job, scope, label = "选择") {
+  return `<label class="select-job"><input type="checkbox" data-select="${esc(job.id)}" data-scope="${scope}"
+    ${state.selected[scope].has(job.id) ? "checked" : ""} ${state.removing ? "disabled" : ""}>
+    ${esc(label)}</label>`;
+}
+
+function managementBar(scope, jobs) {
+  const allowed = new Set(jobs.map((job) => job.id));
+  for (const id of state.selected[scope]) {
+    if (!allowed.has(id)) state.selected[scope].delete(id);
+  }
+  const count = state.selected[scope].size;
+  return `<label class="select-job"><input type="checkbox" data-select-all="${scope}"
+    ${jobs.length && count === jobs.length ? "checked" : ""} ${!jobs.length || state.removing ? "disabled" : ""}>
+    全选${scope === "library" ? "当前列表（含旧版本）" : "未完成任务"}</label>
+    <span>已选 ${count} 项</span>
+    <button class="secondary compact danger" data-remove="${scope}" ${!count || state.removing ? "disabled" : ""}>删除所选</button>`;
+}
+
+function visiblePackGroups() {
+  const groups = groupPacks([...state.jobs.values()].filter((job) => job.status === "done")
+    .sort((a, b) => b.created_at - a.created_at));
+  if (!state.searchQuery) return groups;
+  const hits = new Set(state.searchResults.map((result) => result.job_id));
+  return groups.filter((group) => group.some((job) => hits.has(job.id)));
+}
+
+async function removeSelected(scope) {
+  const ids = [...state.selected[scope]];
+  if (!ids.length || state.removing) return;
+  const description = scope === "library" ? "证据包版本" : "未完成任务";
+  const dialog = $("remove-dialog");
+  $("remove-description").textContent = `将移出所选 ${ids.length} 个${description}，未勾选的项目不受影响。`;
+  dialog.returnValue = "cancel";
+  const confirmed = new Promise((resolve) => dialog.addEventListener("close", () => resolve(dialog.returnValue === "remove"), { once: true }));
+  dialog.showModal();
+  if (!await confirmed) return;
+  state.removing = true;
+  render();
+  const notice = $("removal-notice");
+  try {
+    const result = { deleted: [], failed: [] };
+    for (let offset = 0; offset < ids.length; offset += 500) {
+      const response = await fetch("/api/jobs/delete", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: ids.slice(offset, offset + 500) }),
+      });
+      if (!response.ok) throw new Error("删除请求失败，部分项目可能已移出；请刷新确认当前状态。");
+      const batch = await response.json();
+      result.deleted.push(...batch.deleted);
+      result.failed.push(...batch.failed);
+    }
+    for (const id of result.deleted) {
+      state.jobs.delete(id);
+      state.selected[scope].delete(id);
+    }
+    state.searchResults = state.searchResults.filter((hit) => !result.deleted.includes(hit.job_id));
+    notice.textContent = `已移出 ${result.deleted.length} 项（文件保留在库目录 .trash 中）。`
+      + (result.failed.length ? ` ${result.failed.length} 项未删除：${result.failed[0].message}` : "");
+    await refreshJobs();
+    if (state.searchQuery) await searchEvidence();
+  } catch (error) {
+    notice.textContent = error.message;
+  } finally {
+    notice.hidden = false;
+    state.removing = false;
+    render();
+  }
+}
 
 const clock = (seconds) => {
   const safe = Number(seconds) || 0;
@@ -132,7 +204,6 @@ function groupPacks(done) {
 function render() {
   const jobs = [...state.jobs.values()].sort((a, b) => b.created_at - a.created_at);
   const active = jobs.filter((job) => ["queued", "running"].includes(job.status));
-  const done = jobs.filter((job) => job.status === "done");
   const failed = jobs.filter((job) => ["error", "interrupted"].includes(job.status));
   const libraryMode = state.mode === "library";
 
@@ -142,10 +213,13 @@ function render() {
   $("active-label").hidden = active.length === 0;
   $("active").innerHTML = active.map(jobCard).join("");
 
-  const packs = groupPacks(done);
+  const packs = visiblePackGroups();
   $("library-label").hidden = false;
   $("library-label").textContent = libraryMode ? "Library" : "最近的 Evidence Packs";
   $("library").innerHTML = packs.map(libraryCard).join("");
+  $("library-manage").innerHTML = managementBar("library", packs.flat());
+  $("library").hidden = false;
+  $("search-results").hidden = true;
   $("search-field").classList.toggle("prominent", libraryMode);
 
   const toggle = $("failed-toggle");
@@ -155,13 +229,37 @@ function render() {
   toggle.classList.toggle("open", state.showFailed);
   $("failed").hidden = failed.length === 0 || !state.showFailed;
   $("failed").innerHTML = failed.map(jobCard).join("");
+  $("failed-manage").hidden = !state.showFailed || !failed.length;
+  $("failed-manage").innerHTML = managementBar("failed", failed);
 
   $("loading").hidden = true;
-  $("empty").hidden = jobs.length > 0;
+  $("empty").hidden = jobs.length > 0 || Boolean(state.searchQuery);
+  if (state.searchQuery) renderSearchResults();
   wireDynamicActions();
 }
 
 function wireDynamicActions() {
+  for (const element of document.querySelectorAll("[data-select]")) {
+    element.onchange = () => {
+      const selected = state.selected[element.dataset.scope];
+      if (element.checked) selected.add(element.dataset.select);
+      else selected.delete(element.dataset.select);
+      render();
+    };
+  }
+  for (const element of document.querySelectorAll("[data-select-all]")) {
+    element.onchange = () => {
+      const scope = element.dataset.selectAll;
+      const jobs = scope === "library" ? visiblePackGroups().flat()
+        : [...state.jobs.values()].filter((job) => ["error", "interrupted"].includes(job.status));
+      state.selected[scope].clear();
+      if (element.checked) for (const job of jobs) state.selected[scope].add(job.id);
+      render();
+    };
+  }
+  for (const element of document.querySelectorAll("[data-remove]")) {
+    element.onclick = () => removeSelected(element.dataset.remove);
+  }
   for (const element of document.querySelectorAll("[data-open]")) {
     element.onclick = () => openDetail(element.dataset.open);
   }
@@ -195,6 +293,7 @@ function jobCard(job) {
     ? `<button class="primary compact" data-force="${job.id}">仍然完整处理</button>`
     : `<button class="secondary compact" data-reprocess="${job.id}">重新处理</button>`;
   return `<article class="job ${failed ? "error" : job.status}">
+    ${failed ? selectionControl(job, "failed", "选择此任务") : ""}
     <div class="job-head">
       <div class="job-title">${esc(title)}</div>
       <div class="job-time">${failed ? esc(STAGE_LABEL[job.status]) : `${percent}% / ${job.elapsed}s`}</div>
@@ -222,14 +321,15 @@ function libraryCard(group) {
     `${frames.length} 个预览画面`,
     dateLabel(current.finished_at || current.created_at),
   ].filter(Boolean).join(" / ");
-  return `<button class="card" data-open="${current.id}">
+  return `<article class="pack-entry"><button class="card" data-open="${current.id}">
     ${cover}
     <span class="card-body">
       <span class="card-title">${esc(current.title)}</span>
       <span class="card-meta">${esc(metadata)}</span>
       ${superseded.length ? `<span class="card-older">${superseded.length} 个旧版本</span>` : ""}
     </span>
-  </button>`;
+  </button><div class="pack-selection">${group.map((job, index) => selectionControl(job, "library",
+    `${index ? "旧版本" : "当前版本"} · ${dateLabel(job.finished_at || job.created_at)}`)).join("")}</div></article>`;
 }
 
 function frameUrl(jobId, frame, modern = true, collection = null) {
@@ -523,6 +623,7 @@ async function searchEvidence() {
     state.searchResults = [];
     $("search-results").hidden = true;
     $("library").hidden = false;
+    render();
     return;
   }
   try {
@@ -531,7 +632,7 @@ async function searchEvidence() {
     if (!response.ok) throw new Error(data.detail || "搜索失败");
     if (query !== state.searchQuery) return;
     state.searchResults = data.results;
-    renderSearchResults();
+    render();
   } catch (error) {
     showError(error.message);
   }
@@ -545,12 +646,13 @@ function renderSearchResults() {
     container.innerHTML = `<div class="empty compact-empty"><strong>没有匹配的证据</strong><p>尝试标题、说过的话或画面中的文字。</p></div>`;
     return;
   }
-  container.innerHTML = state.searchResults.map((result) => `
+  container.innerHTML = state.searchResults.map((result) => `<article>
     <button class="search-result" data-open="${result.job_id}">
       <span class="search-title">${esc(result.title)}</span>
       <span class="search-platform">${esc(result.platform)}</span>
       ${result.hits.map((hit) => `<span class="search-hit"><time>${clock(hit.timestamp)}</time><span>${esc(hit.text)}</span></span>`).join("")}
-    </button>`).join("");
+    </button><div class="pack-selection">${(visiblePackGroups().find((group) => group.some((job) => job.id === result.job_id)) || [])
+      .map((job, index) => selectionControl(job, "library", `${index ? "旧版本" : "当前版本"} · ${dateLabel(job.finished_at || job.created_at)}`)).join("")}</div></article>`).join("");
   wireDynamicActions();
 }
 
@@ -561,6 +663,7 @@ async function refreshJobs(attempt = 0) {
     const data = await response.json();
     state.jobs.clear();
     for (const job of data.jobs) state.jobs.set(job.id, job);
+    state.searchResults = state.searchResults.filter((hit) => state.jobs.has(hit.job_id));
     if (state.view === "home") render();
   } catch (_error) {
     if (attempt >= 3) {
