@@ -1,7 +1,6 @@
 """ffmpeg wrappers plus perceptual-hash de-duplication of sampled frames."""
 from __future__ import annotations
 
-import asyncio
 import shutil
 from dataclasses import dataclass
 from pathlib import Path
@@ -9,6 +8,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
+from . import subprocesses
 from .config import settings
 
 
@@ -54,12 +54,10 @@ class Frame:
 async def _ffmpeg(args: list[str]) -> None:
     if not shutil.which("ffmpeg"):
         raise MediaError("ffmpeg is not installed (brew install ffmpeg)")
-    proc = await asyncio.create_subprocess_exec(
-        "ffmpeg", "-hide_banner", "-loglevel", "error", "-y", *args,
-        stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
+    code, _, err = await subprocesses.run(
+        ["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", *args]
     )
-    _, err = await proc.communicate()
-    if proc.returncode:
+    if code:
         raise MediaError(f"ffmpeg failed: {err.decode(errors='replace').strip()[:400]}")
 
 
