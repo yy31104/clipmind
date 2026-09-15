@@ -6,7 +6,7 @@
 <meta name="description" content="Local-first multimodal video ingestion for humans and AI agents.">
 <title>ClipMind</title>
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="/static/style.css?v=3">
+<link rel="stylesheet" href="/static/style.css?v=4">
 </head>
 <body>
 <div id="app">
@@ -49,6 +49,7 @@
     </section>
 
     <section class="board">
+      <p id="removal-notice" role="status" aria-live="polite" hidden></p>
       <div id="active-section">
         <h2 class="section-label" id="active-label" hidden>正在处理</h2>
         <div class="stack" id="active"></div>
@@ -62,11 +63,13 @@
             placeholder="搜索转写、OCR 或标题" autocomplete="off">
         </label>
       </div>
+      <div id="library-manage" class="manage-bar"></div>
       <div class="search-results" id="search-results" hidden></div>
       <div class="grid" id="library"></div>
 
       <div id="failed-section">
         <button class="fold" id="failed-toggle" aria-expanded="false" hidden></button>
+        <div id="failed-manage" class="manage-bar"></div>
         <div class="stack" id="failed" hidden></div>
       </div>
 
@@ -106,6 +109,17 @@
     <section class="pane" id="pane-transcript" role="tabpanel" hidden></section>
   </main>
 </div>
-<script src="/static/app.js?v=3"></script>
+<dialog id="remove-dialog" aria-labelledby="remove-heading">
+  <form method="dialog">
+    <h2 id="remove-heading">删除所选</h2>
+    <p id="remove-description"></p>
+    <p>文件将移到本地库的 .trash 中，可手动恢复。不会删除原始视频或已导出的副本，也不会释放这部分磁盘空间。</p>
+    <div class="dialog-actions">
+      <button class="secondary" value="cancel" autofocus>取消</button>
+      <button class="secondary danger" value="remove">确认移出</button>
+    </div>
+  </form>
+</dialog>
+<script src="/static/app.js?v=4"></script>
 </body>
 </html>

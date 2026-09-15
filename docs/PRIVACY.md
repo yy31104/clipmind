@@ -179,9 +179,24 @@ delete the rest of the knowledge base.
 
 ## Deletion and disclosure
 
-ClipMind currently has no UI delete action and no telemetry. To remove data,
-stop the app and delete the desired pack directory and derived SQLite index from
+ClipMind has no telemetry. Removing a job in the UI moves it to `.trash` and is
+not erasure (see below). To erase data, stop the app and delete the desired pack
+directory (including any copy under `.trash`) and the derived SQLite index from
 the local library. Security issues involving credentials, path boundaries, or
 unexpected disclosure should be reported privately as described in
 [`SECURITY.md`](../SECURITY.md), not posted with sensitive artifacts in a public
 issue.
+
+## Removing tasks and library versions
+
+The UI supports selecting individual failed/interrupted tasks or Evidence Pack
+versions, or all entries in the current list (including old versions). A confirmation
+dialog precedes removal. Running and queued jobs cannot be removed this way.
+
+Removal moves the job directory to `<library>/.trash/<batch>/<job-id>` and removes
+it from the visible library and search index. This is **not secure erasure** and
+does not reclaim disk space; retained media and transcripts remain on disk.
+Original local files, upload originals and separately exported copies are untouched.
+To recover manually, stop ClipMind and move the job directory back to the library
+root, only if that job ID does not already exist, then restart. Never overwrite
+an existing directory. There is no automatic trash purge.

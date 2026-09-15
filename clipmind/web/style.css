@@ -369,3 +369,18 @@ h1 { font-size: clamp(36px, 5vw, 54px); line-height: 1.08; letter-spacing: -.04e
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
+/* Selection is outside the card's open button: checkbox clicks never navigate. */
+.manage-bar { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; margin: 16px 0; color: var(--muted, #666); font-size: 14px; }
+.select-job { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
+.select-job input { width: 17px; height: 17px; accent-color: #283d35; }
+.pack-entry { min-width: 0; }
+.pack-entry .card { width: 100%; }
+.pack-selection { display: grid; gap: 8px; padding: 12px 4px; }
+.job > .select-job { margin-bottom: 12px; }
+.danger { color: #b43b32; }
+#removal-notice { padding: 12px 16px; background: #eef4ef; border-radius: 8px; }
+[hidden] { display: none !important; }
+dialog { max-width: 480px; width: calc(100% - 40px); border: 1px solid #ddd; border-radius: 16px; padding: 24px; color: #222; }
+dialog::backdrop { background: #0006; }
+dialog p { line-height: 1.6; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
