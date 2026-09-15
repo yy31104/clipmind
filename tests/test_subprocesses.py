@@ -65,8 +65,11 @@ class RunTests(unittest.IsolatedAsyncioTestCase):
         self.tempdir.cleanup()
 
     async def test_completion_reports_exit_code_and_output(self) -> None:
+        # Bytes, not print(): Windows text streams turn "\n" into "\r\n", and the
+        # point is that the output arrives exactly as the child wrote it.
         code, out, err = await fetch._run(
-            [sys.executable, "-c", "import sys; print('out'); sys.stderr.write('err'); sys.exit(3)"]
+            [sys.executable, "-c",
+             "import sys; sys.stdout.buffer.write(b'out\\n'); sys.stderr.buffer.write(b'err'); sys.exit(3)"]
         )
         self.assertEqual((code, out, err), (3, "out\n", "err"))
 
