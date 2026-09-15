@@ -15,6 +15,9 @@ things.
   Google Chrome installed and can stop working whenever Douyin changes its page,
   signature or media delivery. Successful runs on sample videos show that the
   path works today, not that it will keep working.
+- **Live streams are not analysed.** A job needs a complete recording, so live
+  and scheduled streams are refused before any media is downloaded. Submit the
+  replay once it is available.
 - **Cookie sessions expire.** A fresh signed-in browser session or narrowly
   exported cookie file can be required. ClipMind does not bypass platform
   access controls.

@@ -7,6 +7,13 @@ are documented separately and do not have to equal the application version.
 
 ### Changed
 
+- Live and scheduled streams are refused before any of their media is
+  downloaded, with `live_stream_unsupported` and an action to submit the replay
+  once the stream has ended. yt-dlp checks this after reading metadata, in the
+  same call, so the refusal costs no media bytes or extra request, and
+  **Process anyway** does not bypass it. Recordings of finished streams are
+  unaffected. Capturing part of a live stream is not supported.
+
 - Apple Vision OCR works again on macOS 27. Creating Vision's image request
   with an empty Python dict as its options raises `NSInvalidArgumentException`
   there (observed with PyObjC 12.2.2), so OCR failed on every frame. ClipMind now

@@ -66,6 +66,7 @@ class AttemptFailure:
 # Most actionable first. This is the order the previous if-chain applied, kept
 # so classification does not shift while it gains structure.
 _RANKED_CODES = (
+    "live_stream_unsupported",
     "private_video",
     "source_metadata_unavailable",
     "cookies_stale",
@@ -79,6 +80,10 @@ _RANK = {code: index for index, code in enumerate(_RANKED_CODES)}
 
 def _message_for(code: str, platform: str) -> tuple[str, str]:
     return {
+        "live_stream_unsupported": (
+            "This is a live or scheduled stream, not a finished video.",
+            "ClipMind analyses complete recordings. Submit the replay link after the stream has ended.",
+        ),
         "source_metadata_unavailable": (
             "抖音视频信息获取失败，尚未取得视频文件。",
             "浏览器可播放不代表当前下载器能够获取。此错误不能确认 cookies 过期，请勿反复刷新登录或重复提交。",
@@ -116,6 +121,15 @@ def classify_generic(failure: AttemptFailure) -> str | None:
     """Transport and tool-level classification every adapter shares."""
     reason = failure.reason
     lowered = reason.lower()
+    # Scheduled streams and premieres fail during extraction, before any
+    # metadata reaches the filter below, with the platform's own wording.
+    if (
+        "live event will begin" in lowered
+        or "live event is scheduled" in lowered
+        or "live event has not yet started" in lowered
+        or "premieres in" in lowered
+    ):
+        return "live_stream_unsupported"
     if (
         "private video" in lowered
         or "video is private" in lowered
@@ -218,6 +232,18 @@ def _describe(source: str) -> str:
     return {"-": "no cookies", "file": "cookie file"}.get(source, f"{source} cookies")
 
 
+# An analysis job needs an end: a live stream would download until it stopped,
+# holding a queue slot the whole time. yt-dlp evaluates this after reading
+# metadata and before choosing formats, so a live or scheduled stream costs no
+# media bytes and no extra request. `!=?` lets sources that report no status
+# through.
+LIVE_FILTER = "!is_live & live_status !=? is_upcoming"
+
+
+def _is_live(info: dict) -> bool:
+    return info.get("is_live") is True or info.get("live_status") in {"is_live", "is_upcoming"}
+
+
 async def _run(args: list[str], *, cwd: Path | None = None) -> tuple[int, str, str]:
     code, out, err = await subprocesses.run(args, cwd=cwd)
     return code, out.decode(errors="replace"), err.decode(errors="replace")
@@ -273,6 +299,7 @@ class CookieRung:
                 "--no-progress",
                 "--no-simulate",
                 "--dump-single-json",
+                "--match-filter", LIVE_FILTER,
                 "-f", config.fetch_format,
                 "-o", str(root / "source.%(ext)s"),
                 *cookie_args,
@@ -290,6 +317,14 @@ class CookieRung:
             info = json.loads(out.splitlines()[-1])
         except json.JSONDecodeError as exc:
             return None, self._failed(f"bad metadata ({exc})")
+
+        if _is_live(info):
+            # A property of the source, not of this rung: every other rung would
+            # find the same stream, and the filter has kept its media off disk.
+            raise FetchError(
+                "live_stream_unsupported",
+                *_message_for("live_stream_unsupported", "source"),
+            )
 
         path = _downloaded_path(info, root)
         if path is None:
