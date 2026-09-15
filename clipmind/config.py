@@ -108,6 +108,13 @@ class Settings:
     max_asr: int = 1  # single GPU
     max_ocr: int = 2
 
+    # --- browser-assisted acquisition ---
+    # Douyin signs its detail endpoint from inside the page, so no plain client
+    # can reach it. A real browser is the only way to learn the address; the
+    # media itself then needs nothing special.
+    douyin_browser_enabled: bool = True
+    douyin_browser_timeout: float = 90.0
+
     # --- probing ---
     # A probe answers "what is this" without acquiring it, so it gets a wall
     # clock it cannot exceed rather than the patience acquisition is allowed.
@@ -171,6 +178,8 @@ class Settings:
             max_fetch=_int("CLIPMIND_MAX_FETCH", 4),
             max_asr=_int("CLIPMIND_MAX_ASR", 1),
             max_ocr=_int("CLIPMIND_MAX_OCR", 2),
+            douyin_browser_enabled=os.getenv("CLIPMIND_DOUYIN_BROWSER", "1") != "0",
+            douyin_browser_timeout=_float("CLIPMIND_DOUYIN_BROWSER_TIMEOUT", 90.0),
             probe_timeout=_float("CLIPMIND_PROBE_TIMEOUT", 20.0),
             probe_socket_timeout=_float("CLIPMIND_PROBE_SOCKET_TIMEOUT", 8.0),
             probe_max_bytes=_int("CLIPMIND_PROBE_MAX_BYTES", 32 * 1024 * 1024),

@@ -2,6 +2,7 @@ fastapi>=0.115
 uvicorn[standard]>=0.32
 python-dotenv>=1.0
 yt-dlp>=2025.1.1
+playwright>=1.49
 pillow>=10.4
 numpy>=2.0
 pyobjc-framework-Vision>=10.3; sys_platform == "darwin"

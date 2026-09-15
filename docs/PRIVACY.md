@@ -104,6 +104,34 @@ into an Evidence Pack. Safari is intentionally not a default fallback because
 its protected cookie container would otherwise encourage misleading Full Disk
 Access guidance.
 
+## Douyin browser session
+
+Douyin builds the signature its video-detail endpoint requires inside its own
+page, so yt-dlp cannot reach that endpoint with or without cookies. After the
+cookie attempts above fail for a Douyin link, ClipMind tries one more strategy:
+
+- it starts the locally installed Google Chrome through Playwright with a
+  **new temporary, signed-out profile** created for that run. Your normal Chrome
+  profile, its cookies, logins and extensions are not used or modified;
+- the window is placed off screen rather than hidden, because Douyin refuses
+  headless browsers. Chrome may still appear briefly in the Dock or taskbar;
+- the browser opens `https://www.douyin.com/` for a few seconds so the site's
+  own scripts run, then opens the submitted link, from your network connection;
+- it waits up to `CLIPMIND_DOUYIN_BROWSER_TIMEOUT` (90 seconds) for the page to
+  describe the requested video. A response describing a different video, such
+  as a recommended one, is refused rather than processed;
+- the browser is closed as soon as the media address is known. The media is then
+  downloaded without cookies into the job's `acquisition/` directory and removed
+  by the same cleanup contract as any other acquired media.
+
+URL probes never launch this browser. When Google Chrome or Playwright is not
+available, the strategy reports that and the job fails with the usual
+acquisition diagnosis. To turn the strategy off:
+
+```dotenv
+CLIPMIND_DOUYIN_BROWSER=0
+```
+
 ## Local uploads and files
 
 The browser upload endpoint streams the selected file into a randomized private

@@ -19,6 +19,17 @@ are documented separately and do not have to equal the application version.
   to cleanup. Previously they kept running and could write into a directory
   being cleaned up. On Windows only the direct child is stopped.
 
+- Douyin links that yt-dlp cannot acquire now fall back to a temporary,
+  signed-out Google Chrome session driven by Playwright. The page is only
+  trusted for the requested video (a different or recommended video is refused),
+  the browser closes as soon as the media address is known, and the media follows
+  the normal acquisition cleanup. `douyin.com/user/self?modal_id=…` links keep
+  their video identity, and yt-dlp's "fresh cookies" message for Douyin is
+  reported as unavailable metadata rather than expired cookies. Probes never
+  launch the browser; `CLIPMIND_DOUYIN_BROWSER=0` turns it off. Playwright is
+  now a dependency: the lockfile adds Playwright and pyee, and the already
+  locked greenlet 3.5.5 now installs on every platform, including macOS arm64.
+
 - Inbox failed/interrupted tasks and Library versions support individual selection,
   select-all and confirmed bulk removal. Removed job directories are retained in
   the library's `.trash` (manual recovery), excluded from search and restart recovery.
