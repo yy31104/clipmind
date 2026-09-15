@@ -7,6 +7,12 @@ are documented separately and do not have to equal the application version.
 
 ### Changed
 
+- Apple Vision OCR works again on macOS 27. Creating Vision's image request
+  with an empty Python dict as its options raises `NSInvalidArgumentException`
+  there (observed with PyObjC 12.2.2), so OCR failed on every frame. ClipMind now
+  passes `None` for Vision's default options; recognition settings and results
+  are otherwise unchanged.
+
 - Bilibili BV/av request identities now include explicit part numbers. Cache
   reuse rejects ambiguous part queries and legacy packs without matching part
   identity, including same-URL matches. Identical canonical URLs can reuse
