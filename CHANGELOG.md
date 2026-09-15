@@ -7,6 +7,14 @@ are documented separately and do not have to equal the application version.
 
 ### Changed
 
+- Reading a result starts from the evidence. Each search hit is its own link to
+  that moment: an on-screen-text hit selects the matching screenshot, a speech
+  hit the matching transcript line, and the screenshot on screen at that time
+  opens beside its OCR text and the speech within 10 seconds. Clicking any
+  screenshot shows the same context. The overview leads with 复制全文转写,
+  导出笔记（Markdown）, 下载全部资料（含截图） and 打开原视频 (only for web
+  sources); completeness, JSON resources and MCP moved under 开发者信息.
+
 - Live and scheduled streams are refused before any of their media is
   downloaded, with `live_stream_unsupported` and an action to submit the replay
   once the stream has ended. yt-dlp checks this after reading metadata, in the

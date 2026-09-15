@@ -11,6 +11,7 @@ const state = {
   searchResults: [],
   selected: { library: new Set(), failed: new Set() },
   removing: false,
+  detail: null,
 };
 
 function selectionControl(job, scope, label = "选择") {
@@ -263,6 +264,10 @@ function wireDynamicActions() {
   for (const element of document.querySelectorAll("[data-open]")) {
     element.onclick = () => openDetail(element.dataset.open);
   }
+  for (const element of document.querySelectorAll("[data-jump]")) {
+    const at = element.dataset.at === "" ? NaN : Number(element.dataset.at);
+    element.onclick = () => openDetail(element.dataset.jump, { kind: element.dataset.kind, at });
+  }
   for (const element of document.querySelectorAll("[data-reprocess]")) {
     element.onclick = () => reprocess(element.dataset.reprocess, false);
   }
@@ -359,7 +364,85 @@ function frameBadges(frame) {
   return `${contentBadge(frame)}${unspokenBadge(frame)}`;
 }
 
-async function openDetail(id) {
+// Speech this close to a screenshot is shown beside it: long enough to cover
+// what is being said while a slide is up, short enough to stay about it.
+const SPEECH_WINDOW_SECONDS = 10;
+
+function coveringIndex(times, at) {
+  // What is on screen, or being said, at `at`: the last item started by then.
+  if (!times.length) return -1;
+  let found = 0;
+  times.forEach((time, index) => {
+    if (Number(time) <= at + 1e-6) found = index;
+  });
+  return found;
+}
+
+function nearbySpeech(segments, at, window = SPEECH_WINDOW_SECONDS) {
+  return segments.filter((segment) => {
+    const start = Number(segment.start) || 0;
+    const end = Number(segment.end ?? segment.start) || start;
+    return start <= at + window && end >= at - window;
+  });
+}
+
+function stateAt(detail, at) {
+  // Canonical visual states cover the whole video; previews are only a subset.
+  const canonical = detail.states.length > 0;
+  const items = canonical ? detail.states : detail.frames;
+  const index = coveringIndex(items.map((item) => item.timestamp), at);
+  return index < 0 ? null : { item: items[index], collection: canonical ? "visual_states/all" : null };
+}
+
+function focusRow(selector, at) {
+  for (const row of document.querySelectorAll(".focus")) row.classList.remove("focus");
+  const rows = [...document.querySelectorAll(selector)];
+  const index = coveringIndex(rows.map((row) => row.dataset.at), at);
+  if (index < 0) return null;
+  rows[index].classList.add("focus");
+  rows[index].scrollIntoView?.({ block: "center" });
+  return rows[index];
+}
+
+function openFrameContext(at) {
+  const detail = state.detail;
+  const found = detail && stateAt(detail, at);
+  if (!found) return;
+  const { item, collection } = found;
+  const label = item.clock || clock(item.timestamp);
+  $("frame-dialog-time").textContent = label;
+  $("frame-dialog-image").src = frameUrl(detail.job.id, item, detail.modernFrames, collection);
+  $("frame-dialog-image").alt = `${label} 的画面`;
+  $("frame-dialog-ocr").innerHTML = item.text
+    ? `<p class="frame-dialog-text">${esc(item.text)}</p>`
+    : `<p class="hint">这个画面没有识别到文字。</p>`;
+  const speech = nearbySpeech(detail.job.transcript || [], at);
+  const current = speech.findIndex((segment) =>
+    Number(segment.start) <= at && at <= Number(segment.end ?? segment.start));
+  $("frame-dialog-speech").innerHTML = speech.length
+    ? speech.map((segment, index) => `<div class="line${index === current ? " current" : ""}"><span class="ts">${clock(segment.start)}</span><span>${esc(segment.text)}</span></div>`).join("")
+    : `<p class="hint">前后 ${SPEECH_WINDOW_SECONDS} 秒内没有讲话。</p>`;
+  const dialog = $("frame-dialog");
+  $("frame-dialog-transcript").onclick = () => {
+    dialog.close();
+    selectTab("transcript");
+    focusRow("#pane-transcript .line[data-at]", at);
+  };
+  if (!dialog.open) dialog.showModal();
+}
+
+function showEvidenceAt(kind, at) {
+  if (kind === "ocr") {
+    selectTab("frames");
+    focusRow("#pane-frames .frame[data-at]", at);
+  } else {
+    selectTab("transcript");
+    focusRow("#pane-transcript .line[data-at]", at);
+  }
+  openFrameContext(at);
+}
+
+async function openDetail(id, focus = null) {
   const response = await fetch(`/api/jobs/${id}`);
   if (!response.ok) return;
   const job = await response.json();
@@ -369,36 +452,58 @@ async function openDetail(id) {
   const metadata = job.result || {};
   const modernFrames = Array.isArray(metadata.visual_preview);
   const frames = modernFrames ? metadata.visual_preview : (metadata.keyframes || []);
+  state.detail = {
+    job,
+    frames,
+    modernFrames,
+    states: modernFrames && Array.isArray(metadata.visual_states)
+      ? metadata.visual_states.filter((item) => item && item.file)
+      : [],
+  };
+  const sourceUrl = /^https?:\/\//i.test(metadata.url || "") ? metadata.url : "";
   $("d-title").textContent = job.title;
   $("d-meta").innerHTML = [
     metadata.platform ? esc(metadata.platform) : null,
     metadata.uploader ? esc(metadata.uploader) : null,
     metadata.duration ? clock(metadata.duration) : null,
     `${frames.length} 个预览画面`,
-    metadata.url ? `<a href="${esc(metadata.url)}" target="_blank" rel="noopener">打开原视频</a>` : null,
+    sourceUrl ? `<a href="${esc(sourceUrl)}" target="_blank" rel="noopener">打开原视频</a>` : null,
   ].filter(Boolean).join("<span>/</span>");
 
   if (metadata.evidence_pack) {
     const complete = metadata.evidence_pack.completeness || {};
     const preflight = metadata.preflight || {};
-    $("pane-summary").innerHTML = `<div class="pack-overview">
-      <div><span>Schema</span><strong>${esc(metadata.evidence_pack.schema?.version || "")}</strong></div>
-      <div><span>转写</span><strong>${esc(complete.transcript || "unknown")}</strong></div>
-      <div><span>OCR</span><strong>${esc(complete.ocr || "unknown")}</strong></div>
-      <div><span>视觉状态</span><strong>${esc(complete.visual_states || "unknown")}</strong></div>
-    </div>
-    <p>完整时间戳转写、OCR、视觉时间线和 canonical 画面已经写入稳定文件契约。</p>
-    ${preflight.estimated_canonical_states !== undefined
-      ? `<p class="hint">预检估算 ${preflight.estimated_canonical_states} 个状态，${preflight.estimated_pack_mb} MB。</p>`
-      : ""}
+    $("pane-summary").innerHTML = `<p class="summary-lead">已保存 ${(job.transcript || []).length} 段讲话和 ${frames.length} 张讲解截图。点开截图，可以同时看到画面文字和附近的讲话。</p>
     <div class="actions">
-      <a class="secondary action" href="/api/jobs/${job.id}/evidence.md" download>下载 Markdown</a>
-      <a class="secondary action" href="/api/jobs/${job.id}/evidence.zip" download>导出完整 ZIP</a>
-      <button class="secondary action" id="copy-transcript">复制转写</button>
+      <button class="primary action" id="copy-transcript">复制全文转写</button>
+      <a class="secondary action" href="/api/jobs/${job.id}/evidence.md" download>导出笔记（Markdown）</a>
+      <a class="secondary action" href="/api/jobs/${job.id}/evidence.zip" download>下载全部资料（含截图）</a>
+      ${sourceUrl ? `<a class="secondary action" href="${esc(sourceUrl)}" target="_blank" rel="noopener">打开原视频</a>` : ""}
+    </div>
+    <div class="actions quiet-actions">
       <button class="secondary action" id="reprocess">重新处理</button>
       ${state.kbInbox ? `<button class="secondary action" id="send-kb">发送到知识库</button>` : ""}
     </div>
-    <p id="handoff-status" class="hint"></p>`;
+    <p id="handoff-status" class="hint"></p>
+    <details class="developer">
+      <summary>开发者信息</summary>
+      <div class="pack-overview">
+        <div><span>Schema</span><strong>${esc(metadata.evidence_pack.schema?.version || "")}</strong></div>
+        <div><span>转写</span><strong>${esc(complete.transcript || "unknown")}</strong></div>
+        <div><span>OCR</span><strong>${esc(complete.ocr || "unknown")}</strong></div>
+        <div><span>视觉状态</span><strong>${esc(complete.visual_states || "unknown")}</strong></div>
+      </div>
+      ${preflight.estimated_canonical_states !== undefined
+        ? `<p class="hint">预检估算 ${preflight.estimated_canonical_states} 个状态，${preflight.estimated_pack_mb} MB。</p>`
+        : ""}
+      <ul class="developer-links">
+        <li><a href="/api/packs/${job.id}" target="_blank" rel="noopener">Evidence Pack 摘要（JSON）</a></li>
+        <li><a href="/api/packs/${job.id}/transcript" target="_blank" rel="noopener">转写（JSON）</a></li>
+        <li><a href="/api/packs/${job.id}/ocr" target="_blank" rel="noopener">画面文字（JSON）</a></li>
+        <li><a href="/api/packs/${job.id}/timeline" target="_blank" rel="noopener">视觉时间线（JSON）</a></li>
+      </ul>
+      <p class="hint">Agent 可以运行 <code>clipmind mcp</code>，通过 stdio MCP 读取整个本地库。</p>
+    </details>`;
     $("reprocess").onclick = () => reprocess(job.id, false);
     $("copy-transcript").onclick = () => copyTranscript(job.transcript || []);
     if (state.kbInbox) $("send-kb").onclick = () => sendToKnowledgeBase(job.id);
@@ -408,18 +513,24 @@ async function openDetail(id) {
   }
 
   $("pane-frames").innerHTML = frames.map((frame) => `
-    <article class="frame">
+    <article class="frame" data-at="${Number(frame.timestamp) || 0}">
       <div class="frame-cap"><span class="ts">${esc(frame.clock || clock(frame.timestamp))}</span>${frameBadges(frame)}</div>
-      <img loading="lazy" src="${frameUrl(job.id, frame, modernFrames)}" alt="${esc(frame.clock || clock(frame.timestamp))} 的视觉证据">
+      <button class="frame-open" data-context-at="${Number(frame.timestamp) || 0}" aria-label="查看 ${esc(frame.clock || clock(frame.timestamp))} 的画面文字和附近讲话">
+        <img loading="lazy" src="${frameUrl(job.id, frame, modernFrames)}" alt="${esc(frame.clock || clock(frame.timestamp))} 的视觉证据">
+      </button>
       ${frame.text ? `<div class="frame-ocr">${esc(frame.text)}</div>` : ""}
     </article>`).join("") || `<p class="hint">没有提取到可预览的画面证据。</p>`;
 
   $("pane-transcript").innerHTML = (job.transcript || []).length
-    ? job.transcript.map((segment) => `<div class="line"><span class="ts">${clock(segment.start)}</span><span>${esc(segment.text)}</span></div>`).join("")
+    ? job.transcript.map((segment) => `<div class="line" data-at="${Number(segment.start) || 0}"><span class="ts">${clock(segment.start)}</span><span>${esc(segment.text)}</span></div>`).join("")
     : `<p class="hint">这个媒体没有可转写的语音。${metadata.asr_error ? esc(` (${metadata.asr_error})`) : ""}</p>`;
 
   $("pane-timeline").innerHTML = timeline(job, frames, modernFrames);
-  selectTab("summary");
+  for (const element of document.querySelectorAll("[data-context-at]")) {
+    element.onclick = () => openFrameContext(Number(element.dataset.contextAt));
+  }
+  if (focus && Number.isFinite(focus.at)) showEvidenceAt(focus.kind, focus.at);
+  else selectTab("summary");
 }
 
 function timeline(job, frames, modernFrames) {
@@ -445,7 +556,9 @@ function timeline(job, frames, modernFrames) {
     return `<article class="timeline-row visual-row">
       <time>${clock(event.at)}</time><div>
         <span class="kind">画面</span>${frameBadges(frame)}
-        <img loading="lazy" src="${frameUrl(job.id, frame, modernFrames)}" alt="${clock(event.at)} 的视觉证据">
+        <button class="frame-open" data-context-at="${event.at}" aria-label="查看 ${clock(event.at)} 的画面文字和附近讲话">
+          <img loading="lazy" src="${frameUrl(job.id, frame, modernFrames)}" alt="${clock(event.at)} 的视觉证据">
+        </button>
         ${frame.text ? `<p>${esc(frame.text)}</p>` : ""}
       </div>
     </article>`;
@@ -646,12 +759,18 @@ function renderSearchResults() {
     container.innerHTML = `<div class="empty compact-empty"><strong>没有匹配的证据</strong><p>尝试标题、说过的话或画面中的文字。</p></div>`;
     return;
   }
-  container.innerHTML = state.searchResults.map((result) => `<article>
-    <button class="search-result" data-open="${result.job_id}">
+  // Each hit is its own button: it leads to that moment, not just the video.
+  container.innerHTML = state.searchResults.map((result) => `<article class="search-card">
+    <button class="search-result" data-open="${esc(result.job_id)}">
       <span class="search-title">${esc(result.title)}</span>
       <span class="search-platform">${esc(result.platform)}</span>
-      ${result.hits.map((hit) => `<span class="search-hit"><time>${clock(hit.timestamp)}</time><span>${esc(hit.text)}</span></span>`).join("")}
-    </button><div class="pack-selection">${(visiblePackGroups().find((group) => group.some((job) => job.id === result.job_id)) || [])
+    </button>
+    ${result.hits.map((hit) => {
+      const at = hit.timestamp === null || hit.timestamp === undefined ? "" : Number(hit.timestamp);
+      return `<button class="search-hit" data-jump="${esc(result.job_id)}" data-kind="${esc(hit.kind)}" data-at="${at}">
+        <time>${clock(hit.timestamp)}</time><span>${esc(hit.text)}</span><span class="hit-kind">${hit.kind === "ocr" ? "画面文字" : "讲话"}</span>
+      </button>`;
+    }).join("")}<div class="pack-selection">${(visiblePackGroups().find((group) => group.some((job) => job.id === result.job_id)) || [])
       .map((job, index) => selectionControl(job, "library", `${index ? "旧版本" : "当前版本"} · ${dateLabel(job.finished_at || job.created_at)}`)).join("")}</div></article>`).join("");
   wireDynamicActions();
 }

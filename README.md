@@ -121,8 +121,9 @@ GPU drivers, or model weights.
 ### Web app
 
 Paste one or more links, or drop local media. Inbox shows live jobs, Library
-searches complete packs, and the detail view exposes Overview, Visuals,
-Transcript, and Evidence. Over-budget work is refused with an estimate; only an
+searches complete packs. Each search hit opens its video at that moment, with
+the screenshot on screen, its OCR text and the nearby speech side by side;
+clicking any screenshot shows the same context. Over-budget work is refused with an estimate; only an
 explicit **Process anyway** starts the full untruncated job.
 
 To tidy the list, expand unfinished tasks or open Library, select individual

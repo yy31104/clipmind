@@ -6,7 +6,7 @@
 <meta name="description" content="Local-first multimodal video ingestion for humans and AI agents.">
 <title>ClipMind</title>
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="/static/style.css?v=4">
+<link rel="stylesheet" href="/static/style.css?v=5">
 </head>
 <body>
 <div id="app">
@@ -109,6 +109,26 @@
     <section class="pane" id="pane-transcript" role="tabpanel" hidden></section>
   </main>
 </div>
+<dialog id="frame-dialog" class="frame-dialog" aria-labelledby="frame-dialog-time">
+  <form method="dialog" class="frame-dialog-close">
+    <button class="secondary compact" value="close">关闭</button>
+  </form>
+  <div class="frame-dialog-body">
+    <img id="frame-dialog-image" alt="">
+    <aside>
+      <h2 id="frame-dialog-time"></h2>
+      <button class="secondary compact" id="frame-dialog-transcript">在转写中查看</button>
+      <section>
+        <h3>画面文字</h3>
+        <div id="frame-dialog-ocr"></div>
+      </section>
+      <section>
+        <h3>附近的讲话</h3>
+        <div id="frame-dialog-speech"></div>
+      </section>
+    </aside>
+  </div>
+</dialog>
 <dialog id="remove-dialog" aria-labelledby="remove-heading">
   <form method="dialog">
     <h2 id="remove-heading">删除所选</h2>
@@ -120,6 +140,6 @@
     </div>
   </form>
 </dialog>
-<script src="/static/app.js?v=4"></script>
+<script src="/static/app.js?v=5"></script>
 </body>
 </html>
