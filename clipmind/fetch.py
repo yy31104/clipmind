@@ -23,7 +23,6 @@ import logging
 import math
 import os
 import shutil
-import signal
 import sys
 import tempfile
 import time
@@ -31,7 +30,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import quote, urlsplit
 
-from . import acquisition
+from . import acquisition, subprocesses
 from .config import Settings, settings
 from .sources import MediaAsset, SourceError, adapter_for
 
@@ -214,14 +213,8 @@ def _describe(source: str) -> str:
 
 
 async def _run(args: list[str], *, cwd: Path | None = None) -> tuple[int, str, str]:
-    proc = await asyncio.create_subprocess_exec(
-        *args,
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE,
-        cwd=str(cwd) if cwd is not None else None,
-    )
-    out, err = await proc.communicate()
-    return proc.returncode or 0, out.decode(errors="replace"), err.decode(errors="replace")
+    code, out, err = await subprocesses.run(args, cwd=cwd)
+    return code, out.decode(errors="replace"), err.decode(errors="replace")
 
 
 @dataclass(frozen=True)
@@ -470,20 +463,7 @@ async def _run_budgeted(
     total = 0
 
     def stop() -> None:
-        try:
-            if os.name == "posix":
-                os.killpg(proc.pid, signal.SIGKILL)
-            else:
-                proc.kill()
-        except PermissionError:
-            # Some macOS execution policies deny signalling a process group
-            # that has already exited while its buffered output is draining.
-            try:
-                proc.kill()
-            except ProcessLookupError:
-                pass
-        except ProcessLookupError:
-            pass
+        subprocesses.kill(proc)
 
     async def read(stream) -> bytes:
         nonlocal overflowed, total

@@ -7,6 +7,12 @@ are documented separately and do not have to equal the application version.
 
 ### Changed
 
+- Stopping a job now stops the tools it started. yt-dlp and FFmpeg run in their
+  own process group and are killed, together with their children (such as
+  yt-dlp's FFmpeg merge), before cancellation or application shutdown proceeds
+  to cleanup. Previously they kept running and could write into a directory
+  being cleaned up. On Windows only the direct child is stopped.
+
 - Bilibili BV/av request identities now include explicit part numbers. Cache
   reuse rejects ambiguous part queries and legacy packs without matching part
   identity, including same-URL matches. Identical canonical URLs can reuse
