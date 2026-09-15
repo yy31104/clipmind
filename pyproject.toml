@@ -24,6 +24,10 @@ dependencies = [
   "uvicorn[standard]>=0.32,<1",
   "python-dotenv>=1,<2",
   "yt-dlp>=2025.1.1",
+  # Douyin signs its metadata endpoint from inside the page, so acquiring it
+  # needs a real browser. Playwright drives an already-installed Chrome; when
+  # no browser is present the rung reports that and the ladder continues.
+  "playwright>=1.49",
   "pillow>=10.4,<13",
   "numpy>=2,<3",
   "pyobjc-framework-Vision>=10.3; sys_platform == 'darwin'",

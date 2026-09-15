@@ -33,6 +33,7 @@ from urllib.parse import quote, urlsplit
 from . import acquisition, subprocesses
 from .config import Settings, settings
 from .sources import MediaAsset, SourceError, adapter_for
+from .sources import douyin_browser
 
 
 logger = logging.getLogger(__name__)
@@ -66,6 +67,7 @@ class AttemptFailure:
 # so classification does not shift while it gains structure.
 _RANKED_CODES = (
     "private_video",
+    "source_metadata_unavailable",
     "cookies_stale",
     "login_required",
     "cookies_unavailable",
@@ -77,6 +79,10 @@ _RANK = {code: index for index, code in enumerate(_RANKED_CODES)}
 
 def _message_for(code: str, platform: str) -> tuple[str, str]:
     return {
+        "source_metadata_unavailable": (
+            "抖音视频信息获取失败，尚未取得视频文件。",
+            "浏览器可播放不代表当前下载器能够获取。此错误不能确认 cookies 过期，请勿反复刷新登录或重复提交。",
+        ),
         "private_video": (
             f"This {platform} video is private.",
             "Use a public video or change its visibility, then retry.",
@@ -291,6 +297,44 @@ class CookieRung:
         return AcquiredMedia(path=path, info=info), None
 
 
+@dataclass(frozen=True)
+class DouyinBrowserRung:
+    """Last rung for Douyin: let the page name its own address, then fetch it.
+
+    Not a retry of the ladder above it. Douyin signs its detail endpoint from
+    inside the page, so no cookie source can reach it -- yt-dlp's own extractor
+    leaves that signature as a TODO. This rung is the only one that can succeed,
+    and it holds a browser open only until the address is known. The media then
+    lands in the acquisition-owned directory like any other rung's, so the same
+    cleanup contract removes it.
+    """
+
+    @property
+    def key(self) -> str:
+        return "douyin-browser"
+
+    def describe(self) -> str:
+        return "browser session"
+
+    def _failed(self, reason: str) -> AttemptFailure:
+        return AttemptFailure(strategy=self.key, label=self.describe(), reason=reason)
+
+    async def acquire(
+        self, url: str, root: Path, config: Settings
+    ) -> tuple[AcquiredMedia | None, AttemptFailure | None]:
+        root = root.resolve()
+        try:
+            resolved = await douyin_browser.resolve(
+                url, timeout=config.douyin_browser_timeout
+            )
+            media = await douyin_browser.download(resolved.urls, root / "source.mp4")
+        except douyin_browser.BrowserUnavailable as exc:
+            return None, self._failed(f"no usable browser: {exc}")
+        except douyin_browser.ResolveFailed as exc:
+            return None, self._failed(str(exc))
+        return AcquiredMedia(path=media, info=dict(resolved.info)), None
+
+
 class AcquisitionEngine:
     """Ordered strategies, plus a memory of which one last worked.
 
@@ -312,7 +356,7 @@ class AcquisitionEngine:
                 return f"host:{host}"
         return f"adapter:{adapter.name}"
 
-    def strategies(self, key: str, config: Settings) -> list[CookieRung]:
+    def strategies(self, key: str, config: Settings) -> list:
         sources = list(config.cookie_sources)
         if config.cookie_file:
             sources.append("file")
@@ -320,7 +364,13 @@ class AcquisitionEngine:
         if remembered and remembered in sources:
             sources.remove(remembered)
             sources.insert(0, remembered)
-        return [CookieRung(source) for source in sources]
+        rungs: list = [CookieRung(source) for source in sources]
+        # Douyin's endpoint is unreachable without a browser, so this is the rung
+        # that decides the outcome rather than a fallback for flakiness. It stays
+        # last so a cheaper rung still wins if Douyin ever opens the endpoint up.
+        if key == "adapter:douyin" and config.douyin_browser_enabled:
+            rungs.append(DouyinBrowserRung())
+        return rungs
 
     async def acquire(
         self,
@@ -599,6 +649,11 @@ async def _probe_strategies(
                            network_requests=requests_used, **values)
 
     for strategy in _engine.strategies(_engine.affinity_key(url, adapter), config):
+        # A rung that needs a browser is an acquisition strategy, not a way to
+        # answer "what is this" inside a probe budget. Probing stays cheap, and
+        # never launches a browser to decide whether one would have been needed.
+        if not isinstance(strategy, CookieRung):
+            continue
         remaining = deadline - time.monotonic()
         if remaining <= 0:
             break

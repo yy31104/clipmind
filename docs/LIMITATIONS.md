@@ -11,6 +11,10 @@ things.
   account-gated, or upstream-changed media may still fail in yt-dlp. The generic
   URL fallback and third-party adapters are extension paths, not verified-source
   claims.
+- **The Douyin browser session follows Douyin's current page behavior.** It needs
+  Google Chrome installed and can stop working whenever Douyin changes its page,
+  signature or media delivery. Successful runs on sample videos show that the
+  path works today, not that it will keep working.
 - **Cookie sessions expire.** A fresh signed-in browser session or narrowly
   exported cookie file can be required. ClipMind does not bypass platform
   access controls.

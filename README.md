@@ -55,7 +55,7 @@ preserves the source evidence first:
 | Input | Built-in adapter | Acquisition note |
 | --- | --- | --- |
 | YouTube / Shorts | `youtube` | yt-dlp; cookies are tried only as configured |
-| Douyin | `douyin` | some media requires a current signed-in session |
+| Douyin | `douyin` | yt-dlp first, then a temporary signed-out Chrome session when Douyin refuses it ([details](docs/PRIVACY.md#douyin-browser-session)); account-gated media may still fail |
 | MP4, MOV, MKV, WebM, AVI, audio, and other FFmpeg media | `local-file` | copied without modification; shared provenance omits the original directory |
 | Third-party packages | `clipmind.sources` entry point | see [Source adapters](docs/SOURCE_ADAPTERS.md) |
 
