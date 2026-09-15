@@ -7,6 +7,12 @@ are documented separately and do not have to equal the application version.
 
 ### Changed
 
+- Apple Vision OCR works again on macOS 27. Creating Vision's image request
+  with an empty Python dict as its options raises `NSInvalidArgumentException`
+  there (observed with PyObjC 12.2.2), so OCR failed on every frame. ClipMind now
+  passes `None` for Vision's default options; recognition settings and results
+  are otherwise unchanged.
+
 - Stopping a job now stops the tools it started. yt-dlp and FFmpeg run in their
   own process group and are killed, together with their children (such as
   yt-dlp's FFmpeg merge), before cancellation or application shutdown proceeds
