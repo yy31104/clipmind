@@ -184,6 +184,31 @@ class JobStore:
             return job
         return None
 
+    def remove(self, job_id: str) -> None:
+        """Remove a terminal job from the library, retaining its recoverable files."""
+        job = self.jobs.get(job_id)
+        if job is None:
+            raise KeyError(job_id)
+        if job.status not in {"done", "error", "interrupted"}:
+            raise ValueError("正在处理或排队的任务不能删除，请等待任务结束。")
+        # Remove derived rows first: a crash before the rename is repaired by
+        # normal startup indexing; a crash after it cannot resurrect the pack.
+        self.index.remove(job_id)
+        try:
+            self.storage.move_to_trash(job_id)
+        except (OSError, ValueError):
+            if job.status == "done":
+                self._sync_index(job)
+            raise
+        del self.jobs[job_id]
+        for queue in list(self._subscribers):
+            while True:
+                try:
+                    queue.get_nowait()
+                except asyncio.QueueEmpty:
+                    break
+            queue.put_nowait({"type": "resync"})
+
     def _schedule(self, job: Job) -> None:
         task = asyncio.create_task(self._run(job))
         self._tasks.add(task)
