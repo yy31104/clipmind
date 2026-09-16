@@ -236,7 +236,22 @@ function render() {
   $("loading").hidden = true;
   $("empty").hidden = jobs.length > 0 || Boolean(state.searchQuery);
   if (state.searchQuery) renderSearchResults();
+  markClampedTitles();
   wireDynamicActions();
+}
+
+function markClampedTitles() {
+  // Only a title that is really cut off fades; a short one ends cleanly.
+  for (const title of document.querySelectorAll(".card-title")) {
+    title.classList.toggle("is-clamped", title.scrollHeight > title.clientHeight + 1);
+  }
+}
+
+// Transcripts and libraries get long; the way back up should not be a scroll.
+const BACK_TO_TOP_AFTER_PX = 600;
+
+function updateBackToTop() {
+  $("back-to-top").hidden = window.scrollY < BACK_TO_TOP_AFTER_PX;
 }
 
 function wireDynamicActions() {
@@ -801,6 +816,13 @@ $("failed-toggle").onclick = () => {
   render();
 };
 $("back").onclick = () => setMode("library");
+$("back-to-top").onclick = () => {
+  const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+};
+window.addEventListener("scroll", updateBackToTop, { passive: true });
+window.addEventListener("resize", markClampedTitles);
+document.fonts?.ready?.then(markClampedTitles);
 $("home-btn").onclick = () => setMode("inbox");
 for (const item of document.querySelectorAll("[data-mode]")) {
   item.onclick = () => setMode(item.dataset.mode);

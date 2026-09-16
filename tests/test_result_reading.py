@@ -33,7 +33,8 @@ const rows = {};
 const row = (at) => ({ dataset: { at: String(at) }, classList: classes(), scrollIntoView() { this.scrolled = true; } });
 const context = vm.createContext({
   document: { getElementById: element, querySelectorAll: (selector) => rows[selector] || [] },
-  window: { scrollTo() {} }, navigator: {}, EventSource: class {},
+  window: { scrollY: 0, scrollTo(options) { this.scrolledTo = options; }, addEventListener() {}, matchMedia: () => ({ matches: false }) },
+  navigator: {}, EventSource: class {},
   fetch: () => new Promise(() => {}), setTimeout, clearTimeout, console,
 });
 vm.runInContext(fs.readFileSync(process.argv[1], 'utf8'), context);
@@ -150,6 +151,28 @@ class ResultReadingTests(unittest.TestCase):
   }
   assert.ok(!summary.includes('打开原视频') && !element('d-meta').innerHTML.includes('打开原视频'),
     'a local file has no source page to open');
+""")
+
+    def test_only_titles_that_overflow_fade(self) -> None:
+        self.run_app(r"""
+  const short = { scrollHeight: 38, clientHeight: 38, classList: classes() };
+  const long = { scrollHeight: 76, clientHeight: 38, classList: classes() };
+  rows['.card-title'] = [short, long];
+  run('markClampedTitles()');
+  assert.ok(!short.classList.contains('is-clamped'), 'a title that fits must not fade');
+  assert.ok(long.classList.contains('is-clamped'));
+""")
+
+    def test_back_to_top_appears_once_scrolled_and_returns_to_the_top(self) -> None:
+        self.run_app(r"""
+  context.window.scrollY = 0;
+  run('updateBackToTop()');
+  assert.equal(element('back-to-top').hidden, true);
+  context.window.scrollY = 900;
+  run('updateBackToTop()');
+  assert.equal(element('back-to-top').hidden, false);
+  element('back-to-top').onclick();
+  assert.equal(context.window.scrolledTo.top, 0);
 """)
 
 

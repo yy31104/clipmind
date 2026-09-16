@@ -21,7 +21,7 @@ const element = id => {
   return elements.get(id);
 };
 const context = vm.createContext({document: {getElementById: element, querySelectorAll: () => []},
-  EventSource: class {}, fetch: () => new Promise(()=>{}), setTimeout, clearTimeout, console});
+  window: {scrollY: 0, scrollTo(){}, addEventListener(){}}, EventSource: class {}, fetch: () => new Promise(()=>{}), setTimeout, clearTimeout, console});
 vm.runInContext(fs.readFileSync(process.argv[1], 'utf8'), context);
 // Stub rendering only; selection and removal are the actual production functions.
 vm.runInContext('render = () => {}; refreshJobs = async () => {};', context);

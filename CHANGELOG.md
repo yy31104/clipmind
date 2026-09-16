@@ -7,6 +7,11 @@ are documented separately and do not have to equal the application version.
 
 ### Changed
 
+- Library cards line up. Every title takes two lines, and a longer one fades
+  out at the end of its second line instead of stretching its card; the full
+  title is on the detail page. Cards in a row keep one height even when a pack
+  lists older versions. A 回到顶部 button appears once a page is scrolled down.
+
 - Reading a result starts from the evidence. Each search hit is its own link to
   that moment: an on-screen-text hit selects the matching screenshot, a speech
   hit the matching transcript line, and the screenshot on screen at that time
