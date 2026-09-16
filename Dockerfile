@@ -17,4 +17,7 @@ RUN python -m pip install --no-cache-dir .
 
 VOLUME ["/data"]
 EXPOSE 8420
+# 0.0.0.0 is the container's own interface; without it a published port cannot
+# reach the server. The server has no authentication, so publish it on the
+# host's loopback only: docker run -p 127.0.0.1:8420:8420 ...
 CMD ["clipmind", "serve", "--host", "0.0.0.0", "--port", "8420"]
