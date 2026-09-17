@@ -120,7 +120,7 @@ class EvidencePackTests(unittest.TestCase):
             )
             self.assertEqual(
                 manifest["configuration"]["preview_algorithm"],
-                "adaptive-scene-text-v1",
+                "adaptive-scene-text-v2",
             )
             self.assertEqual(manifest["completeness"]["transcript"], "complete")
             self.assertEqual(manifest["completeness"]["ocr"], "complete")

@@ -227,7 +227,7 @@ def _transcript_markdown(item: Media, transcript: Transcript) -> str:
     return "\n".join(lines) + "\n"
 
 
-def _evidence_markdown(
+def evidence_markdown(
     item: Media,
     frames: list[Frame],
     transcript: Transcript,
@@ -343,7 +343,7 @@ def write_pack(
     _write_jsonl(dest / "ocr.jsonl", ocr_records)
     _write_jsonl(dest / "visual_timeline.jsonl", timeline_records)
     (dest / "evidence.md").write_text(
-        _evidence_markdown(item, canonical, transcript, dest), encoding="utf-8"
+        evidence_markdown(item, canonical, transcript, dest), encoding="utf-8"
     )
 
     ocr_failures = sum(frame.ocr_warning is not None for frame in canonical)

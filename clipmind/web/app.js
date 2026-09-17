@@ -449,12 +449,46 @@ function openFrameContext(at) {
 function showEvidenceAt(kind, at) {
   if (kind === "ocr") {
     selectTab("frames");
+    if (state.detail?.states.length) {
+      state.detail.showAllFrames = true;
+      renderDetailFrames();
+    }
     focusRow("#pane-frames .frame[data-at]", at);
   } else {
     selectTab("transcript");
     focusRow("#pane-transcript .line[data-at]", at);
   }
   openFrameContext(at);
+}
+
+function renderDetailFrames() {
+  const detail = state.detail;
+  if (!detail) return;
+  const all = detail.showAllFrames && detail.states.length > 0;
+  const frames = all ? detail.states : detail.frames;
+  const collection = all ? "visual_states/all" : null;
+  const description = detail.states.length
+    ? `当前显示 ${all ? `全部 ${detail.states.length}` : `精选 ${detail.frames.length}`} 个画面。`
+    : "当前结果包没有独立的完整画面列表。";
+  $("pane-frames").innerHTML = `<div class="frames-toolbar"><span>${description}</span>
+    ${detail.states.length ? `<button class="secondary compact" id="toggle-all-frames">${all ? "只看精选" : `查看全部 ${detail.states.length} 个画面`}</button>` : ""}</div>`
+    + (frames.map((frame) => `
+    <article class="frame" data-at="${Number(frame.timestamp) || 0}">
+      <div class="frame-cap"><span class="ts">${esc(frame.clock || clock(frame.timestamp))}</span>${frameBadges(frame)}</div>
+      <button class="frame-open" data-context-at="${Number(frame.timestamp) || 0}" aria-label="查看 ${esc(frame.clock || clock(frame.timestamp))} 的画面文字和附近讲话">
+        <img loading="lazy" src="${frameUrl(detail.job.id, frame, detail.modernFrames, collection)}" alt="${esc(frame.clock || clock(frame.timestamp))} 的视觉证据">
+      </button>
+      ${frame.text ? `<div class="frame-ocr">${esc(frame.text)}</div>` : ""}
+    </article>`).join("") || `<p class="hint">没有提取到可查看的画面证据。</p>`);
+  if ($("toggle-all-frames")) {
+    $("toggle-all-frames").onclick = () => {
+      detail.showAllFrames = !detail.showAllFrames;
+      renderDetailFrames();
+    };
+  }
+  for (const element of document.querySelectorAll("#pane-frames [data-context-at]")) {
+    element.onclick = () => openFrameContext(Number(element.dataset.contextAt));
+  }
 }
 
 async function openDetail(id, focus = null) {
@@ -474,6 +508,7 @@ async function openDetail(id, focus = null) {
     states: modernFrames && Array.isArray(metadata.visual_states)
       ? metadata.visual_states.filter((item) => item && item.file)
       : [],
+    showAllFrames: false,
   };
   const sourceUrl = /^https?:\/\//i.test(metadata.url || "") ? metadata.url : "";
   $("d-title").textContent = job.title;
@@ -488,7 +523,10 @@ async function openDetail(id, focus = null) {
   if (metadata.evidence_pack) {
     const complete = metadata.evidence_pack.completeness || {};
     const preflight = metadata.preflight || {};
-    $("pane-summary").innerHTML = `<p class="summary-lead">已保存 ${(job.transcript || []).length} 段讲话和 ${frames.length} 张讲解截图。点开截图，可以同时看到画面文字和附近的讲话。</p>
+    const ocrWarning = complete.ocr && complete.ocr !== "complete"
+      ? `<aside class="quality-warning"><strong>画面文字未完整识别</strong><p>截图仍然完整保留，但搜索、笔记和精选画面可能遗漏屏幕文字。请先重启到最新版本，再重新处理；也可以使用本地 OCR 修复工具，只重新识别已有截图。</p></aside>`
+      : "";
+    $("pane-summary").innerHTML = `${ocrWarning}<p class="summary-lead">已保存 ${(job.transcript || []).length} 段讲话、${state.detail.states.length || frames.length} 个完整画面和 ${frames.length} 张精选预览。点开截图，可以同时看到画面文字和附近的讲话。</p>
     <div class="actions">
       <button class="primary action" id="copy-transcript">复制全文转写</button>
       <a class="secondary action" href="/api/jobs/${job.id}/evidence.md" download>导出笔记（Markdown）</a>
@@ -527,21 +565,14 @@ async function openDetail(id, focus = null) {
       + `<a class="secondary action" href="/api/jobs/${job.id}/note.md" download>下载旧版 Markdown</a>`;
   }
 
-  $("pane-frames").innerHTML = frames.map((frame) => `
-    <article class="frame" data-at="${Number(frame.timestamp) || 0}">
-      <div class="frame-cap"><span class="ts">${esc(frame.clock || clock(frame.timestamp))}</span>${frameBadges(frame)}</div>
-      <button class="frame-open" data-context-at="${Number(frame.timestamp) || 0}" aria-label="查看 ${esc(frame.clock || clock(frame.timestamp))} 的画面文字和附近讲话">
-        <img loading="lazy" src="${frameUrl(job.id, frame, modernFrames)}" alt="${esc(frame.clock || clock(frame.timestamp))} 的视觉证据">
-      </button>
-      ${frame.text ? `<div class="frame-ocr">${esc(frame.text)}</div>` : ""}
-    </article>`).join("") || `<p class="hint">没有提取到可预览的画面证据。</p>`;
+  renderDetailFrames();
 
   $("pane-transcript").innerHTML = (job.transcript || []).length
     ? job.transcript.map((segment) => `<div class="line" data-at="${Number(segment.start) || 0}"><span class="ts">${clock(segment.start)}</span><span>${esc(segment.text)}</span></div>`).join("")
     : `<p class="hint">这个媒体没有可转写的语音。${metadata.asr_error ? esc(` (${metadata.asr_error})`) : ""}</p>`;
 
   $("pane-timeline").innerHTML = timeline(job, frames, modernFrames);
-  for (const element of document.querySelectorAll("[data-context-at]")) {
+  for (const element of document.querySelectorAll("#pane-timeline [data-context-at]")) {
     element.onclick = () => openFrameContext(Number(element.dataset.contextAt));
   }
   if (focus && Number.isFinite(focus.at)) showEvidenceAt(focus.kind, focus.at);

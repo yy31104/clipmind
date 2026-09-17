@@ -89,10 +89,17 @@ class ServerEventTests(unittest.IsolatedAsyncioTestCase):
         self.assertNotIn("Bilibili", html)
         self.assertNotIn("TikTok", html)
         self.assertNotIn("小红书", html)
-        self.assertIn('/static/style.css?v=6', html)
-        self.assertIn('/static/app.js?v=6', html)
+        self.assertIn('/static/style.css?v=7', html)
+        self.assertIn('/static/app.js?v=7', html)
         self.assertIn('SOURCE_LABEL[item.platform] || item.platform', javascript)
         self.assertIn('supportedSourceLabels(health.supported_sources)', javascript)
+
+    def test_frontend_exposes_all_canonical_frames_and_ocr_failures(self) -> None:
+        javascript = (WEB_DIR / "app.js").read_text(encoding="utf-8")
+
+        self.assertIn("查看全部 ${detail.states.length} 个画面", javascript)
+        self.assertIn("画面文字未完整识别", javascript)
+        self.assertIn('complete.ocr !== "complete"', javascript)
 
     async def test_handoff_requires_an_explicit_inbox_configuration(self) -> None:
         with tempfile.TemporaryDirectory() as tempdir:

@@ -4,6 +4,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from PIL import Image, ImageFilter
+
 from clipmind import visual_states
 from clipmind.media import Frame
 
@@ -138,6 +140,53 @@ class CanonicalVisualStateTests(unittest.TestCase):
         )
 
         self.assertEqual(preview, [stable])
+
+    def test_preview_replaces_a_fleeting_blurred_transition_with_a_stable_neighbour(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            root = Path(tempdir)
+            clear_path = root / "clear.jpg"
+            blurred_path = root / "blurred.jpg"
+            image = Image.new("L", (96, 96), "white")
+            for x in range(0, 96, 8):
+                for y in range(0, 96, 8):
+                    if (x + y) // 8 % 2:
+                        for px in range(x, min(x + 8, 96)):
+                            for py in range(y, min(y + 8, 96)):
+                                image.putpixel((px, py), 0)
+            image.save(clear_path)
+            image.filter(ImageFilter.GaussianBlur(radius=6)).save(blurred_path)
+            stable = Frame(
+                0, 0.0, clear_path, phash=0, lines=("stable screen",),
+                observed_sample_count=5, stable_duration=2.0,
+            )
+            transition = Frame(
+                1, 0.5, blurred_path, phash=(1 << 64) - 1,
+                lines=("garbled transition",),
+            )
+
+            preview = visual_states.derive_preview([stable, transition])
+
+        self.assertEqual(preview, [stable])
+
+    def test_preview_keeps_a_brief_but_sharp_unique_state(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            root = Path(tempdir)
+            first_path = root / "first.jpg"
+            second_path = root / "second.jpg"
+            Image.effect_noise((96, 96), 80).save(first_path)
+            Image.effect_noise((96, 96), 80).save(second_path)
+            stable = Frame(
+                0, 0.0, first_path, phash=0, lines=("stable",),
+                observed_sample_count=4, stable_duration=1.5,
+            )
+            brief = Frame(
+                1, 0.5, second_path, phash=(1 << 64) - 1,
+                lines=("unique brief document",), transcript_novelty=100,
+            )
+
+            preview = visual_states.derive_preview([stable, brief])
+
+        self.assertIn(brief, preview)
 
     def test_preview_splits_same_layout_when_visible_text_is_replaced(self) -> None:
         first = Frame(0, 0.0, Path("a.jpg"), phash=0, lines=("ALPHA PLAN",))

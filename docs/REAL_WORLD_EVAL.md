@@ -65,6 +65,10 @@ previews were rebuilt from their already-complete canonical evidence with
 the evaluation session. This replay does not rerun acquisition, ASR, or OCR; it
 tests the derived preview against the exact preserved evidence.
 
+Pass `--refresh-ocr` to rerun only OCR on the retained canonical images before
+rebuilding the preview. This does not reacquire media or rerun ASR, and an
+all-frame OCR failure leaves the existing pack unchanged.
+
 ## Sampling decision
 
 The long code/UI source was sampled at both the production 2 fps and a 4 fps
