@@ -278,6 +278,18 @@ h1 { font-size: clamp(36px, 5vw, 54px); line-height: 1.08; letter-spacing: -.04e
 /* result reading */
 .summary-lead { color: var(--muted); max-width: 62ch; }
 .quiet-actions { margin-top: 10px; }
+.quality-warning {
+  margin-bottom: 20px; padding: 14px 16px; border-radius: 11px;
+  border: 1px solid color-mix(in srgb, var(--danger) 35%, var(--line));
+  background: color-mix(in srgb, var(--danger) 7%, var(--surface));
+}
+.quality-warning strong { color: var(--danger); }
+.quality-warning p { color: var(--muted); margin: 5px 0 0; font-size: 13px; }
+.frames-toolbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  color: var(--muted); margin-bottom: 22px; font-size: 13px;
+}
+.frames-toolbar .compact { margin-top: 0; }
 .developer { margin-top: 34px; border-top: 1px solid var(--line); padding-top: 16px; }
 .developer summary { cursor: pointer; color: var(--muted); font-size: 13px; }
 .developer[open] summary { margin-bottom: 16px; }

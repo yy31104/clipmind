@@ -123,7 +123,8 @@ GPU drivers, or model weights.
 Paste one or more links, or drop local media. Inbox shows live jobs, Library
 searches complete packs. Each search hit opens its video at that moment, with
 the screenshot on screen, its OCR text and the nearby speech side by side;
-clicking any screenshot shows the same context. Over-budget work is refused with an estimate; only an
+clicking any screenshot shows the same context. The **画面** tab starts with a
+compact preview and can reveal every retained canonical frame. Over-budget work is refused with an estimate; only an
 explicit **Process anyway** starts the full untruncated job.
 
 To tidy the list, expand unfinished tasks or open Library, select individual
@@ -131,6 +132,17 @@ entries (including old versions) or select all, then choose **删除所选** and
 Only terminal jobs can be removed. Files move to the library's `.trash`, remain
 recoverable and still occupy disk space; original media and exports are untouched.
 See [recovery and privacy details](docs/PRIVACY.md#removing-tasks-and-library-versions).
+
+If an older pack kept its screenshots but OCR was unavailable, repair it locally
+without downloading or transcribing the source again:
+
+```bash
+.venv/bin/python scripts/rebuild_preview.py --refresh-ocr out/PACK_ID
+```
+
+The command refuses to replace the pack when OCR still fails on every frame.
+After a successful repair, restart a running ClipMind service so its in-memory
+job snapshot reloads the repaired result.
 
 ### CLI
 

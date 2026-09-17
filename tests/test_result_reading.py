@@ -153,6 +153,45 @@ class ResultReadingTests(unittest.TestCase):
     'a local file has no source page to open');
 """)
 
+    def test_frames_toggle_between_curated_and_all_canonical_frames(self) -> None:
+        self.run_app(r"""
+  run(`state.detail = ${DETAIL}; renderDetailFrames();`);
+  let html = element('pane-frames').innerHTML;
+  assert.match(html, /精选 1 个画面/);
+  assert.match(html, /查看全部 2 个画面/);
+  assert.match(html, /visual_states\/preview\/03-38\.jpg/);
+  assert.doesNotMatch(html, /visual_states\/all\/01-40\.jpg/);
+
+  element('toggle-all-frames').onclick();
+  html = element('pane-frames').innerHTML;
+  assert.match(html, /全部 2 个画面/);
+  assert.match(html, /只看精选/);
+  assert.match(html, /visual_states\/all\/01-40\.jpg/);
+  assert.match(html, /visual_states\/all\/03-38\.jpg/);
+
+  element('toggle-all-frames').onclick();
+  assert.match(element('pane-frames').innerHTML, /查看全部 2 个画面/);
+""")
+
+    def test_incomplete_ocr_is_prominently_disclosed(self) -> None:
+        self.run_app(r"""
+  const job = {
+    id: 'job1', title: 'OCR failed', transcript: [],
+    result: {
+      evidence_pack: { completeness: { ocr: 'unavailable' }, schema: { version: '1.3.0' } },
+      visual_preview: [{ timestamp: 1, file: 'visual_states/preview/00-01.jpg', text: '' }],
+      visual_states: [{ timestamp: 1, file: 'visual_states/all/00-01.jpg', text: '' }],
+    },
+  };
+  context.fetch = async () => ({ ok: true, json: async () => job });
+  await run(`openDetail('job1')`);
+  const summary = element('pane-summary').innerHTML;
+  assert.match(summary, /quality-warning/);
+  assert.match(summary, /画面文字未完整识别/);
+  assert.match(summary, /截图仍然完整保留/);
+  assert.match(summary, /OCR 修复工具/);
+""")
+
     def test_only_titles_that_overflow_fade(self) -> None:
         self.run_app(r"""
   const short = { scrollHeight: 38, clientHeight: 38, classList: classes() };

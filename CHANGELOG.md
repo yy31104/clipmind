@@ -7,6 +7,10 @@ are documented separately and do not have to equal the application version.
 
 ### Changed
 
+- Keep the full canonical frame set visible from result pages, warn clearly when
+  OCR is incomplete, avoid fleeting blurred transitions in derived previews,
+  and allow OCR/preview repair from already-retained screenshots.
+
 - Library cards line up. Every title takes two lines, and a longer one fades
   out at the end of its second line instead of stretching its card; the full
   title is on the detail page. Cards in a row keep one height even when a pack

@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import argparse
+import asyncio
 import json
 import os
 import shutil
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -15,6 +17,11 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from clipmind import evidence, media, render, visual_states  # noqa: E402
+from clipmind.asr import Segment, Transcript, Word  # noqa: E402
+from clipmind.config import settings  # noqa: E402
+from clipmind.fetch import Media  # noqa: E402
+from clipmind.index import EvidenceIndex  # noqa: E402
+from clipmind.providers import default_providers  # noqa: E402
 
 
 def read_jsonl(path: Path) -> list[dict]:
@@ -35,7 +42,32 @@ def write_jsonl(path: Path, rows: list[dict]) -> None:
     )
 
 
-def rebuild(workdir: Path) -> int:
+def _transcript(rows: list[dict], manifest: dict) -> Transcript:
+    return Transcript(
+        segments=[
+            Segment(
+                float(row["start"]),
+                float(row["end"]),
+                row["text"],
+                tuple(
+                    Word(
+                        float(word["start"]),
+                        float(word["end"]),
+                        word["text"],
+                        word.get("probability"),
+                    )
+                    for word in row.get("words", ())
+                ),
+                row.get("speaker"),
+            )
+            for row in rows
+        ],
+        error=(manifest.get("diagnostics") or {}).get("asr_error"),
+        diarization_error=(manifest.get("diagnostics") or {}).get("diarization_error"),
+    )
+
+
+def rebuild(workdir: Path, *, refresh_ocr: bool = False) -> int:
     manifest = evidence.load_complete_pack(workdir)
     timeline = read_jsonl(workdir / "visual_timeline.jsonl")
     ocr_by_id = {row["id"]: row for row in read_jsonl(workdir / "ocr.jsonl")}
@@ -54,13 +86,31 @@ def rebuild(workdir: Path) -> int:
                 lines=tuple(ocr.get("lines", ())),
                 dedupe_warning=row.get("dedupe_warning"),
                 ocr_warning=ocr.get("error"),
+                observed_sample_count=int(row.get("observed_sample_count") or 1),
+                stable_duration=float(row.get("stable_duration_seconds") or 0),
             )
         )
 
+    ocr_error = None
+    if refresh_ocr:
+        started = time.perf_counter()
+        ocr_error = asyncio.run(
+            visual_states.annotate(
+                frames,
+                asyncio.Semaphore(settings.max_ocr),
+                default_providers(settings).text,
+            )
+        )
+        if frames and all(frame.ocr_warning for frame in frames):
+            raise RuntimeError(ocr_error or "OCR failed on every frame")
+        manifest.setdefault("timings", {})["ocr_seconds"] = round(
+            time.perf_counter() - started, 3
+        )
+
     groups = visual_states.group_progressive_builds(frames)
-    transcript = read_jsonl(workdir / "transcript.jsonl")
+    transcript_rows = read_jsonl(workdir / "transcript.jsonl")
     spoken = tuple(
-        (float(row["start"]), float(row["end"]), row["text"]) for row in transcript
+        (float(row["start"]), float(row["end"]), row["text"]) for row in transcript_rows
     )
     # Packs written before schema 1.1.0 carry no alignment measurements, so a
     # rebuild is also how they gain them.
@@ -82,12 +132,20 @@ def rebuild(workdir: Path) -> int:
     manifest_next = workdir / "manifest.json.next"
     job_next = workdir / "job.json.next"
     metadata_next = workdir / "metadata.json.next"
+    ocr_path = workdir / "ocr.jsonl"
+    ocr_previous = workdir / f"ocr.previous-{os.getpid()}.jsonl"
+    ocr_next = workdir / "ocr.jsonl.next"
+    evidence_path = workdir / "evidence.md"
+    evidence_previous = workdir / f"evidence.previous-{os.getpid()}.md"
+    evidence_next = workdir / "evidence.md.next"
     manifest_moved = False
     timeline_moved = False
     job_moved = False
     metadata_moved = False
     preview_moved = False
     preview_installed = False
+    ocr_moved = False
+    evidence_moved = False
     complete = False
     try:
         visual_states.materialize_preview(selected, temporary)
@@ -124,6 +182,13 @@ def rebuild(workdir: Path) -> int:
             else None
         )
         if metadata is not None:
+            if refresh_ocr:
+                by_name = {frame.path.name: frame for frame in frames}
+                for state in metadata.get("visual_states", ()):
+                    frame = by_name.get(Path(state.get("file", "")).name)
+                    if frame is not None:
+                        state["text"] = frame.text
+                metadata["ocr_error"] = ocr_error
             metadata.update(
                 visual_preview=preview_records,
                 build_groups=group_records,
@@ -132,10 +197,46 @@ def rebuild(workdir: Path) -> int:
         job_payload = json.loads(job_path.read_text(encoding="utf-8"))
         result = job_payload.get("job", {}).get("result")
         if isinstance(result, dict):
+            if refresh_ocr:
+                by_name = {frame.path.name: frame for frame in frames}
+                for state in result.get("visual_states", ()):
+                    frame = by_name.get(Path(state.get("file", "")).name)
+                    if frame is not None:
+                        state["text"] = frame.text
+                result["ocr_error"] = ocr_error
             result.update(
                 visual_preview=preview_records,
                 build_groups=group_records,
                 preview_frame_count=len(selected),
+            )
+        failures = sum(frame.ocr_warning is not None for frame in frames)
+        if refresh_ocr:
+            manifest["completeness"]["ocr"] = "partial" if failures else "complete"
+            manifest["diagnostics"]["ocr_error"] = ocr_error
+            manifest["diagnostics"]["ocr_failure_count"] = failures
+            for payload in (metadata, result):
+                if isinstance(payload, dict) and isinstance(payload.get("evidence_pack"), dict):
+                    payload["evidence_pack"]["completeness"] = dict(
+                        manifest["completeness"]
+                    )
+            source = json.loads((workdir / "source.json").read_text(encoding="utf-8"))
+            item = Media(
+                workdir / "source.mp4",
+                {
+                    "id": source.get("source_id"),
+                    "title": source.get("title"),
+                    "duration": source.get("duration"),
+                    "webpage_url": source.get("url"),
+                    "uploader": source.get("uploader"),
+                    "_clipmind_platform": source.get("platform"),
+                },
+            )
+            write_jsonl(ocr_next, evidence._ocr_records(frames))
+            evidence_next.write_text(
+                evidence.evidence_markdown(
+                    item, frames, _transcript(transcript_rows, manifest), workdir
+                ),
+                encoding="utf-8",
             )
         write_jsonl(timeline_next, timeline)
         write_json(manifest_next, manifest)
@@ -152,6 +253,11 @@ def rebuild(workdir: Path) -> int:
         if metadata is not None:
             os.replace(metadata_path, metadata_previous)
             metadata_moved = True
+        if refresh_ocr:
+            os.replace(ocr_path, ocr_previous)
+            ocr_moved = True
+            os.replace(evidence_path, evidence_previous)
+            evidence_moved = True
         os.replace(preview, previous)
         preview_moved = True
         os.replace(temporary, preview)
@@ -160,6 +266,9 @@ def rebuild(workdir: Path) -> int:
         os.replace(job_next, job_path)
         if metadata is not None:
             os.replace(metadata_next, metadata_path)
+        if refresh_ocr:
+            os.replace(ocr_next, ocr_path)
+            os.replace(evidence_next, evidence_path)
         os.replace(manifest_next, manifest_path)
         complete = True
     except Exception:
@@ -171,6 +280,12 @@ def rebuild(workdir: Path) -> int:
             if metadata_moved:
                 metadata_path.unlink(missing_ok=True)
                 os.replace(metadata_previous, metadata_path)
+            if evidence_moved:
+                evidence_path.unlink(missing_ok=True)
+                os.replace(evidence_previous, evidence_path)
+            if ocr_moved:
+                ocr_path.unlink(missing_ok=True)
+                os.replace(ocr_previous, ocr_path)
             if job_moved:
                 job_path.unlink(missing_ok=True)
                 os.replace(job_previous, job_path)
@@ -187,21 +302,34 @@ def rebuild(workdir: Path) -> int:
         manifest_next.unlink(missing_ok=True)
         job_next.unlink(missing_ok=True)
         metadata_next.unlink(missing_ok=True)
+        ocr_next.unlink(missing_ok=True)
+        evidence_next.unlink(missing_ok=True)
         if complete:
             shutil.rmtree(previous, ignore_errors=True)
             manifest_previous.unlink(missing_ok=True)
             timeline_previous.unlink(missing_ok=True)
             job_previous.unlink(missing_ok=True)
             metadata_previous.unlink(missing_ok=True)
+            ocr_previous.unlink(missing_ok=True)
+            evidence_previous.unlink(missing_ok=True)
     return len(selected)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("workdirs", nargs="+", type=Path)
+    parser.add_argument(
+        "--refresh-ocr",
+        action="store_true",
+        help="rerun OCR on retained canonical images before rebuilding the preview",
+    )
     args = parser.parse_args()
     for workdir in args.workdirs:
-        count = rebuild(workdir.resolve())
+        resolved = workdir.resolve()
+        count = rebuild(resolved, refresh_ocr=args.refresh_ocr)
+        index_path = resolved.parent / ".evidence-index.sqlite3"
+        if index_path.exists():
+            EvidenceIndex(index_path).sync(resolved.name, resolved)
         print(f"{workdir}: {count} preview state(s)")
 
 

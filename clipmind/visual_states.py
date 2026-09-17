@@ -11,11 +11,14 @@ from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Iterable
 
+import numpy as np
+from PIL import Image
+
 from . import media, ocr
 from .media import Frame
 from .providers import TextRecognizer
 
-PREVIEW_ALGORITHM = "adaptive-scene-text-v1"
+PREVIEW_ALGORITHM = "adaptive-scene-text-v2"
 
 
 @dataclass(frozen=True)
@@ -199,6 +202,82 @@ def _replaces_visible_text(
         _caption_like(earlier, spoken_intervals)
         and _caption_like(later, spoken_intervals)
     )
+
+
+def _sharpness(frame: Frame) -> float | None:
+    """Return a simple edge-energy score, or None when the image is unreadable."""
+    try:
+        with Image.open(frame.path) as image:
+            pixels = np.asarray(image.convert("L"), dtype=np.float32)
+    except (OSError, ValueError):
+        return None
+    if min(pixels.shape, default=0) < 2:
+        return None
+    horizontal = np.diff(pixels, axis=1)
+    vertical = np.diff(pixels, axis=0)
+    return float(np.mean(horizontal * horizontal) + np.mean(vertical * vertical))
+
+
+def _replace_blurred_transitions(
+    frames: list[Frame],
+    preview: list[Frame],
+    *,
+    window: float = 1.25,
+    sharpness_ratio: float = 0.55,
+) -> list[Frame]:
+    """Replace fleeting, clearly blurrier preview frames with a stable neighbour.
+
+    Canonical evidence is untouched. A brief but sharp slide remains eligible;
+    only a one-sample state that is substantially blurrier than a nearby state
+    observed more than once is replaced.
+    """
+    ordered = sorted(frames, key=lambda frame: (frame.timestamp, frame.index))
+    scores: dict[int, float | None] = {}
+
+    def score(frame: Frame) -> float | None:
+        if frame.index not in scores:
+            scores[frame.index] = _sharpness(frame)
+        return scores[frame.index]
+
+    chosen: dict[int, Frame] = {}
+    for frame in preview:
+        if (
+            frame.dedupe_warning is not None
+            or frame.observed_sample_count > 1
+            or frame.stable_duration > 0
+        ):
+            chosen[frame.index] = frame
+            continue
+        neighbours = [
+            candidate
+            for candidate in ordered
+            if candidate.index != frame.index
+            and abs(candidate.timestamp - frame.timestamp) <= window
+            and candidate.dedupe_warning is None
+            and (
+                candidate.observed_sample_count > 1
+                or candidate.stable_duration > 0
+            )
+        ]
+        current = score(frame)
+        ranked = [
+            (candidate_score, candidate)
+            for candidate in neighbours
+            if (candidate_score := score(candidate)) is not None
+        ]
+        if current is None or not ranked:
+            chosen[frame.index] = frame
+            continue
+        neighbour_score, neighbour = max(
+            ranked,
+            key=lambda value: (
+                value[0],
+                -abs(value[1].timestamp - frame.timestamp),
+            ),
+        )
+        replacement = neighbour if current < sharpness_ratio * neighbour_score else frame
+        chosen[replacement.index] = replacement
+    return sorted(chosen.values(), key=lambda frame: (frame.timestamp, frame.index))
 
 
 
@@ -530,7 +609,7 @@ def derive_preview(
         preview.append(frame)
         selected.add(frame.index)
 
-    return sorted(preview, key=lambda frame: (frame.timestamp, frame.index))
+    return _replace_blurred_transitions(ordered, preview)
 
 
 def materialize_preview(frames: list[Frame], dest_dir: Path) -> list[Frame]:
