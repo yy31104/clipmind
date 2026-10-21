@@ -111,6 +111,10 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
             "transcribe": self.fake_transcribe,
             "annotate": self.fake_annotate,
             "materialize": visual_states.materialize_preview,
+            # Orchestration fixtures contain fake JPEG bytes. Content detection
+            # has real-image tests of its own; use the legacy scene view here.
+            "select_content": lambda frames, spoken_intervals=(): visual_states.derive_preview(
+                frames, spoken_intervals=spoken_intervals),
             "write_pack": pipeline.evidence.write_pack,
             "write_all": self.fake_write_all,
         }
@@ -122,6 +126,7 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
             "dedupe": (pipeline.media, "dedupe"),
             "annotate": (pipeline.visual_states, "annotate"),
             "materialize": (pipeline.visual_states, "materialize_preview"),
+            "select_content": (pipeline.visual_content, "select_content_frames"),
             "write_pack": (pipeline.evidence, "write_pack"),
             "write_all": (pipeline.render, "write_all"),
         }
@@ -166,6 +171,33 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
 
     def report(self, stage, progress, note="") -> None:
         pass
+
+    async def test_content_only_preview_does_not_force_a_context_screenshot(self) -> None:
+        from PIL import Image
+
+        async def photo_samples(video, dest_dir, **kwargs):
+            dest_dir.mkdir(parents=True, exist_ok=True)
+            path = dest_dir / "sample.jpg"
+            Image.new("RGB", (160, 100), "#5b6d7a").save(path)
+            return [Frame(0, 0.0, path)]
+
+        with self.patched_pipeline(
+            sample_frames=photo_samples,
+            select_content=pipeline.visual_content.select_content_frames,
+            write_all=pipeline.render.write_all,
+        ):
+            result = await pipeline.process(
+                "https://v.douyin.com/example", self.workdir, self.pools(), self.report)
+        self.assertEqual(result["preview_frame_count"], 0)
+        self.assertEqual(result["visual_preview"], [])
+        self.assertEqual(result["canonical_visual_state_count"], 1)
+        manifest = json.loads((self.workdir / "manifest.json").read_text(encoding="utf-8"))
+        self.assertEqual(manifest["configuration"]["preview_algorithm"],
+                         pipeline.visual_content.CONTENT_ALGORITHM)
+        self.assertEqual(manifest["counts"]["scenes"], 1)
+        timeline = [json.loads(line) for line in (self.workdir / "visual_timeline.jsonl").read_text(encoding="utf-8").splitlines()]
+        self.assertEqual(timeline[0]["scene_id"], "scene-00001")
+        self.assertEqual(timeline[0]["file"], "visual_states/all/00-00-00000.jpg")
 
     async def test_speech_and_vision_overlap_and_join_before_the_pack(self) -> None:
         speech_started = asyncio.Event()
@@ -456,14 +488,19 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
             return frames[1:]
 
         async def annotate_all(frames, semaphore, recognizer=None) -> str | None:
-            # Preview opening-context logic only receives canonical frames.
+            # Every state is a distinct code example, rather than context-only
+            # footage. Useful screenshots have no fixed per-video count cap.
             self.assertEqual([frame.index for frame in frames], list(range(1, 13)))
+            for frame in frames:
+                frame.lines = (f"def strategy_{frame.index}(close, average):", "    return close > average")
+                frame.text = "\n".join(frame.lines)
             return None
 
         real_write_all = pipeline.render.write_all
         with (
             self.patched_pipeline(
                 sample_frames=many_samples,
+                select_content=lambda frames, spoken_intervals=(): frames,
                 dedupe=dedupe_without_opening,
                 annotate=annotate_all,
                 materialize=self.copy_preview,

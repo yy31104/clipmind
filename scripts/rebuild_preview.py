@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from clipmind import evidence, media, render, visual_states  # noqa: E402
+from clipmind import evidence, media, render, visual_content, visual_states  # noqa: E402
 from clipmind.asr import Segment, Transcript, Word  # noqa: E402
 from clipmind.config import settings  # noqa: E402
 from clipmind.fetch import Media  # noqa: E402
@@ -67,7 +67,7 @@ def _transcript(rows: list[dict], manifest: dict) -> Transcript:
     )
 
 
-def rebuild(workdir: Path, *, refresh_ocr: bool = False) -> int:
+def rebuild(workdir: Path, *, refresh_ocr: bool = False, text_only: bool = False) -> int:
     manifest = evidence.load_complete_pack(workdir)
     timeline = read_jsonl(workdir / "visual_timeline.jsonl")
     ocr_by_id = {row["id"]: row for row in read_jsonl(workdir / "ocr.jsonl")}
@@ -88,6 +88,7 @@ def rebuild(workdir: Path, *, refresh_ocr: bool = False) -> int:
                 ocr_warning=ocr.get("error"),
                 observed_sample_count=int(row.get("observed_sample_count") or 1),
                 stable_duration=float(row.get("stable_duration_seconds") or 0),
+                ocr_layout=tuple(ocr.get("layout", ())),
             )
         )
 
@@ -115,7 +116,12 @@ def rebuild(workdir: Path, *, refresh_ocr: bool = False) -> int:
     # Packs written before schema 1.1.0 carry no alignment measurements, so a
     # rebuild is also how they gain them.
     visual_states.annotate_transcript_alignment(frames, spoken)
-    selected = visual_states.derive_preview(frames, spoken_intervals=spoken)
+    visual_states.annotate_structure(frames, spoken_intervals=spoken)
+    if text_only:
+        selected, algorithm = [], "text-only-v1"
+    else:
+        selected = visual_content.select_content_frames(frames, spoken_intervals=spoken)
+        algorithm = visual_content.CONTENT_ALGORITHM
     visual_root = workdir / "visual_states"
     temporary = Path(tempfile.mkdtemp(prefix="preview.next-", dir=visual_root))
     preview = visual_root / "preview"
@@ -157,6 +163,13 @@ def rebuild(workdir: Path, *, refresh_ocr: bool = False) -> int:
             row["ocr_char_count"] = frame.ocr_char_count
             row["transcript_novelty_char_count"] = frame.transcript_novelty
             row["transcript_overlap_ratio"] = frame.transcript_overlap
+            row["content_hint"] = frame.content_hint
+            row["scene_id"] = frame.scene_id
+            row["scene_boundary"] = frame.scene_boundary
+            row["scene_change_score"] = frame.scene_change_score
+            row.pop("scene_boundary_reason", None)
+            if frame.scene_boundary_reason:
+                row["scene_boundary_reason"] = frame.scene_boundary_reason
             row.pop("preview_file", None)
             for key in ("build_group_id", "build_position", "build_size"):
                 row.pop(key, None)
@@ -173,7 +186,8 @@ def rebuild(workdir: Path, *, refresh_ocr: bool = False) -> int:
         manifest["schema"]["version"] = evidence.SCHEMA_VERSION
         manifest["counts"]["preview_visual_states"] = len(selected)
         manifest["counts"]["progressive_build_groups"] = len(groups)
-        manifest["configuration"]["preview_algorithm"] = visual_states.PREVIEW_ALGORITHM
+        manifest["counts"]["scenes"] = len({frame.scene_id for frame in frames if frame.scene_id})
+        manifest["configuration"]["preview_algorithm"] = algorithm
         preview_records = render.preview_records(selected)
         group_records = render.build_group_records(groups)
         metadata = (
@@ -318,6 +332,7 @@ def rebuild(workdir: Path, *, refresh_ocr: bool = False) -> int:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("workdirs", nargs="+", type=Path)
+    parser.add_argument("--text-only", action="store_true", help="clear derived previews; keep original images and text")
     parser.add_argument(
         "--refresh-ocr",
         action="store_true",
@@ -326,7 +341,7 @@ def main() -> None:
     args = parser.parse_args()
     for workdir in args.workdirs:
         resolved = workdir.resolve()
-        count = rebuild(resolved, refresh_ocr=args.refresh_ocr)
+        count = rebuild(resolved, refresh_ocr=args.refresh_ocr, text_only=args.text_only)
         index_path = resolved.parent / ".evidence-index.sqlite3"
         if index_path.exists():
             EvidenceIndex(index_path).sync(resolved.name, resolved)

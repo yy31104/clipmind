@@ -3,9 +3,12 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 import sqlite3
+import tempfile
 import uuid
 from contextlib import asynccontextmanager
+from functools import partial
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
@@ -13,7 +16,7 @@ from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from . import handoff
+from . import compact, handoff
 from .config import WEB_DIR
 from .jobs import JobStore
 from .links import extract_sources, guess_title, normalize_url
@@ -22,6 +25,16 @@ from .sdk import PackLibrary
 from .sources import supported_sources
 
 store = JobStore()
+
+
+class _DownloadResponse(FileResponse):
+    """Delete an owned export even after invalid ranges or disconnected clients."""
+
+    async def __call__(self, scope, receive, send):
+        try:
+            await super().__call__(scope, receive, send)
+        finally:
+            Path(self.path).unlink(missing_ok=True)
 
 
 @asynccontextmanager
@@ -305,16 +318,42 @@ async def evidence_file(job_id: str):
 
 
 @app.get("/api/jobs/{job_id}/evidence.zip")
-async def evidence_zip(job_id: str):
+async def evidence_zip(job_id: str, profile: str = "full"):
     workdir = _workdir(job_id)
+    if profile not in {"compact", "full", "text"}:
+        raise HTTPException(400, "profile must be compact, full or text")
+    # Concurrent downloads must not replace a ZIP another Windows response is
+    # still reading. Each response owns a separate archive, removed after send.
+    descriptor, temporary = tempfile.mkstemp(
+        prefix=".clipmind-download-", suffix=".zip", dir=workdir.parent,
+    )
+    os.close(descriptor)
+    destination = Path(temporary)
+    exporter = compact.export_compact_zip if profile == "compact" else handoff.export_zip
+    if profile == "text":
+        exporter = partial(compact.export_compact_zip, image_policy="text")
+    build = asyncio.create_task(asyncio.to_thread(exporter, workdir, destination))
     try:
-        path = handoff.export_zip(workdir)
+        path = await asyncio.shield(build)
     except handoff.EvidencePackError as exc:
+        destination.unlink(missing_ok=True)
         raise HTTPException(409, str(exc)) from exc
-    return FileResponse(
+    except BaseException:
+        # Cancelling a coroutine cannot stop its filesystem worker. Arrange
+        # cleanup after that worker finishes rather than racing its ZIP writer.
+        def discard_finished(task):
+            try:
+                task.result()
+            except BaseException:
+                pass
+            destination.unlink(missing_ok=True)
+
+        build.add_done_callback(discard_finished)
+        raise
+    return _DownloadResponse(
         path,
         media_type="application/zip",
-        filename=f"{job_id}-evidence.zip",
+        filename=f"{job_id}-{profile + '-' if profile != 'full' else ''}evidence.zip",
     )
 
 

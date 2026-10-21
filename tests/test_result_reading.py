@@ -146,11 +146,31 @@ class ResultReadingTests(unittest.TestCase):
   assert.equal(element('frame-dialog').open, true);
   assert.equal(element('pane-summary').hidden, true);
   const summary = element('pane-summary').innerHTML;
-  for (const label of ['复制全文转写', '导出笔记（Markdown）', '下载全部资料（含截图）', '开发者信息']) {
+  for (const label of ['复制全文转写', '导出笔记（Markdown）', '下载精简资料（仅干货截图）', '下载纯文字资料', '下载完整资料（全部截图）', '开发者信息']) {
     assert.ok(summary.includes(label), label);
   }
+  assert.match(summary, /evidence\.zip\?profile=compact/);
+  assert.match(summary, /evidence\.zip\?profile=full/);
+  assert.match(summary, /evidence\.zip\?profile=text/);
   assert.ok(!summary.includes('打开原视频') && !element('d-meta').innerHTML.includes('打开原视频'),
     'a local file has no source page to open');
+""")
+
+    def test_text_only_result_has_no_forced_preview_or_error_message(self) -> None:
+        self.run_app(r"""
+  run(`state.detail = ${DETAIL}; state.detail.frames = []; renderDetailFrames();`);
+  const html = element('pane-frames').innerHTML;
+  assert.match(html, /未选出需要保留的图表、代码或文档截图/);
+  assert.doesNotMatch(html, /<article class="frame"/);
+  assert.match(html, /查看全部 2 个画面/);
+""")
+
+    def test_compact_preview_can_reference_one_shared_canonical_image(self) -> None:
+        self.run_app(r"""
+  assert.equal(run(`frameUrl('job1', { file: 'visual_states/all/00-01.jpg' }, true)`),
+    '/api/jobs/job1/visual_states/all/00-01.jpg');
+  assert.equal(run(`frameUrl('job1', { file: 'visual_states/preview/00-01.jpg' }, true)`),
+    '/api/jobs/job1/visual_states/preview/00-01.jpg');
 """)
 
     def test_frames_toggle_between_curated_and_all_canonical_frames(self) -> None:

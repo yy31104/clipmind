@@ -10,11 +10,23 @@ from pathlib import Path
 
 from .evidence import PACK_ARTIFACTS, EvidencePackError, load_complete_pack
 
+COMPACT_ARTIFACTS = ("omitted_visual_text.jsonl", "metadata.json", "transcript.json")
+
 
 def _files(pack_dir: Path) -> list[tuple[Path, Path]]:
     root = pack_dir.resolve()
     files: list[tuple[Path, Path]] = []
-    for artifact in ("manifest.json", *PACK_ARTIFACTS):
+    manifest = load_complete_pack(pack_dir)
+    extras: tuple[str, ...] = ()
+    if (manifest.get("configuration", {}).get("compact", {}).get("profile")
+            == "compact-reading-v1"):
+        # Compact reading copies carry omitted OCR as text. Preserve only this
+        # fixed contract on re-export/Inbox delivery, never arbitrary manifest paths.
+        if not all(name in manifest.get("artifacts", ())
+                   and (pack_dir / name).is_file() for name in COMPACT_ARTIFACTS):
+            raise EvidencePackError("compact reading copy is missing its text artifacts")
+        extras = COMPACT_ARTIFACTS
+    for artifact in ("manifest.json", *PACK_ARTIFACTS, *extras):
         path = pack_dir / artifact
         candidates = sorted(path.rglob("*")) if path.is_dir() else [path]
         for candidate in candidates:
@@ -96,6 +108,11 @@ def send_to_inbox(pack_dir: Path, inbox: Path) -> dict:
     if destination.exists():
         existing = load_complete_pack(destination)
         if existing["source"] == manifest["source"]:
+            if ((existing.get("configuration") or {}).get("compact")
+                    != (manifest.get("configuration") or {}).get("compact")):
+                raise EvidencePackError(
+                    "Inbox destination already exists for a different Evidence Pack variant"
+                )
             return {"status": "already_present", "destination": str(destination)}
         raise EvidencePackError("Inbox destination already exists for another source")
 
