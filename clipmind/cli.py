@@ -157,6 +157,8 @@ def _parser() -> argparse.ArgumentParser:
     export = commands.add_parser("export", help="export a canonical deterministic ZIP")
     export.add_argument("pack_id")
     export.add_argument("--output", "-o")
+    export.add_argument("--compact", action="store_true", help="keep full transcript with selected screenshots")
+    export.add_argument("--text-only", action="store_true", help="export text without any screenshots")
 
     demo = commands.add_parser(
         "demo", help="extract a generated sample video; no network or account"
@@ -243,7 +245,13 @@ def entrypoint(argv: list[str] | None = None) -> int:
             _print(library.get(args.pack_id).visual_timeline, as_json=args.json)
             return 0
         if args.command == "export":
-            path = library.get(args.pack_id).export(args.output)
+            pack = library.get(args.pack_id)
+            if args.compact or args.text_only:
+                from .compact import export_compact_zip
+                path = export_compact_zip(pack.root, Path(args.output) if args.output else None,
+                                          image_policy="text" if args.text_only else "content")
+            else:
+                path = pack.export(args.output)
             print(path)
             return 0
         if args.command == "doctor":

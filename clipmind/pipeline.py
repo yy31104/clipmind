@@ -13,7 +13,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from urllib.parse import quote
 
-from . import acquisition, evidence, media, preflight, render, visual_states
+from . import acquisition, evidence, media, preflight, render, visual_content, visual_states
 from .config import Settings, settings
 from .fetch import fetch
 from .providers import ProviderBundle, default_providers
@@ -207,8 +207,10 @@ async def process(
         # Measured on canonical states, never used to decide canonical
         # membership: an ASR or OCR slip must not be able to delete evidence.
         visual_states.annotate_transcript_alignment(canonical, spoken)
+        visual_states.annotate_structure(canonical, spoken_intervals=spoken)
+        selected = visual_content.select_content_frames(canonical, spoken_intervals=spoken)
         preview = visual_states.materialize_preview(
-            visual_states.derive_preview(canonical, spoken_intervals=spoken),
+            selected,
             workdir / "visual_states" / "preview",
         )
         preview_seconds = round(time.perf_counter() - stage_started, 3)
@@ -230,6 +232,7 @@ async def process(
             timings=timings,
             config=config,
             preflight_result=estimate.public(),
+            preview_algorithm=visual_content.CONTENT_ALGORITHM,
         )
         base += STAGES[2][1]
         report("writing", base, f"{len(preview)} preview states, "

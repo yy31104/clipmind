@@ -475,24 +475,16 @@ def annotate_content_hints(frames: list[Frame]) -> None:
             frame.content_hint = "textual"
 
 
-def derive_preview(
+def annotate_structure(
     frames: list[Frame],
     *,
     spoken_intervals: Iterable[tuple[float, float, str]] = (),
     scene_floor: float = 24.0,
     activity_margin: float = 14.0,
     scene_ceiling: float = 32.0,
-    latest_readability_ratio: float = 0.6,
     replacement_visual_floor: float = 6.0,
-    novelty_floor: int = 40,
-    novelty_overlap: float = 0.5,
-) -> list[Frame]:
-    """Choose one readable representative per content-driven visual scene.
-
-    Progressive builds first collapse to their completed state. The scene
-    threshold then adapts to the video's observed visual activity, but no frame
-    count or per-duration budget is applied.
-    """
+) -> None:
+    """Measure content hints and scenes without selecting any preview images."""
     speech = tuple(spoken_intervals)
     ordered = sorted(frames, key=lambda frame: (frame.timestamp, frame.index))
     annotate_content_hints(ordered)
@@ -517,7 +509,7 @@ def derive_preview(
             frame.scene_id = "scene-00001"
             frame.scene_boundary = position == 0
             frame.scene_boundary_reason = "initial" if position == 0 else None
-        return candidates
+        return
 
     comparable_pairs = [
         (earlier, later)
@@ -568,6 +560,47 @@ def derive_preview(
     for frame in ordered:
         if frame.scene_id is None and frame.build_group_id in group_scenes:
             frame.scene_id = group_scenes[frame.build_group_id]
+
+
+def derive_preview(
+    frames: list[Frame],
+    *,
+    spoken_intervals: Iterable[tuple[float, float, str]] = (),
+    scene_floor: float = 24.0,
+    activity_margin: float = 14.0,
+    scene_ceiling: float = 32.0,
+    latest_readability_ratio: float = 0.6,
+    replacement_visual_floor: float = 6.0,
+    novelty_floor: int = 40,
+    novelty_overlap: float = 0.5,
+) -> list[Frame]:
+    """Choose one readable representative per content-driven visual scene.
+
+    Progressive builds first collapse to their completed state. The scene
+    threshold then adapts to the video's observed visual activity, but no frame
+    count or per-duration budget is applied.
+    """
+    speech = tuple(spoken_intervals)
+    ordered = sorted(frames, key=lambda frame: (frame.timestamp, frame.index))
+    annotate_structure(
+        ordered, spoken_intervals=speech, scene_floor=scene_floor,
+        activity_margin=activity_margin, scene_ceiling=scene_ceiling,
+        replacement_visual_floor=replacement_visual_floor,
+    )
+    candidates = [
+        frame
+        for frame in ordered
+        if frame.build_group_id is None
+        or frame.build_position == frame.build_size - 1
+    ]
+    if len(candidates) < 2:
+        return candidates
+    scenes: list[list[Frame]] = []
+    for frame in candidates:
+        if not scenes or frame.scene_id != scenes[-1][0].scene_id:
+            scenes.append([frame])
+        else:
+            scenes[-1].append(frame)
 
     preview = []
     for scene in scenes:

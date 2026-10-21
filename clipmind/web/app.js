@@ -353,8 +353,10 @@ function libraryCard(group) {
 }
 
 function frameUrl(jobId, frame, modern = true, collection = null) {
-  const name = String(frame.file || "").split("/").pop();
-  const directory = collection || (modern ? "visual_states/preview" : "keyframes");
+  const file = String(frame.file || "").replaceAll("\\", "/");
+  const name = file.split("/").pop();
+  const directory = collection || (file.startsWith("visual_states/all/")
+    ? "visual_states/all" : modern ? "visual_states/preview" : "keyframes");
   return `/api/jobs/${jobId}/${directory}/${encodeURIComponent(name)}`;
 }
 
@@ -479,7 +481,7 @@ function renderDetailFrames() {
         <img loading="lazy" src="${frameUrl(detail.job.id, frame, detail.modernFrames, collection)}" alt="${esc(frame.clock || clock(frame.timestamp))} 的视觉证据">
       </button>
       ${frame.text ? `<div class="frame-ocr">${esc(frame.text)}</div>` : ""}
-    </article>`).join("") || `<p class="hint">没有提取到可查看的画面证据。</p>`);
+    </article>`).join("") || `<p class="hint">未选出需要保留的图表、代码或文档截图。口播内容请看转写；原始采样画面仍可查看。</p>`);
   if ($("toggle-all-frames")) {
     $("toggle-all-frames").onclick = () => {
       detail.showAllFrames = !detail.showAllFrames;
@@ -530,13 +532,16 @@ async function openDetail(id, focus = null) {
     <div class="actions">
       <button class="primary action" id="copy-transcript">复制全文转写</button>
       <a class="secondary action" href="/api/jobs/${job.id}/evidence.md" download>导出笔记（Markdown）</a>
-      <a class="secondary action" href="/api/jobs/${job.id}/evidence.zip" download>下载全部资料（含截图）</a>
+      <a class="primary action" href="/api/jobs/${job.id}/evidence.zip?profile=compact" download>下载精简资料（仅干货截图）</a>
       ${sourceUrl ? `<a class="secondary action" href="${esc(sourceUrl)}" target="_blank" rel="noopener">打开原视频</a>` : ""}
     </div>
     <div class="actions quiet-actions">
+      <a class="secondary action" href="/api/jobs/${job.id}/evidence.zip?profile=text" download>下载纯文字资料</a>
+      <a class="secondary action" href="/api/jobs/${job.id}/evidence.zip?profile=full" download>下载完整资料（全部截图）</a>
       <button class="secondary action" id="reprocess">重新处理</button>
       ${state.kbInbox ? `<button class="secondary action" id="send-kb">发送到知识库</button>` : ""}
     </div>
+    <p class="hint">精简资料中，纯口播只留文字，图表、代码、文档等独立内容才附截图。完整资料保留原始采样画面。</p>
     <p id="handoff-status" class="hint"></p>
     <details class="developer">
       <summary>开发者信息</summary>

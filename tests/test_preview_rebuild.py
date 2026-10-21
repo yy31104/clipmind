@@ -128,22 +128,25 @@ class PreviewRebuildTests(unittest.TestCase):
 
             manifest = evidence.load_complete_pack(dest)
             timeline = rebuild_preview.read_jsonl(dest / "visual_timeline.jsonl")
-            self.assertEqual(count, 2)
+            self.assertEqual(count, 0)
             self.assertEqual(manifest["counts"]["canonical_visual_states"], 3)
-            self.assertEqual(manifest["counts"]["preview_visual_states"], 2)
+            self.assertEqual(manifest["counts"]["preview_visual_states"], 0)
             self.assertEqual(
                 manifest["configuration"]["preview_algorithm"],
-                visual_states.PREVIEW_ALGORITHM,
+                rebuild_preview.visual_content.CONTENT_ALGORITHM,
             )
-            self.assertEqual(sum(row["in_preview"] for row in timeline), 2)
+            self.assertEqual(sum(row["in_preview"] for row in timeline), 0)
+            self.assertGreater(manifest["counts"]["scenes"], 0)
+            self.assertEqual(manifest["counts"]["scenes"], len({row["scene_id"] for row in timeline}))
+            self.assertTrue(all(row["scene_id"] for row in timeline))
             self.assertEqual(len(list(all_dir.glob("*.jpg"))), 3)
-            self.assertEqual(len(list(preview_dir.glob("*.jpg"))), 2)
+            self.assertEqual(len(list(preview_dir.glob("*.jpg"))), 0)
             job = json.loads((dest / "job.json").read_text(encoding="utf-8"))["job"]
             metadata = json.loads(
                 (dest / "metadata.json").read_text(encoding="utf-8")
             )
-            self.assertEqual(job["result"]["preview_frame_count"], 2)
-            self.assertEqual(len(job["result"]["visual_preview"]), 2)
+            self.assertEqual(job["result"]["preview_frame_count"], 0)
+            self.assertEqual(len(job["result"]["visual_preview"]), 0)
             self.assertEqual(
                 job["result"]["visual_preview"], metadata["visual_preview"]
             )

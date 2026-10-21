@@ -53,6 +53,34 @@ The canonical ZIP includes the artifacts named by the contract and the
 manifest. `preflight.json` and compatibility views can remain in the local job
 directory without becoming canonical exported evidence.
 
+### Compact reading copies
+
+The web UI's primary ZIP action (`?profile=compact`) creates a **derived reading
+copy**, not a claim that all sampled images were retained. From an original full
+pack, `?profile=full`, SDK export and Inbox delivery preserve its canonical files.
+Re-exporting a compact copy preserves only its selected images and omitted OCR
+text; it cannot restore the original images. CLI users can explicitly choose
+`clipmind export PACK_ID --compact`.
+
+A compact copy keeps the original transcript JSONL/Markdown bytes, including
+word timestamps. Only positive evidence of independent reading material
+(code, documents, charts, tables or instruction lists) earns a screenshot;
+pure commentary has no screenshots and no forced representative/cover image.
+Empty OCR, content hints, new OCR words and scene changes alone do not earn
+a screenshot. `?profile=text` or CLI `--text-only` explicitly exports no images.
+Its OCR and visual timeline are rebuilt with valid local references and matching counts.
+Preview records point at the same `visual_states/all/` images, so the required
+`visual_states/preview/` directory may be empty. `omitted_visual_text.jsonl`
+preserves recognized text and source IDs/timestamps for images omitted from
+the reading copy; it does not link to absent screenshots. The manifest records
+the compact profile, parent manifest digest, selection algorithm, and original
+and selected image counts. These derived IDs apply only within that copy.
+
+The original library pack and full ZIP remain available. Heuristic selection
+can miss a meaningful visual. Speech/OCR errors are recorded and do not by
+themselves cause a photograph to be included. Compactness reduces exported bytes,
+not the initial sampling or OCR workload.
+
 `metadata.json` and `transcript.json` are UI/migration views outside the v1
 contract. `note.md` and `keyframes/` can appear in older libraries and remain
 readable, but current jobs do not write them.
@@ -165,11 +193,13 @@ kept and the warning is serialized.
 
 ### `visual_states/preview/`
 
-A derived chronological view optimized for browsing. It prefers stable/readable
-states, collapses intermediate progressive builds, uses adaptive scene grouping,
-and guarantees a slot for sufficiently novel unspoken text unless an equivalent
-state is already represented. It has no fixed count limit and cannot remove or
-repoint canonical files.
+A derived chronological view optimized for reading. New jobs and preview
+rebuilds select positive evidence of code, document layouts, tables, charts or
+instruction lists with `independent-visual-content-v1`. Pure commentary can have
+zero preview images. Scene or caption changes, OCR novelty and recognition
+errors do not force an image into this view. It has no fixed count limit and
+cannot remove or repoint canonical files. Existing packs can retain older scene
+selection until explicitly rebuilt; the manifest records the algorithm used.
 
 ## Transcript alignment (introduced in 1.1)
 

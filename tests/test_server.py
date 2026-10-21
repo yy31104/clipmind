@@ -90,7 +90,7 @@ class ServerEventTests(unittest.IsolatedAsyncioTestCase):
         self.assertNotIn("TikTok", html)
         self.assertNotIn("小红书", html)
         self.assertIn('/static/style.css?v=7', html)
-        self.assertIn('/static/app.js?v=7', html)
+        self.assertIn('/static/app.js?v=9', html)
         self.assertIn('SOURCE_LABEL[item.platform] || item.platform', javascript)
         self.assertIn('supportedSourceLabels(health.supported_sources)', javascript)
 

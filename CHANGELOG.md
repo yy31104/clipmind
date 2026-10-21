@@ -7,6 +7,15 @@ are documented separately and do not have to equal the application version.
 
 ### Changed
 
+- Reading previews and the web UI's primary ZIP download now select screenshots
+  only for independent code, document, table, chart or instruction-list content.
+  Pure spoken commentary can have zero screenshots. Compact downloads retain
+  full transcripts, word timing and omitted OCR text without duplicate preview
+  JPEGs; a separate text-only download and CLI `--compact` / `--text-only` flags
+  are available. Full exports and the original canonical library remain intact.
+  Selection uses local structural heuristics and can miss useful visuals; it
+  reduces exported bytes rather than the initial sampling or OCR workload.
+
 - Keep the full canonical frame set visible from result pages, warn clearly when
   OCR is incomplete, avoid fleeting blurred transitions in derived previews,
   and allow OCR/preview repair from already-retained screenshots.

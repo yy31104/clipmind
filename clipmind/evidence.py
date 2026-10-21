@@ -305,6 +305,7 @@ def write_pack(
     timings: dict[str, float] | None = None,
     config: Settings = settings,
     preflight_result: dict | None = None,
+    preview_algorithm: str = PREVIEW_ALGORITHM,
 ) -> dict:
     """Write every canonical artifact, with manifest.json written last."""
     dest.mkdir(parents=True, exist_ok=True)
@@ -395,7 +396,7 @@ def write_pack(
             "evidence_width": config.evidence_width,
             "dedupe_threshold": config.dedupe_threshold,
             "dedupe_algorithm": media.DEDUPE_ALGORITHM,
-            "preview_algorithm": PREVIEW_ALGORITHM,
+            "preview_algorithm": preview_algorithm,
             "preflight": preflight_result,
         },
     }

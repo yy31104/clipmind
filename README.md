@@ -154,6 +154,8 @@ clipmind search "retrieval augmented generation"
 clipmind transcript PACK_ID
 clipmind timeline PACK_ID --json
 clipmind export PACK_ID --output evidence.zip
+clipmind export PACK_ID --compact --output reading.zip
+clipmind export PACK_ID --text-only --output text.zip
 clipmind doctor
 ```
 
@@ -235,9 +237,26 @@ Every successful job publishes `manifest.json` last. The current writer emits
     └── preview/                  # compact derived view; no fixed budget
 ```
 
-`metadata.json` and `transcript.json` are UI/migration artifacts outside the
-canonical ZIP. `note.md` and `keyframes/` are read only for packs created before
-the Evidence Pack became canonical; current jobs do not write them.
+`metadata.json` and `transcript.json` are UI/migration artifacts outside the full
+canonical ZIP; compact copies include them for portable reading. `note.md` and
+`keyframes/` are read only for packs created before the Evidence Pack became
+canonical; current jobs do not write them.
+
+The web UI's primary action is **compact download**: full transcript and word timing,
+screenshots only for independently useful code, documents, tables, charts or
+instruction lists, and the recognized text of omitted images. Pure spoken
+commentary has **zero screenshots**, including cover/first/last/context frames.
+Scene changes, hand gestures, caption changes, OCR noise and empty OCR alone
+do not qualify an image. A **text-only download** explicitly omits every image.
+Selected preview JPEGs reference the same image instead of being stored twice.
+Selection uses local layout and image structure heuristics; it is not a guarantee
+that every important visual is found. Recognition failures are recorded and do
+not force context screenshots into the compact copy.
+**Full download** keeps every canonical image; SDK exports and Inbox handoff
+from the original library pack keep the full evidence. Re-exporting a compact
+copy preserves that copy's subset and cannot restore omitted images. Existing
+packs are not deleted or rewritten when downloading a compact copy. CLI exports
+remain full unless `--compact` or `--text-only` is supplied.
 
 See [Evidence Pack v1](docs/EVIDENCE_PACK.md) and the machine-readable
 [JSON Schema](schemas/evidence-pack-v1.schema.json).
