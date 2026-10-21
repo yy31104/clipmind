@@ -151,7 +151,12 @@ class AcquisitionLedgerTests(unittest.TestCase):
     def test_a_symlinked_owned_directory_is_refused(self) -> None:
         outside = Path(self.tempdir.name) / "outside"
         outside.mkdir()
-        acquisition.workspace(self.workdir).symlink_to(outside, target_is_directory=True)
+        try:
+            acquisition.workspace(self.workdir).symlink_to(outside, target_is_directory=True)
+        except OSError as exc:
+            if getattr(exc, "winerror", None) == 1314:
+                self.skipTest("Windows symlink privilege is unavailable")
+            raise
 
         with self.assertRaises(ValueError):
             acquisition.open_workspace(self.workdir, strategy="pending")
@@ -163,7 +168,12 @@ class AcquisitionLedgerTests(unittest.TestCase):
         outside.mkdir()
         kept = outside / "not-ours.mp4"
         kept.write_bytes(b"someone else's file")
-        acquisition.workspace(self.workdir).symlink_to(outside, target_is_directory=True)
+        try:
+            acquisition.workspace(self.workdir).symlink_to(outside, target_is_directory=True)
+        except OSError as exc:
+            if getattr(exc, "winerror", None) == 1314:
+                self.skipTest("Windows symlink privilege is unavailable")
+            raise
 
         acquisition.purge(self.workdir)
 
