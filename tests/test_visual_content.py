@@ -65,6 +65,26 @@ class VisualContentTests(unittest.TestCase):
             "text": code, "confidence": .95, "bbox": [.1, .25, .6, .1]},))
         self.assertEqual(select_content_frames([frame], ((0., 1., "print hello"),)), [frame])
 
+    def test_reserved_assignment_targets_are_not_code_evidence(self):
+        for index, text in enumerate(("and = 68 of 105 sessions", "if = 42", "None = 3", "True = 1")):
+            with self.subTest(text=text):
+                image = Image.new("RGB", (240, 180), "white")
+                ImageDraw.Draw(image).text((24, 45), text, fill="black")
+                frame = self.frame(index, image, (text,), ({
+                    "text": text, "confidence": .95, "bbox": [.1, .25, .8, .1]},))
+                self.assertEqual(select_content_frames([frame]), [])
+
+    def test_valid_assignments_members_calls_and_imports_remain_code_evidence(self):
+        for index, text in enumerate(("answer = 68", "record.value = 68", "AND = 68",
+                                      "print('hello')", "import numpy",
+                                      "from pathlib import Path", "const count = 68")):
+            with self.subTest(text=text):
+                image = Image.new("RGB", (240, 180), "white")
+                ImageDraw.Draw(image).text((24, 45), text, fill="black")
+                frame = self.frame(index, image, (text,), ({
+                    "text": text, "confidence": .95, "bbox": [.1, .25, .8, .1]},))
+                self.assertEqual(select_content_frames([frame]), [frame])
+
     def test_narrated_slide_and_ui_data_are_still_independent_layout(self):
         document = self.document()
         spoken = ((0., 3., " ".join(document.lines)),)
@@ -112,7 +132,7 @@ class VisualContentTests(unittest.TestCase):
         self.assertEqual(select_content_frames([frame]), [])
         frame.path.unlink()
         self.assertEqual(select_content_frames([frame]), [])
-        self.assertEqual(CONTENT_ALGORITHM, "independent-visual-content-v1")
+        self.assertEqual(CONTENT_ALGORITHM, "independent-visual-content-v3")
 
 
 if __name__ == "__main__":

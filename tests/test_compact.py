@@ -327,6 +327,45 @@ class CompactExportTests(unittest.TestCase):
         self.assert_references(Path(result["path"]))
         self.assertEqual(before, self.snapshot())
 
+    def test_real_duplicate_selection_keeps_source_text_and_valid_representative_refs(self):
+        timeline = self.rows(self.pack / "visual_timeline.jsonl")
+        records = self.rows(self.pack / "ocr.jsonl")
+        for index, (row, record) in enumerate(zip(timeline, records)):
+            code = "value = 101" if index == 1 else "value = 100"
+            caption = "重复讲解" if index < 2 else "讲解内容"
+            image = Image.new("RGB", (240, 160), "white")
+            drawing = ImageDraw.Draw(image)
+            drawing.text((24, 32), code, fill="black")
+            painted_caption = "first" if index < 2 else "second"
+            drawing.text((84, 136), painted_caption, fill="black")
+            left, top, right, bottom = drawing.textbbox((84, 136), painted_caption)
+            # Lossless test images make the pixel-level evidence exact, while
+            # retaining the real pack filenames and source identities.
+            image.save(self.pack / row["file"], format="PNG")
+            record.update(text=code + "\n" + caption, lines=[code, caption], layout=[
+                {"text": code, "confidence": .99, "bbox": [.1, .2, .8, .1]},
+                {"text": caption, "confidence": .99,
+                 "bbox": [left / 240, top / 160, (right-left) / 240, (bottom-top) / 160]}])
+        (self.pack / "ocr.jsonl").write_text("".join(
+            json.dumps(record, ensure_ascii=False) + "\n" for record in records), encoding="utf-8")
+        before = self.snapshot()
+        result = compact.build_compact_pack(self.pack, self.root / "deduplicated")
+        derived = Path(result["path"])
+        self.assertEqual(result["retained_count"], 2)
+        self.assertEqual(result["manifest"]["configuration"]["preview_algorithm"],
+                         compact.visual_content.CONTENT_ALGORITHM)
+        self.assertEqual(result["manifest"]["configuration"]["compact"]["duplicate_visual_states"], 1)
+        omitted = self.rows(derived / "omitted_visual_text.jsonl")
+        self.assertEqual(len(omitted), 1)
+        self.assertEqual(omitted[0]["selection_reason"], "duplicate_visual_content")
+        self.assertEqual(omitted[0]["representative_source_visual_id"], "visual-00001")
+        self.assertEqual(omitted[0]["representative_visual_ref"], "visual-00001")
+        self.assertEqual(omitted[0]["text"], records[-1]["text"])
+        self.assert_references(derived)
+        self.assertEqual((derived / "transcript.jsonl").read_bytes(),
+                         (self.pack / "transcript.jsonl").read_bytes())
+        self.assertEqual(before, self.snapshot())
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -28,6 +28,12 @@ things.
 
 ## Extraction fidelity
 
+- **Reading selection cannot promise zero omissions.** It can select only frames
+  that survived the existing sampling and pre-OCR canonical deduplication.
+  Positive layout checks can miss an unusual diagram or incomplete OCR.
+  Reading deduplication uses exact native pixels and protected subtitle masks;
+  JPEG noise or uncertain mixed portrait/document layouts may remain separate.
+  Full canonical images and the complete transcript remain available for review.
 - **Sampling is not continuous recording.** Production uses uniform 2 fps
   change detection. A checked-in 4 fps probe covered all 105 states stable for
   at least 0.5 seconds in one long code/UI source; sub-0.5-second flashes can be

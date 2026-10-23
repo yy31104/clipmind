@@ -190,7 +190,7 @@ class EvidencePackTests(unittest.TestCase):
             self.assertEqual(manifest["completeness"]["transcript"], "unavailable")
             self.assertEqual(manifest["completeness"]["ocr"], "partial")
             self.assertEqual(jsonl(dest / "ocr.jsonl")[0]["error"], frames[0].ocr_warning)
-            self.assertIn("Transcript unavailable", (dest / "transcript.md").read_text())
+            self.assertIn("Transcript unavailable", (dest / "transcript.md").read_text(encoding="utf-8"))
 
     def test_serializes_word_timing_and_speaker_only_when_provider_supplies_them(self) -> None:
         with tempfile.TemporaryDirectory() as tempdir:
