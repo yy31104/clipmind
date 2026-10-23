@@ -5,6 +5,7 @@ The original Evidence Pack remains the place to inspect unclassified visuals.
 """
 from __future__ import annotations
 
+import hashlib
 import math
 import re
 import unicodedata
@@ -17,8 +18,9 @@ from .media import Frame
 from .visual_states import transcript_alignment
 
 
-CONTENT_ALGORITHM = "independent-visual-content-v1"
+CONTENT_ALGORITHM = "independent-visual-content-v2"
 _LETTERS = re.compile(r"[a-z0-9_\u3400-\u9fff]", re.I)
+_SPEECH_TOKENS = re.compile(r"[a-z0-9_]+|[\u3400-\u9fff]")
 _BULLET = re.compile(r"^\s*(?:[-*•●▪]|\d{1,2}[.)、]|[一二三四五六七八九十][、.])\s*")
 _CODE = re.compile(
     r"^\s*(?:async\s+)?(?:def|class)\s+[a-z_]\w*(?:\([^\n]*\))?\s*:"
@@ -29,6 +31,11 @@ _CODE = re.compile(
 )
 _CALL = re.compile(r"^\s*[a-z_]\w*(?:\.[a-z_]\w*)*\([^\n]*\)\s*;?\s*$", re.I)
 _COMMAND = re.compile(r"^\s*(?:python3?|uv|pip3?|git|npm|pnpm|curl)\s+[\w./-]+(?:\s+\S+)*\s*$", re.I)
+_CLOSING = re.compile(r"下期[见見]|下次[见見]|感[谢謝](?:[观觀]看|收看)|[谢謝][谢謝].*[观觀]看|thanks.*watching|see you (?:next|soon)", re.I)
+_PROMO = re.compile(
+    r"[关關]注(?:我|我[们們]|公[众眾][号號])|[关關]注[\s·•:：。,，.-]|[订訂][阅閱]|[点點][赞讚]|[转轉][发發]"
+    r"|[历歷]史回[测測]|不[构構]成投[资資]建[议議]"
+    r"|subscribe|follow\s+(?:me|us|for more)|like and share|not financial advice", re.I)
 
 
 @dataclass(frozen=True)
@@ -107,11 +114,11 @@ def _runs(values: np.ndarray, minimum: int) -> list[tuple[int, int]]:
             if b - a + 1 >= minimum and values[a:b+1].mean() >= .75]
 
 
-def _chart(ink: np.ndarray) -> bool:
+def _chart_region(ink: np.ndarray) -> _Line | None:
     """Require thin intersecting axes/grid and actual marks inside that area."""
     height, width = ink.shape
     if min(height, width) < 24:
-        return False
+        return None
     up, down, left, right = [np.ones_like(ink) for _ in range(4)]
     up[4:] = ink[:-4]
     down[:-4] = ink[4:]
@@ -133,16 +140,30 @@ def _chart(ink: np.ndarray) -> bool:
                 continue
             interior = ink[max(0, ya):min(height, yb), max(0, xa):min(width, xb)]
             if interior.size and 12 <= interior.sum() and .001 <= interior.mean() <= .25:
-                return True
-    return False
+                # Include a margin for ticks/labels outside the detected axes.
+                left = max(0., min(x1, x) / width - .025)
+                top = max(0., min(y1, y) / height - .025)
+                right = min(1., max(x2, x) / width + .025)
+                bottom = min(1., max(y2, y) / height + .025)
+                return _Line("", left, top, right - left, bottom - top)
+    return None
 
 
 def _caption(line: _Line, frame: Frame, spoken: tuple) -> bool:
-    if not spoken or line.y < .65 or line.height > .18:
+    if not spoken or line.y < .70 or line.height > .13:
         return False
     total, novel, overlap = transcript_alignment(
         Frame(frame.index, frame.timestamp, frame.path, lines=(line.text,)), spoken)
-    return bool(total and overlap >= .8 and novel <= 3)
+    if not (total and overlap == 1 and novel == 0):
+        return False
+    visible = _SPEECH_TOKENS.findall(_normal(line.text).casefold())
+    local = [token for start, end, text in spoken
+             if end > frame.timestamp - 2 and start < frame.timestamp + 2
+             for token in _SPEECH_TOKENS.findall(_normal(text).casefold())]
+    # A bag of words can reverse a warning or swap two values. Caption removal
+    # needs the actual ordered phrase, not just the same tokens nearby.
+    return bool(visible and any(local[index:index + len(visible)] == visible
+                               for index in range(len(local) - len(visible) + 1)))
 
 
 def _aligned_reading(lines: list[_Line]) -> bool:
@@ -164,29 +185,217 @@ def _aligned_reading(lines: list[_Line]) -> bool:
     return False
 
 
-def select_content_frames(frames: list[Frame], spoken_intervals=()) -> list[Frame]:
+@dataclass(frozen=True)
+class _Candidate:
+    frame: Frame
+    kind: str
+    # Native-resolution digests are comparison evidence, never perceptual hashes.
+    size: tuple[int, int]
+    digest: bytes
+    text: tuple[str, ...]
+    captions: tuple[_Line, ...]
+    protected: tuple[_Line, ...]
+
+
+def _rectangle(line: _Line, size: tuple[int, int]) -> tuple[int, int, int, int]:
+    width, height = size
+    return (max(0, int(line.x * width)), max(0, int(line.y * height)),
+            min(width, math.ceil((line.x + line.width) * width)),
+            min(height, math.ceil((line.y + line.height) * height)))
+
+
+def _overlap(first: _Line, second: _Line, size: tuple[int, int]) -> bool:
+    # Use exactly the same outward pixel rounding as the actual mask.
+    a, b = _rectangle(first, size), _rectangle(second, size)
+    return a[0] < b[2] and b[0] < a[2] and a[1] < b[3] and b[1] < a[3]
+
+
+def _caption_lines(frame: Frame, lines: list[_Line], spoken: tuple) -> list[_Line]:
+    candidates = [line for line in lines if _caption(line, frame, spoken)]
+    # A row aligned with an established document column is reading material,
+    # even when it is near the bottom and the speaker reads it aloud.
+    upper = [line for line in lines if line.y < .65]
+    code_context = any(_CODE.search(line.text) or _CALL.fullmatch(line.text)
+                       or _COMMAND.fullmatch(line.text) for line in upper)
+    return [line for line in candidates if not any(
+        abs(line.x - anchor.x) <= .025
+        for anchor in upper
+    ) and not (code_context and (_CODE.search(line.text)
+                                or _CALL.fullmatch(line.text)
+                                or _COMMAND.fullmatch(line.text)))]
+
+
+def _native(frame: Frame) -> np.ndarray | None:
+    try:
+        with Image.open(frame.path) as image:
+            return np.asarray(image.convert("RGB"), dtype=np.uint8)
+    except (OSError, ValueError):
+        return None
+
+
+def _mask(pixels: np.ndarray, captions: tuple[_Line, ...]) -> np.ndarray:
+    result = pixels.copy()
+    height, width = result.shape[:2]
+    for line in captions:
+        # Do not blank a whole lower band or downsample small plot/code changes.
+        x1, y1, x2, y2 = _rectangle(line, (width, height))
+        result[y1:y2, x1:x2] = 0
+    return result
+
+
+def _signature(frame: Frame, captions: list[_Line]) -> tuple[str, ...]:
+    ignored = {_normal(line.text) for line in captions}
+    # Keep case, punctuation, operators and repeated tokens. Speech coverage
+    # never excuses a changed number or symbol in the document itself.
+    return tuple(_normal(text) for text in (frame.lines or (frame.text,))
+                 if text.strip() and _normal(text) not in ignored)
+
+
+def _safe_captions(lines: list[_Line], captions: list[_Line], *,
+                   chart: _Line | None, size: tuple[int, int]) -> tuple[_Line, ...]:
+    protected = [line for line in lines if line not in captions]
+    if chart:
+        protected.append(chart)
+    if sum(line.width * line.height for line in captions) > .20:
+        return ()
+    return tuple(line for line in captions
+                 if not any(_overlap(line, other, size) for other in protected))
+
+
+def _complete_layout(frame: Frame, lines: list[_Line]) -> bool:
+    try:
+        nonempty = [block for block in frame.ocr_layout if str(block.get("text") or "").strip()]
+        located = {_normal(line.text) for line in lines}
+        return len(nonempty) == len(lines) and all(
+            _normal(line) in located for line in frame.lines if line.strip())
+    except (AttributeError, TypeError, ValueError):
+        return False
+
+
+def _outro_only(texts) -> bool:
+    texts = [re.sub(r"(?<=[\u3400-\u9fff])\s+(?=[\u3400-\u9fff])", "", _normal(text))
+             for text in texts if text.strip()]
+    if not any(_CLOSING.search(text) for text in texts):
+        return False
+    if any(re.search(r"\d", text) for text in texts):
+        return False
+    def ornament_noise(text):
+        if not re.search(r"[a-z\u3400-\u9fff]", text, re.I):
+            return True
+        words = re.findall(r"[a-z]+", text)
+        if set(word.casefold() for word in words) & {
+            "to", "be", "or", "not", "and", "the", "for", "in", "on", "of", "no", "yes",
+            "pe", "pb", "roe", "roa", "nav", "pnl", "eps", "var", "rsi", "atr", "ema", "sma",
+        }:
+            return False
+        return (not re.search(r"[\u3400-\u9fff]", text) and len(words) >= 4
+                and max(map(len, words)) <= 3 and len(set(words)) < len(words)
+                and sum(char.isupper() for char in text) <= len(text) * .2)
+    unknown = [text for text in texts if not (_CLOSING.search(text) or _PROMO.search(text)
+                                             or ornament_noise(text))]
+    # A single short nonnumeric logo can accompany the closing/promotional
+    # lines. Any extra prose, numbers, formula or code makes this inconclusive.
+    return len(unknown) <= 1 and all(
+        _text_size(text) <= 8 and not re.search(r"[0-9=<>+*/%]", text)
+        for text in unknown)
+
+
+def _candidate(frame: Frame, spoken: tuple) -> _Candidate | None:
+    lines = _layout(frame)
+    pixels = _pixels(frame)
+    if pixels is None:
+        return None
+    captions = _caption_lines(frame, lines, spoken)
+    body = [line for line in lines if line not in captions]
+    canvas, ink = _canvas(pixels)
+    caption_text = {_normal(line.text) for line in captions}
+    code_lines = [line.text for line in body if line.y < .7]
+    if canvas:
+        code_lines.extend(_normal(line) for line in frame.lines
+                          if _normal(line) not in caption_text)
+    code = any(_CODE.search(text) or _CALL.fullmatch(text) or _COMMAND.fullmatch(text)
+               for text in code_lines)
+    chart = _chart_region(ink) if canvas else None
+    if not code and chart is None and _outro_only(frame.lines):
+        return None
+    if not (code or _aligned_reading(body) or chart):
+        return None
+    native = _native(frame)
+    if native is None:
+        return None
+    size = (native.shape[1], native.shape[0])
+    safe = _safe_captions(lines, captions, chart=chart, size=size)
+    # A warning disables subtitle-based merging, not positive content selection.
+    if frame.ocr_warning or frame.dedupe_warning or not _complete_layout(frame, lines):
+        safe = ()
+    fingerprint = hashlib.sha256(_mask(native, safe).tobytes()).digest()
+    return _Candidate(frame, "code" if code else "chart" if chart else "reading_layout",
+                      size, fingerprint,
+                      _signature(frame, list(safe)), safe, tuple(body + ([chart] if chart else [])))
+
+
+def _same_content(first: _Candidate, later: _Candidate) -> bool:
+    if (first.size != later.size or first.text != later.text
+            or first.frame.ocr_warning or later.frame.ocr_warning
+            or first.frame.dedupe_warning or later.frame.dedupe_warning):
+        return False
+    if first.captions == later.captions and first.digest == later.digest:
+        return True
+    if not (first.captions and later.captions):
+        return False
+    masks = tuple(dict.fromkeys((*first.captions, *later.captions)))
+    if (sum(line.width * line.height for line in masks) > .25
+            or any(_overlap(mask, text, first.size) for mask in masks
+                   for text in (*first.protected, *later.protected))):
+        return False
+    a, b = _native(first.frame), _native(later.frame)
+    return (a is not None and b is not None and a.shape == b.shape
+            and np.array_equal(_mask(a, masks), _mask(b, masks)))
+
+
+def select_content_frames(frames: list[Frame], spoken_intervals=(), *,
+                          decisions: dict[int, dict] | None = None) -> list[Frame]:
     """Keep only positive code, reading-layout or plotted-data evidence.
 
     No first/last/context image is added. Empty OCR is assessed visually; an
     unreadable image or arbitrary OCR volume is not positive content evidence.
     Unavailable speech does not force a context image into the selection.
     """
-    spoken = tuple(spoken_intervals)
-    selected = []
+    spoken = tuple(sorted(spoken_intervals, key=lambda item: (item[0], item[1])))
+    groups: list[list[_Candidate]] = []
+    representatives: list[_Candidate] = []
+    seen: dict[tuple, int] = {}
+    last_body: dict[tuple, int] = {}
+    records = decisions if decisions is not None else {}
     for frame in sorted(frames, key=lambda item: (item.timestamp, item.index)):
-        lines = _layout(frame)
-        pixels = _pixels(frame)
-        if pixels is None:
+        candidate = _candidate(frame, spoken)
+        if candidate is None:
+            records[frame.index] = {"reason": "promotional_outro" if _outro_only(frame.lines)
+                                   else "no_independent_visual_content_selected"}
             continue
-        canvas, ink = _canvas(pixels)
-        code_lines = [line.text for line in lines if line.y < .7]
-        if canvas:
-            code_lines.extend(_normal(line) for line in frame.lines)
-        if any(_CODE.search(text) or _CALL.fullmatch(text) or _COMMAND.fullmatch(text)
-               for text in code_lines):
-            selected.append(frame)
-            continue
-        body = [line for line in lines if not _caption(line, frame, spoken)]
-        if _aligned_reading(body) or (canvas and _chart(ink)):
-            selected.append(frame)
-    return selected
+        key = (candidate.size, candidate.digest, candidate.text,
+               tuple((line.x, line.y, line.width, line.height) for line in candidate.captions))
+        body_key = (candidate.size, candidate.kind, candidate.text)
+        possible = seen.get(key)
+        if possible is None:
+            possible = last_body.get(body_key)
+        if possible is not None and _same_content(representatives[possible], candidate):
+            groups[possible].append(candidate)
+            # Keep the first positive representative as a fixed anchor. A
+            # union of two subtitle masks is not transitive; swapping anchors
+            # could otherwise hide gradual changes across a long sequence.
+            seen[key] = possible
+            last_body[body_key] = possible
+        else:
+            seen[key] = len(representatives)
+            last_body[body_key] = len(representatives)
+            representatives.append(candidate)
+            groups.append([candidate])
+    for representative, group in zip(representatives, groups):
+        for candidate in group:
+            records[candidate.frame.index] = (
+                {"reason": "independent_" + representative.kind}
+                if candidate is representative else
+                {"reason": "duplicate_visual_content",
+                 "representative_index": representative.frame.index})
+    return sorted((item.frame for item in representatives), key=lambda frame: (frame.timestamp, frame.index))

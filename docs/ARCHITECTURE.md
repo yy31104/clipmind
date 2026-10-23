@@ -116,9 +116,12 @@ No interface has a separate visual-selection or Evidence Pack implementation.
 - OCR layout uses normalized coordinates when the provider supplies them.
 - transcript novelty measures on-screen text not present in nearby speech. It is
   not an importance score and never controls canonical membership.
-- `preview/` is derived. It chooses stable/readable representatives, removes
-  intermediate progressive builds, and has a novelty safety net for documents
-  or code that would otherwise disappear inside a single visual scene.
+- `preview/` is derived. It selects positive code, document-layout and plotted
+  data evidence, so pure spoken commentary can have no preview images. Exact
+  native-pixel comparison may merge selected duplicates after protecting body
+  text and plot regions. Only fully ASR-covered ordered subtitle phrases can be
+  masked. A fixed positive representative prevents comparison drift; none of
+  these decisions can remove canonical evidence.
 - preview can be rebuilt from a complete pack without reacquiring media or
   rerunning OCR. Rebuild removes the completion marker during its atomic swap
   and republishes it only after every derived view agrees.

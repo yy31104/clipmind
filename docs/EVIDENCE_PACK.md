@@ -74,7 +74,10 @@ Preview records point at the same `visual_states/all/` images, so the required
 preserves recognized text and source IDs/timestamps for images omitted from
 the reading copy; it does not link to absent screenshots. The manifest records
 the compact profile, parent manifest digest, selection algorithm, and original
-and selected image counts. These derived IDs apply only within that copy.
+and selected image counts. Duplicate omissions also record a
+`representative_source_visual_id` in the original pack and a
+`representative_visual_ref` in the derived timeline. The compact configuration
+records `duplicate_visual_states`. These derived IDs apply only within that copy.
 
 The original library pack and full ZIP remain available. Heuristic selection
 can miss a meaningful visual. Speech/OCR errors are recorded and do not by
@@ -195,11 +198,21 @@ kept and the warning is serialized.
 
 A derived chronological view optimized for reading. New jobs and preview
 rebuilds select positive evidence of code, document layouts, tables, charts or
-instruction lists with `independent-visual-content-v1`. Pure commentary can have
+instruction lists with `independent-visual-content-v2`. Pure commentary can have
 zero preview images. Scene or caption changes, OCR novelty and recognition
 errors do not force an image into this view. It has no fixed count limit and
 cannot remove or repoint canonical files. Existing packs can retain older scene
 selection until explicitly rebuilt; the manifest records the algorithm used.
+
+Version 2 removes a selected duplicate only when non-caption text preserves
+case, numbers and punctuation and native decoded RGB pixels match. Trusted
+subtitle boxes may be excluded only with full ordered phrase coverage in nearby
+ASR, complete readable layout and no OCR/hash warning. Masks cannot overlap
+document/code rows or detected plot regions, using the same native pixel rounding
+as the comparison. Comparison keeps a fixed first positive representative rather
+than following a chain of slightly changed images. Uncertain, compressed or
+mixed portrait/document variants may remain separate; no approximate hash or
+thumbnail similarity is used to erase their differences.
 
 ## Transcript alignment (introduced in 1.1)
 

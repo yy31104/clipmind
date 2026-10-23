@@ -7,6 +7,14 @@ are documented separately and do not have to equal the application version.
 
 ### Changed
 
+- Reading selection v2 merges proven duplicates using original-resolution pixels
+  and exact non-caption text. Subtitle-only changes require full ordered phrase
+  coverage in nearby ASR and protected layout. Bottom code captions are no longer
+  mistaken for code screenshots, while spoken bottom document rows, operators,
+  numbers and tiny plot changes are preserved. Duplicate omissions identify their
+  retained representative; comparison anchors stay fixed to prevent drift.
+  Promotional closing cards are excluded when they contain no independent data.
+
 - Reading previews and the web UI's primary ZIP download now select screenshots
   only for independent code, document, table, chart or instruction-list content.
   Pure spoken commentary can have zero screenshots. Compact downloads retain

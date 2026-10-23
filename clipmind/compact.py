@@ -119,9 +119,11 @@ def _build(pack: Path, dest: Path, *, image_policy: str) -> dict:
     transcript = _transcript(speech_rows, parent, old_job)
     spoken = tuple((segment.start, segment.end, segment.text) for segment in transcript.segments)
     chosen = []
+    selection: dict[int, dict] = {}
     if image_policy != "text":
         visual_states.annotate_transcript_alignment(frames, spoken)
-        chosen = visual_content.select_content_frames(frames, spoken_intervals=spoken)
+        chosen = visual_content.select_content_frames(frames, spoken_intervals=spoken,
+                                                       decisions=selection)
     completeness, diagnostics = parent.get("completeness", {}), parent.get("diagnostics", {})
     conservative = []
     if (not transcript.text.strip() or transcript.error
@@ -174,6 +176,8 @@ def _build(pack: Path, dest: Path, *, image_policy: str) -> dict:
             "selection_algorithm": algorithm, "image_policy": image_policy,
             "original_visual_states": len(frames), "retained_visual_states": len(copied),
             "omitted_visual_states": len(frames) - len(copied),
+            "duplicate_visual_states": sum(value.get("reason") == "duplicate_visual_content"
+                                            for value in selection.values()),
             "conservative_retention": conservative, "source_completeness": completeness,
             "preview_reuses_canonical_images": True}}
     manifest["artifacts"] = list(dict.fromkeys([*manifest["artifacts"], *EXTRA_ARTIFACTS]))
@@ -201,6 +205,9 @@ def _build(pack: Path, dest: Path, *, image_policy: str) -> dict:
     _write_json(dest / "transcript.json", speech_rows)
     omitted = []
     text_by_id = {row["id"]: row for row in text_rows}
+    source_visual_ids = {frame.index: row["id"] for frame, row in zip(frames, timeline)}
+    retained_ids = {frame.index: f"visual-{number:05d}"
+                    for number, frame in enumerate(retained, 1)}
     for frame, row in zip(frames, timeline):
         text = text_by_id[row["ocr_ref"]]
         if frame.index not in indexes:
@@ -208,7 +215,12 @@ def _build(pack: Path, dest: Path, *, image_policy: str) -> dict:
                 "text": text["text"], "lines": text.get("lines", []),
                 **({"ocr_error": text["error"]} if text.get("error") else {}),
                 "selection_reason": "text_only_requested" if image_policy == "text"
-                    else "no_independent_visual_content_selected"})
+                    else selection.get(frame.index, {}).get("reason", "no_independent_visual_content_selected")})
+            representative = selection.get(frame.index, {}).get("representative_index")
+            if representative in retained_ids:
+                omitted[-1].update(
+                    representative_source_visual_id=source_visual_ids[representative],
+                    representative_visual_ref=retained_ids[representative])
     (dest / "omitted_visual_text.jsonl").write_text("".join(
         json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n" for row in omitted), encoding="utf-8")
     readable = dest / "evidence.md"

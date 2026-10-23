@@ -252,6 +252,15 @@ Selected preview JPEGs reference the same image instead of being stored twice.
 Selection uses local layout and image structure heuristics; it is not a guarantee
 that every important visual is found. Recognition failures are recorded and do
 not force context screenshots into the compact copy.
+Reading selection also removes proven duplicates: the non-caption OCR must
+match exactly, and original-resolution decoded pixels must agree outside trusted
+subtitle boxes. A subtitle must occur in the nearby transcript in the same word
+order. Document columns, code, plot areas and uncertain OCR layout are protected;
+changed digits, punctuation or tiny plotted marks keep their own images. The
+first independently useful image stays the comparison anchor, preventing a
+sequence of small changes from disappearing through successive replacements.
+Simple promotional closing cards are omitted; independent figures, code and
+plots on a closing card remain eligible.
 **Full download** keeps every canonical image; SDK exports and Inbox handoff
 from the original library pack keep the full evidence. Re-exporting a compact
 copy preserves that copy's subset and cannot restore omitted images. Existing
