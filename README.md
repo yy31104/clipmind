@@ -261,6 +261,14 @@ first independently useful image stays the comparison anchor, preventing a
 sequence of small changes from disappearing through successive replacements.
 Simple promotional closing cards are omitted; independent figures, code and
 plots on a closing card remain eligible.
+Version 3 additionally selects legible representatives of text-heavy pages filmed
+with a moving camera. It combines trusted phrase coverage, newly exposed rows,
+high-confidence numbers and matching text anchors that moved or scaled. These
+approximate `repeated_reading_view` decisions are separate from proven pixel
+duplicates. Static document edits and recognized code/charts keep the strict
+path. This is a reading aid, not topic understanding: OCR errors, unrecognized
+figures and brief changes can still defeat it. Omitted OCR and representative
+references remain in the reading copy; use the full download to audit images.
 **Full download** keeps every canonical image; SDK exports and Inbox handoff
 from the original library pack keep the full evidence. Re-exporting a compact
 copy preserves that copy's subset and cannot restore omitted images. Existing

@@ -198,7 +198,7 @@ kept and the warning is serialized.
 
 A derived chronological view optimized for reading. New jobs and preview
 rebuilds select positive evidence of code, document layouts, tables, charts or
-instruction lists with `independent-visual-content-v2`. Pure commentary can have
+instruction lists with `independent-visual-content-v3`. Pure commentary can have
 zero preview images. Scene or caption changes, OCR novelty and recognition
 errors do not force an image into this view. It has no fixed count limit and
 cannot remove or repoint canonical files. Existing packs can retain older scene
@@ -213,6 +213,26 @@ as the comparison. Comparison keeps a fixed first positive representative rather
 than following a chain of slightly changed images. Uncertain, compressed or
 mixed portrait/document variants may remain separate; no approximate hash or
 thumbnail similarity is used to erase their differences.
+
+Version 3 also chooses readable representatives of text-heavy moving-camera
+views. This **approximate reading selection** is distinct from exact duplicate
+proof: trusted six-character phrase coverage must reach 85%, newly exposed
+substantial rows are protected, and new numbers in OCR rows with confidence at
+least 0.95 retain a view. At least three matching text anchors must move or scale;
+stable digital edits and recognized code/charts stay on the strict path. Views
+with OCR/hash warnings or malformed/unlocated OCR cannot be covered this way.
+Small numeric, operator, identifier-case and negation edits in corresponding
+high-confidence rows retain a view even when its values appear elsewhere on a page.
+There is no image-count budget.
+
+`omitted_visual_text.jsonl` labels these decisions `repeated_reading_view`, records
+`reading_phrase_coverage` and lists `reading_representatives` with original and
+derived visual IDs. The compact configuration counts `covered_reading_views`
+separately from `duplicate_visual_states`. OCR confidence is not ground truth;
+low-confidence values, unrecognized diagrams and camera movement accompanying
+a real change can be missed in this reading subset. All omitted OCR remains in
+the derivative, and the original pack retains every canonical image. This is not
+a semantic relevance model or a guarantee that every important visual is selected.
 
 ## Transcript alignment (introduced in 1.1)
 

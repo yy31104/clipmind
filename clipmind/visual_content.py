@@ -6,6 +6,7 @@ The original Evidence Pack remains the place to inspect unclassified visuals.
 from __future__ import annotations
 
 import hashlib
+import keyword
 import math
 import re
 import unicodedata
@@ -15,10 +16,11 @@ import numpy as np
 from PIL import Image
 
 from .media import Frame
+from . import reading_views
 from .visual_states import transcript_alignment
 
 
-CONTENT_ALGORITHM = "independent-visual-content-v2"
+CONTENT_ALGORITHM = "independent-visual-content-v3"
 _LETTERS = re.compile(r"[a-z0-9_\u3400-\u9fff]", re.I)
 _SPEECH_TOKENS = re.compile(r"[a-z0-9_]+|[\u3400-\u9fff]")
 _BULLET = re.compile(r"^\s*(?:[-*•●▪]|\d{1,2}[.)、]|[一二三四五六七八九十][、.])\s*")
@@ -31,6 +33,7 @@ _CODE = re.compile(
 )
 _CALL = re.compile(r"^\s*[a-z_]\w*(?:\.[a-z_]\w*)*\([^\n]*\)\s*;?\s*$", re.I)
 _COMMAND = re.compile(r"^\s*(?:python3?|uv|pip3?|git|npm|pnpm|curl)\s+[\w./-]+(?:\s+\S+)*\s*$", re.I)
+_BARE_ASSIGNMENT = re.compile(r"^\s*([a-z_]\w*)\s*=(?!=)", re.I)
 _CLOSING = re.compile(r"下期[见見]|下次[见見]|感[谢謝](?:[观觀]看|收看)|[谢謝][谢謝].*[观觀]看|thanks.*watching|see you (?:next|soon)", re.I)
 _PROMO = re.compile(
     r"[关關]注(?:我|我[们們]|公[众眾][号號])|[关關]注[\s·•:：。,，.-]|[订訂][阅閱]|[点點][赞讚]|[转轉][发發]"
@@ -53,6 +56,16 @@ def _normal(text: str) -> str:
 
 def _text_size(text: str) -> int:
     return len(_LETTERS.findall(_normal(text)))
+
+
+def _code_line(text: str) -> bool:
+    assignment = _BARE_ASSIGNMENT.match(text)
+    # OCR can turn prose such as "and - 68 sessions" into an assignment.
+    # Only a bare reserved target is invalid; member access, imports and valid
+    # case-sensitive identifiers must retain their existing syntax evidence.
+    if assignment and keyword.iskeyword(assignment.group(1)):
+        return False
+    return bool(_CODE.search(text) or _CALL.fullmatch(text) or _COMMAND.fullmatch(text))
 
 
 def _layout(frame: Frame) -> list[_Line]:
@@ -185,6 +198,21 @@ def _aligned_reading(lines: list[_Line]) -> bool:
     return False
 
 
+def _reading_material(lines: list[_Line], canvas: bool) -> bool:
+    if not _aligned_reading(lines):
+        return False
+    # A few names, logos or browser labels on a photograph are not a document
+    # paragraph. Preserve instruction lists and numerical panels, including
+    # those filmed on a monitor rather than on a flat page background.
+    substantial = any((_text_size(line.text) >= 40
+                       and len(re.findall(r"[a-z_]+", line.text, re.I)) >= 8)
+                      or len(re.findall(r"[\u3400-\u9fff]", line.text)) >= 18
+                      for line in lines)
+    return (canvas or substantial or sum(_text_size(line.text) for line in lines) >= 160
+            or sum(bool(_BULLET.match(line.text)) for line in lines) >= 2
+            or sum(bool(re.search(r"\d", line.text)) for line in lines) >= 3)
+
+
 @dataclass(frozen=True)
 class _Candidate:
     frame: Frame
@@ -215,14 +243,11 @@ def _caption_lines(frame: Frame, lines: list[_Line], spoken: tuple) -> list[_Lin
     # A row aligned with an established document column is reading material,
     # even when it is near the bottom and the speaker reads it aloud.
     upper = [line for line in lines if line.y < .65]
-    code_context = any(_CODE.search(line.text) or _CALL.fullmatch(line.text)
-                       or _COMMAND.fullmatch(line.text) for line in upper)
+    code_context = any(_code_line(line.text) for line in upper)
     return [line for line in candidates if not any(
         abs(line.x - anchor.x) <= .025
         for anchor in upper
-    ) and not (code_context and (_CODE.search(line.text)
-                                or _CALL.fullmatch(line.text)
-                                or _COMMAND.fullmatch(line.text)))]
+    ) and not (code_context and _code_line(line.text))]
 
 
 def _native(frame: Frame) -> np.ndarray | None:
@@ -313,12 +338,11 @@ def _candidate(frame: Frame, spoken: tuple) -> _Candidate | None:
     if canvas:
         code_lines.extend(_normal(line) for line in frame.lines
                           if _normal(line) not in caption_text)
-    code = any(_CODE.search(text) or _CALL.fullmatch(text) or _COMMAND.fullmatch(text)
-               for text in code_lines)
+    code = any(_code_line(text) for text in code_lines)
     chart = _chart_region(ink) if canvas else None
     if not code and chart is None and _outro_only(frame.lines):
         return None
-    if not (code or _aligned_reading(body) or chart):
+    if not (code or _reading_material(body, canvas) or chart):
         return None
     native = _native(frame)
     if native is None:
@@ -398,4 +422,15 @@ def select_content_frames(frames: list[Frame], spoken_intervals=(), *,
                 if candidate is representative else
                 {"reason": "duplicate_visual_content",
                  "representative_index": representative.frame.index})
-    return sorted((item.frame for item in representatives), key=lambda frame: (frame.timestamp, frame.index))
+    # Approximate reading-view coverage is deliberately separate from proven
+    # duplicates. A moving camera is not a new paragraph; stable digital edits,
+    # code and plots continue through the strict comparison above.
+    views = [view for item in representatives if item.kind == "reading_layout"
+             if (view := reading_views.describe(item.frame, item.protected, item.captions)) is not None]
+    _, covered = reading_views.choose(views)
+    for index, decision in list(records.items()):
+        original = decision.get("representative_index", index)
+        if original in covered:
+            records[index] = dict(covered[original])
+    return sorted((item.frame for item in representatives if item.frame.index not in covered),
+                  key=lambda frame: (frame.timestamp, frame.index))

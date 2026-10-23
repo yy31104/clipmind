@@ -178,6 +178,8 @@ def _build(pack: Path, dest: Path, *, image_policy: str) -> dict:
             "omitted_visual_states": len(frames) - len(copied),
             "duplicate_visual_states": sum(value.get("reason") == "duplicate_visual_content"
                                             for value in selection.values()),
+            "covered_reading_views": sum(value.get("reason") == "repeated_reading_view"
+                                          for value in selection.values()),
             "conservative_retention": conservative, "source_completeness": completeness,
             "preview_reuses_canonical_images": True}}
     manifest["artifacts"] = list(dict.fromkeys([*manifest["artifacts"], *EXTRA_ARTIFACTS]))
@@ -221,6 +223,13 @@ def _build(pack: Path, dest: Path, *, image_policy: str) -> dict:
                 omitted[-1].update(
                     representative_source_visual_id=source_visual_ids[representative],
                     representative_visual_ref=retained_ids[representative])
+            representatives = selection.get(frame.index, {}).get("representative_indexes", ())
+            if representatives:
+                omitted[-1]["reading_representatives"] = [
+                    {"source_visual_id": source_visual_ids[index],
+                     "visual_ref": retained_ids[index]}
+                    for index in representatives if index in retained_ids]
+                omitted[-1]["reading_phrase_coverage"] = selection[frame.index]["reading_phrase_coverage"]
     (dest / "omitted_visual_text.jsonl").write_text("".join(
         json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n" for row in omitted), encoding="utf-8")
     readable = dest / "evidence.md"
