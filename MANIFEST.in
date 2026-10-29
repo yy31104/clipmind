@@ -1,0 +1,12 @@
+include README.md CHANGELOG.md LICENSE CONTRIBUTING.md CODE_OF_CONDUCT.md SECURITY.md
+include uv.lock requirements-test.txt .env.example .dockerignore Dockerfile Makefile run.py cli.py
+recursive-include schemas *.json
+recursive-include scripts *.py *.ps1 *.sh
+recursive-include docs *.md *.json *.gif
+recursive-include eval *.json
+recursive-include packaging *
+recursive-include .github *.yml *.md
+recursive-include tests *.py *.json
+global-exclude *.pyc
+prune .venv
+prune out

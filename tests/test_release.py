@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import hashlib
+import io
+import tarfile
 import tempfile
 import tomllib
 import unittest
@@ -14,6 +16,24 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class ReleaseArtifactTests(unittest.TestCase):
+    def test_source_release_cannot_omit_the_visual_gate_or_include_local_env(self):
+        required = ("pyproject.toml", "requirements-test.txt", "scripts/evaluate_visual_quality.py",
+                    "scripts/build_release_assets.py", "tests/test_visual_quality.py", "tests/pack_fixture.py",
+                    "schemas/evidence-pack-v1.schema.json")
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "release.tar.gz"
+            for names, valid in ((required, True), (required[:-1], False), ((*required, ".env"), False)):
+                with tarfile.open(path, "w:gz") as archive:
+                    for name in names:
+                        entry = tarfile.TarInfo("clipmind/" + name)
+                        entry.size = 1
+                        archive.addfile(entry, io.BytesIO(b"x"))
+                if valid:
+                    build_release_assets.verify_source_distribution(path)
+                else:
+                    with self.assertRaises(RuntimeError):
+                        build_release_assets.verify_source_distribution(path)
+
     def test_release_tag_must_match_the_package_version(self) -> None:
         build_release_assets.validate_release_tag("v1.2.1", "1.2.1")
 
