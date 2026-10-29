@@ -24,6 +24,7 @@ The registry order is:
 ```text
 local file
 verified specific built-ins (Douyin, YouTube)
+experimental exact-note built-ins (WeChat Channels, Xiaohongshu)
 installed clipmind.sources entry points
 generic HTTP(S) fallback
 ```
@@ -33,6 +34,31 @@ still runs before the best-effort generic URL fallback. Only YouTube, Douyin,
 and local files are advertised as verified inputs. Entry points are loaded once
 per process. A plugin that raises during import or fails protocol validation is
 logged and skipped so it cannot disable built-ins.
+
+### Xiaohongshu public notes (experimental)
+
+The `xiaohongshu` adapter recognizes `xhslink.cn` / `xhslink.com` share links
+and canonical `/explore/<note-id>` or `/discovery/item/<note-id>` URLs. It reads
+the public page's explicit `noteDetailMap[requested-id].note` entry, requires
+the embedded note ID to agree, and refuses recommendations or identity-changing
+redirects. Public videos use the entry's media streams; normal image posts keep
+every explicit image page in source order, including repeated pages. Image-post
+soundtracks are not acquired, and are labelled accordingly. Live Photos remain
+unsupported on this adapter rather than being reduced to a still cover.
+
+No personal Chrome session or cookies are read by this path. A redirect to the
+platform's login page produces `login_required`, not a claim that the link has
+expired. Signed share queries may be necessary while fetching but are omitted
+from normalized source provenance. Only HTTPS platform and CDN addresses are
+contacted, with bounded redirects, body bytes, request counts and elapsed time;
+every page must transfer and decode before publication. Metadata parsing never
+executes page JavaScript. Cancellation waits for a bounded network read to finish
+before deleting the acquisition-owned temporary directory.
+
+The adapter has offline fixtures covering both media contracts, exact IDs,
+authentication redirects, transfer integrity and cancellation. This is not a
+claim that every live note is publicly retrievable: the user's tested share link
+redirected to login. Authenticated end-to-end acquisition has not been verified.
 
 ### Bilibili multipart cache compatibility
 

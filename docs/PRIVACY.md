@@ -10,9 +10,19 @@ without a separate security layer.
 
 ## Network access
 
-URL ingestion uses yt-dlp to resolve and download only the submitted source.
+URL ingestion uses platform-specific acquisition strategies, including yt-dlp,
+to resolve and download only the submitted source.
 What upstream hosts are contacted depends on the platform, redirects, and media
 delivery network.
+
+For experimental WeChat Channels share-link ingestion, `clipmind wechat-login`
+opens Tencent Yuanbao in a dedicated Chrome profile in the user's local ClipMind
+data directory. The user signs in directly on that official page. ClipMind then
+asks Tencent Yuanbao to resolve the submitted share link and reads the WeChat
+Channels feed page in that browser. It does not request a Cookie export, print
+account tokens, or send the link to a third-party parsing service. The browser
+profile contains sensitive account state and should be protected like a signed-in
+browser. Failed or restricted videos produce no Evidence Pack.
 
 Probing a URL uses yt-dlp's metadata parsers, with HTTP(S) reads owned by a
 separate ClipMind worker. The standalone library probe has these limits:
@@ -79,8 +89,9 @@ boundary to that package's code; review plugins before installing them.
 
 ## Browser cookies
 
-The default URL acquisition order is `chrome,-`: yt-dlp first tries the local
-Chrome cookie store and then an unauthenticated request. Browser-cookie access is
+The default yt-dlp cookie-attempt order is `chrome,-`: it tries the local
+Chrome cookie store and then an unauthenticated request. Douyin first tries the
+anonymous public-feed strategy below. Browser-cookie access is
 broader than the final source domain—yt-dlp reads the configured browser store,
 not only cookies for YouTube, Douyin, or another submitted site. On macOS this
 can trigger a Keychain prompt.
@@ -104,11 +115,31 @@ into an Evidence Pack. Safari is intentionally not a default fallback because
 its protected cookie container would otherwise encourage misleading Full Disk
 Access guidance.
 
+## Douyin public feed
+
+For an individual Douyin video, acquisition first requests its public mobile
+feed endpoint at `api5-normal-c-hl.amemv.com`. This request sends the submitted
+video ID and no browser cookies, account credentials, or third-party parser
+request. Short share links are resolved through HTTPS redirects restricted to
+Douyin domains. The metadata response is limited to 2 MiB.
+
+Feed responses can contain recommended videos. ClipMind requires exactly one
+entry with the requested ID; a missing or ambiguous match falls through to the
+existing strategies. HTTPS media URLs must belong to an allowed Douyin/ByteDance
+delivery domain, and the selected strategy is recorded in `source.json`.
+Downloaded media uses the same owned temporary-directory cleanup as other
+acquisition strategies. The endpoint is an upstream dependency and may change;
+one successful extraction does not establish universal source availability.
+Image notes are not audio videos and are not supported by this strategy.
+
+URL probes do not use this acquisition fallback or download a job's media.
+
 ## Douyin browser session
 
 Douyin builds the signature its video-detail endpoint requires inside its own
-page, so yt-dlp cannot reach that endpoint with or without cookies. After the
-cookie attempts above fail for a Douyin link, ClipMind tries one more strategy:
+page; yt-dlp may fail to reach that endpoint even when the browser can play the
+video. After the public-feed and configured cookie attempts fail for a Douyin
+link, ClipMind tries one more strategy:
 
 - it starts the locally installed Google Chrome through Playwright with a
   **new temporary, signed-out profile** created for that run. Your normal Chrome

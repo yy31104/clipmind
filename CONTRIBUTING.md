@@ -45,13 +45,14 @@ product surface without an accepted design issue.
 
 ## Development setup
 
+Install Python/uv and Node.js first; `node` is required for JavaScript syntax and
+UI behavior tests. See [Installation](docs/INSTALL.md) for FFmpeg, OCR languages,
+and platform dependencies. Create the project environment from `uv.lock`:
+
 ```bash
 git clone https://github.com/yy31104/clipmind.git
 cd clipmind
-uv venv --python 3.12
-uv pip install -r clipmind/requirements.txt
-uv pip install -r requirements-test.txt
-make test
+uv sync --locked --python 3.12
 ```
 
 Tests are intentionally offline and should not require model downloads, browser
@@ -59,10 +60,19 @@ cookies, or real platform access. Use temporary directories and mocked provider
 boundaries. Tiny synthetic media can be generated during a test, but avoid large
 binary fixtures.
 
-Run the app during UI work:
+On macOS/Linux, run the tests and app with Make:
 
 ```bash
+make test
 make run
+```
+
+On Windows, use native PowerShell commands without Make:
+
+```powershell
+node --check clipmind/web/app.js
+& .\.venv\Scripts\python.exe -m unittest discover -s tests -v
+.\scripts\clipmind_windows.ps1 serve
 ```
 
 Then verify desktop and narrow/mobile layouts, keyboard focus, empty/loading/
@@ -84,6 +94,8 @@ inside a UI pull request.
 
 ## Verification checklist
 
+On macOS/Linux:
+
 ```bash
 make test
 .venv/bin/python -m compileall -q clipmind tests scripts
@@ -93,16 +105,41 @@ sh -n scripts/install.sh scripts/build_macos_app.sh
 git diff --check
 ```
 
-Every pull request should run `make test`, `make eval`, and `git diff --check`.
+On Windows, the equivalent local checks use PowerShell and Python rather than
+Make, jq, or sh:
+
+```powershell
+node --check clipmind/web/app.js
+& .\.venv\Scripts\python.exe -m unittest discover -s tests -v
+& .\.venv\Scripts\python.exe -m compileall -q clipmind tests scripts
+& .\.venv\Scripts\python.exe -m json.tool schemas/evidence-pack-v1.schema.json > $null
+git diff --check
+```
+
+Unix shell-script syntax checks run on macOS/Linux or their CI jobs.
+Every pull request should run `make test`, `make eval`, and `git diff --check`,
+or their native equivalents. On Windows, the existing-pack evaluation is:
+
+```powershell
+& .\.venv\Scripts\python.exe scripts/evaluate.py --mode existing --out out
+```
+
 `make eval` audits the newest already-complete Evidence Pack for each real case;
 it is fast and normally offline, but it does **not** prove that the current
-pipeline can reproduce those packs.
+pipeline can reproduce those packs. A fresh checkout without the reviewed
+packs reports them as missing; report that result instead of claiming it passed.
 
 Any change to acquisition, sampling, deduplication, OCR/ASR wiring, canonical
 membership, or preview derivation must also run:
 
 ```bash
 make eval-reextract
+```
+
+PowerShell equivalent:
+
+```powershell
+& .\.venv\Scripts\python.exe scripts/evaluate.py --mode reextract
 ```
 
 That target uses the current pipeline and a fresh temporary library, so cached
@@ -112,7 +149,8 @@ the downloaded source SHA-256 matches the reviewed baseline. Changed or
 unavailable source identity is reported explicitly and only broad quality bounds
 apply; source drift is a review signal, not a reason to rewrite the baseline.
 
-Use `make eval-synthetic` for the generated silent-slide end-to-end fixture.
+Use `make eval-synthetic` for the generated silent-slide end-to-end fixture;
+on Windows, run `& .\.venv\Scripts\python.exe scripts/evaluate_silent_slides.py`.
 
 If you change packaging, also build a wheel and inspect/install it in a clean
 temporary environment. If you change source matching, prove specific adapters

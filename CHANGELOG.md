@@ -7,6 +7,45 @@ are documented separately and do not have to equal the application version.
 
 ### Changed
 
+- Douyin media retrieval reports received bytes, known length and average
+  transfer rate. The fetching card shows an unknown overall percentage and
+  explains temporary retrieval/cleanup instead of appearing frozen at 0%.
+  Transfers check length, byte limits and an overall deadline; incomplete
+  responses are not passed to the extraction pipeline as successful videos.
+
+- Browser uploads accept the same common camera and legacy media families as
+  local paths, including MPEG/TS, WMV, AIFF, WMA and AC3. Unsupported document
+  uploads are described as file-type limitations rather than setup failures.
+- Audio with attached cover art uses the audio path rather than sampling a
+  cover as a video. Remote downloads explicitly identified as audio are checked
+  using the actual streams before transcription.
+- Multipage TIFF inputs preserve every decoded page as lossless PNG in source
+  order, with an explicit transformation marker and no fabricated video clock.
+  Oversized or unreadable later pages cannot publish a prefix-only success.
+
+- Douyin Live Photo posts now acquire each page's native still and bounded
+  dynamic clip. Canonical OCR/screenshots preserve page order and separate
+  clip-local motion time from the whole-post timeline. Search, SDK, compact
+  export and OCR rebuilding retain the unique visual reference; missing or
+  undecodable motion does not turn into a still-only success.
+- Browser acquisition failures retain safe phase/reason/status diagnostics
+  alongside public-feed counts, so navigation and download failures are not
+  hidden by an earlier missing-metadata or Cookie message.
+
+- Local still images and acquired Douyin image posts retain original image
+  bytes and source page order with OCR. Silent and no-detected-speech videos
+  keep visual evidence; image-post soundtracks that were not acquired are
+  explicitly labelled instead of inventing speech or playback timestamps.
+- Unchanged libraries reuse their search index without repeatedly reading all
+  transcript and OCR files. Compact and text-only packs keep omitted OCR
+  searchable, while the UI distinguishes text-only evidence from attached images.
+- Portable full packs display their canonical transcript after export/import.
+  Image searches address original page indices, and Windows MCP emits UTF-8
+  even when the system console uses GBK, including Chinese and emoji content.
+- Dependency checks now report missing ffprobe before local audio is mistaken
+  for video. Setup and contributor docs use locked environments and include
+  native PowerShell verification commands.
+
 - Reading previews and the web UI's primary ZIP download now select screenshots
   only for independent code, document, table, chart or instruction-list content.
   Pure spoken commentary can have zero screenshots. Compact downloads retain
@@ -92,6 +131,31 @@ are documented separately and do not have to equal the application version.
   and restart recovery share one cleanup contract and temporary media is removed
   whatever the acquiring strategy named it. With `CLIPMIND_KEEP_VIDEO=1` the
   retained media now lives in `acquisition/` instead of at the job root.
+
+### Reliability and visual quality
+
+- Guard canonical perceptual-hash deduplication with local pixel changes, preserving
+  small numeric/code/chart changes before OCR. Budgets still apply.
+- Improve structural screenshot selection for weak OCR documents and axis-free
+  connected diagrams; add a labeled recall/redundancy gate and per-image compact
+  export decisions. Original canonical evidence and transcripts remain intact.
+- Add read-only `clipmind verify` for identities, references, images and counts.
+- Recover validated completed packs after crashes, isolate bad job records,
+  make Windows starts idempotent, and recover corrupt derived search indexes
+  without discarding their old files. Report storage failures explicitly.
+- Add a bounded public Xiaohongshu video/static-image path with exact note identity,
+  real stream checks, cancellation cleanup and clear login-required errors.
+  Authenticated end-to-end capture remains unverified.
+- Restrict HTTP Host names to loopback and browser writes to the same origin.
+  The server remains a single-user local application, not a public SaaS service.
+- Reject full ZIP destinations inside the source pack and distinguish repaired
+  Inbox artifacts from identical previous deliveries without overwriting either.
+- Join analysis siblings and native workers before cleanup on failure or repeated
+  cancellation; remove partial cancelled uploads and reject truncated image/media
+  transfers. Graceful cancellation may wait for the current native model call.
+- Recover SDK batch terminal states after notification overflow, isolate malformed
+  library metadata, and use Unicode-aware evidence search. Display detail-load
+  errors and prevent late responses from opening the wrong result.
 
 ## 1.2.0 — 2026-09-04
 
