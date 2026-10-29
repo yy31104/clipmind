@@ -1,5 +1,10 @@
 # Limitations
 
+The [input-type matrix](INPUT_TYPES.md) separates supported media paths from
+article/document and authenticated-source gaps. General webpage bodies, PDF
+and Office files are not currently media inputs; accepting a URL or filename
+does not itself establish extraction support.
+
 ClipMind is conservative about what it claims. A recognized adapter, a complete
 package transaction, and a faithful copy of source evidence are different
 things.
@@ -32,6 +37,12 @@ things.
   change detection. A checked-in 4 fps probe covered all 105 states stable for
   at least 0.5 seconds in one long code/UI source; sub-0.5-second flashes can be
   missed and are not assumed readable.
+- **Live Photo motion is sampled evidence.** Each original page is retained,
+  and its dynamic clip is sampled separately with clip-local positions. This
+  preserves page order without inventing a whole-post video duration; it does
+  not retain every motion frame or transcribe the post's music/motion audio.
+  A missing or undecodable declared clip fails the job rather than publishing
+  its still cover as complete dynamic evidence.
 - **Visual grouping is heuristic.** dHash, OCR overlap, scene scores, build
   groups, scroll groups, and content hints are measurements rather than general
   visual understanding. Canonical output can retain transitions; preview can

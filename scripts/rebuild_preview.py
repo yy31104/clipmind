@@ -69,6 +69,7 @@ def _transcript(rows: list[dict], manifest: dict) -> Transcript:
 
 def rebuild(workdir: Path, *, refresh_ocr: bool = False, text_only: bool = False) -> int:
     manifest = evidence.load_complete_pack(workdir)
+    source = json.loads((workdir / "source.json").read_text(encoding="utf-8"))
     timeline = read_jsonl(workdir / "visual_timeline.jsonl")
     ocr_by_id = {row["id"]: row for row in read_jsonl(workdir / "ocr.jsonl")}
 
@@ -89,6 +90,8 @@ def rebuild(workdir: Path, *, refresh_ocr: bool = False, text_only: bool = False
                 observed_sample_count=int(row.get("observed_sample_count") or 1),
                 stable_duration=float(row.get("stable_duration_seconds") or 0),
                 ocr_layout=tuple(ocr.get("layout", ())),
+                source_image_index=row.get("source_image_index", ocr.get("source_image_index")),
+                source_motion_timestamp=row.get("source_motion_timestamp", ocr.get("source_motion_timestamp")),
             )
         )
 
@@ -108,7 +111,11 @@ def rebuild(workdir: Path, *, refresh_ocr: bool = False, text_only: bool = False
             time.perf_counter() - started, 3
         )
 
-    groups = visual_states.group_progressive_builds(frames)
+    image_collection = source.get("media_type") == "image_collection" or any(
+        frame.source_image_index is not None for frame in frames
+    )
+    visual_primary = bool(source.get("visual_primary") or image_collection)
+    groups = [] if image_collection else visual_states.group_progressive_builds(frames)
     transcript_rows = read_jsonl(workdir / "transcript.jsonl")
     spoken = tuple(
         (float(row["start"]), float(row["end"]), row["text"]) for row in transcript_rows
@@ -119,6 +126,8 @@ def rebuild(workdir: Path, *, refresh_ocr: bool = False, text_only: bool = False
     visual_states.annotate_structure(frames, spoken_intervals=spoken)
     if text_only:
         selected, algorithm = [], "text-only-v1"
+    elif visual_primary:
+        selected, algorithm = frames, "visual-only-primary-v1"
     else:
         selected = visual_content.select_content_frames(frames, spoken_intervals=spoken)
         algorithm = visual_content.CONTENT_ALGORITHM
@@ -233,7 +242,9 @@ def rebuild(workdir: Path, *, refresh_ocr: bool = False, text_only: bool = False
                     payload["evidence_pack"]["completeness"] = dict(
                         manifest["completeness"]
                     )
-            source = json.loads((workdir / "source.json").read_text(encoding="utf-8"))
+                    payload["evidence_pack"]["diagnostics"] = dict(
+                        manifest["diagnostics"]
+                    )
             item = Media(
                 workdir / "source.mp4",
                 {
@@ -243,7 +254,15 @@ def rebuild(workdir: Path, *, refresh_ocr: bool = False, text_only: bool = False
                     "webpage_url": source.get("url"),
                     "uploader": source.get("uploader"),
                     "_clipmind_platform": source.get("platform"),
+                    "_clipmind_media_type": source.get("media_type"),
+                    "_clipmind_audio_status": source.get("audio_status"),
+                    "_clipmind_speech_status": source.get("speech_status"),
+                    "_clipmind_visual_primary": visual_primary,
+                    "_clipmind_time_basis": source.get("time_basis"),
+                    **{f"_clipmind_{field}": source[field] for field in (
+                        "source_image_count", "source_motion_count", "motion_sample_fps", "motion_audio_status", "motion_time_basis", "image_page_transform") if field in source},
                 },
+                image_paths=tuple(frame.path for frame in frames) if image_collection else (),
             )
             write_jsonl(ocr_next, evidence._ocr_records(frames))
             evidence_next.write_text(

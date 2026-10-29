@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import unittest
+import sys
 from pathlib import Path
-from unittest.mock import patch
+from types import SimpleNamespace
+from unittest.mock import MagicMock, patch
 
 from clipmind import asr, ocr, providers
 from clipmind.config import Settings
@@ -50,6 +52,27 @@ class ProviderSelectionTests(unittest.TestCase):
 
 
 class PortableProviderDegradationTests(unittest.IsolatedAsyncioTestCase):
+    def test_faster_whisper_runtime_settings_and_cache_key(self) -> None:
+        factory = MagicMock()
+        factory.return_value.transcribe.return_value = (iter(()), SimpleNamespace(language="en"))
+        cases = (
+            Settings(faster_whisper_model="small", faster_whisper_device="cpu", faster_whisper_compute_type="int8"),
+            Settings(faster_whisper_model="small", faster_whisper_device="cuda", faster_whisper_compute_type="float16"),
+            Settings(faster_whisper_model="small", faster_whisper_device="cpu", faster_whisper_compute_type="float16"),
+        )
+        with patch.dict(sys.modules, {"faster_whisper": SimpleNamespace(WhisperModel=factory)}):
+            asr._faster_models.clear()
+            try:
+                for config in (*cases, cases[0]):
+                    asr.FasterWhisperProvider(config)._transcribe_sync(Path("audio.wav"))
+            finally:
+                asr._faster_models.clear()
+
+        self.assertEqual(factory.call_count, 3)
+        factory.assert_any_call("small", device="cpu", compute_type="int8")
+        factory.assert_any_call("small", device="cuda", compute_type="float16")
+        factory.assert_any_call("small", device="cpu", compute_type="float16")
+
     async def test_missing_faster_whisper_degrades_without_import_failure(self) -> None:
         provider = asr.FasterWhisperProvider(Settings())
         with patch.object(asr, "faster_whisper_available", return_value=False):
@@ -57,6 +80,16 @@ class PortableProviderDegradationTests(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(transcript.engine, "faster-whisper")
         self.assertIn("unavailable", transcript.error)
+
+    async def test_missing_cuda_runtime_reports_action_without_cpu_fallback(self) -> None:
+        provider = asr.FasterWhisperProvider(Settings(faster_whisper_device="cuda"))
+        with (
+            patch.object(asr.FasterWhisperProvider, "available", return_value=True),
+            patch.object(asr.FasterWhisperProvider, "_transcribe_sync", side_effect=RuntimeError("Library cublas64_12.dll is not found")),
+        ):
+            transcript = await provider.transcribe(Path("audio.wav"))
+        self.assertEqual(transcript.segments, [])
+        self.assertIn("CLIPMIND_FASTER_WHISPER_DEVICE=cpu", transcript.error)
 
     def test_missing_tesseract_is_reported_at_the_provider_boundary(self) -> None:
         provider = ocr.TesseractTextRecognizer(Settings())

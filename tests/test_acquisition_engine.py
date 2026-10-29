@@ -64,9 +64,12 @@ class CookieLadderTests(unittest.IsolatedAsyncioTestCase):
         # only possible because it is an object rather than a module global.
         self.engine = patch.object(fetch, "_engine", fetch.AcquisitionEngine())
         self.engine.start()
+        self.public_feed = patch("clipmind.fetch.douyin_public.resolve", side_effect=fetch.douyin_browser.ResolveFailed("no public test fixture"))
+        self.public_feed.start()
 
     def tearDown(self) -> None:
         self.engine.stop()
+        self.public_feed.stop()
         self.tempdir.cleanup()
 
     def workdir(self) -> Path:

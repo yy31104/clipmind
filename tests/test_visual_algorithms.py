@@ -7,6 +7,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from PIL import Image
+import numpy as np
 
 from clipmind import media, ocr, visual_states
 from clipmind.media import Frame
@@ -109,6 +110,13 @@ class OCRAnnotationTests(unittest.IsolatedAsyncioTestCase):
 
 
 class DedupeTests(unittest.TestCase):
+    def setUp(self) -> None:
+        # These isolate hash sequencing. Native-pixel behavior is exercised with
+        # actual image files in test_canonical_detail instead of nonexistent paths.
+        comparison = patch.object(media, "_comparison_pixels", return_value=np.zeros((32, 32, 3), dtype=np.int16))
+        comparison.start()
+        self.addCleanup(comparison.stop)
+
     def test_dedupe_compares_against_the_last_kept_frame(self) -> None:
         frames = [make_frame(index) for index in range(3)]
 

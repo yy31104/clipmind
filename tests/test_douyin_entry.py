@@ -24,3 +24,22 @@ class DouyinEntryTests(unittest.TestCase):
         self.assertEqual(error.code, 'source_metadata_unavailable')
         self.assertNotIn('refresh', error.action)
         self.assertNotIn('rejected the browser cookies', str(error))
+
+    def test_browser_metadata_failure_outweighs_earlier_cookie_read_error(self):
+        failures = [
+            AttemptFailure('chrome', 'chrome cookies', 'ERROR: Could not copy Chrome cookie database'),
+            AttemptFailure('-', 'no cookies', 'ERROR: unable to extract video metadata'),
+            AttemptFailure('douyin-browser', 'browser session',
+                           'the page returned no detail for 123456789'),
+        ]
+        error = classify_failures(failures, adapter=ADAPTER, platform='douyin')
+        self.assertEqual(error.code, 'source_metadata_unavailable')
+        self.assertNotIn('Chrome cookies', str(error))
+
+    def test_cookie_read_error_still_reported_when_browser_cannot_start(self):
+        failures = [
+            AttemptFailure('chrome', 'chrome cookies', 'ERROR: Could not copy Chrome cookie database'),
+            AttemptFailure('douyin-browser', 'browser session', 'no usable browser: Chrome missing'),
+        ]
+        error = classify_failures(failures, adapter=ADAPTER, platform='douyin')
+        self.assertEqual(error.code, 'cookies_unavailable')

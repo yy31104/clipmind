@@ -9,6 +9,7 @@ import json
 import os
 import subprocess
 import sys
+import tarfile
 import tempfile
 import tomllib
 import venv
@@ -36,6 +37,20 @@ def write_checksums(files: list[Path], destination: Path) -> None:
         for path in sorted(files, key=lambda path: path.name)
     ]
     destination.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def verify_source_distribution(path: Path) -> None:
+    """The released source must reproduce the shipped visual quality gate."""
+    required = {"pyproject.toml", "requirements-test.txt", "scripts/evaluate_visual_quality.py",
+                "scripts/build_release_assets.py", "tests/test_visual_quality.py", "tests/pack_fixture.py",
+                "schemas/evidence-pack-v1.schema.json"}
+    with tarfile.open(path, "r:gz") as archive:
+        members = [member.name for member in archive.getmembers() if member.isfile()]
+    relative = {name.split("/", 1)[1] for name in members if "/" in name}
+    if not required <= relative:
+        raise RuntimeError("source distribution is missing runtime/test/quality-gate inputs")
+    if any(Path(name).name == ".env" for name in relative):
+        raise RuntimeError("source distribution must not contain local environment secrets")
 
 
 def _clean_release_outputs(dist: Path) -> None:
@@ -103,6 +118,7 @@ def build_release_assets(*, tag: str | None = None, root: Path = ROOT) -> dict:
         cwd=root,
     )
     distributions = _built_distributions(dist, version)
+    verify_source_distribution(next(path for path in distributions if path.name.endswith(".tar.gz")))
     wheel = next(path for path in distributions if path.suffix == ".whl")
     _verify_clean_install(wheel, name, version)
     checksums = dist / "SHA256SUMS"

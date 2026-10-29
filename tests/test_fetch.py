@@ -2,12 +2,51 @@ from __future__ import annotations
 
 import unittest
 from unittest.mock import patch
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from clipmind import fetch
 from clipmind.config import Settings
 
 
 class FetchErrorTests(unittest.TestCase):
+    def test_wechat_channels_share_uses_dedicated_browser(self) -> None:
+        import asyncio
+        from clipmind.sources import wechat_browser
+
+        with TemporaryDirectory() as temp:
+            root = Path(temp) / "owned"
+            for url in (
+                "https://weixin.qq.com/sph/Awo78WDUPG",
+                "https://channels.weixin.qq.com/finder-preview/pages/sph?id=Awo78WDUPG",
+            ):
+                async def fake_acquire(source, destination, **kwargs):
+                    destination.write_bytes(b"video")
+                    return wechat_browser.ResolvedMedia("https://example.invalid/media", {
+                        "id": "Awo78WDUPG", "title": "示例", "webpage_url": source
+                    })
+
+                with self.subTest(url=url), patch.object(wechat_browser, "acquire", fake_acquire):
+                    result = asyncio.run(fetch.fetch(url, root))
+                    self.assertEqual(result.platform, "wechat")
+                    self.assertEqual(result.source_id, "Awo78WDUPG")
+                    self.assertEqual(result.info["_clipmind_strategy"], "wechat browser session")
+                    self.assertEqual(result.media_path.read_bytes(), b"video")
+
+    def test_wechat_failure_does_not_claim_chrome_cookies_are_unreadable(self) -> None:
+        import asyncio
+        from clipmind.sources import wechat_browser
+
+        async def missing_login(*args, **kwargs):
+            raise wechat_browser.ResolveFailed("请先在腾讯元宝官方网页扫码登录")
+
+        with TemporaryDirectory() as temp, patch.object(wechat_browser, "acquire", missing_login):
+            with self.assertRaises(fetch.FetchError) as raised:
+                asyncio.run(fetch.fetch("https://weixin.qq.com/sph/Awo78WDUPG", Path(temp)))
+            self.assertEqual(raised.exception.code, "media_fetch_failed")
+            self.assertIn("扫码登录", raised.exception.user_message)
+            self.assertNotIn("Cookie", raised.exception.user_message)
+
     def test_fresh_cookie_failure_is_safe_and_actionable(self) -> None:
         error = fetch._fetch_error(
             [
@@ -22,7 +61,7 @@ class FetchErrorTests(unittest.TestCase):
         self.assertNotIn("Safari", str(error))
 
     def test_expired_link_has_a_fresh_link_recovery_action(self) -> None:
-        error = fetch._fetch_error(["ERROR: Unsupported URL"])
+        error = fetch._fetch_error(["ERROR: This video is not available"])
 
         self.assertEqual(error.code, "link_unavailable")
         self.assertIn("fresh share link", error.action)

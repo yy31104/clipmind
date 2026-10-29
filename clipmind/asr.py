@@ -1,13 +1,13 @@
 """Speech-to-text via MLX Whisper (runs on the Apple Silicon GPU, no API cost)."""
 from __future__ import annotations
 
-import asyncio
 import logging
 import threading
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
 
+from .async_utils import to_thread_joined
 from .config import Settings, settings
 
 
@@ -130,7 +130,7 @@ class MLXWhisperProvider:
         return await _transcribe(audio, self.config)
 
 
-_faster_models: dict[str, object] = {}
+_faster_models: dict[tuple[str, str, str], object] = {}
 _faster_models_lock = threading.Lock()
 
 
@@ -154,23 +154,40 @@ class FasterWhisperProvider:
                 error="faster-whisper is unavailable; install the portable ASR extra",
             )
         try:
-            return await asyncio.to_thread(self._transcribe_sync, audio)
+            return await to_thread_joined(self._transcribe_sync, audio)
         except Exception as exc:  # noqa: BLE001
+            reason = str(exc).lower()
+            if "cublas" in reason or "cudnn" in reason:
+                error = (
+                    "CUDA runtime unavailable; install CUDA 12 cuBLAS and cuDNN 9 "
+                    "or set CLIPMIND_FASTER_WHISPER_DEVICE=cpu, then reprocess"
+                )
+            else:
+                error = f"speech transcription failed ({type(exc).__name__}); reprocess after checking the local log"
             return Transcript(
                 [],
                 engine=self.name,
-                error=f"speech transcription failed ({type(exc).__name__}); reprocess after checking the local log",
+                error=error,
             )
 
     def _transcribe_sync(self, audio: Path) -> Transcript:
         from faster_whisper import WhisperModel
 
         model_name = self.config.faster_whisper_model
+        model_key = (
+            model_name,
+            self.config.faster_whisper_device,
+            self.config.faster_whisper_compute_type,
+        )
         with _faster_models_lock:
-            model = _faster_models.get(model_name)
+            model = _faster_models.get(model_key)
             if model is None:
-                model = WhisperModel(model_name, device="auto", compute_type="auto")
-                _faster_models[model_name] = model
+                model = WhisperModel(
+                    model_name,
+                    device=self.config.faster_whisper_device,
+                    compute_type=self.config.faster_whisper_compute_type,
+                )
+                _faster_models[model_key] = model
         segments, info = model.transcribe(
             str(audio),
             language=self.config.asr_language,
@@ -213,7 +230,7 @@ async def _transcribe(audio: Path | None, config: Settings) -> Transcript:
             error="mlx-whisper is unavailable; install dependencies and reprocess",
         )
     try:
-        return await asyncio.to_thread(_transcribe_sync, audio, config)
+        return await to_thread_joined(_transcribe_sync, audio, config)
     except Exception as exc:  # noqa: BLE001 - surfaced to the UI, not swallowed
         return Transcript(
             segments=[],

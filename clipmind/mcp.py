@@ -285,8 +285,21 @@ def serve_stdio() -> None:
         except (json.JSONDecodeError, ValueError) as exc:
             response = MCPServer._error(None, -32700, str(exc))
         if response is not None:
-            sys.stdout.write(json.dumps(response, ensure_ascii=False) + "\n")
-            sys.stdout.flush()
+            _write_response(response)
+
+
+def _write_response(response: dict) -> None:
+    """MCP wire data is UTF-8 regardless of the host's console code page."""
+    rendered = json.dumps(response, ensure_ascii=False) + "\n"
+    binary = getattr(sys.stdout, "buffer", None)
+    if binary is not None:
+        binary.write(rendered.encode("utf-8"))
+        binary.flush()
+    else:
+        # Embedders/tests may supply a Unicode-only stream such as StringIO.
+        # It has no byte encoding to override, so preserve that interface.
+        sys.stdout.write(rendered)
+        sys.stdout.flush()
 
 
 def entrypoint() -> None:

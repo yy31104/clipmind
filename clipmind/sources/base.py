@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Protocol
+from typing import Iterable, Protocol
 from urllib.parse import urlsplit
 
 
@@ -75,6 +75,8 @@ class MediaAsset:
 
     media_path: Path
     info: dict
+    image_paths: tuple[Path, ...]
+    image_motion_paths: tuple[Path | None, ...]
 
     def __init__(
         self,
@@ -82,13 +84,28 @@ class MediaAsset:
         info: dict | None = None,
         *,
         video_path: Path | None = None,
+        image_paths: Iterable[Path] = (),
+        image_motion_paths: Iterable[Path | None] = (),
     ) -> None:
         # ``video_path`` keeps the public constructor used by v1 integrations.
+        self.image_paths = tuple(Path(path) for path in image_paths)
+        self.image_motion_paths = tuple(Path(path) if path is not None else None
+                                        for path in image_motion_paths)
+        if self.image_motion_paths and len(self.image_motion_paths) != len(self.image_paths):
+            raise ValueError("image_motion_paths must match the original image page order")
         selected = media_path if media_path is not None else video_path
+        if selected is None and self.image_paths:
+            selected = self.image_paths[0]
         if selected is None:
             raise TypeError("media_path is required")
         self.media_path = selected
         self.info = dict(info or {})
+
+    @property
+    def media_type(self) -> str:
+        if self.image_paths:
+            return "image_collection"
+        return str(self.info.get("_clipmind_media_type") or "video")
 
     @property
     def video_path(self) -> Path:

@@ -12,6 +12,7 @@ const state = {
   selected: { library: new Set(), failed: new Set() },
   removing: false,
   detail: null,
+  detailRequest: 0,
 };
 
 function selectionControl(job, scope, label = "选择") {
@@ -100,6 +101,64 @@ const esc = (value) => String(value ?? "").replace(
   (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[character]),
 );
 
+const isImageFrame = (frame) => Number.isInteger(frame?.source_image_index) && frame.source_image_index >= 0;
+const visualPosition = (frame) => isImageFrame(frame)
+  ? Number.isInteger(frame.visual_state_index) && frame.visual_state_index >= 0 ? frame.visual_state_index : frame.source_image_index
+  : (Number(frame.timestamp) || 0);
+const frameLabel = (frame) => {
+  if (!isImageFrame(frame)) return frame.clock || clock(frame.timestamp);
+  const page = `第 ${frame.source_image_index + 1} 张`;
+  return Number.isFinite(frame.source_motion_timestamp) && frame.source_motion_timestamp >= 0
+    ? `${page} · 动态 ${Number(frame.source_motion_timestamp.toFixed(3))} 秒` : page;
+};
+const isImageCollection = (metadata) => metadata?.media_type === "image_collection" || metadata?.time_basis === "image_order";
+const isAudioOnly = (metadata) => metadata?.media_type === "audio" || metadata?.visual_status === "not_applicable"
+  || metadata?.evidence_pack?.diagnostics?.visual_status === "not_applicable";
+const isOmittedVisual = (hit) => hit?.kind === "ocr" && (hit.visual_available === false || hit.omitted_visual === true);
+
+function emptyTranscriptMessage(metadata) {
+  if (metadata.asr_error && metadata.asr_error !== "no audio track") return `语音转写未完成，不能据此判断没有讲话。 (${metadata.asr_error})`;
+  const audioStatus = metadata.audio_status || metadata.evidence_pack?.diagnostics?.audio_status;
+  if (isImageCollection(metadata)) {
+    return audioStatus === "not_applicable"
+      ? "图片资料：已提取图片和文字；本地图片不包含配音。"
+      : "图集：已提取图片和文字；未提取配音。";
+  }
+  if (isAudioOnly(metadata)) return metadata.speech_status === "not_detected"
+    ? "已处理音轨，未检测到讲话。此素材仅有音频，无需截图或 OCR。"
+    : "没有生成语音转写。此素材仅有音频，无需截图或 OCR。";
+  if (audioStatus === "absent" || metadata.asr_error === "no audio track") return "此视频没有音轨，已保留画面和识别文字。";
+  return "没有生成语音转写。画面和识别文字仍可查看。";
+}
+
+function referencedImageState(jobId, hit) {
+  const metadata = state.jobs.get(jobId)?.result;
+  if (!isImageCollection(metadata) && !isImageFrame(hit)) return null;
+  const matched = /^visual-(\d+)$/.exec(String(hit.ref || ""));
+  const frame = matched && metadata?.visual_states?.[Number(matched[1]) - 1];
+  return isImageFrame(frame) ? frame : null;
+}
+
+function searchHitLabel(jobId, hit) {
+  if (isOmittedVisual(hit)) return `${isImageFrame(hit) ? frameLabel(hit) : "画面文字"}（仅文字）`;
+  const frame = referencedImageState(jobId, hit);
+  if (frame) return frameLabel(frame);
+  if (isImageFrame(hit)) return frameLabel(hit);
+  const metadata = state.jobs.get(jobId)?.result;
+  if (isImageCollection(metadata)) return "图片文字";
+  return clock(hit.timestamp);
+}
+
+function searchHitPosition(jobId, hit) {
+  if (isOmittedVisual(hit)) return "";
+  const frame = referencedImageState(jobId, hit);
+  if (frame) return visualPosition(frame);
+  if (isImageFrame(hit)) return visualPosition(hit);
+  const metadata = state.jobs.get(jobId)?.result;
+  if (isImageCollection(metadata)) return "";
+  return hit.timestamp === null || hit.timestamp === undefined ? "" : Number(hit.timestamp);
+}
+
 const dateLabel = (seconds) => {
   if (!seconds) return "";
   const at = new Date(seconds * 1000);
@@ -123,9 +182,11 @@ const STAGE_LABEL = {
 const SOURCE_LABEL = {
   douyin: "抖音",
   youtube: "YouTube",
+  wechat: "微信视频号（实验，需登录）",
+  xiaohongshu: "小红书（实验，公开笔记）",
   local: "本地文件",
 };
-const SOURCE_ORDER = ["youtube", "douyin", "local"];
+const SOURCE_ORDER = ["youtube", "douyin", "wechat", "local"];
 
 function supportedSourceLabels(items = []) {
   return [...items]
@@ -281,7 +342,11 @@ function wireDynamicActions() {
   }
   for (const element of document.querySelectorAll("[data-jump]")) {
     const at = element.dataset.at === "" ? NaN : Number(element.dataset.at);
-    element.onclick = () => openDetail(element.dataset.jump, { kind: element.dataset.kind, at });
+    const result = state.searchResults[Number(element.dataset.resultIndex)];
+    const hit = result?.hits?.[Number(element.dataset.hitIndex)];
+    const textOnly = result?.job_id === element.dataset.jump && isOmittedVisual(hit) ? { ...hit } : null;
+    element.onclick = () => openDetail(element.dataset.jump, textOnly
+      ? { kind: "ocr", textOnly } : { kind: element.dataset.kind, at });
   }
   for (const element of document.querySelectorAll("[data-reprocess]")) {
     element.onclick = () => reprocess(element.dataset.reprocess, false);
@@ -302,9 +367,31 @@ function costEstimate(job) {
   </dl>`;
 }
 
+function jobElapsedSeconds(job, now = Date.now() / 1000) {
+  if (job.status === "running" && Number.isFinite(job.started_at) && job.started_at > 0
+      && Number.isFinite(now) && now > 0) {
+    return Math.round(Math.max(0, now - job.started_at) * 10) / 10;
+  }
+  return Number.isFinite(job.elapsed) && job.elapsed >= 0 ? job.elapsed : 0;
+}
+
+function updateActiveJobElapsed() {
+  if (state.view !== "home" || state.mode === "library") return;
+  const now = Date.now() / 1000;
+  // A long ASR/OCR stage may emit no events. Update only its elapsed label;
+  // rebuilding the library here would disturb selection, search and scrolling.
+  for (const element of document.querySelectorAll("[data-active-job-time]")) {
+    const job = state.jobs.get(element.dataset.activeJobTime);
+    if (!job || job.status !== "running") continue;
+    const text = `${jobElapsedSeconds(job, now)}s`;
+    if (element.textContent !== text) element.textContent = text;
+  }
+}
+
 function jobCard(job) {
   const percent = Math.round((job.progress || 0) * 100);
   const failed = ["error", "interrupted"].includes(job.status);
+  const fetching = !failed && job.status === "running" && job.stage === "fetching";
   const title = failed && urlish(job.title) ? "媒体无法处理" : job.title;
   const source = failed && urlish(job.title)
     ? `<div class="job-source">${esc(job.title.replace(/^\/+/, ""))}</div>`
@@ -312,21 +399,33 @@ function jobCard(job) {
   const retry = job.error_code === "cost_limit_exceeded"
     ? `<button class="primary compact" data-force="${job.id}">仍然完整处理</button>`
     : `<button class="secondary compact" data-reprocess="${job.id}">重新处理</button>`;
+  const elapsed = `<span${job.status === "running" ? ` data-active-job-time="${esc(job.id)}"` : ""}>${jobElapsedSeconds(job)}s</span>`;
   return `<article class="job ${failed ? "error" : job.status}">
     ${failed ? selectionControl(job, "failed", "选择此任务") : ""}
     <div class="job-head">
       <div class="job-title">${esc(title)}</div>
-      <div class="job-time">${failed ? esc(STAGE_LABEL[job.status]) : `${percent}% / ${job.elapsed}s`}</div>
+      <div class="job-time">${failed ? esc(STAGE_LABEL[job.status]) : `${fetching ? "获取中" : `${percent}%`} / ${elapsed}`}</div>
     </div>
     ${source}
     <div class="job-note">${esc(STAGE_LABEL[job.stage] || job.stage)}${job.note ? ` / ${esc(job.note)}` : ""}</div>
+    ${persistenceNotice(job)}
+    ${fetching ? '<div class="job-transfer-hint">自动临时获取，处理后清理，无需手动下载。</div>' : ""}
     ${failed
       ? `<div class="job-error">${esc(job.error || "")}</div>
          ${costEstimate(job)}
          ${job.error_action ? `<div class="job-action">${esc(job.error_action)}</div>` : ""}
          ${retry}`
-      : `<div class="bar" role="progressbar" aria-label="处理进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}"><i style="width:${percent}%"></i></div>`}
+      : fetching
+        ? '<div class="bar indeterminate" role="progressbar" aria-label="正在获取临时媒体，整体进度尚未知"></div>'
+        : `<div class="bar" role="progressbar" aria-label="处理进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}"><i style="width:${percent}%"></i></div>`}
   </article>`;
+}
+
+function persistenceNotice(job) {
+  if (!job.persistence_warning) return "";
+  const recovery = job.status === "done" && job.result
+    ? "已生成的资料仍保留，请先导出备份。" : "处理尚未完成，请解决存储问题后重试。";
+  return `<div class="job-error" role="status">任务状态未能保存到磁盘，请检查可用空间和目录权限。${recovery}</div>`;
 }
 
 function libraryCard(group) {
@@ -337,8 +436,10 @@ function libraryCard(group) {
     ? `<img class="thumb" loading="lazy" src="${frameUrl(current.id, frames[Math.floor(frames.length / 2)], modern)}" alt="">`
     : `<div class="thumb empty-thumb">${esc((current.result?.platform || "video").toUpperCase())}</div>`;
   const metadata = [
-    clock(current.result?.duration || 0),
-    `${frames.length} 个预览画面`,
+    isImageCollection(current.result)
+      ? `${current.result?.source_image_count ?? current.result?.canonical_visual_state_count ?? frames.length} 张图片${current.result?.source_motion_count ? ` · ${current.result.source_motion_count} 段动态` : ""}`
+      : clock(current.result?.duration || 0),
+    isAudioOnly(current.result) ? "纯音频" : `${frames.length} 个预览画面`,
     dateLabel(current.finished_at || current.created_at),
   ].filter(Boolean).join(" / ");
   return `<article class="pack-entry"><button class="card" data-open="${current.id}">
@@ -348,7 +449,7 @@ function libraryCard(group) {
       <span class="card-meta">${esc(metadata)}</span>
       ${superseded.length ? `<span class="card-older">${superseded.length} 个旧版本</span>` : ""}
     </span>
-  </button><div class="pack-selection">${group.map((job, index) => selectionControl(job, "library",
+  </button>${persistenceNotice(current)}<div class="pack-selection">${group.map((job, index) => selectionControl(job, "library",
     `${index ? "旧版本" : "当前版本"} · ${dateLabel(job.finished_at || job.created_at)}`)).join("")}</div></article>`;
 }
 
@@ -407,7 +508,7 @@ function stateAt(detail, at) {
   // Canonical visual states cover the whole video; previews are only a subset.
   const canonical = detail.states.length > 0;
   const items = canonical ? detail.states : detail.frames;
-  const index = coveringIndex(items.map((item) => item.timestamp), at);
+  const index = coveringIndex(items.map(visualPosition), at);
   return index < 0 ? null : { item: items[index], collection: canonical ? "visual_states/all" : null };
 }
 
@@ -426,25 +527,48 @@ function openFrameContext(at) {
   const found = detail && stateAt(detail, at);
   if (!found) return;
   const { item, collection } = found;
-  const label = item.clock || clock(item.timestamp);
+  setFrameDialogTextOnly(false);
+  const label = frameLabel(item);
   $("frame-dialog-time").textContent = label;
   $("frame-dialog-image").src = frameUrl(detail.job.id, item, detail.modernFrames, collection);
   $("frame-dialog-image").alt = `${label} 的画面`;
   $("frame-dialog-ocr").innerHTML = item.text
     ? `<p class="frame-dialog-text">${esc(item.text)}</p>`
     : `<p class="hint">这个画面没有识别到文字。</p>`;
-  const speech = nearbySpeech(detail.job.transcript || [], at);
+  const speech = isImageFrame(item) ? [] : nearbySpeech(detail.job.transcript || [], at);
   const current = speech.findIndex((segment) =>
     Number(segment.start) <= at && at <= Number(segment.end ?? segment.start));
   $("frame-dialog-speech").innerHTML = speech.length
     ? speech.map((segment, index) => `<div class="line${index === current ? " current" : ""}"><span class="ts">${clock(segment.start)}</span><span>${esc(segment.text)}</span></div>`).join("")
-    : `<p class="hint">前后 ${SPEECH_WINDOW_SECONDS} 秒内没有讲话。</p>`;
+    : `<p class="hint">${isImageFrame(item) || !(detail.job.transcript || []).length ? esc(emptyTranscriptMessage(detail.job.result || {})) : `前后 ${SPEECH_WINDOW_SECONDS} 秒内没有讲话。`}</p>`;
   const dialog = $("frame-dialog");
+  $("frame-dialog-transcript").hidden = isImageFrame(item);
   $("frame-dialog-transcript").onclick = () => {
     dialog.close();
     selectTab("transcript");
     focusRow("#pane-transcript .line[data-at]", at);
   };
+  if (!dialog.open) dialog.showModal();
+}
+
+function setFrameDialogTextOnly(textOnly) {
+  $("frame-dialog-image").hidden = textOnly;
+  $("frame-dialog-speech-section").hidden = textOnly;
+  const body = $("frame-dialog-body");
+  if (body.style) body.style.gridTemplateColumns = textOnly ? "minmax(0, 1fr)" : "";
+}
+
+function openOmittedVisualText(hit) {
+  setFrameDialogTextOnly(true);
+  $("frame-dialog-image").removeAttribute?.("src");
+  $("frame-dialog-image").alt = "";
+  $("frame-dialog-time").textContent = searchHitLabel(state.detail?.job.id, hit);
+  $("frame-dialog-ocr").innerHTML = `<p class="hint">此精简包未附此页图片。以下为保留的完整画面文字。</p>
+    <p class="frame-dialog-text">${esc(hit.text)}</p>`;
+  $("frame-dialog-speech").innerHTML = "";
+  $("frame-dialog-transcript").hidden = true;
+  $("frame-dialog-transcript").onclick = null;
+  const dialog = $("frame-dialog");
   if (!dialog.open) dialog.showModal();
 }
 
@@ -469,19 +593,20 @@ function renderDetailFrames() {
   const all = detail.showAllFrames && detail.states.length > 0;
   const frames = all ? detail.states : detail.frames;
   const collection = all ? "visual_states/all" : null;
-  const description = detail.states.length
+  const audioOnly = isAudioOnly(detail.job.result);
+  const description = audioOnly ? "此素材仅有音频，无需截图或 OCR。" : detail.states.length
     ? `当前显示 ${all ? `全部 ${detail.states.length}` : `精选 ${detail.frames.length}`} 个画面。`
     : "当前结果包没有独立的完整画面列表。";
   $("pane-frames").innerHTML = `<div class="frames-toolbar"><span>${description}</span>
     ${detail.states.length ? `<button class="secondary compact" id="toggle-all-frames">${all ? "只看精选" : `查看全部 ${detail.states.length} 个画面`}</button>` : ""}</div>`
     + (frames.map((frame) => `
-    <article class="frame" data-at="${Number(frame.timestamp) || 0}">
-      <div class="frame-cap"><span class="ts">${esc(frame.clock || clock(frame.timestamp))}</span>${frameBadges(frame)}</div>
-      <button class="frame-open" data-context-at="${Number(frame.timestamp) || 0}" aria-label="查看 ${esc(frame.clock || clock(frame.timestamp))} 的画面文字和附近讲话">
-        <img loading="lazy" src="${frameUrl(detail.job.id, frame, detail.modernFrames, collection)}" alt="${esc(frame.clock || clock(frame.timestamp))} 的视觉证据">
+    <article class="frame" data-at="${visualPosition(frame)}">
+      <div class="frame-cap"><span class="ts">${esc(frameLabel(frame))}</span>${frameBadges(frame)}</div>
+      <button class="frame-open" data-context-at="${visualPosition(frame)}" aria-label="查看 ${esc(frameLabel(frame))} 的画面文字${isImageFrame(frame) ? "" : "和附近讲话"}">
+        <img loading="lazy" src="${frameUrl(detail.job.id, frame, detail.modernFrames, collection)}" alt="${esc(frameLabel(frame))} 的视觉证据">
       </button>
       ${frame.text ? `<div class="frame-ocr">${esc(frame.text)}</div>` : ""}
-    </article>`).join("") || `<p class="hint">未选出需要保留的图表、代码或文档截图。口播内容请看转写；原始采样画面仍可查看。</p>`);
+    </article>`).join("") || `<p class="hint">${audioOnly ? "此素材仅有音频，无需截图或 OCR。请查看转写结果。" : "未选出需要保留的图表、代码或文档截图。口播内容请看转写；原始采样画面仍可查看。"}</p>`);
   if ($("toggle-all-frames")) {
     $("toggle-all-frames").onclick = () => {
       detail.showAllFrames = !detail.showAllFrames;
@@ -494,9 +619,22 @@ function renderDetailFrames() {
 }
 
 async function openDetail(id, focus = null) {
-  const response = await fetch(`/api/jobs/${id}`);
-  if (!response.ok) return;
-  const job = await response.json();
+  const request = ++state.detailRequest;
+  let job;
+  try {
+    const response = await fetch(`/api/jobs/${id}`);
+    const data = await response.json();
+    if (request !== state.detailRequest) return;
+    if (!response.ok) throw new Error(typeof data.detail === "string" ? data.detail : "无法打开资料，请刷新列表后重试。");
+    job = data;
+  } catch (error) {
+    if (request === state.detailRequest) {
+      show("home");
+      showError(error.message || "无法打开资料，请检查本机服务是否仍在运行。");
+    }
+    return;
+  }
+  $("error").hidden = true;
   state.current = job;
   show("detail");
 
@@ -513,27 +651,31 @@ async function openDetail(id, focus = null) {
     showAllFrames: false,
   };
   const sourceUrl = /^https?:\/\//i.test(metadata.url || "") ? metadata.url : "";
+  const sourceLabel = isImageCollection(metadata) ? "打开原图集" : isAudioOnly(metadata) ? "打开原音频" : "打开原视频";
+  const visualPrimary = Boolean(metadata.visual_primary) || isImageCollection(metadata);
   $("d-title").textContent = job.title;
   $("d-meta").innerHTML = [
     metadata.platform ? esc(metadata.platform) : null,
     metadata.uploader ? esc(metadata.uploader) : null,
-    metadata.duration ? clock(metadata.duration) : null,
-    `${frames.length} 个预览画面`,
-    sourceUrl ? `<a href="${esc(sourceUrl)}" target="_blank" rel="noopener">打开原视频</a>` : null,
+    isImageCollection(metadata) ? "图集" : metadata.duration ? clock(metadata.duration) : null,
+    isAudioOnly(metadata) ? "纯音频" : `${frames.length} 个预览画面`,
+    sourceUrl ? `<a href="${esc(sourceUrl)}" target="_blank" rel="noopener">${sourceLabel}</a>` : null,
   ].filter(Boolean).join("<span>/</span>");
 
   if (metadata.evidence_pack) {
     const complete = metadata.evidence_pack.completeness || {};
     const preflight = metadata.preflight || {};
-    const ocrWarning = complete.ocr && complete.ocr !== "complete"
+    const ocrWarning = !isAudioOnly(metadata) && complete.ocr && complete.ocr !== "complete"
       ? `<aside class="quality-warning"><strong>画面文字未完整识别</strong><p>截图仍然完整保留，但搜索、笔记和精选画面可能遗漏屏幕文字。请先重启到最新版本，再重新处理；也可以使用本地 OCR 修复工具，只重新识别已有截图。</p></aside>`
       : "";
-    $("pane-summary").innerHTML = `${ocrWarning}<p class="summary-lead">已保存 ${(job.transcript || []).length} 段讲话、${state.detail.states.length || frames.length} 个完整画面和 ${frames.length} 张精选预览。点开截图，可以同时看到画面文字和附近的讲话。</p>
+    const mediaNotice = isImageCollection(metadata) || metadata.asr_error || metadata.audio_status === "absent"
+      ? `<p class="${metadata.asr_error && metadata.asr_error !== "no audio track" ? "quality-warning" : "hint"}">${esc(emptyTranscriptMessage(metadata))}</p>` : "";
+    $("pane-summary").innerHTML = `${ocrWarning}${mediaNotice}<p class="summary-lead">${isAudioOnly(metadata) ? `已保存 ${(job.transcript || []).length} 段讲话。此素材仅有音频，无需截图或 OCR。` : `已保存 ${(job.transcript || []).length} 段讲话、${state.detail.states.length || frames.length} 个完整画面和 ${frames.length} 张精选预览。${isImageCollection(metadata) ? "图片按原顺序展示，点开可查看识别文字。" : visualPrimary ? "点开可查看画面和识别文字。" : "点开截图，可以同时看到画面文字和附近的讲话。"}`}</p>
     <div class="actions">
-      <button class="primary action" id="copy-transcript">复制全文转写</button>
+      <button class="primary action" id="copy-transcript" ${!(job.transcript || []).length ? "disabled" : ""}>复制全文转写</button>
       <a class="secondary action" href="/api/jobs/${job.id}/evidence.md" download>导出笔记（Markdown）</a>
-      <a class="primary action" href="/api/jobs/${job.id}/evidence.zip?profile=compact" download>下载精简资料（仅干货截图）</a>
-      ${sourceUrl ? `<a class="secondary action" href="${esc(sourceUrl)}" target="_blank" rel="noopener">打开原视频</a>` : ""}
+      <a class="primary action" href="/api/jobs/${job.id}/evidence.zip?profile=compact" download>${isAudioOnly(metadata) ? "下载文字资料" : visualPrimary ? "下载画面资料（图片与文字）" : "下载精简资料（仅干货截图）"}</a>
+      ${sourceUrl ? `<a class="secondary action" href="${esc(sourceUrl)}" target="_blank" rel="noopener">${sourceLabel}</a>` : ""}
     </div>
     <div class="actions quiet-actions">
       <a class="secondary action" href="/api/jobs/${job.id}/evidence.zip?profile=text" download>下载纯文字资料</a>
@@ -541,7 +683,7 @@ async function openDetail(id, focus = null) {
       <button class="secondary action" id="reprocess">重新处理</button>
       ${state.kbInbox ? `<button class="secondary action" id="send-kb">发送到知识库</button>` : ""}
     </div>
-    <p class="hint">精简资料中，纯口播只留文字，图表、代码、文档等独立内容才附截图。完整资料保留原始采样画面。</p>
+    <p class="hint">${isAudioOnly(metadata) ? "下载资料保留可用转写和明确的处理状态。" : isImageCollection(metadata) ? "图集按原顺序保存图片和识别文字；未取得的配音不生成转写。" : visualPrimary ? "此资料以画面为主，下载画面资料会保留完整采样画面和识别文字。" : "精简资料中，纯口播只留文字，图表、代码、文档等独立内容才附截图。完整资料保留原始采样画面。"}</p>
     <p id="handoff-status" class="hint"></p>
     <details class="developer">
       <summary>开发者信息</summary>
@@ -574,20 +716,23 @@ async function openDetail(id, focus = null) {
 
   $("pane-transcript").innerHTML = (job.transcript || []).length
     ? job.transcript.map((segment) => `<div class="line" data-at="${Number(segment.start) || 0}"><span class="ts">${clock(segment.start)}</span><span>${esc(segment.text)}</span></div>`).join("")
-    : `<p class="hint">这个媒体没有可转写的语音。${metadata.asr_error ? esc(` (${metadata.asr_error})`) : ""}</p>`;
+    : `<p class="hint">${esc(emptyTranscriptMessage(metadata))}</p>`;
 
   $("pane-timeline").innerHTML = timeline(job, frames, modernFrames);
   for (const element of document.querySelectorAll("#pane-timeline [data-context-at]")) {
     element.onclick = () => openFrameContext(Number(element.dataset.contextAt));
   }
-  if (focus && Number.isFinite(focus.at)) showEvidenceAt(focus.kind, focus.at);
+  if (focus?.textOnly && isOmittedVisual(focus.textOnly)) {
+    selectTab("frames");
+    openOmittedVisualText(focus.textOnly);
+  } else if (focus && Number.isFinite(focus.at)) showEvidenceAt(focus.kind, focus.at);
   else selectTab("summary");
 }
 
 function timeline(job, frames, modernFrames) {
   const visual = frames.map((frame) => ({
     kind: "visual",
-    at: Number(frame.timestamp) || 0,
+    at: visualPosition(frame),
     frame,
   }));
   const speech = (job.transcript || []).map((segment) => ({
@@ -604,11 +749,12 @@ function timeline(job, frames, modernFrames) {
       </article>`;
     }
     const frame = event.frame;
+    const label = frameLabel(frame);
     return `<article class="timeline-row visual-row">
-      <time>${clock(event.at)}</time><div>
+      <${isImageFrame(frame) ? "span" : "time"}>${esc(label)}</${isImageFrame(frame) ? "span" : "time"}><div>
         <span class="kind">画面</span>${frameBadges(frame)}
-        <button class="frame-open" data-context-at="${event.at}" aria-label="查看 ${clock(event.at)} 的画面文字和附近讲话">
-          <img loading="lazy" src="${frameUrl(job.id, frame, modernFrames)}" alt="${clock(event.at)} 的视觉证据">
+        <button class="frame-open" data-context-at="${event.at}" aria-label="查看 ${esc(label)} 的画面文字${isImageFrame(frame) ? "" : "和附近讲话"}">
+          <img loading="lazy" src="${frameUrl(job.id, frame, modernFrames)}" alt="${esc(label)} 的视觉证据">
         </button>
         ${frame.text ? `<p>${esc(frame.text)}</p>` : ""}
       </div>
@@ -672,6 +818,7 @@ function selectTab(name) {
 }
 
 function show(view) {
+  if (view !== "detail") state.detailRequest += 1;
   state.view = view;
   $("view-home").hidden = view !== "home";
   $("view-settings").hidden = view !== "settings";
@@ -711,7 +858,7 @@ function renderSettings() {
       <span class="status ${ready ? "ready" : "missing"}">${ready ? "就绪" : "不可用"}</span>
     </article>`).join("") + `
     <article class="setting-row wide">
-      <div><strong>支持的来源</strong><span>${esc(supportedSourceLabels(health.supported_sources).join(", "))}</span></div>
+      <div><strong>来源支持状态</strong><span>${esc(supportedSourceLabels(health.supported_sources).join(", "))}；实际可用性取决于链接和访问条件。</span></div>
     </article>
     <article class="setting-row wide">
       <div><strong>上传上限</strong><span>${esc(health.max_upload_mb || 0)} MB，每个文件</span></div>
@@ -811,15 +958,15 @@ function renderSearchResults() {
     return;
   }
   // Each hit is its own button: it leads to that moment, not just the video.
-  container.innerHTML = state.searchResults.map((result) => `<article class="search-card">
+  container.innerHTML = state.searchResults.map((result, resultIndex) => `<article class="search-card">
     <button class="search-result" data-open="${esc(result.job_id)}">
       <span class="search-title">${esc(result.title)}</span>
       <span class="search-platform">${esc(result.platform)}</span>
     </button>
-    ${result.hits.map((hit) => {
-      const at = hit.timestamp === null || hit.timestamp === undefined ? "" : Number(hit.timestamp);
-      return `<button class="search-hit" data-jump="${esc(result.job_id)}" data-kind="${esc(hit.kind)}" data-at="${at}">
-        <time>${clock(hit.timestamp)}</time><span>${esc(hit.text)}</span><span class="hit-kind">${hit.kind === "ocr" ? "画面文字" : "讲话"}</span>
+    ${result.hits.map((hit, hitIndex) => {
+      const at = searchHitPosition(result.job_id, hit);
+      return `<button class="search-hit" data-jump="${esc(result.job_id)}" data-kind="${esc(hit.kind)}" data-at="${at}" data-result-index="${resultIndex}" data-hit-index="${hitIndex}">
+        <time>${esc(searchHitLabel(result.job_id, hit))}</time><span>${esc(hit.text)}</span><span class="hit-kind">${hit.kind === "ocr" ? "画面文字" : "讲话"}</span>
       </button>`;
     }).join("")}<div class="pack-selection">${(visiblePackGroups().find((group) => group.some((job) => job.id === result.job_id)) || [])
       .map((job, index) => selectionControl(job, "library", `${index ? "旧版本" : "当前版本"} · ${dateLabel(job.finished_at || job.created_at)}`)).join("")}</div></article>`).join("");
@@ -898,6 +1045,7 @@ $("library-search").addEventListener("input", () => {
 });
 
 const events = new EventSource("/api/events");
+if (typeof setInterval === "function") setInterval(updateActiveJobElapsed, 1000);
 events.onmessage = async (event) => {
   const job = JSON.parse(event.data);
   if (job.type === "hello" || job.type === "resync") {

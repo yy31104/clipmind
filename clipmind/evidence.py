@@ -36,19 +36,33 @@ class EvidencePackError(RuntimeError):
 
 def load_complete_pack(dest: Path) -> dict:
     """Return a validated completion manifest or reject a partial pack."""
+    dest = Path(dest).resolve()
+    for artifact in ("manifest.json", *PACK_ARTIFACTS):
+        path = dest / artifact
+        current = path
+        while current != dest:
+            if current.is_symlink() or not current.resolve().is_relative_to(dest):
+                raise EvidencePackError("Evidence Pack contains a linked or unsafe artifact")
+            current = current.parent
     manifest_path = dest / "manifest.json"
     try:
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
+    except (OSError, UnicodeError, ValueError, RecursionError) as exc:
         raise EvidencePackError("missing or invalid manifest.json") from exc
+    if not isinstance(manifest, dict):
+        raise EvidencePackError("invalid manifest.json: object required")
     schema = manifest.get("schema") or {}
     if (
-        schema.get("name") != SCHEMA_NAME
+        not isinstance(schema, dict)
+        or schema.get("name") != SCHEMA_NAME
+        or not isinstance(schema.get("version"), str)
         or schema.get("version") not in READABLE_SCHEMA_VERSIONS
         or manifest.get("status") != "complete"
     ):
         raise EvidencePackError("unsupported or incomplete Evidence Pack")
-    missing = [artifact for artifact in PACK_ARTIFACTS if not (dest / artifact).exists()]
+    missing = [artifact for artifact in PACK_ARTIFACTS
+               if not ((dest / artifact).is_dir() if artifact.endswith("/")
+                       else (dest / artifact).is_file())]
     if missing:
         raise EvidencePackError(f"Evidence Pack is missing: {', '.join(missing)}")
     return manifest
@@ -124,6 +138,15 @@ def _ocr_records(frames: list[Frame]) -> list[dict]:
             record["layout"] = list(frame.ocr_layout)
         if frame.ocr_warning:
             record["error"] = frame.ocr_warning
+        if frame.source_image_index is not None:
+            record.update(
+                source_image_index=frame.source_image_index,
+                visual_state_index=frame.index,
+                time_basis="image_order",
+                timestamp_available=False,
+            )
+            if frame.source_motion_timestamp is not None:
+                record["source_motion_timestamp"] = frame.source_motion_timestamp
         records.append(record)
     return records
 
@@ -208,6 +231,15 @@ def _timeline_records(
                 record["scene_boundary_reason"] = frame.scene_boundary_reason
         if frame.dedupe_warning:
             record["dedupe_warning"] = frame.dedupe_warning
+        if frame.source_image_index is not None:
+            record.update(
+                source_image_index=frame.source_image_index,
+                visual_state_index=frame.index,
+                time_basis="image_order",
+                timestamp_available=False,
+            )
+            if frame.source_motion_timestamp is not None:
+                record["source_motion_timestamp"] = frame.source_motion_timestamp
         records.append(record)
     return records
 
@@ -216,6 +248,10 @@ def _transcript_markdown(item: Media, transcript: Transcript) -> str:
     lines = [f"# Transcript — {item.title}", ""]
     if transcript.error:
         lines.extend([f"> Transcript unavailable or incomplete: {transcript.error}", ""])
+    elif item.info.get("_clipmind_audio_status") in {"not_acquired", "not_applicable"}:
+        lines.extend(["> Image collection: no audio was acquired. Image text is recorded separately as OCR, not speech.", ""])
+    elif item.info.get("_clipmind_audio_status") == "absent":
+        lines.extend(["> This media has no audio track. Visual evidence and OCR are available separately.", ""])
     if transcript.segments:
         lines.extend(
             f"**{_timestamp(segment.start)}–{_timestamp(segment.end)}** "
@@ -233,15 +269,22 @@ def evidence_markdown(
     transcript: Transcript,
     dest: Path,
 ) -> str:
+    image_collection = getattr(item, "media_type", "video") == "image_collection" or any(
+        frame.source_image_index is not None for frame in frames)
+    page_count = item.info.get("_clipmind_source_image_count", len({
+        frame.source_image_index for frame in frames if frame.source_image_index is not None
+    }))
     lines = [
         f"# Evidence — {item.title}",
         "",
         f"- Source: {item.webpage_url or '-'}",
         f"- Uploader: {item.uploader or '-'}",
-        f"- Duration: {_timestamp(item.duration)}",
+        (f"- Source images: {page_count} (source order; no measured whole-post timestamps)"
+         if image_collection else f"- Duration: {_timestamp(item.duration)}"),
         f"- Schema: `{SCHEMA_NAME}@{SCHEMA_VERSION}`",
         "",
-        "> This view preserves source evidence in time order. It does not decide what is important.",
+        ("> This view preserves the original image order. No video timing or speech has been invented."
+         if image_collection else "> This view preserves source evidence in time order. It does not decide what is important."),
         "",
     ]
     events = [
@@ -256,7 +299,11 @@ def evidence_markdown(
             frame = value
             lines.extend(
                 [
-                    f"## {_timestamp(frame.timestamp)} — Visual state",
+                    (f"## Image {frame.source_image_index + 1} — Motion at {_timestamp(frame.source_motion_timestamp)} (clip-relative)"
+                     if frame.source_motion_timestamp is not None else
+                     f"## Image {frame.source_image_index + 1} — Visual state"
+                     if frame.source_image_index is not None
+                     else f"## {_timestamp(frame.timestamp)} — Visual state"),
                     "",
                     f"![Visual state]({frame.path.relative_to(dest).as_posix()})",
                     "",
@@ -336,6 +383,45 @@ def write_pack(
         "acquisition_strategy": item.info.get("_clipmind_strategy"),
         "source_adapter": item.info.get("_clipmind_source_adapter"),
     }
+    audio_status = item.info.get("_clipmind_audio_status")
+    image_collection = getattr(item, "media_type", "video") == "image_collection" or bool(getattr(item, "image_paths", ())) or any(
+        frame.source_image_index is not None for frame in canonical
+    )
+    media_type = getattr(item, "media_type", "video")
+    audio_only = media_type == "audio"
+    if media_type in {"audio", "video", "image_collection"}:
+        source["media_type"] = media_type
+    if image_collection:
+        page_count = item.info.get("_clipmind_source_image_count", len({
+            frame.source_image_index for frame in canonical
+            if frame.source_image_index is not None
+        }))
+        motion_count = item.info.get("_clipmind_source_motion_count", len({
+            frame.source_image_index for frame in canonical
+            if frame.source_motion_timestamp is not None
+        }))
+        source.update(
+            media_type="image_collection", source_image_count=page_count,
+            source_motion_count=motion_count,
+            time_basis="image_order", duration_available=False,
+        )
+    motion_fields = {
+        key: item.info[f"_clipmind_{key}"]
+        for key in ("motion_sample_fps", "motion_audio_status", "motion_time_basis")
+        if f"_clipmind_{key}" in item.info
+    }
+    source.update(motion_fields)
+    if "_clipmind_image_page_transform" in item.info:
+        source["image_page_transform"] = item.info["_clipmind_image_page_transform"]
+    if audio_status is not None:
+        source["audio_status"] = audio_status
+    if "_clipmind_visual_primary" in item.info:
+        source["visual_primary"] = bool(item.info["_clipmind_visual_primary"])
+    speech_status = item.info.get("_clipmind_speech_status")
+    if speech_status is not None:
+        source["speech_status"] = speech_status
+    if item.info.get("_clipmind_image_audio") is not None:
+        source["image_audio_acquisition"] = item.info["_clipmind_image_audio"]
     _write_json(dest / "source.json", source)
     _write_jsonl(dest / "transcript.jsonl", transcript_records)
     (dest / "transcript.md").write_text(
@@ -364,12 +450,16 @@ def write_pack(
             "ocr_records": len(ocr_records),
         },
         "completeness": {
-            "transcript": "unavailable" if transcript.error else "complete",
+            "transcript": (
+                "unavailable"
+                if transcript.error or audio_status in {"absent", "not_acquired", "not_applicable"}
+                else "complete"
+            ),
             "word_timing": "complete" if transcript.has_word_timing else "unavailable",
             "speaker_diarization": "complete" if transcript.has_speakers else "unavailable",
             "ocr": (
                 "unavailable"
-                if canonical and ocr_failures == len(canonical)
+                if audio_only or (canonical and ocr_failures == len(canonical))
                 else "partial"
                 if ocr_failures or ocr_error
                 else "complete"
@@ -388,6 +478,12 @@ def write_pack(
             "dedupe_failure_count": sum(
                 frame.dedupe_warning is not None for frame in canonical
             ),
+            **({"audio_status": audio_status} if audio_status is not None else {}),
+            **({"speech_status": speech_status} if speech_status is not None else {}),
+            **({"time_basis": "image_order"} if image_collection else {}),
+            **({"visual_status": "not_applicable"} if audio_only else {}),
+            **({"source_motion_count": source["source_motion_count"], **motion_fields,
+                "motion_sampling": "complete"} if motion_fields else {}),
         },
         "timings": dict(sorted((timings or {}).items())),
         "configuration": {
@@ -395,7 +491,7 @@ def write_pack(
             "change_detection_width": config.sample_width,
             "evidence_width": config.evidence_width,
             "dedupe_threshold": config.dedupe_threshold,
-            "dedupe_algorithm": media.DEDUPE_ALGORITHM,
+            "dedupe_algorithm": "ordered-source-images-v1" if image_collection else media.DEDUPE_ALGORITHM,
             "preview_algorithm": preview_algorithm,
             "preflight": preflight_result,
         },

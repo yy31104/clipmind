@@ -120,7 +120,7 @@ class EvidencePackTests(unittest.TestCase):
             )
             self.assertEqual(
                 manifest["configuration"]["preview_algorithm"],
-                "adaptive-scene-text-v2",
+                "adaptive-scene-text-v3-caption-aware",
             )
             self.assertEqual(manifest["completeness"]["transcript"], "complete")
             self.assertEqual(manifest["completeness"]["ocr"], "complete")
@@ -190,7 +190,7 @@ class EvidencePackTests(unittest.TestCase):
             self.assertEqual(manifest["completeness"]["transcript"], "unavailable")
             self.assertEqual(manifest["completeness"]["ocr"], "partial")
             self.assertEqual(jsonl(dest / "ocr.jsonl")[0]["error"], frames[0].ocr_warning)
-            self.assertIn("Transcript unavailable", (dest / "transcript.md").read_text())
+            self.assertIn("Transcript unavailable", (dest / "transcript.md").read_text(encoding="utf-8"))
 
     def test_serializes_word_timing_and_speaker_only_when_provider_supplies_them(self) -> None:
         with tempfile.TemporaryDirectory() as tempdir:
@@ -256,7 +256,10 @@ class SchemaCompatibilityTests(unittest.TestCase):
             dest = Path(tempdir)
             for artifact in evidence.PACK_ARTIFACTS:
                 (dest / artifact).parent.mkdir(parents=True, exist_ok=True)
-                (dest / artifact).write_text("{}", encoding="utf-8")
+                if artifact.endswith("/"):
+                    (dest / artifact).mkdir(exist_ok=True)
+                else:
+                    (dest / artifact).write_text("{}", encoding="utf-8")
             (dest / "manifest.json").write_text(
                 json.dumps(
                     {

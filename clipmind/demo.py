@@ -56,7 +56,8 @@ def build_sample_video(destination: Path) -> Path:
         image = Image.new("RGB", (1280, 720), "white")
         draw = ImageDraw.Draw(image)
         draw.rectangle((0, 0, 170 + index * 90, 720), fill=color)
-        draw.text((260, 280), label, fill="black", font=font)
+        # Keep black text clear of the widest dark sidebar on every slide.
+        draw.text((520, 280), label, fill="black", font=font)
         path = destination / f"slide-{index}.png"
         image.save(path)
         slides.append(path)

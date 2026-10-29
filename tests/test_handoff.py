@@ -124,6 +124,76 @@ class HandoffTests(unittest.TestCase):
             with self.assertRaisesRegex(evidence.EvidencePackError, "ocr.jsonl"):
                 handoff.export_zip(pack)
 
+    def test_zip_output_cannot_replace_source_artifacts(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            root = Path(tempdir)
+            pack = self.make_pack(root)
+            before = {path.relative_to(pack): path.read_bytes()
+                      for path in pack.rglob("*") if path.is_file()}
+            for destination in (pack, pack / "manifest.json",
+                                pack / "visual_states" / "all" / "state.jpg",
+                                root / "unused" / ".." / pack.name / "transcript.md"):
+                with self.subTest(destination=destination.name):
+                    with self.assertRaisesRegex(evidence.EvidencePackError, "outside"):
+                        handoff.export_zip(pack, destination)
+            self.assertEqual(before, {path.relative_to(pack): path.read_bytes()
+                                     for path in pack.rglob("*") if path.is_file()})
+            self.assertFalse((root / "unused").exists())
+
+    def test_zip_output_alias_cannot_replace_source_artifact(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            root = Path(tempdir)
+            pack = self.make_pack(root)
+            original = (pack / "manifest.json").read_bytes()
+            alias = root / "output.zip"
+            try:
+                alias.symlink_to(pack / "manifest.json")
+            except (OSError, NotImplementedError):
+                self.skipTest("Symbolic links unavailable")
+            with self.assertRaisesRegex(evidence.EvidencePackError, "outside"):
+                handoff.export_zip(pack, alias)
+            self.assertEqual(original, (pack / "manifest.json").read_bytes())
+            self.assertTrue(alias.is_symlink())
+
+    def test_revised_pack_is_not_reported_as_already_delivered(self) -> None:
+        for artifact in ("transcript.jsonl", "ocr.jsonl", "visual_states/all/state.jpg"):
+            with self.subTest(artifact=artifact), tempfile.TemporaryDirectory() as tempdir:
+                root = Path(tempdir)
+                pack = self.make_pack(root)
+                inbox = root / "Inbox"
+                handoff.send_to_inbox(pack, inbox)
+                delivered = inbox / pack.name
+                before = {path.relative_to(delivered): path.read_bytes()
+                          for path in delivered.rglob("*") if path.is_file()}
+                changed = pack / artifact
+                changed.write_bytes(b"repaired evidence")
+                with self.assertRaisesRegex(evidence.EvidencePackError, "different artifact contents"):
+                    handoff.send_to_inbox(pack, inbox)
+                self.assertEqual(before, {path.relative_to(delivered): path.read_bytes()
+                                         for path in delivered.rglob("*") if path.is_file()})
+                self.assertEqual(changed.read_bytes(), b"repaired evidence")
+                self.assertEqual(list(inbox.iterdir()), [delivered])
+
+    def test_local_retry_state_does_not_break_delivery_idempotency(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            root = Path(tempdir)
+            pack = self.make_pack(root)
+            inbox = root / "Inbox"
+            handoff.send_to_inbox(pack, inbox)
+            record = json.loads((pack / "job.json").read_text(encoding="utf-8"))
+            record["job"]["url"] = "C:/different/local/private-demo.mp4"
+            record["job"]["options"] = {"local_source_path": record["job"]["url"]}
+            (pack / "job.json").write_text(json.dumps(record), encoding="utf-8")
+            self.assertEqual(handoff.send_to_inbox(pack, inbox)["status"], "already_present")
+
+    def test_inbox_inside_source_is_rejected_without_mutation(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            pack = self.make_pack(Path(tempdir))
+            inbox = pack / "visual_states" / "all" / "Inbox"
+            with self.assertRaisesRegex(evidence.EvidencePackError, "outside"):
+                handoff.send_to_inbox(pack, inbox)
+            self.assertFalse(inbox.exists())
+
 
 if __name__ == "__main__":
     unittest.main()

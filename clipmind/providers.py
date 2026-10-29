@@ -1,7 +1,6 @@
 """Small provider boundaries for platform-specific speech and OCR engines."""
 from __future__ import annotations
 
-import asyncio
 from dataclasses import dataclass, field, replace
 import importlib.util
 import platform
@@ -12,6 +11,7 @@ from typing import Protocol
 
 from . import asr, ocr
 from .asr import Transcript
+from .async_utils import to_thread_joined
 from .config import Settings
 
 
@@ -97,7 +97,7 @@ class PyannoteSpeakerDiarizer:
                 ),
             )
         try:
-            return await asyncio.to_thread(self._assign_sync, audio, transcript)
+            return await to_thread_joined(self._assign_sync, audio, transcript)
         except Exception as exc:  # noqa: BLE001 - diarization is optional evidence
             return replace(
                 transcript,

@@ -20,6 +20,13 @@ jobs:
       - run: python -m pip install -r requirements-test.txt
       - run: node --check clipmind/web/app.js
       - run: python -m unittest discover -s tests -v
+      - name: Labeled visual recall and redundancy gate
+        run: python scripts/evaluate_visual_quality.py --output visual-quality.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: visual-quality-${{ matrix.os }}
+          path: visual-quality.json
 
   integration:
     # The byte-counting probe gates need yt-dlp, which the unit job omits on
@@ -32,8 +39,19 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      - run: python -m pip install -r requirements-test.txt yt-dlp
-      - run: python -m unittest tests.test_probe tests.test_probe_transport tests.test_live_streams -v
+      - run: sudo apt-get update
+      - run: sudo apt-get install -y ffmpeg tesseract-ocr tesseract-ocr-eng
+      - run: python -m pip install -r requirements-test.txt yt-dlp pytesseract
+      - run: python -m unittest tests.test_probe tests.test_probe_transport tests.test_live_streams tests.test_xiaohongshu -v
+      - name: Real decoder and image format contracts
+        run: python -m unittest tests.test_upload_formats tests.test_multipage_tiff tests.test_remote_media_types -v
+      - name: Offline local extraction smoke
+        env:
+          CLIPMIND_OUT: ${{ runner.temp }}/clipmind-smoke
+          CLIPMIND_OCR_PROVIDER: tesseract
+          CLIPMIND_TESSERACT_LANGUAGES: eng
+          HF_HUB_OFFLINE: '1'
+        run: python -m clipmind.cli demo --json
 
   lock-install:
     name: lock-install (${{ matrix.os }})

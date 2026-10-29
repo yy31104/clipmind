@@ -90,6 +90,8 @@ class Settings:
     asr_provider: str = "auto"
     asr_model: str = "mlx-community/whisper-large-v3-turbo"
     faster_whisper_model: str = "large-v3-turbo"
+    faster_whisper_device: str = "auto"
+    faster_whisper_compute_type: str = "auto"
     asr_language: str | None = "zh"
 
     # --- optional speaker diarization ---
@@ -109,11 +111,11 @@ class Settings:
     max_ocr: int = 2
 
     # --- browser-assisted acquisition ---
-    # Douyin signs its detail endpoint from inside the page, so no plain client
-    # can reach it. A real browser is the only way to learn the address; the
-    # media itself then needs nothing special.
+    # Anonymous public-feed acquisition is tried first. The desktop detail
+    # endpoint may require the site's own browser session as a final fallback.
     douyin_browser_enabled: bool = True
     douyin_browser_timeout: float = 90.0
+    wechat_browser_timeout: float = 90.0
 
     # --- probing ---
     # A probe answers "what is this" without acquiring it, so it gets a wall
@@ -161,6 +163,12 @@ class Settings:
             faster_whisper_model=os.getenv(
                 "CLIPMIND_FASTER_WHISPER_MODEL", "large-v3-turbo"
             ),
+            faster_whisper_device=os.getenv(
+                "CLIPMIND_FASTER_WHISPER_DEVICE", "auto"
+            ).casefold(),
+            faster_whisper_compute_type=os.getenv(
+                "CLIPMIND_FASTER_WHISPER_COMPUTE_TYPE", "auto"
+            ).casefold(),
             asr_language=os.getenv("CLIPMIND_ASR_LANGUAGE", "zh") or None,
             diarization_provider=os.getenv(
                 "CLIPMIND_DIARIZATION_PROVIDER", "none"
@@ -180,6 +188,7 @@ class Settings:
             max_ocr=_int("CLIPMIND_MAX_OCR", 2),
             douyin_browser_enabled=os.getenv("CLIPMIND_DOUYIN_BROWSER", "1") != "0",
             douyin_browser_timeout=_float("CLIPMIND_DOUYIN_BROWSER_TIMEOUT", 90.0),
+            wechat_browser_timeout=_float("CLIPMIND_WECHAT_BROWSER_TIMEOUT", 90.0),
             probe_timeout=_float("CLIPMIND_PROBE_TIMEOUT", 20.0),
             probe_socket_timeout=_float("CLIPMIND_PROBE_SOCKET_TIMEOUT", 8.0),
             probe_max_bytes=_int("CLIPMIND_PROBE_MAX_BYTES", 32 * 1024 * 1024),
