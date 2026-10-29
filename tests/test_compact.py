@@ -21,7 +21,9 @@ class CompactExportTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
-        self.root = Path(self.temp.name)
+        # Windows runner TEMP may use an 8.3 alias while exported paths are
+        # resolved to their long name. Compare one canonical fixture root.
+        self.root = Path(self.temp.name).resolve()
         self.pack = self.root / "original"
         self.make_pack()
 

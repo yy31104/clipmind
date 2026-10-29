@@ -12,7 +12,7 @@ import shutil
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
 from clipmind import acquisition, fetch, pipeline
 from clipmind.jobs import JobStore
@@ -268,7 +268,15 @@ class LocalOriginalTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_local_ingestion_copies_and_never_owns_the_original(self) -> None:
         adapter = adapter_for(str(self.original))
-        asset = await fetch._fetch_local(str(self.original), self.workdir, adapter)
+        # Ownership is independent of an installed decoder. This fixture is
+        # deliberately synthetic bytes; exercise the copy/ledger path while
+        # supplying both sides of the ffprobe boundary in the unit test.
+        with patch.object(fetch.shutil, "which", return_value="ffprobe"), patch.object(
+            fetch, "_run", new=AsyncMock(return_value=(0, '{"format":{"duration":"1"}}', ""))
+        ) as probe:
+            asset = await fetch._fetch_local(str(self.original), self.workdir, adapter)
+        probe.assert_awaited_once()
+        self.assertEqual(Path(probe.call_args.args[0][-1]).resolve(), asset.media_path.resolve())
 
         self.assertNotEqual(asset.media_path.resolve(), self.original.resolve())
         self.assertTrue(

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -58,10 +59,12 @@ class EvidencePackSDKTests(unittest.TestCase):
                 pack.frame(visual_state_id="visual-00001")
 
     def test_bad_encoding_and_deep_json_report_pack_errors(self) -> None:
-        # CPython 3.12's C JSON parser can accept a deeper structure than the
-        # Python call-stack limit. This depth exceeds its nesting boundary too.
-        malformed = (b"\xff", ('{"nested":' + '[' * 5000
-                               + '0' + ']' * 5000 + '}').encode())
+        # The outer object plus these arrays exceeds our own record limit,
+        # regardless of the interpreter's native JSON recursion threshold.
+        depth = sdk.MAX_RECORD_JSON_DEPTH
+        malformed = (b"\xff", ('{"nested":' + '[' * depth
+                               + '0' + ']' * depth + '}').encode(),
+                     b'{"missing":}', b'{"unclosed":"value')
         for attribute, filename in (("source", "source.json"),
                                     ("transcript", "transcript.jsonl"),
                                     ("ocr", "ocr.jsonl"),
@@ -72,6 +75,25 @@ class EvidencePackSDKTests(unittest.TestCase):
                     (pack.root / filename).write_bytes(payload)
                     with self.assertRaisesRegex(EvidencePackError, filename):
                         getattr(pack, attribute)
+
+    def test_json_nesting_boundary_accepts_valid_records_and_ignores_escaped_text(self) -> None:
+        depth = sdk.MAX_RECORD_JSON_DEPTH - 1
+        at_limit = '{"nested":' + '[' * depth + '0' + ']' * depth + '}'
+        # Braces, quotes and backslashes are ordinary evidence text when
+        # encoded inside a JSON string, including Unicode escape sequences.
+        text_record = json.dumps({"text": ('[{\\\"quoted\"}]}\\' * 500) + '\u0022[\u005c'})
+        unicode_escaped = r'{"text":"\u0022[\u005c\u0022{"}'
+        for attribute, filename in (("source", "source.json"),
+                                    ("transcript", "transcript.jsonl"),
+                                    ("ocr", "ocr.jsonl"),
+                                    ("visual_timeline", "visual_timeline.jsonl")):
+            with self.subTest(attribute=attribute), tempfile.TemporaryDirectory() as tempdir:
+                pack = EvidencePack.open(make_complete_pack(Path(tempdir)))
+                for payload in (at_limit, text_record, unicode_escaped):
+                    (pack.root / filename).write_text(payload, encoding="utf-8")
+                    expected = json.loads(payload)
+                    self.assertEqual(getattr(pack, attribute),
+                                     expected if attribute == "source" else [expected])
 
     def test_bad_source_metadata_does_not_hide_healthy_library(self) -> None:
         with tempfile.TemporaryDirectory() as tempdir:

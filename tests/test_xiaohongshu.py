@@ -6,6 +6,7 @@ import io
 import json
 import shutil
 import subprocess
+import sys
 import tempfile
 import threading
 import unittest
@@ -68,6 +69,34 @@ def redirect(url, target):
 
 
 class IdentityTests(unittest.TestCase):
+    def test_json_notes_work_without_optional_js_converter_and_keep_exact_identity(self):
+        with patch.dict(sys.modules, {"yt_dlp": None, "yt_dlp.utils": None}):
+            for kind in ("normal", "video"):
+                with self.subTest(kind=kind):
+                    resolved = xhs.parse_page(html(note(kind)), PAGE)
+                    self.assertEqual(resolved.info["id"], NOTE)
+            wrong = note()
+            wrong["noteId"] = OTHER
+            with self.assertRaises(SourceError) as caught:
+                xhs.parse_page(html(wrong), PAGE)
+            self.assertEqual(caught.exception.code, "source_metadata_unavailable")
+
+    def test_missing_js_converter_has_dependency_diagnosis_not_identity_failure(self):
+        payload = html().replace(b'"type": "normal"', b'"optional": undefined, "type": "normal"')
+        with patch.dict(sys.modules, {"yt_dlp": None, "yt_dlp.utils": None}), self.assertRaises(SourceError) as caught:
+            xhs.parse_page(payload, PAGE)
+        self.assertEqual(caught.exception.code, "missing_dependency")
+
+    def test_js_literal_converter_remains_available_when_dependency_installed(self):
+        try:
+            import yt_dlp.utils
+        except ImportError:
+            self.skipTest("optional JavaScript-literal converter is not installed")
+        payload = html().replace(b'"type": "normal"', b'"optional": undefined, "type": "normal"')
+        resolved = xhs.parse_page(payload, PAGE)
+        self.assertEqual(resolved.info["id"], NOTE)
+        self.assertEqual(len(resolved.image_urls), 1)
+
     def test_nonfinite_or_overflowing_video_measurements_are_refused(self):
         for value in (float("nan"), float("inf"), 10 ** 400, -1):
             item = note("video")

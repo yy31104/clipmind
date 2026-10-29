@@ -17,6 +17,36 @@ from .links import extract_sources, guess_title
 from .providers import ProviderBundle
 
 
+# Evidence records have a shallow schema. Keep a generous, explicit boundary
+# rather than relying on CPython's platform/version-dependent JSON recursion
+# limit, which can change independently of sys.getrecursionlimit().
+MAX_RECORD_JSON_DEPTH = 128
+
+
+def _load_record_json(text: str):
+    """Bound nesting before decoding, without treating string contents as JSON."""
+    depth = 0
+    in_string = escaped = False
+    for character in text:
+        if in_string:
+            if escaped:
+                escaped = False
+            elif character == "\\":
+                escaped = True
+            elif character == '"':
+                in_string = False
+        elif character == '"':
+            in_string = True
+        elif character in "[{":
+            depth += 1
+            if depth > MAX_RECORD_JSON_DEPTH:
+                raise ValueError("Evidence record exceeds the JSON nesting limit")
+        elif character in "]}":
+            depth -= 1
+    # Syntax, object shape and all other decoding checks remain authoritative.
+    return json.loads(text)
+
+
 class ClipMindError(RuntimeError):
     """Actionable application error exposed by the SDK."""
 
@@ -36,7 +66,7 @@ class ClipMindError(RuntimeError):
 
 def _read_json(path: Path) -> dict:
     try:
-        value = json.loads(path.read_text(encoding="utf-8"))
+        value = _load_record_json(path.read_text(encoding="utf-8"))
     except (OSError, UnicodeError, ValueError, RecursionError) as exc:
         raise EvidencePackError(f"missing or invalid {path.name}") from exc
     if not isinstance(value, dict):
@@ -47,7 +77,7 @@ def _read_json(path: Path) -> dict:
 def _read_jsonl(path: Path) -> list[dict]:
     try:
         lines = path.read_text(encoding="utf-8").splitlines()
-        values = [json.loads(line) for line in lines if line.strip()]
+        values = [_load_record_json(line) for line in lines if line.strip()]
     except (OSError, UnicodeError, ValueError, RecursionError) as exc:
         raise EvidencePackError(f"missing or invalid {path.name}") from exc
     if not all(isinstance(value, dict) for value in values):

@@ -34,7 +34,8 @@ class LivePhotoPackTests(unittest.TestCase):
     def setUp(self):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
-        self.root = Path(temporary.name)
+        # Match the SDK's canonical path even when Windows TEMP is an 8.3 alias.
+        self.root = Path(temporary.name).resolve()
         self.pack = self.root / "livephoto"
         all_dir = self.pack / "visual_states" / "all"
         all_dir.mkdir(parents=True)

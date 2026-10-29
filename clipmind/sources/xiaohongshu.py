@@ -252,14 +252,26 @@ def parse_page(body: bytes, page_url: str) -> ResolvedNote:
         raise _error("source_metadata_unavailable", "小红书公开页面未提供可验证的目标笔记正文；未使用推荐内容。")
     raw = text[matches[0].end():].split("</script>", 1)[0].strip().rstrip(";")
     try:
-        from yt_dlp.utils import js_to_json
-        # Pure text conversion; no JavaScript execution or network requests.
-        state = json.loads(js_to_json(raw), object_pairs_hook=_unique_object)
+        try:
+            state = json.loads(raw, object_pairs_hook=_unique_object)
+        except json.JSONDecodeError:
+            # Most pages contain JSON. Only JavaScript literal syntax such as
+            # `undefined` needs the optional converter; neither path executes
+            # page JavaScript. Missing installation dependencies must not be
+            # misreported as missing/wrong upstream note identity.
+            try:
+                from yt_dlp.utils import js_to_json
+            except ImportError:
+                raise SourceError(
+                    "missing_dependency", "解析此小红书页面需要安装 yt-dlp 依赖。",
+                    "请按 ClipMind 安装说明恢复锁定依赖后重启；无需刷新登录或导出 Cookie。",
+                ) from None
+            state = json.loads(js_to_json(raw), object_pairs_hook=_unique_object)
         notes = state["note"]["noteDetailMap"]
         note = notes[expected]["note"]
         if not isinstance(note, dict) or note.get("noteId", note.get("id")) != expected:
             raise ValueError("wrong note identity")
-    except (ImportError, ValueError, TypeError, KeyError, RecursionError):
+    except (ValueError, TypeError, KeyError, RecursionError):
         raise _error("source_metadata_unavailable", "小红书页面没有唯一匹配的目标笔记，已拒绝使用推荐内容。") from None
     info = {"id": expected, "title": str(note.get("title") or expected)[:2000],
         "description": str(note.get("desc") or "")[:20000], "duration": 0.0}
