@@ -15,10 +15,11 @@ import numpy as np
 from PIL import Image
 
 from . import media, ocr
+from .async_utils import gather_joined, to_thread_joined
 from .media import Frame
 from .providers import TextRecognizer
 
-PREVIEW_ALGORITHM = "adaptive-scene-text-v2"
+PREVIEW_ALGORITHM = "adaptive-scene-text-v3-caption-aware"
 
 
 @dataclass(frozen=True)
@@ -300,14 +301,14 @@ async def annotate(
             try:
                 rich_reader = getattr(recognizer, "recognize", None)
                 if rich_reader is not None:
-                    result = await asyncio.to_thread(rich_reader, frame.path)
+                    result = await to_thread_joined(rich_reader, frame.path)
                     lines = list(result.lines)
                     frame.ocr_layout = tuple(
                         block.public() for block in result.blocks
                     )
                 else:
                     reader = recognizer.read_text if recognizer is not None else ocr.read_text
-                    lines = await asyncio.to_thread(reader, frame.path)
+                    lines = await to_thread_joined(reader, frame.path)
             except Exception as exc:  # noqa: BLE001
                 frame.ocr_warning = (
                     f"{type(exc).__name__}: OCR failed; image retained"
@@ -317,7 +318,7 @@ async def annotate(
         frame.lines = tuple(lines)
         frame.text = "\n".join(lines)
 
-    await asyncio.gather(*(run(f) for f in frames))
+    await gather_joined(*(run(f) for f in frames))
     if not failures:
         return None
     return f"OCR failed on {len(failures)}/{len(frames)} frames: {failures[0]}"
@@ -473,6 +474,134 @@ def annotate_content_hints(frames: list[Frame]) -> None:
             frame.content_hint = "document_slide"
         else:
             frame.content_hint = "textual"
+
+
+def _caption_boxes(frame: Frame, speech: tuple) -> list[tuple[float, ...]]:
+    """Only identify short, located subtitles which nearby ASR already covers.
+
+    Text overlap alone cannot distinguish a narrated chart from a subtitle.
+    Missing layout, unfamiliar text, code, and failed recognition therefore
+    remain eligible for screenshots.
+    """
+    if frame.ocr_warning or frame.dedupe_warning or not speech or not frame.ocr_layout:
+        return []
+    total, novel, overlap = transcript_alignment(frame, speech)
+    if not (4 <= total <= 110 and overlap >= 0.85 and novel <= 2):
+        return []
+    if len(frame.lines) > 4 or re.search(
+        r"\b(?:def|class|import|return|const|function|async|await)\b|[{}=<>]",
+        " ".join(frame.lines), re.IGNORECASE,
+    ):
+        return []
+    boxes = []
+    for block in frame.ocr_layout:
+        if not str(block.get("text") or "").strip():
+            continue
+        box = block.get("bbox")
+        if not isinstance(box, (tuple, list)) or len(box) != 4:
+            return []
+        try:
+            x, y, width, height = (float(value) for value in box)
+        except (TypeError, ValueError):
+            return []
+        if not (0 <= x < 1 and 0.6 <= y < 1 and 0 < width <= 1 - x
+                and 0 < height <= min(0.18, 1 - y)):
+            return []
+        boxes.append((x, y, width, height))
+    return boxes if 0 < len(boxes) <= 4 else []
+
+
+def _same_outside_captions(
+    earlier: Frame, later: Frame, boxes: list[tuple[float, ...]],
+) -> bool:
+    """Require almost identical pixels outside the union of subtitle boxes.
+
+    A changed plot or screen must survive even if all its labels were read
+    aloud. OCR hints, empty OCR, and a matching perceptual hash are not proof
+    of a redundant screenshot.
+    """
+    try:
+        with Image.open(earlier.path) as first, Image.open(later.path) as second:
+            if first.size != second.size:
+                return False
+            a = np.asarray(first.convert("RGB").resize((128, 128)), dtype=np.int16)
+            b = np.asarray(second.convert("RGB").resize((128, 128)), dtype=np.int16)
+    except (OSError, ValueError):
+        return False
+    visible = np.ones((128, 128), dtype=bool)
+    for x, y, width, height in boxes:
+        left = max(0, int(x * 128) - 2)
+        right = min(128, int((x + width) * 128) + 3)
+        top = max(0, int(y * 128) - 2)
+        bottom = min(128, int((y + height) * 128) + 3)
+        visible[top:bottom, left:right] = False
+    if visible.mean() < 0.6:
+        return False
+    difference = np.abs(a - b)[visible]
+    return bool(difference.mean() <= 1.5 and (difference.max(axis=1) > 12).mean() <= 0.002)
+
+
+def _flat_reading_canvas(frame: Frame) -> bool | None:
+    try:
+        with Image.open(frame.path) as image:
+            pixels = np.asarray(image.convert("RGB").resize((96, 96)), dtype=np.uint16)
+    except (OSError, ValueError):
+        return None
+    colours = pixels // 32
+    buckets = colours[:, :, 0] * 64 + colours[:, :, 1] * 8 + colours[:, :, 2]
+    return bool(np.bincount(buckets.ravel(), minlength=512).max() / buckets.size >= 0.55)
+
+
+def suppress_repeated_captions(
+    preview: list[Frame], spoken_intervals: Iterable[tuple[float, float, str]],
+) -> list[Frame]:
+    """Drop a changed subtitle only with both transcript and pixel evidence.
+
+    The first image remains as context. Canonical storage is never changed;
+    uncertain visual material and unspoken text remain in the derived view.
+    """
+    speech = tuple(spoken_intervals)
+    result = []
+    previous_boxes: list[tuple[float, ...]] = []
+    for frame in sorted(preview, key=lambda value: (value.timestamp, value.index)):
+        boxes = _caption_boxes(frame, speech)
+        if (result and boxes and previous_boxes
+                and _flat_reading_canvas(frame) is False
+                and _flat_reading_canvas(result[-1]) is False
+                and _same_outside_captions(
+            result[-1], frame, previous_boxes + boxes,
+        )):
+            continue
+        result.append(frame)
+        previous_boxes = boxes
+    return result
+
+
+def protect_reading_material(frames: list[Frame], selected: list[Frame]) -> list[Frame]:
+    """Keep plausible code, document and chart canvases in a reading copy.
+
+    Preview scene clustering is allowed to skip a similar-looking plot, but
+    a compact evidence copy must be more cautious. Rich text/code and large
+    flat reading canvases (including charts with no OCR) stay available. This
+    is a conservative visual heuristic, not semantic recognition of a chart.
+    """
+    chosen = {frame.index for frame in selected}
+    for frame in frames:
+        if frame.index in chosen:
+            continue
+        text = " ".join(frame.lines)
+        code = len(re.findall(
+            r"\b(?:def|class|import|return|const|function|async|await)\b|[{}=<>]",
+            text, re.IGNORECASE,
+        )) >= 2
+        if code or (frame.ocr_char_count >= 80 and frame.transcript_novelty >= 20):
+            chosen.add(frame.index)
+            continue
+        # Quantised colour tolerates JPEG noise around white paper or dark UI.
+        if _flat_reading_canvas(frame) is not False:
+            chosen.add(frame.index)
+    return sorted((frame for frame in frames if frame.index in chosen),
+                  key=lambda frame: (frame.timestamp, frame.index))
 
 
 def annotate_structure(
@@ -642,7 +771,9 @@ def derive_preview(
         preview.append(frame)
         selected.add(frame.index)
 
-    return _replace_blurred_transitions(ordered, preview)
+    return suppress_repeated_captions(
+        _replace_blurred_transitions(ordered, preview), speech,
+    )
 
 
 def materialize_preview(frames: list[Frame], dest_dir: Path) -> list[Frame]:

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import math
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
@@ -36,7 +37,7 @@ class ClipMindError(RuntimeError):
 def _read_json(path: Path) -> dict:
     try:
         value = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
+    except (OSError, UnicodeError, ValueError, RecursionError) as exc:
         raise EvidencePackError(f"missing or invalid {path.name}") from exc
     if not isinstance(value, dict):
         raise EvidencePackError(f"{path.name} must contain an object")
@@ -47,7 +48,7 @@ def _read_jsonl(path: Path) -> list[dict]:
     try:
         lines = path.read_text(encoding="utf-8").splitlines()
         values = [json.loads(line) for line in lines if line.strip()]
-    except (OSError, json.JSONDecodeError) as exc:
+    except (OSError, UnicodeError, ValueError, RecursionError) as exc:
         raise EvidencePackError(f"missing or invalid {path.name}") from exc
     if not all(isinstance(value, dict) for value in values):
         raise EvidencePackError(f"{path.name} must contain objects")
@@ -112,19 +113,50 @@ class EvidencePack:
         title = str(self.source.get("title") or "")
         if needle in title.casefold():
             hits.append({"kind": "title", "timestamp": None, "text": title})
-        for kind, records in (("transcript", self.transcript), ("ocr", self.ocr)):
+        groups = [("transcript", self.transcript, False), ("ocr", self.ocr, False)]
+        configuration = self.manifest.get("configuration") or {}
+        if not isinstance(configuration, dict):
+            raise EvidencePackError("manifest configuration must contain an object")
+        profile = configuration.get("compact") or {}
+        if not isinstance(profile, dict):
+            raise EvidencePackError("compact profile must contain an object")
+        if profile.get("profile") == "compact-reading-v1":
+            # This fixed text supplement carries OCR whose source image was
+            # intentionally omitted. It does not become canonical .ocr or a
+            # fabricated visual state just because search can find its text.
+            groups.append(("ocr", _read_jsonl(self.root / "omitted_visual_text.jsonl"), True))
+        for kind, records, omitted in groups:
             for record in records:
                 text = str(record.get("text") or "")
                 if needle not in text.casefold():
                     continue
-                hits.append(
-                    {
-                        "kind": kind,
-                        "ref": record.get("id") or record.get("visual_state_ref"),
-                        "timestamp": record.get("start", record.get("timestamp")),
-                        "text": text,
-                    }
-                )
+                hit = {
+                    "kind": kind,
+                    "ref": (record.get("visual_state_ref") or record.get("id"))
+                           if kind == "ocr" else record.get("id"),
+                    "timestamp": record.get("start", record.get("timestamp")),
+                    "text": text,
+                }
+                if kind == "ocr":
+                    image_index = record.get("source_image_index")
+                    if type(image_index) is int and image_index >= 0:
+                        hit.update(source_image_index=image_index, time_basis="image_order",
+                                   timestamp_available=False, timestamp=None)
+                        visual_index = record.get("visual_state_index")
+                        if type(visual_index) is int and visual_index >= 0:
+                            hit["visual_state_index"] = visual_index
+                        motion = record.get("source_motion_timestamp")
+                        if type(motion) in {int, float} and math.isfinite(motion) and motion >= 0:
+                            hit["source_motion_timestamp"] = motion
+                    elif record.get("timestamp_available") is False:
+                        hit.update(timestamp_available=False, timestamp=None)
+                        if record.get("time_basis"):
+                            hit["time_basis"] = record["time_basis"]
+                if omitted:
+                    hit.update(ref=None, timestamp=None, visual_available=False,
+                               omitted_visual=True, source_visual_ref=record.get("id"),
+                               timestamp_available=False)
+                hits.append(hit)
                 if len(hits) >= max(1, min(limit, 500)):
                     return hits
         return hits
@@ -135,6 +167,7 @@ class EvidencePack:
         visual_state_id: str | None = None,
         timestamp: float | None = None,
         preview: bool = False,
+        source_image_index: int | None = None,
     ) -> tuple[Path, dict]:
         timeline = self.visual_timeline
         record = None
@@ -143,12 +176,23 @@ class EvidencePack:
                 (item for item in timeline if item.get("id") == visual_state_id),
                 None,
             )
+        elif source_image_index is not None:
+            if type(source_image_index) is not int or source_image_index < 0:
+                raise EvidencePackError("source_image_index must be a nonnegative integer")
+            pages = [item for item in timeline if item.get("source_image_index") == source_image_index]
+            record = next((item for item in pages if item.get("source_motion_timestamp") is None),
+                          pages[0] if pages else None)
         elif timestamp is not None and timeline:
+            timed = [item for item in timeline
+                     if item.get("timestamp_available") is not False
+                     and item.get("source_image_index") is None]
+            if not timed:
+                raise EvidencePackError("This source has image order, not playback timestamps; use visual_state_id or source_image_index.")
             at = float(timestamp)
             record = next(
                 (
                     item
-                    for item in timeline
+                    for item in timed
                     if float(item.get("start") or 0) <= at
                     < float(item.get("end") or item.get("start") or 0)
                 ),
@@ -156,7 +200,7 @@ class EvidencePack:
             )
             if record is None:
                 record = min(
-                    timeline,
+                    timed,
                     key=lambda item: abs(float(item.get("start") or 0) - at),
                 )
         if record is None:
@@ -183,19 +227,21 @@ class PackLibrary:
     def list(self) -> list[EvidencePack]:
         if not self.root.exists():
             return []
-        packs: list[EvidencePack] = []
+        packs: list[tuple[int, EvidencePack]] = []
         for path in self.root.iterdir():
             if not path.is_dir() or path.name.startswith("."):
                 continue
             try:
-                packs.append(EvidencePack.open(path))
-            except EvidencePackError:
+                pack = EvidencePack.open(path)
+                # A complete manifest cannot make damaged source metadata
+                # readable. Isolate one bad pack before consumers build the
+                # whole library's summaries (CLI, HTTP and MCP).
+                pack.summary()
+                modified = (pack.root / "manifest.json").stat().st_mtime_ns
+            except (EvidencePackError, OSError):
                 continue
-        return sorted(
-            packs,
-            key=lambda pack: (pack.root / "manifest.json").stat().st_mtime_ns,
-            reverse=True,
-        )
+            packs.append((modified, pack))
+        return [pack for _modified, pack in sorted(packs, key=lambda item: item[0], reverse=True)]
 
     def get(self, pack_id: str) -> EvidencePack:
         if not pack_id or Path(pack_id).name != pack_id:
@@ -271,17 +317,28 @@ class ClipMind:
 
             while pending:
                 event = await queue.get()
-                job_id = event.get("id")
-                if job_id not in pending:
-                    continue
-                if progress is not None:
-                    progress(dict(event))
-                if event.get("status") == "done":
-                    completed[positions[job_id]] = self.library.get(job_id)
-                    pending.remove(job_id)
-                elif event.get("status") in {"error", "interrupted"}:
-                    failures.append(event)
-                    pending.remove(job_id)
+                # JobStore deliberately replaces an overflowing progress queue
+                # with a resync marker. Terminal events may have been dropped,
+                # so recover their authoritative snapshots without rerunning
+                # work or waiting forever for notifications that already fired.
+                events = (
+                    [store.jobs[job_id].public()
+                     for job_id in sorted(pending, key=positions.__getitem__)
+                     if job_id in store.jobs]
+                    if event.get("type") == "resync" else [event]
+                )
+                for update in events:
+                    job_id = update.get("id")
+                    if job_id not in pending:
+                        continue
+                    if progress is not None:
+                        progress(dict(update))
+                    if update.get("status") == "done":
+                        completed[positions[job_id]] = self.library.get(job_id)
+                        pending.remove(job_id)
+                    elif update.get("status") in {"error", "interrupted"}:
+                        failures.append(update)
+                        pending.remove(job_id)
         finally:
             store.unsubscribe(queue)
             await store.close()

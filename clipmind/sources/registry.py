@@ -10,11 +10,15 @@ from .direct import ADAPTER as DIRECT
 from .douyin import ADAPTER as DOUYIN
 from .local import ADAPTER as LOCAL
 from .youtube import ADAPTER as YOUTUBE
+from .wechat import ADAPTER as WECHAT
+from .xiaohongshu import ADAPTER as XIAOHONGSHU
 
 ADAPTERS: tuple[SourceAdapter, ...] = (
     LOCAL,
     DOUYIN,
     YOUTUBE,
+    WECHAT,
+    XIAOHONGSHU,
     DIRECT,
 )
 

@@ -112,7 +112,7 @@ class VisualContentTests(unittest.TestCase):
         self.assertEqual(select_content_frames([frame]), [])
         frame.path.unlink()
         self.assertEqual(select_content_frames([frame]), [])
-        self.assertEqual(CONTENT_ALGORITHM, "independent-visual-content-v1")
+        self.assertEqual(CONTENT_ALGORITHM, "independent-visual-content-v4")
 
 
 if __name__ == "__main__":

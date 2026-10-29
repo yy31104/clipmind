@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import math
 import time
 import uuid
 from dataclasses import asdict, dataclass, field, fields
@@ -15,7 +16,7 @@ from .index import EvidenceIndex
 from .pipeline import Pools, cleanup_temporary, process
 from .providers import ProviderBundle, default_providers
 from .sources.identity import allows_source_reuse
-from .storage import JobStorage
+from .storage import JobPersistenceError, JobStorage
 
 
 STATUSES = {"queued", "running", "done", "error", "interrupted"}
@@ -36,6 +37,7 @@ class Job:
     error_code: str | None = None
     error_action: str | None = None
     error_details: dict | None = None
+    persistence_warning: dict | None = None
     options: dict = field(default_factory=dict)
     result: dict | None = None
     created_at: float = field(default_factory=time.time)
@@ -64,8 +66,24 @@ class Job:
 
     @classmethod
     def from_record(cls, record: dict) -> Job:
+        def finite(value):
+            try:
+                return type(value) in (int, float) and math.isfinite(value)
+            except OverflowError:
+                return False
+
         names = {item.name for item in fields(cls)}
-        return cls(**{name: value for name, value in record.items() if name in names})
+        job = cls(**{name: value for name, value in record.items() if name in names})
+        if (not all(isinstance(value, str) for value in (job.id, job.url, job.title, job.status, job.stage, job.note))
+                or not isinstance(job.options, dict) or (job.result is not None and not isinstance(job.result, dict))
+                or not finite(job.progress)
+                or not 0 <= job.progress <= 1
+                or any(not finite(value)
+                       for value in (job.created_at,))
+                or any(value is not None and not finite(value)
+                       for value in (job.started_at, job.finished_at))):
+            raise ValueError("invalid persisted job record")
+        return job
 
 
 class JobStore:
@@ -86,11 +104,15 @@ class JobStore:
         self._subscribers: set[asyncio.Queue] = set()
         self._tasks: set[asyncio.Task] = set()
         self._started = False
+        self._closed = False
         for record in self.storage.load():
             try:
                 job = Job.from_record(record)
             except (TypeError, ValueError):
-                continue
+                recovered = self.storage.completed_record(record["id"])
+                if recovered is None:
+                    continue
+                job = Job.from_record(recovered)
             if job.status in STATUSES:
                 self.jobs[job.id] = job
 
@@ -122,8 +144,23 @@ class JobStore:
         """Apply restart recovery once the application event loop is running."""
         if self._started:
             return
+        if self._closed:
+            raise RuntimeError("job store is closed")
         self._started = True
         for job in list(self.jobs.values()):
+            if job.status in {"running", "interrupted"} or job.error_code == "job_storage_unavailable":
+                completed = self.storage.completed_record(job.id)
+                if completed is not None:
+                    cleanup_temporary(self.workdir(job.id), keep_source=self.config.keep_source_video)
+                    job.status, job.stage, job.progress = "done", "done", 1.0
+                    job.result = completed["result"]
+                    job.title = completed["title"]
+                    job.note = completed["note"]
+                    job.finished_at = completed["finished_at"]
+                    job.error = job.error_code = job.error_action = job.error_details = None
+                    job.persistence_warning = None
+                    self._persist_terminal(job)
+                    self._publish(job)
             if job.status == "queued":
                 self._schedule(job)
                 continue
@@ -133,7 +170,7 @@ class JobStore:
                 job.note = "interrupted by application restart"
                 job.error = job.error or "processing was interrupted by application restart"
                 job.finished_at = time.time()
-                self._persist(job)
+                self._persist_terminal(job)
                 self._publish(job)
                 continue
             if job.status == "done":
@@ -145,6 +182,8 @@ class JobStore:
                 cleanup_temporary(self.workdir(job.id), keep_source=False)
 
     def submit(self, url: str, title: str, *, options: dict | None = None) -> Job:
+        if self._closed:
+            raise RuntimeError("job store is closed")
         job = Job(
             id=uuid.uuid4().hex[:12],
             url=url,
@@ -219,8 +258,6 @@ class JobStore:
             job.status = "running"
             job.started_at = time.time()
             job.finished_at = None
-            self._persist(job)
-            self._publish(job)
 
             def report(stage: str, progress: float, note: str = "") -> None:
                 job.stage = stage
@@ -233,6 +270,10 @@ class JobStore:
                 self._publish(job)
 
             try:
+                # Nothing external may start unless this transition is durable.
+                # A full disk here still produces a terminal UI notification.
+                self._persist(job)
+                self._publish(job)
                 job.result = await process(
                     job.url,
                     self.workdir(job.id),
@@ -261,10 +302,11 @@ class JobStore:
                 )
                 job.error_details = getattr(exc, "details", None)
             job.finished_at = time.time()
-            self._persist(job)
+            self._persist_terminal(job)
             self._publish(job)
 
     async def close(self) -> None:
+        self._closed = True
         tasks = list(self._tasks)
         for task in tasks:
             task.cancel()
@@ -273,6 +315,20 @@ class JobStore:
 
     def _persist(self, job: Job) -> None:
         self.storage.save(job.id, job.record())
+
+    def _persist_terminal(self, job: Job) -> None:
+        try:
+            self._persist(job)
+        except JobPersistenceError:
+            # No invisible orphan task and no false claim that its snapshot was
+            # saved. The prior durable running state prevents automatic replay;
+            # a validated complete manifest can restore the result on restart.
+            job.persistence_warning = {
+                "code": JobPersistenceError.code,
+                "message": JobPersistenceError.user_message,
+                "action": JobPersistenceError.action,
+            }
+            logger.warning("Task %s finished but its state could not be saved", job.id)
 
     def listing(self) -> list[dict]:
         return [j.public() for j in sorted(

@@ -148,12 +148,13 @@ class VisionTextRecognizer:
         return recognize(image, languages=self.config.ocr_languages)
 
 
-def tesseract_available() -> bool:
+def tesseract_available(languages: str | None = None) -> bool:
     if not shutil.which("tesseract"):
         return False
     try:
-        import pytesseract  # noqa: F401
-        return True
+        import pytesseract
+        required = set((languages or settings.tesseract_languages).split("+"))
+        return required.issubset(set(pytesseract.get_languages(config="")))
     except Exception:
         return False
 
@@ -166,7 +167,7 @@ class TesseractTextRecognizer:
     name: str = "tesseract"
 
     def available(self) -> bool:
-        return tesseract_available()
+        return tesseract_available(self.config.tesseract_languages)
 
     def read_text(self, image: Path) -> list[str]:
         return self.recognize(image).lines

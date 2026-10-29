@@ -14,12 +14,32 @@ def clock(seconds: float) -> str:
     return f"{int(seconds // 60):02d}:{int(seconds % 60):02d}"
 
 
+def _visual_position(frame: Frame) -> dict:
+    """Image order is provenance, never an invented playback timestamp."""
+    image_index = getattr(frame, "source_image_index", None)
+    if image_index is not None:
+        position = {
+            "visual_state_index": frame.index,
+            "source_image_index": image_index,
+            "time_basis": "image_order",
+            "timestamp_available": False,
+            "clock": f"第 {image_index + 1} 张",
+        }
+        motion = getattr(frame, "source_motion_timestamp", None)
+        if motion is not None:
+            seconds = f"{motion:.3f}".rstrip("0").rstrip(".")
+            position.update(source_motion_timestamp=motion,
+                            clock=f"第 {image_index + 1} 张 · 动态 {seconds} 秒")
+        return position
+    return {"clock": clock(frame.timestamp)}
+
+
 def preview_records(frames: list[Frame]) -> list[dict]:
     """Serialize the UI preview once for pipeline, job state and rebuilds."""
     return [
         {
             "timestamp": frame.timestamp,
-            "clock": clock(frame.timestamp),
+            **_visual_position(frame),
             "file": (Path("visual_states") / "preview" / frame.path.name).as_posix(),
             "canonical_file": (
                 Path("visual_states") / "all" / frame.path.name
@@ -86,12 +106,21 @@ def build_metadata(
         "stage_timings": dict(sorted((stage_timings or {}).items())),
         "preflight": preflight_result,
     }
+    diagnostics = (evidence_manifest or {}).get("diagnostics", {})
+    for field in ("media_type", "audio_status", "time_basis", "speech_status", "visual_primary", "visual_status",
+                  "source_image_count", "source_motion_count", "motion_sample_fps", "motion_audio_status", "motion_time_basis",
+                  "image_page_transform"):
+        value = item.info.get(f"_clipmind_{field}")
+        if value is None:
+            value = diagnostics.get(field)
+        if value is not None:
+            metadata[field] = value
     if visual_states is not None:
         states = []
         for frame in canonical:
             state = {
                 "timestamp": frame.timestamp,
-                "clock": clock(frame.timestamp),
+                **_visual_position(frame),
                 "file": frame.path.relative_to(dest).as_posix(),
                 "text": frame.text,
                 "content_hint": frame.content_hint,
@@ -140,6 +169,7 @@ def build_metadata(
             "evidence": "evidence.md",
             "schema": evidence_manifest["schema"],
             "completeness": evidence_manifest["completeness"],
+            "diagnostics": evidence_manifest.get("diagnostics", {}),
         }
     return metadata
 

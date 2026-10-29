@@ -125,7 +125,7 @@ class SourceRegistryTests(unittest.TestCase):
 
     def test_registry_exposes_contributor_facing_capabilities(self) -> None:
         platforms = {item["platform"] for item in supported_sources()}
-        self.assertEqual(platforms, {"douyin", "youtube", "local"})
+        self.assertEqual(platforms, {"douyin", "youtube", "wechat", "xiaohongshu", "local"})
 
     def test_installed_adapter_entry_point_precedes_the_generic_url_fallback(self) -> None:
         plugin = SourceAdapter(

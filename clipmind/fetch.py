@@ -25,6 +25,7 @@ import os
 import shutil
 import sys
 import tempfile
+import threading
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -33,7 +34,7 @@ from urllib.parse import quote, urlsplit
 from . import acquisition, subprocesses
 from .config import Settings, settings
 from .sources import MediaAsset, SourceError, adapter_for
-from .sources import douyin_browser
+from .sources import douyin_browser, douyin_public, douyin_images, douyin_motion, wechat_browser, xiaohongshu
 
 
 logger = logging.getLogger(__name__)
@@ -57,6 +58,7 @@ class AttemptFailure:
     strategy: str
     label: str
     reason: str
+    details: dict | None = None
 
     @property
     def diagnostic(self) -> str:
@@ -68,11 +70,15 @@ class AttemptFailure:
 _RANKED_CODES = (
     "live_stream_unsupported",
     "private_video",
+    "image_collection_limit_exceeded",
+    "image_collection_fetch_failed",
+    "source_media_unavailable",
     "source_metadata_unavailable",
     "cookies_stale",
     "login_required",
     "cookies_unavailable",
     "link_unavailable",
+    "extractor_unsupported",
     "media_fetch_failed",
 )
 _RANK = {code: index for index, code in enumerate(_RANKED_CODES)}
@@ -80,6 +86,18 @@ _RANK = {code: index for index, code in enumerate(_RANKED_CODES)}
 
 def _message_for(code: str, platform: str) -> tuple[str, str]:
     return {
+        "image_collection_limit_exceeded": (
+            "图集超过完整获取的资源限制，未输出不完整的证据包。",
+            "请使用较小的原图集合；数量、大小或像素超限不会被静默截断。",
+        ),
+        "image_collection_fetch_failed": (
+            "已找到目标图集，但未能完整取得全部原图或动态片段。",
+            "未使用封面或推荐内容补齐缺页。可稍后重试，或上传可用的原图；此错误不能证明链接已删除或需要重新登录。",
+        ),
+        "source_media_unavailable": (
+            "已识别目标作品，但媒体文件未能下载完成。",
+            "请检查网络后重试，或上传可用的原始媒体。该结果不能证明作品已删除或 Cookie 过期。",
+        ),
         "live_stream_unsupported": (
             "This is a live or scheduled stream, not a finished video.",
             "ClipMind analyses complete recordings. Submit the replay link after the stream has ended.",
@@ -107,6 +125,10 @@ def _message_for(code: str, platform: str) -> tuple[str, str]:
         "link_unavailable": (
             f"This {platform} link is expired or unavailable.",
             f"Copy a fresh share link from {platform.title()} and try again.",
+        ),
+        "extractor_unsupported": (
+            "ClipMind's current extractor does not support this URL.",
+            "This does not establish that the source is expired or removed. Check supported source types; source availability remains unknown.",
         ),
     }.get(
         code,
@@ -149,7 +171,9 @@ def classify_generic(failure: AttemptFailure) -> str | None:
         "permission" in lowered or "operation not permitted" in lowered
     ) and "cookie" in lowered:
         return "cookies_unavailable"
-    if "unsupported url" in lowered or "not available" in lowered or "removed" in lowered:
+    if "unsupported url" in lowered:
+        return "extractor_unsupported"
+    if "not available" in lowered or "removed" in lowered:
         return "link_unavailable"
     return None
 
@@ -193,13 +217,95 @@ def classify_failures(
     logger.warning("%s acquisition failed after all strategies: %s", platform, diagnostic)
     best: str | None = None
     for failure in failures:
-        code = _code_for(failure, adapter)
+        detail = failure.details if isinstance(failure.details, dict) else {}
+        image_reason = detail.get("reason")
+        code = (
+            "image_collection_limit_exceeded" if image_reason == "image_limit_exceeded"
+            else "image_collection_fetch_failed" if image_reason == "image_download_failed"
+            else "source_media_unavailable" if image_reason == "media_download_failed"
+            else None
+        ) if failure.strategy in {"douyin-public", "douyin-browser"} else None
+        if (code is None and failure.strategy == "douyin-browser"
+                and isinstance(image_reason, str) and image_reason in _BROWSER_REASONS):
+            code = "source_metadata_unavailable"
+        code = code or _code_for(failure, adapter)
         if code is None:
             continue
         if best is None or _RANK[code] < _RANK[best]:
             best = code
     message, action = _message_for(best or "media_fetch_failed", platform)
-    return FetchError(best or "media_fetch_failed", message, action)
+    # Only export the public resolver's fixed reason codes and integer counts.
+    # Raw extractor errors/URLs can contain credentials and remain log-only.
+    metadata_attempts = []
+    if best in {"source_metadata_unavailable", "source_media_unavailable"}:
+        for failure in failures:
+            detail = failure.details
+            if failure.strategy != "douyin-public" or not isinstance(detail, dict):
+                continue
+            reason = detail.get("reason")
+            if not isinstance(reason, str) or reason not in {"entries_missing", "target_missing", "target_ambiguous"}:
+                continue
+            safe = {"strategy": "douyin-public", "reason": reason}
+            for key in ("entry_count", "exact_id_matches"):
+                value = detail.get(key)
+                if type(value) is int and value >= 0:
+                    safe[key] = value
+            metadata_attempts.append(safe)
+    if best == "source_metadata_unavailable" and any(item["reason"] == "target_missing" for item in metadata_attempts):
+        message = "抖音公共接口未返回请求的视频；已拒绝使用推荐内容。"
+        action = "当前路径未能解析该视频，请保留原链接等待受支持的适配修复。此结果不证明视频已删除或 cookies 过期，请勿反复刷新登录或重复提交。"
+    browser_attempts = [detail for failure in failures
+                        if (detail := _safe_browser_detail(failure)) is not None]
+    if best == "source_metadata_unavailable" and browser_attempts:
+        reason = browser_attempts[-1]["reason"]
+        if reason == "browser_unavailable":
+            message = "Chrome 浏览器兜底无法启动。"
+            action = "请确认本机已安装 Chrome 和 Playwright 依赖，并允许本地启动浏览器；无需提供 Cookie。"
+        elif reason in {"navigation_timeout", "navigation_failed"}:
+            message = "Chrome 加载抖音页面超时，尚未取得媒体。" if reason == "navigation_timeout" else "Chrome 未能正常加载抖音页面，尚未取得媒体。"
+            action = "请检查网络连接及原链接能否打开后再试。此结果不能确认登录过期，无需反复登录或导出 Cookie。"
+        else:
+            message = "Chrome 已打开页面，但未取得目标作品的可用媒体信息。"
+            action = "请保留原链接用于适配检查，或上传可用的本地媒体；浏览器可播放不代表当前提取器已取得内容。"
+    error = FetchError(best or "media_fetch_failed", message, action)
+    if best in {"image_collection_fetch_failed", "image_collection_limit_exceeded"}:
+        error.details = {"source_resolved": True, "media_type": "image_collection"}
+    if metadata_attempts:
+        error.details = {"metadata_attempts": metadata_attempts}
+    if best in {"source_metadata_unavailable", "source_media_unavailable"} and browser_attempts:
+        error.details = {**getattr(error, "details", {}), "browser_attempts": browser_attempts}
+    if best == "source_media_unavailable":
+        error.details = {**getattr(error, "details", {}), "source_resolved": True}
+    return error
+
+
+_BROWSER_REASONS = {
+    "browser_unavailable": {"launch"},
+    "navigation_timeout": {"warmup", "navigation"},
+    "navigation_failed": {"warmup", "navigation"},
+    "target_id_unresolved": {"identity"},
+    "metadata_unavailable": {"metadata"},
+    "media_download_failed": {"download"},
+}
+
+
+def _safe_browser_detail(failure: AttemptFailure) -> dict | None:
+    detail = failure.details
+    if failure.strategy != "douyin-browser" or not isinstance(detail, dict):
+        return None
+    reason, stage = detail.get("reason"), detail.get("stage")
+    if (not isinstance(reason, str) or reason not in _BROWSER_REASONS
+            or not isinstance(stage, str) or stage not in _BROWSER_REASONS[reason]):
+        return None
+    safe = {"strategy": "douyin-browser", "reason": reason, "stage": stage}
+    for key in ("metadata_responses", "embedded_attempts"):
+        value = detail.get(key)
+        if type(value) is int and 0 <= value <= 1_000_000:
+            safe[key] = value
+    status = detail.get("last_http_status")
+    if type(status) is int and 100 <= status <= 599:
+        safe["last_http_status"] = status
+    return safe
 
 
 def _fetch_error(errors: list[str], platform: str = "source") -> FetchError:
@@ -255,6 +361,56 @@ class AcquiredMedia:
 
     path: Path
     info: dict
+    image_paths: tuple[Path, ...] = ()
+    image_motion_paths: tuple[Path | None, ...] = ()
+
+
+def _media_transfer_note(received: int, total: int | None, elapsed: float) -> str:
+    """Only transfer measurements enter public status; never a CDN address."""
+    if received == 0:
+        return "已找到目标视频，正在连接媒体并等待数据"
+    megabytes = received / 1_000_000
+    amount = f"{megabytes:.1f}"
+    if total is not None and total > 0:
+        amount += f" / {total / 1_000_000:.1f}"
+    speed = f" · 平均 {megabytes / elapsed:.1f} MB/s" if elapsed > 0 else ""
+    return f"正在接收临时媒体：{amount} MB{speed}"
+
+
+async def _download_resolved(resolved, root: Path, config: Settings, *, on_note=None) -> AcquiredMedia:
+    """Video mirrors and ordered image pages are different asset contracts."""
+    if resolved.image_urls:
+        try:
+            maximum = min(512 * 1024 * 1024, max(1, config.max_upload_mb) * 1024 * 1024)
+            images = await douyin_images.download_images(
+                resolved.image_urls, root,
+                max_total_bytes=maximum,
+            )
+            motion_groups = getattr(resolved, "image_motion_urls", ())
+            motions = ()
+            if any(motion_groups):
+                if len(motion_groups) != len(images):
+                    raise douyin_images.ImagePostError("motion pages do not match the original image order")
+                motions = await douyin_motion.download_motions(
+                    motion_groups, root,
+                    max_total_bytes=maximum - sum(path.stat().st_size for path in images),
+                )
+        except douyin_images.ImagePostBudgetExceeded as exc:
+            raise FetchError(
+                "image_collection_limit_exceeded",
+                "图集超过完整获取的资源限制，未输出不完整的证据包。",
+                "请使用较小的原图集合；数量、大小或像素超限不会被静默截断。",
+            ) from exc
+        return AcquiredMedia(images[0], dict(resolved.info), images, motions)
+    progress = (lambda received, total, elapsed: on_note(
+        _media_transfer_note(received, total, elapsed))) if on_note is not None else None
+    if on_note is not None:
+        on_note(_media_transfer_note(0, None, 0))
+    path = await douyin_browser.download(
+        resolved.urls, root / "source.mp4", on_progress=progress,
+        max_bytes=max(1, config.max_upload_mb) * 1024 * 1024,
+    )
+    return AcquiredMedia(path, dict(resolved.info))
 
 
 @dataclass(frozen=True)
@@ -333,6 +489,35 @@ class CookieRung:
 
 
 @dataclass(frozen=True)
+class DouyinPublicRung:
+    key: str = "douyin-public"
+
+    def describe(self) -> str:
+        return "public feed"
+
+    def _failed(self, reason: str) -> AttemptFailure:
+        return AttemptFailure(strategy=self.key, label=self.describe(), reason=reason)
+
+    async def acquire(self, url: str, root: Path, config: Settings, *, on_note=None):
+        resolved = None
+        try:
+            resolved = await douyin_public.resolve(url)
+            media = await _download_resolved(resolved, root.resolve(), config, on_note=on_note)
+        except douyin_images.ImagePostError as exc:
+            return None, AttemptFailure(
+                self.key, self.describe(), str(exc),
+                {"reason": "image_limit_exceeded" if isinstance(exc, douyin_images.ImagePostBudgetExceeded) else "image_download_failed"},
+            )
+        except douyin_browser.ResolveFailed as exc:
+            return None, AttemptFailure(
+                strategy=self.key, label=self.describe(), reason=str(exc),
+                details=({"reason": "media_download_failed", "stage": "download"}
+                         if resolved is not None else getattr(exc, "details", None)),
+            )
+        return media, None
+
+
+@dataclass(frozen=True)
 class DouyinBrowserRung:
     """Last rung for Douyin: let the page name its own address, then fetch it.
 
@@ -355,19 +540,178 @@ class DouyinBrowserRung:
         return AttemptFailure(strategy=self.key, label=self.describe(), reason=reason)
 
     async def acquire(
-        self, url: str, root: Path, config: Settings
+        self, url: str, root: Path, config: Settings, *, on_note=None
     ) -> tuple[AcquiredMedia | None, AttemptFailure | None]:
         root = root.resolve()
+        resolved = None
         try:
             resolved = await douyin_browser.resolve(
                 url, timeout=config.douyin_browser_timeout
             )
-            media = await douyin_browser.download(resolved.urls, root / "source.mp4")
+            media = await _download_resolved(resolved, root, config, on_note=on_note)
+        except douyin_images.ImagePostError as exc:
+            return None, AttemptFailure(
+                self.key, self.describe(), str(exc),
+                {"reason": "image_limit_exceeded" if isinstance(exc, douyin_images.ImagePostBudgetExceeded) else "image_download_failed"},
+            )
         except douyin_browser.BrowserUnavailable as exc:
-            return None, self._failed(f"no usable browser: {exc}")
+            return None, AttemptFailure(self.key, self.describe(), f"no usable browser: {exc}",
+                                        {"reason": "browser_unavailable", "stage": "launch"})
         except douyin_browser.ResolveFailed as exc:
-            return None, self._failed(str(exc))
-        return AcquiredMedia(path=media, info=dict(resolved.info)), None
+            return None, AttemptFailure(self.key, self.describe(), str(exc),
+                {"reason": "media_download_failed", "stage": "download"}
+                if resolved is not None else getattr(exc, "details", None))
+        return media, None
+
+
+@dataclass(frozen=True)
+class XiaohongshuRung:
+    """Public exact-note metadata; never silently reads personal Chrome cookies."""
+
+    key: str = "xiaohongshu-public"
+
+    def describe(self) -> str:
+        return "xiaohongshu public note"
+
+    async def acquire(self, url: str, root: Path, config: Settings, *, on_note=None):
+        try:
+            asset = await xiaohongshu.acquire(url, root.resolve(),
+                max_bytes=max(1, config.max_upload_mb) * 1024 * 1024, on_note=on_note)
+        except SourceError as exc:
+            raise FetchError(exc.code, exc.user_message, exc.action) from None
+        return AcquiredMedia(asset.media_path, asset.info, asset.image_paths), None
+
+
+@dataclass(frozen=True)
+class WechatBrowserRung:
+    """Use only the user's dedicated local Tencent browser session."""
+
+    key: str = "wechat-browser"
+
+    def describe(self) -> str:
+        return "wechat browser session"
+
+    def _failed(self, reason: str) -> AttemptFailure:
+        return AttemptFailure(strategy=self.key, label=self.describe(), reason=reason)
+
+    async def acquire(self, url: str, root: Path, config: Settings):
+        try:
+            resolved = await wechat_browser.acquire(
+                url, root.resolve() / "source.mp4", timeout=config.wechat_browser_timeout
+            )
+        except wechat_browser.BrowserUnavailable as exc:
+            raise FetchError(
+                "missing_dependency", "无法打开微信视频号专用 Chrome 会话。", str(exc)
+            ) from exc
+        except wechat_browser.ResolveFailed as exc:
+            raise FetchError("media_fetch_failed", str(exc),
+                             "请在本机运行 clipmind wechat-login 登录腾讯元宝后重试；若视频仅限微信内查看，可上传你有权使用的本地文件。") from exc
+        return AcquiredMedia(root / "source.mp4", dict(resolved.info)), None
+
+
+def _remote_audio_candidate(info: dict) -> bool:
+    """Select audio-labelled downloads for verification, never by filename.
+
+    Older source plugins can omit codec information. Preserve their video
+    contract; the actual streams decide the type whenever an extractor declares
+    audio-only output, including a selected audio format nested by yt-dlp.
+    """
+    if info.get("_clipmind_media_type") == "audio":
+        return True
+    if isinstance(info.get("vcodec"), str) and info["vcodec"].casefold() == "none":
+        return True
+    for key in ("requested_downloads", "requested_formats"):
+        selected = info.get(key)
+        if (isinstance(selected, list) and selected
+                and all(isinstance(row, dict) and isinstance(row.get("vcodec"), str)
+                        and row["vcodec"].casefold() == "none" for row in selected)):
+            return True
+    return False
+
+
+def _stream_media_type(streams: object) -> str | None:
+    """Classify actual streams; an attached album cover is not moving video."""
+    if not isinstance(streams, list) or not streams or not all(isinstance(row, dict) for row in streams):
+        return None
+    has_audio = any(row.get("codec_type") == "audio" for row in streams)
+    has_video = any(
+        row.get("codec_type") == "video"
+        and not (isinstance(row.get("disposition"), dict)
+                 and row["disposition"].get("attached_pic") == 1)
+        for row in streams
+    )
+    return "video" if has_video else "audio" if has_audio else None
+
+
+async def _remote_media_info(acquired: AcquiredMedia) -> dict:
+    """Verify remote audio and the experimental XHS path against local streams.
+
+    An audio file's attached cover is not a moving video stream. Conversely,
+    misleading upstream labels cannot make real video disappear from a pack.
+    Image collections already have an explicit ordered-asset contract.
+    XHS video duration comes from FFprobe, not the page's optional estimate.
+    """
+    info = dict(acquired.info)
+    verify_xiaohongshu = info.get("_clipmind_source_adapter") == "xiaohongshu"
+    if acquired.image_paths or not (_remote_audio_candidate(info) or verify_xiaohongshu):
+        return info
+    if not shutil.which("ffprobe"):
+        raise FetchError(
+            "missing_dependency",
+            "ffprobe is not installed or is not available on PATH.",
+            "Install a complete FFmpeg distribution with ffmpeg and ffprobe, add both to PATH, then restart ClipMind.",
+        )
+    try:
+        code, output, _error = await asyncio.wait_for(_run([
+            "ffprobe", "-v", "error", "-show_entries",
+            "format=duration:stream=codec_type:stream_disposition=attached_pic",
+            "-of", "json", str(acquired.path),
+        ]), timeout=30.0)
+    except asyncio.TimeoutError:
+        raise FetchError(
+            "media_probe_failed", "检查下载媒体的音视频流超时，未生成不完整证据包。",
+            "请检查来源文件是否能够正常播放，或提供完整的本地文件。",
+        ) from None
+    except OSError:
+        raise FetchError(
+            "missing_dependency", "无法启动 FFprobe 来检查下载的媒体。",
+            "请检查 FFmpeg/FFprobe 安装及 PATH，然后重启 ClipMind。",
+        ) from None
+    try:
+        payload = json.loads(output) if code == 0 else None
+        streams = payload.get("streams") if isinstance(payload, dict) else None
+        media_type = _stream_media_type(streams)
+        if media_type is None:
+            raise ValueError("no audio or moving video")
+    except (ValueError, TypeError):
+        raise FetchError(
+            "media_probe_failed",
+            "下载的媒体无法识别有效音频或视频流，未生成不完整证据包。",
+            "请检查来源文件是否完整及本机 FFprobe 是否可用；可提供能够正常播放的本地文件。",
+        ) from None
+    info["_clipmind_media_type"] = media_type
+    if verify_xiaohongshu and media_type != "video":
+        raise FetchError(
+            "media_probe_failed", "小红书视频地址未返回有效的视频流，未用音频或封面代替原视频。",
+            "请提供可正常播放的完整视频文件；本次没有生成不完整资料包。",
+        )
+    try:
+        known_duration = float(info.get("duration") or 0)
+    except (TypeError, ValueError):
+        known_duration = 0
+    if verify_xiaohongshu or not math.isfinite(known_duration) or known_duration <= 0:
+        try:
+            duration = float(payload.get("format", {}).get("duration") or 0)
+        except (AttributeError, TypeError, ValueError):
+            duration = 0
+        if math.isfinite(duration) and duration > 0:
+            info["duration"] = duration
+        elif verify_xiaohongshu:
+            raise FetchError(
+                "media_probe_failed", "无法确认小红书视频的完整时长，未发布资料包。",
+                "请检查来源文件是否完整，或提供可正常播放的本地视频。",
+            )
+    return info
 
 
 class AcquisitionEngine:
@@ -392,6 +736,10 @@ class AcquisitionEngine:
         return f"adapter:{adapter.name}"
 
     def strategies(self, key: str, config: Settings) -> list:
+        if key == "adapter:xiaohongshu":
+            return [XiaohongshuRung()]
+        if key == "adapter:wechat-channels":
+            return [WechatBrowserRung()]
         sources = list(config.cookie_sources)
         if config.cookie_file:
             sources.append("file")
@@ -400,6 +748,8 @@ class AcquisitionEngine:
             sources.remove(remembered)
             sources.insert(0, remembered)
         rungs: list = [CookieRung(source) for source in sources]
+        if key == "adapter:douyin":
+            rungs.insert(0, DouyinPublicRung())
         # Douyin's endpoint is unreachable without a browser, so this is the rung
         # that decides the outcome rather than a fallback for flakiness. It stays
         # last so a cheaper rung still wins if Douyin ever opens the endpoint up.
@@ -426,23 +776,35 @@ class AcquisitionEngine:
         for strategy in self.strategies(key, config):
             if on_note:
                 on_note(f"trying {strategy.describe()}")
-            acquired, failure = await strategy.acquire(url, root, config)
+            if isinstance(strategy, (DouyinPublicRung, DouyinBrowserRung, XiaohongshuRung)):
+                acquired, failure = await strategy.acquire(url, root, config, on_note=on_note)
+            else:
+                acquired, failure = await strategy.acquire(url, root, config)
             if acquired is None:
                 # Every attempt is kept. The rung that explains the failure is
                 # often not the last one, and a fixed window can drop it.
                 failures.append(failure or strategy._failed("failed"))
                 continue
 
+            acquired_info = await _remote_media_info(acquired)
             async with self._lock:
                 self._winning[key] = strategy.key
             acquisition.record_strategy(workdir, strategy.describe())
-            acquired.info["_clipmind_strategy"] = strategy.describe()
+            acquired_info["_clipmind_strategy"] = strategy.describe()
             return MediaAsset(
                 media_path=acquired.path,
-                info=adapter.normalize_info(url, acquired.info),
+                info=adapter.normalize_info(url, acquired_info),
+                image_paths=acquired.image_paths,
+                image_motion_paths=acquired.image_motion_paths,
             )
 
-        raise classify_failures(failures, adapter=adapter, platform=adapter.platform)
+        error = classify_failures(failures, adapter=adapter, platform=adapter.platform)
+        if adapter.name == "douyin" and error.code == "source_metadata_unavailable":
+            error.details = {**getattr(error, "details", {}),
+                             "browser_fallback": "failed" if config.douyin_browser_enabled else "disabled"}
+            if not config.douyin_browser_enabled:
+                error.action = "当前已关闭 Chrome 浏览器兜底。开启本机浏览器兜底，或上传原视频／图片；无需反复登录或导出 Cookie。"
+        raise error
 
 
 _engine = AcquisitionEngine()
@@ -466,7 +828,7 @@ async def fetch(
 
     # Checked here rather than inside the rung: a missing dependency is worth
     # saying once, not once per rung behind a ladder of failures.
-    if not shutil.which("yt-dlp"):
+    if adapter.name not in {"wechat-channels", "xiaohongshu"} and not shutil.which("yt-dlp"):
         raise FetchError(
             "missing_dependency",
             "yt-dlp is not installed.",
@@ -623,7 +985,15 @@ async def probe(url: str, *, config: Settings = settings) -> ProbeResult:
     try:
         adapter = adapter_for(url)
     except SourceError as exc:
-        return ProbeResult(status="unavailable", platform="source", failure_code=exc.code)
+        # The local adapter matches existing files only. An explicit path that
+        # it rejected is a missing local file, not an unrecognized remote URL.
+        if exc.code == "unsupported_source" and (
+            url.startswith("file://") or Path(url).expanduser().is_absolute()
+        ):
+            return ProbeResult(status="unavailable", platform="local",
+                               failure_code="local_file_unavailable")
+        status = "unavailable" if exc.code in _PROBE_UNAVAILABLE else "unknown"
+        return ProbeResult(status=status, platform="source", failure_code=exc.code)
 
     if adapter.local:
         path = Path(url.removeprefix("file://")).expanduser()
@@ -639,6 +1009,31 @@ async def probe(url: str, *, config: Settings = settings) -> ProbeResult:
             title=path.stem,
             strategy="local file",
         )
+
+    if adapter.name == "xiaohongshu":
+        # Same exact-note parser as acquisition, with no media requests and the
+        # caller's existing probe budgets. Cancellation joins the bounded worker.
+        stop = threading.Event()
+        worker = asyncio.create_task(asyncio.to_thread(xiaohongshu.resolve, url,
+            timeout=max(.1, config.probe_timeout), max_bytes=max(0, config.probe_max_bytes),
+            max_requests=max(0, config.probe_max_requests), stop=stop))
+        try:
+            resolved, usage = await asyncio.shield(worker)
+            return ProbeResult(status="reachable", platform=adapter.platform,
+                source_id=resolved.info["id"], title=resolved.info.get("title"),
+                duration=resolved.info.get("duration"), strategy="xiaohongshu public note", **usage)
+        except asyncio.CancelledError:
+            import contextlib
+            stop.set()
+            while not worker.done():
+                with contextlib.suppress(BaseException):
+                    await asyncio.shield(worker)
+            with contextlib.suppress(BaseException):
+                worker.result()
+            raise
+        except SourceError as exc:
+            return ProbeResult(status="unknown", platform=adapter.platform,
+                failure_code=exc.code, **getattr(exc, "usage", {}))
 
     if not shutil.which("yt-dlp"):
         return ProbeResult(
@@ -778,6 +1173,23 @@ async def _probe_strategies(
 
 
 async def _fetch_local(url: str, workdir: Path, adapter) -> MediaAsset:
+    import contextlib
+    from . import image_media
+
+    async def finish_owned_thread(function, *args):
+        # Cancellation must not race cleanup against a copy/hash worker still
+        # holding the acquisition-owned source file on Windows.
+        worker = asyncio.create_task(asyncio.to_thread(function, *args))
+        try:
+            return await asyncio.shield(worker)
+        except asyncio.CancelledError:
+            while not worker.done():
+                with contextlib.suppress(BaseException):
+                    await asyncio.shield(worker)
+            with contextlib.suppress(BaseException):
+                worker.result()
+            raise
+
     source = Path(url.removeprefix("file://")).expanduser().resolve()
     if not source.is_file():
         raise FetchError(
@@ -791,9 +1203,34 @@ async def _fetch_local(url: str, workdir: Path, adapter) -> MediaAsset:
     root = acquisition.open_workspace(workdir, strategy="local file copy")
     suffix = source.suffix.casefold() or ".media"
     dest = root / f"source{suffix}"
-    await asyncio.to_thread(shutil.copy2, source, dest)
-    metadata = await _probe_local(dest)
-    digest = await asyncio.to_thread(_sha256, dest)
+    await finish_owned_thread(shutil.copy2, source, dest)
+    images = ()
+    image_extensions = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff", ".gif", ".avif", ".apng"}
+    try:
+        from PIL import Image
+        with Image.open(dest) as image:
+            image.verify()
+        with Image.open(dest) as image:
+            tiff = image.format == "TIFF"
+            animated = not tiff and getattr(image, "n_frames", 1) > 1
+        if tiff:
+            images = await image_media.expand_tiff_pages(dest, root)
+            metadata = {"duration": 0.0, "_clipmind_media_type": "image_collection",
+                        "_clipmind_image_audio": "not_applicable"}
+            if len(images) > 1:
+                metadata["_clipmind_image_page_transform"] = image_media.TIFF_PAGE_TRANSFORM
+        elif not animated:
+            images = (dest,)
+            metadata = {"duration": 0.0, "_clipmind_media_type": "image_collection",
+                        "_clipmind_image_audio": "not_applicable"}
+        else:
+            metadata = await _probe_local(dest)
+    except (OSError, ValueError, Image.DecompressionBombError) as exc:
+        if source.suffix.casefold() in image_extensions:
+            raise FetchError("image_decode_failed", "无法解码这张图片；原文件未修改。",
+                             "请选择可正常打开的 JPG、PNG、WebP 或其他受支持的本地图片。") from exc
+        metadata = await _probe_local(dest)
+    digest = await finish_owned_thread(_sha256, dest)
     info = adapter.normalize_info(
         str(source),
         {
@@ -806,17 +1243,21 @@ async def _fetch_local(url: str, workdir: Path, adapter) -> MediaAsset:
             "_clipmind_strategy": "local file copy",
         },
     )
-    return MediaAsset(media_path=dest, info=info)
+    return MediaAsset(media_path=dest, info=info, image_paths=images)
 
 
 async def _probe_local(path: Path) -> dict:
     if not shutil.which("ffprobe"):
-        return {"duration": 0.0}
+        raise FetchError(
+            "missing_dependency",
+            "ffprobe is not installed or is not available on PATH.",
+            "Install a complete FFmpeg distribution with ffmpeg and ffprobe, add both to PATH, then restart ClipMind.",
+        )
     code, out, _err = await _run(
         [
             "ffprobe",
             "-v", "error",
-            "-show_entries", "format=duration",
+            "-show_entries", "format=duration:stream=codec_type:stream_disposition=attached_pic",
             "-of", "json",
             str(path),
         ]
@@ -825,7 +1266,10 @@ async def _probe_local(path: Path) -> dict:
         return {"duration": 0.0}
     try:
         payload = json.loads(out)
-        return {"duration": float(payload.get("format", {}).get("duration") or 0.0)}
+        result = {"duration": float(payload.get("format", {}).get("duration") or 0.0)}
+        if _stream_media_type(payload.get("streams")) == "audio":
+            result["_clipmind_media_type"] = "audio"
+        return result
     except (json.JSONDecodeError, TypeError, ValueError):
         return {"duration": 0.0}
 

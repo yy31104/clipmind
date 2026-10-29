@@ -6,6 +6,7 @@ import asyncio
 import json
 import os
 import shutil
+import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -88,14 +89,71 @@ async def main(
     return 0 if succeeded == len(urls) else 1
 
 
-def doctor() -> dict:
+def _deep_asr_smoke() -> dict:
+    environment = dict(os.environ)
+    environment["HF_HUB_OFFLINE"] = "1"
+    try:
+        result = subprocess.run(
+            [sys.executable, "-m", "clipmind.doctor_smoke"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=90,
+            env=environment,
+            check=False,
+        )
+        report = json.loads(result.stdout.strip())
+        if not isinstance(report, dict) or not isinstance(report.get("passed"), bool):
+            raise ValueError("invalid smoke test report")
+        return report
+    except subprocess.TimeoutExpired:
+        return {"passed": False, "reason": "ASR smoke test timed out after 90 seconds"}
+    except (OSError, ValueError, json.JSONDecodeError):
+        return {"passed": False, "reason": "ASR smoke test did not return a valid report"}
+
+
+def doctor(*, deep: bool = False) -> dict:
     config = Settings.from_env()
     providers = default_providers(config)
     root = OUT_DIR if OUT_DIR.exists() else OUT_DIR.parent
+    asr_importable = providers.transcript.available()
+    asr = {
+        "provider": providers.transcript.name,
+        "model": (
+            config.faster_whisper_model if providers.transcript.name == "faster-whisper"
+            else config.asr_model
+        ),
+        "device": (
+            config.faster_whisper_device if providers.transcript.name == "faster-whisper"
+            else "native"
+        ),
+        "compute_type": (
+            config.faster_whisper_compute_type if providers.transcript.name == "faster-whisper"
+            else "provider-default"
+        ),
+        "check_scope": "import_only",
+        "runtime_test": "not_run",
+    }
+    if deep and providers.transcript.name == "faster-whisper" and asr_importable:
+        smoke = _deep_asr_smoke()
+        asr["check_scope"] = "offline_smoke_test"
+        asr["runtime_test"] = "passed" if smoke["passed"] else "failed"
+        asr["runtime_detail"] = smoke["reason"]
+        if not smoke["passed"] and any(
+            name in smoke["reason"].lower() for name in ("cublas", "cudnn")
+        ):
+            asr["runtime_action"] = (
+                "Install CUDA 12 cuBLAS and cuDNN 9, or set "
+                "CLIPMIND_FASTER_WHISPER_DEVICE=cpu."
+            )
+    elif deep and providers.transcript.name != "faster-whisper":
+        asr["runtime_detail"] = "deep smoke test is available for faster-whisper only"
     checks = {
         "ffmpeg": bool(shutil.which("ffmpeg")),
+        "ffprobe": bool(shutil.which("ffprobe")),
         "yt_dlp": bool(shutil.which("yt-dlp")),
-        "asr": providers.transcript.available(),
+        "asr": asr_importable and (not deep or asr["runtime_test"] != "failed"),
         "ocr": providers.text.available(),
         "library_writable": os.access(root, os.W_OK),
     }
@@ -106,6 +164,7 @@ def doctor() -> dict:
             "asr": providers.transcript.name,
             "ocr": providers.text.name,
         },
+        "asr": asr,
         "library": str(OUT_DIR),
         "sources": supported_sources(),
     }
@@ -167,10 +226,17 @@ def _parser() -> argparse.ArgumentParser:
 
     diagnostic = commands.add_parser("doctor", help="check local dependencies and providers")
     diagnostic.add_argument("--json", action="store_true")
+    diagnostic.add_argument("--deep", action="store_true", help="run an offline ASR smoke test with a cached model")
+
+    verify = commands.add_parser("verify", help="audit saved pack files, images, timing and references without network access")
+    verify.add_argument("pack", help="library pack ID or Evidence Pack directory")
+    verify.add_argument("--json", action="store_true")
 
     serve = commands.add_parser("serve", help="run the local web application")
     serve.add_argument("--host", default="127.0.0.1")
     serve.add_argument("--port", type=int, default=8420)
+
+    commands.add_parser("wechat-login", help="open Tencent Yuanbao for local WeChat Channels sign-in")
 
     commands.add_parser("mcp", help="run the MCP server over stdio")
     return parser
@@ -255,19 +321,50 @@ def entrypoint(argv: list[str] | None = None) -> int:
             print(path)
             return 0
         if args.command == "doctor":
-            report = doctor()
+            report = doctor(deep=args.deep)
             if args.json:
                 _print(report, as_json=True)
             else:
                 for name, ready in report["checks"].items():
-                    print(f"{'✓' if ready else '✗'} {name}")
+                    label = name
+                    if name == "asr":
+                        label = "asr import" if report["asr"]["runtime_test"] == "not_run" else "asr runtime"
+                    print(f"{'✓' if ready else '✗'} {label}")
                 print(f"ASR: {report['providers']['asr']} / OCR: {report['providers']['ocr']}")
+                asr = report["asr"]
+                print(f"ASR model: {asr['model']} / device: {asr['device']} / compute: {asr['compute_type']}")
+                if asr["runtime_test"] == "not_run":
+                    print("ASR check: import only; model and runtime untested. Use `clipmind doctor --deep`.")
+                else:
+                    print(f"ASR runtime: {asr['runtime_test']} ({asr['runtime_detail']})")
+                    if asr.get("runtime_action"):
+                        print(f"ASR action: {asr['runtime_action']}")
                 print("Sources: " + ", ".join(item["platform"] for item in report["sources"]))
             return 0 if report["ready"] else 1
+        if args.command == "verify":
+            from .quality import audit_pack
+
+            target = Path(args.pack).expanduser()
+            if not target.is_dir():
+                target = library.get(args.pack).root
+            report = audit_pack(target)
+            _print(report, as_json=args.json)
+            return 0 if report["passed"] else 1
         if args.command == "serve":
             import uvicorn
 
             uvicorn.run("clipmind.server:app", host=args.host, port=args.port)
+            return 0
+        if args.command == "wechat-login":
+            from .sources.wechat_browser import BrowserUnavailable, login
+
+            print("在打开的腾讯元宝官方网页中自行扫码登录，完成后关闭该窗口。不要向 ClipMind 提供 Cookie 或密码。")
+            try:
+                asyncio.run(login())
+            except BrowserUnavailable as exc:
+                print(str(exc), file=sys.stderr)
+                return 1
+            print("浏览器窗口已关闭。现在可以重新处理微信视频号分享链接。")
             return 0
         if args.command == "mcp":
             from .mcp import serve_stdio

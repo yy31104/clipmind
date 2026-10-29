@@ -42,7 +42,12 @@ def source_id_from_url(url: str) -> str | None:
 
 def guess_title(text: str, url: str) -> str | None:
     """Best-effort title from share text, shown until metadata resolves."""
-    head = (text or "").split(url)[0]
+    head = (text or "").split(url, 1)[0]
+    # A batch's earlier URL/title belongs to another source. In particular, a
+    # plain newline-separated URL list must not label video B with video A.
+    previous = list(_URL_RE.finditer(head))
+    if previous:
+        head = head[previous[-1].end():]
     head = head.rsplit(":/", 1)[-1]
     head = re.sub(r"^\s*\d{2}/\d{2}\b", " ", head)
     head = re.sub(r"^\s*\S+@\S+", " ", head)

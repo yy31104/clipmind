@@ -41,9 +41,25 @@ class DouyinAdapter(SourceAdapter):
         return urlunsplit(("https", canonical_host(value), path, "", ""))
 
     def classify_failure(self, failure) -> str | None:
+        detail = getattr(failure, "details", None)
+        reason = detail.get("reason") if isinstance(detail, dict) else None
+        if failure.strategy == "douyin-public" and isinstance(reason, str) and reason in {
+            "entries_missing", "target_missing", "target_ambiguous",
+        }:
+            return "source_metadata_unavailable"
         # This extractor message is also emitted with no cookies. It is not
         # evidence that a user's browser session expired or a video is private.
         if "fresh cookies" in failure.reason.lower():
+            return "source_metadata_unavailable"
+        # A Chrome-cookie read can fail before the independent, signed-out
+        # browser strategy runs. If that browser cannot identify the requested
+        # video, changing the user's Chrome login is not the recovery action.
+        if failure.strategy == "douyin-browser" and failure.reason.startswith((
+            "the page never resolved to a video id",
+            "the page returned no detail for ",
+            "the page described video ",
+            "the video detail carried no playable address",
+        )):
             return "source_metadata_unavailable"
         return None
 

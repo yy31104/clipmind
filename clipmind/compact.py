@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import os
 import shutil
 import tempfile
@@ -40,12 +41,11 @@ def _rows(path: Path) -> list[dict]:
 
 def _parent_manifest(pack: Path) -> dict:
     try:
-        manifest = _json(pack / "manifest.json")
+        manifest = evidence.load_complete_pack(pack)
         if not isinstance(manifest.get("configuration", {}), dict):
             raise ValueError("configuration object required")
         if "compact" in manifest.get("configuration", {}):
             raise evidence.EvidencePackError("This pack is already compact; export from the original complete pack.")
-        evidence.load_complete_pack(pack)
         return manifest
     except (KeyError, TypeError, ValueError, AttributeError) as exc:
         raise evidence.EvidencePackError("invalid parent Evidence Pack data") from exc
@@ -60,7 +60,7 @@ def _image(pack: Path, value: str) -> Path:
     relative = Path(value)
     if (relative.is_absolute() or len(relative.parts) != 3
             or relative.parts[:2] != ("visual_states", "all")
-            or relative.suffix.lower() not in {".jpg", ".jpeg"}):
+            or relative.suffix.lower() not in {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff", ".gif", ".avif"}):
         raise evidence.EvidencePackError("invalid canonical image reference")
     path = pack / relative
     if path.is_symlink() or not path.resolve().is_relative_to(pack) or not path.is_file():
@@ -82,12 +82,20 @@ def _load_frames(pack: Path, timeline: list[dict], records: list[dict], *, hash_
         if path.name.casefold() in names:
             raise evidence.EvidencePackError("duplicate canonical image name")
         names.add(path.name.casefold())
+        source_index = row.get("source_image_index")
+        if source_index is not None and (type(source_index) is not int or source_index < 0):
+            raise evidence.EvidencePackError("invalid source image order")
+        motion = row.get("source_motion_timestamp")
+        if motion is not None and (type(motion) not in {int, float} or not math.isfinite(motion)
+                                   or motion < 0 or source_index is None):
+            raise evidence.EvidencePackError("invalid source motion timestamp")
         frame = media.Frame(index, row["start"], path,
             text=text["text"], lines=tuple(text.get("lines", ())),
             ocr_layout=tuple(text.get("layout", ())), ocr_warning=text.get("error"),
             dedupe_warning=row.get("dedupe_warning"),
             observed_sample_count=row.get("observed_sample_count", 1),
-            stable_duration=row.get("stable_duration_seconds", 0))
+            stable_duration=row.get("stable_duration_seconds", 0),
+            source_image_index=source_index, source_motion_timestamp=motion)
         if hash_images:
             try:
                 frame.phash = media.dhash(path)
@@ -119,9 +127,16 @@ def _build(pack: Path, dest: Path, *, image_policy: str) -> dict:
     transcript = _transcript(speech_rows, parent, old_job)
     spoken = tuple((segment.start, segment.end, segment.text) for segment in transcript.segments)
     chosen = []
+    selection: dict[int, dict] = {}
+    visual_primary = bool(source.get("visual_primary") or source.get("media_type") == "image_collection")
     if image_policy != "text":
-        visual_states.annotate_transcript_alignment(frames, spoken)
-        chosen = visual_content.select_content_frames(frames, spoken_intervals=spoken)
+        if visual_primary:
+            chosen = frames
+            selection = {frame.index: {"reason": "primary_visual_source"} for frame in frames}
+        else:
+            visual_states.annotate_transcript_alignment(frames, spoken)
+            chosen = visual_content.select_content_frames(frames, spoken_intervals=spoken,
+                                                           decisions=selection)
     completeness, diagnostics = parent.get("completeness", {}), parent.get("diagnostics", {})
     conservative = []
     if (not transcript.text.strip() or transcript.error
@@ -148,16 +163,25 @@ def _build(pack: Path, dest: Path, *, image_policy: str) -> dict:
         shutil.copyfile(frame.path, target)
         copied.append(replace(frame, path=target))
     # Rebuild membership after selection, so group sizes cannot name dropped states.
-    groups = visual_states.group_progressive_builds(copied)
-    scrolls = visual_states.group_scroll_sequences(copied)
+    images = source.get("media_type") == "image_collection"
+    groups = [] if images else visual_states.group_progressive_builds(copied)
+    scrolls = [] if images else visual_states.group_scroll_sequences(copied)
     visual_states.annotate_structure(copied, spoken_intervals=spoken)
     item = MediaAsset(dest / "no-source-media", {
         "id": source["source_id"], "title": source["title"], "duration": source["duration"],
         "uploader": source.get("uploader"), "webpage_url": source.get("url"),
         "_clipmind_platform": source["platform"],
         "_clipmind_strategy": source.get("acquisition_strategy"),
-        "_clipmind_source_adapter": source.get("source_adapter")})
-    algorithm = visual_content.CONTENT_ALGORITHM if image_policy == "content" else "text-only-v1"
+        "_clipmind_source_adapter": source.get("source_adapter"),
+        "_clipmind_media_type": source.get("media_type", "video"),
+        "_clipmind_audio_status": source.get("audio_status"),
+        "_clipmind_speech_status": source.get("speech_status"),
+        "_clipmind_time_basis": source.get("time_basis"),
+        "_clipmind_visual_primary": visual_primary,
+        **{f"_clipmind_{field}": source[field] for field in (
+            "source_image_count", "source_motion_count", "motion_sample_fps", "motion_audio_status", "motion_time_basis", "image_page_transform") if field in source}},
+        image_paths=tuple(frame.path for frame in copied) if images else ())
+    algorithm = ("visual-only-primary-v1" if visual_primary else visual_content.CONTENT_ALGORITHM) if image_policy == "content" else "text-only-v1"
     manifest = evidence.write_pack(dest, item, transcript, copied, copied, groups,
         candidate_frame_count=parent.get("counts", {}).get("candidate_frames", len(frames)),
         scroll_groups=scrolls, ocr_error=diagnostics.get("ocr_error"),
@@ -174,14 +198,19 @@ def _build(pack: Path, dest: Path, *, image_policy: str) -> dict:
             "selection_algorithm": algorithm, "image_policy": image_policy,
             "original_visual_states": len(frames), "retained_visual_states": len(copied),
             "omitted_visual_states": len(frames) - len(copied),
+            "duplicate_visual_states": sum(value.get("reason") == "duplicate_visual_content"
+                                            for value in selection.values()),
+            "covered_reading_views": sum(value.get("reason") == "repeated_reading_view"
+                                          for value in selection.values()),
             "conservative_retention": conservative, "source_completeness": completeness,
             "preview_reuses_canonical_images": True}}
     manifest["artifacts"] = list(dict.fromkeys([*manifest["artifacts"], *EXTRA_ARTIFACTS]))
     # Preserve upstream ASR modality/diagnostic conclusions, not fresh model claims.
-    for modality in ("transcript", "word_timing", "speaker_diarization"):
+    for modality in ("transcript", "word_timing", "speaker_diarization", "ocr"):
         if modality in completeness:
             manifest["completeness"][modality] = completeness[modality]
-    for key in ("asr_error", "diarization_error"):
+    for key in ("asr_error", "diarization_error", "audio_status", "speech_status", "visual_status",
+                "ocr_error", "ocr_failure_count", "time_basis"):
         if key in diagnostics:
             manifest["diagnostics"][key] = diagnostics[key]
     metadata = render.build_metadata(dest, item, transcript, diagnostics.get("ocr_error"),
@@ -201,14 +230,52 @@ def _build(pack: Path, dest: Path, *, image_policy: str) -> dict:
     _write_json(dest / "transcript.json", speech_rows)
     omitted = []
     text_by_id = {row["id"]: row for row in text_rows}
+    source_visual_ids = {frame.index: row["id"] for frame, row in zip(frames, timeline)}
+    retained_ids = {frame.index: f"visual-{number:05d}"
+                    for number, frame in enumerate(retained, 1)}
     for frame, row in zip(frames, timeline):
         text = text_by_id[row["ocr_ref"]]
         if frame.index not in indexes:
             omitted.append({"id": row["id"], "timestamp": row["start"],
                 "text": text["text"], "lines": text.get("lines", []),
+                **({key: row[key] for key in ("visual_state_index", "source_image_index", "source_motion_timestamp", "time_basis", "timestamp_available") if key in row}),
                 **({"ocr_error": text["error"]} if text.get("error") else {}),
                 "selection_reason": "text_only_requested" if image_policy == "text"
-                    else "no_independent_visual_content_selected"})
+                    else selection.get(frame.index, {}).get("reason", "no_independent_visual_content_selected")})
+            representative = selection.get(frame.index, {}).get("representative_index")
+            if representative in retained_ids:
+                omitted[-1].update(
+                    representative_source_visual_id=source_visual_ids[representative],
+                    representative_visual_ref=retained_ids[representative])
+            representatives = selection.get(frame.index, {}).get("representative_indexes", ())
+            if representatives:
+                omitted[-1]["reading_representatives"] = [
+                    {"source_visual_id": source_visual_ids[index],
+                     "visual_ref": retained_ids[index]}
+                    for index in representatives if index in retained_ids]
+                omitted[-1]["reading_phrase_coverage"] = selection[frame.index]["reading_phrase_coverage"]
+    # A portable audit trail explains selection without claiming to recognize
+    # every semantically important moment. The source pack remains untouched.
+    decision_rows = []
+    for frame, row in zip(frames, timeline):
+        decision = selection.get(frame.index, {})
+        decision_rows.append({"source_visual_id": row["id"], "timestamp": row["start"],
+            "retained": frame.index in indexes,
+            "reason": "text_only_requested" if image_policy == "text" else decision.get("reason", "unclassified"),
+            **({"visual_ref": retained_ids[frame.index]} if frame.index in retained_ids else {}),
+            **({"representative_source_visual_id": source_visual_ids[decision["representative_index"]]}
+               if decision.get("representative_index") in source_visual_ids else {})})
+        if decision.get("representative_indexes"):
+            decision_rows[-1].update(
+                representative_source_visual_ids=[source_visual_ids[index]
+                    for index in decision["representative_indexes"] if index in source_visual_ids],
+                reading_phrase_coverage=decision.get("reading_phrase_coverage"))
+    _write_json(dest / "selection_report.json", {"version": 1,
+        "scope": "structural_selection_not_semantic_guarantee", "algorithm": algorithm,
+        "source_count": len(frames), "retained_count": len(retained),
+        "transcript_preserved_verbatim": True,
+        "omitted_ocr_preserved": True, "decisions": decision_rows})
+    manifest["artifacts"].append("selection_report.json")
     (dest / "omitted_visual_text.jsonl").write_text("".join(
         json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n" for row in omitted), encoding="utf-8")
     readable = dest / "evidence.md"

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+import io
 import json
 import os
 import sqlite3
@@ -12,9 +13,10 @@ from functools import partial
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
+from PIL import Image, ImageOps
 
 from . import compact, handoff
 from .config import WEB_DIR
@@ -23,6 +25,7 @@ from .links import extract_sources, guess_title, normalize_url
 from .evidence import EvidencePackError
 from .sdk import PackLibrary
 from .sources import supported_sources
+from .storage import JobPersistenceError
 
 store = JobStore()
 
@@ -49,8 +52,39 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="ClipMind", lifespan=lifespan)
 
 
+@app.middleware("http")
+async def local_write_boundary(request: Request, call_next):
+    """Browser pages on other origins may not create local jobs or files."""
+    try:
+        host = request.url.hostname
+    except ValueError:
+        host = None
+    if host not in {"localhost", "127.0.0.1", "::1"}:
+        return JSONResponse(status_code=400, content={"detail": "ClipMind requires a loopback Host."})
+    if request.method not in {"GET", "HEAD", "OPTIONS"}:
+        origin = request.headers.get("origin")
+        if request.headers.get("sec-fetch-site") == "cross-site" or (
+            origin and origin != str(request.base_url).rstrip("/")
+        ):
+            return JSONResponse(status_code=403, content={
+                "detail": "Local changes require a same-origin request."})
+    return await call_next(request)
+
+
+@app.exception_handler(JobPersistenceError)
+async def persistence_error(request: Request, exc: JobPersistenceError):
+    return JSONResponse(status_code=503, content={"code": "storage_write_failed",
+        "detail": "部分任务状态未能保存。请先刷新列表确认已接收的任务，再检查磁盘空间和资料库目录权限后重试。"})
+
+
+@app.exception_handler(EvidencePackError)
+async def invalid_evidence(request: Request, exc: EvidencePackError):
+    return JSONResponse(status_code=422, content={"code": "invalid_evidence_pack",
+        "detail": f"保存的资料无法读取：{exc}。请检查或恢复该 Evidence Pack；原文件未修改。"})
+
+
 class SubmitBody(BaseModel):
-    text: str
+    text: str = Field(max_length=65_536)
     reprocess: bool = False
     force: bool = False
 
@@ -88,7 +122,11 @@ async def delete_jobs(body: DeleteJobsBody, request: Request):
 MEDIA_EXTENSIONS = frozenset(
     {
         ".mp4", ".mov", ".mkv", ".webm", ".avi", ".m4v",
+        ".mpeg", ".mpg", ".mpe", ".m2v", ".ts", ".m2ts", ".mts",
+        ".wmv", ".vob", ".3gp", ".3g2",
         ".mp3", ".wav", ".m4a", ".aac", ".flac", ".ogg", ".opus",
+        ".wma", ".aif", ".aiff", ".aifc", ".ac3", ".eac3",
+        ".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff", ".gif", ".apng", ".avif",
     }
 )
 
@@ -156,7 +194,7 @@ async def upload(request: Request, filename: str, force: bool = False):
     if not safe_name or suffix not in MEDIA_EXTENSIONS:
         raise HTTPException(
             415,
-            "Unsupported media type. Choose a video or audio file supported by FFmpeg.",
+            "Unsupported file type. Choose a supported video, audio file, or image; PDF and office documents are not currently supported. Accepted media still need a working local decoder.",
         )
     upload_root = store.storage.root / ".uploads"
     upload_root.mkdir(parents=True, exist_ok=True)
@@ -181,7 +219,9 @@ async def upload(request: Request, filename: str, force: bool = False):
             options={"force": force, "uploaded_filename": safe_name},
         )
         return job.public()
-    except Exception:
+    except BaseException:
+        # Cancellation is not an Exception. A disconnected/cancelled request
+        # must not leave an unowned partial upload in the durable library.
         destination.unlink(missing_ok=True)
         raise
 
@@ -251,16 +291,62 @@ async def pack_frame(
     visual_state_id: str | None = None,
     timestamp: float | None = None,
     preview: bool = False,
+    source_image_index: int | None = None,
 ):
     try:
         path, _record = _pack(pack_id).frame(
             visual_state_id=visual_state_id,
             timestamp=timestamp,
             preview=preview,
+            source_image_index=source_image_index,
         )
     except EvidencePackError as exc:
         raise HTTPException(404, str(exc)) from exc
     return FileResponse(path)
+
+
+async def _image_response(path: Path):
+    """Chrome cannot display TIFF; convert its view without changing evidence."""
+    if path.suffix.casefold() not in {".tif", ".tiff"}:
+        return FileResponse(path)
+
+    def png_view():
+        with Image.open(path) as source:
+            if source.width * source.height > 25_000_000:
+                raise ValueError("image exceeds the display size limit")
+            oriented = ImageOps.exif_transpose(source)
+            converted = oriented.convert("RGBA" if "A" in oriented.getbands() else "RGB")
+            output = io.BytesIO()
+            converted.save(output, format="PNG")
+            return output.getvalue()
+
+    try:
+        content = await asyncio.to_thread(png_view)
+    except (OSError, ValueError, Image.DecompressionBombError) as exc:
+        raise HTTPException(422, "This saved image cannot be displayed. Its original remains in the full Evidence Pack.") from exc
+    return Response(content=content, media_type="image/png", headers={"X-ClipMind-View-Transform": "tiff-to-png"})
+
+
+def _read_job_transcript(workdir: Path) -> list[dict]:
+    """Canonical speech travels with full ZIPs; JSON is a legacy fallback."""
+    canonical = workdir / "transcript.jsonl"
+    legacy = workdir / "transcript.json"
+    path = canonical if canonical.exists() else legacy
+    if not path.exists():
+        return []
+    try:
+        text = path.read_text(encoding="utf-8")
+        records = (
+            [json.loads(line) for line in text.splitlines() if line.strip()]
+            if path == canonical else json.loads(text)
+        )
+        if not isinstance(records, list) or not all(isinstance(row, dict) for row in records):
+            raise ValueError("transcript records must be objects")
+        return records
+    except (OSError, UnicodeError, ValueError, RecursionError) as exc:
+        # A broken authoritative transcript must not silently become an empty
+        # transcript, nor be replaced with a stale compatibility copy.
+        raise HTTPException(422, f"Saved {path.name} is invalid or unreadable; restore the Evidence Pack or reprocess this source.") from exc
 
 
 @app.get("/api/jobs/{job_id}")
@@ -271,10 +357,7 @@ async def detail(job_id: str):
     data = job.public()
     note = store.workdir(job_id) / "note.md"
     data["note_markdown"] = note.read_text(encoding="utf-8") if note.exists() else None
-    transcript = store.workdir(job_id) / "transcript.json"
-    data["transcript"] = (
-        json.loads(transcript.read_text(encoding="utf-8")) if transcript.exists() else []
-    )
+    data["transcript"] = _read_job_transcript(store.workdir(job_id))
     return data
 
 
@@ -293,7 +376,7 @@ async def visual_preview(job_id: str, name: str):
     path = (root / name).resolve()
     if not path.is_relative_to(root) or not path.is_file():
         raise HTTPException(404, "no such visual state")
-    return FileResponse(path)
+    return await _image_response(path)
 
 
 @app.get("/api/jobs/{job_id}/visual_states/all/{name}")
@@ -302,7 +385,7 @@ async def visual_state(job_id: str, name: str):
     path = (root / name).resolve()
     if not path.is_relative_to(root) or not path.is_file():
         raise HTTPException(404, "no such visual state")
-    return FileResponse(path)
+    return await _image_response(path)
 
 
 @app.get("/api/jobs/{job_id}/evidence.md")

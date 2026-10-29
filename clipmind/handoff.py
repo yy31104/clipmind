@@ -26,11 +26,18 @@ def _files(pack_dir: Path) -> list[tuple[Path, Path]]:
                    and (pack_dir / name).is_file() for name in COMPACT_ARTIFACTS):
             raise EvidencePackError("compact reading copy is missing its text artifacts")
         extras = COMPACT_ARTIFACTS
+        # Additive: legacy compact packs did not include this audit trail.
+        if "selection_report.json" in manifest.get("artifacts", ()):
+            if not (pack_dir / "selection_report.json").is_file():
+                raise EvidencePackError("compact reading copy is missing its selection report")
+            extras += ("selection_report.json",)
     for artifact in ("manifest.json", *PACK_ARTIFACTS, *extras):
         path = pack_dir / artifact
         candidates = sorted(path.rglob("*")) if path.is_dir() else [path]
         for candidate in candidates:
-            if not candidate.is_file() or candidate.is_symlink():
+            if candidate.is_symlink():
+                raise EvidencePackError("Evidence Pack contains a linked artifact")
+            if not candidate.is_file():
                 continue
             resolved = candidate.resolve()
             if not resolved.is_relative_to(root):
@@ -67,8 +74,11 @@ def _artifact_bytes(pack_dir: Path, source: Path, relative: Path) -> bytes:
 
 def export_zip(pack_dir: Path, destination: Path | None = None) -> Path:
     """Create a deterministic ZIP containing only canonical v1 artifacts."""
+    pack_dir = Path(pack_dir).resolve()
     load_complete_pack(pack_dir)
-    destination = destination or pack_dir.with_suffix(".evidence.zip")
+    destination = Path(destination or pack_dir.with_suffix(".evidence.zip")).resolve()
+    if destination == pack_dir or destination.is_relative_to(pack_dir):
+        raise EvidencePackError("ZIP destination must be outside the source Evidence Pack")
     destination.parent.mkdir(parents=True, exist_ok=True)
     fd, temporary_name = tempfile.mkstemp(
         prefix=f".{destination.name}.", suffix=".tmp", dir=destination.parent
@@ -100,11 +110,43 @@ def export_zip(pack_dir: Path, destination: Path | None = None) -> Path:
     return destination
 
 
+def _same_deliverable(first: Path, second: Path) -> bool:
+    """Compare the portable contract, not just a shared source identifier.
+
+    A repaired transcript or OCR record is a new delivery even when the pack
+    and source IDs are unchanged. Machine-local retry state is intentionally
+    excluded, as it is from every actual delivery.
+    """
+    first_files = {relative: path for path, relative in _files(first)}
+    second_files = {relative: path for path, relative in _files(second)}
+    if first_files.keys() != second_files.keys():
+        return False
+    for relative, first_path in first_files.items():
+        second_path = second_files[relative]
+        if relative == Path("job.json"):
+            if _portable_job_bytes(first) != _portable_job_bytes(second):
+                return False
+            continue
+        if first_path.stat().st_size != second_path.stat().st_size:
+            return False
+        with first_path.open("rb") as left, second_path.open("rb") as right:
+            while True:
+                chunk = left.read(1024 * 1024)
+                if chunk != right.read(1024 * 1024):
+                    return False
+                if not chunk:
+                    break
+    return True
+
+
 def send_to_inbox(pack_dir: Path, inbox: Path) -> dict:
     """Copy a pack atomically, publishing its manifest as the final file."""
+    pack_dir, inbox = Path(pack_dir).resolve(), Path(inbox).resolve()
     manifest = load_complete_pack(pack_dir)
-    inbox.mkdir(parents=True, exist_ok=True)
     destination = inbox / pack_dir.name
+    if destination == pack_dir or destination.is_relative_to(pack_dir):
+        raise EvidencePackError("Inbox destination must be outside the source Evidence Pack")
+    inbox.mkdir(parents=True, exist_ok=True)
     if destination.exists():
         existing = load_complete_pack(destination)
         if existing["source"] == manifest["source"]:
@@ -112,6 +154,12 @@ def send_to_inbox(pack_dir: Path, inbox: Path) -> dict:
                     != (manifest.get("configuration") or {}).get("compact")):
                 raise EvidencePackError(
                     "Inbox destination already exists for a different Evidence Pack variant"
+                )
+            if not _same_deliverable(pack_dir, destination):
+                raise EvidencePackError(
+                    "Inbox destination contains different artifact contents; "
+                    "the existing pack was preserved. Choose a different inbox "
+                    "to deliver this revised pack."
                 )
             return {"status": "already_present", "destination": str(destination)}
         raise EvidencePackError("Inbox destination already exists for another source")

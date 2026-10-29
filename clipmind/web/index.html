@@ -6,7 +6,7 @@
 <meta name="description" content="Local-first multimodal video ingestion for humans and AI agents.">
 <title>ClipMind</title>
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="/static/style.css?v=7">
+<link rel="stylesheet" href="/static/style.css?v=8">
 </head>
 <body>
 <div id="app">
@@ -25,13 +25,13 @@
   <main class="view" id="view-home">
     <section class="hero" id="hero">
       <div class="hero-copy">
-        <h1>把视频变成可用证据</h1>
-        <p class="sub">粘贴链接或拖入文件，在本地提取语音、文字和完整视觉状态。</p>
+        <h1>把视频和图片变成可用证据</h1>
+        <p class="sub">粘贴链接或拖入视频、音频、图片，在本地提取可用的语音、文字和画面。</p>
         <div class="source-list" id="source-list">YouTube, 抖音, 本地文件</div>
       </div>
 
       <div class="composer" id="composer">
-        <label for="input">视频链接</label>
+        <label for="input">视频或图集链接</label>
         <textarea id="input" rows="4" spellcheck="false"
           placeholder="https://youtube.com/watch?v=...&#10;也可以粘贴分享文字或多个链接"></textarea>
         <div class="drop-message" id="drop-message" hidden>松开以添加本地媒体</div>
@@ -39,7 +39,7 @@
           <span class="hint" id="detected" aria-live="polite">等待链接或文件</span>
           <div class="composer-actions">
             <input id="file-input" type="file" multiple hidden
-              accept="video/*,audio/*,.mkv,.webm,.flac,.opus">
+              accept="video/*,audio/*,image/*,.mp4,.mov,.mkv,.webm,.avi,.m4v,.mpeg,.mpg,.mpe,.m2v,.ts,.m2ts,.mts,.wmv,.vob,.3gp,.3g2,.mp3,.wav,.m4a,.aac,.flac,.ogg,.opus,.wma,.aif,.aiff,.aifc,.ac3,.eac3,.jpg,.jpeg,.png,.webp,.bmp,.tif,.tiff,.gif,.apng,.avif">
             <button class="secondary" id="choose-file">选择文件</button>
             <button class="primary" id="analyze">提取</button>
           </div>
@@ -114,7 +114,7 @@
   <form method="dialog" class="frame-dialog-close">
     <button class="secondary compact" value="close">关闭</button>
   </form>
-  <div class="frame-dialog-body">
+  <div class="frame-dialog-body" id="frame-dialog-body">
     <img id="frame-dialog-image" alt="">
     <aside>
       <h2 id="frame-dialog-time"></h2>
@@ -123,7 +123,7 @@
         <h3>画面文字</h3>
         <div id="frame-dialog-ocr"></div>
       </section>
-      <section>
+      <section id="frame-dialog-speech-section">
         <h3>附近的讲话</h3>
         <div id="frame-dialog-speech"></div>
       </section>
@@ -141,6 +141,6 @@
     </div>
   </form>
 </dialog>
-<script src="/static/app.js?v=9"></script>
+  <script src="/static/app.js?v=16"></script>
 </body>
 </html>

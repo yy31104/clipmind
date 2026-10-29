@@ -89,6 +89,57 @@ class EvidenceIndexTests(unittest.TestCase):
             self.assertFalse(index.sync("partial", pack))
             self.assertEqual(index.search("anything"), [])
 
+    def test_unicode_casefold_matches_transcript_and_ocr_without_changing_source(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            root = Path(tempdir)
+            pack = self.make_pack(root, transcript="Straße ŻÓŁĆ")
+            ocr_path = pack / "ocr.jsonl"
+            ocr = json.loads(ocr_path.read_text(encoding="utf-8"))
+            ocr["text"] = "ΣΊΓΜΑ CAFÉ"
+            ocr_path.write_text(json.dumps(ocr, ensure_ascii=False) + "\n", encoding="utf-8")
+            original = {name: (pack / name).read_bytes() for name in ("transcript.jsonl", "ocr.jsonl")}
+            index = EvidenceIndex(root / "index.sqlite3")
+            index.sync("job-unicode", pack)
+            for query, kind in (("strasse", "transcript"), ("Straße", "transcript"),
+                                ("żółć", "transcript"), ("ŻÓŁĆ", "transcript"),
+                                ("σίγμα", "ocr"), ("café", "ocr")):
+                with self.subTest(query=query):
+                    hits = index.search(query)
+                    self.assertEqual(len(hits), 1)
+                    self.assertEqual(hits[0]["hits"][0]["kind"], kind)
+            self.assertEqual(original, {name: (pack / name).read_bytes() for name in original})
+
+    def test_warm_search_sync_does_not_read_unchanged_transcript_or_ocr(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            root = Path(tempdir)
+            pack = self.make_pack(root)
+            index = EvidenceIndex(root / "index.sqlite3")
+            self.assertTrue(index.sync("job-1", pack))
+            expected = index.search("retrieval")
+            with patch("clipmind.index._json", side_effect=AssertionError("unchanged source read")), patch(
+                "clipmind.index._jsonl", side_effect=AssertionError("unchanged transcript/OCR read")
+            ):
+                for _ in range(3):
+                    self.assertFalse(index.sync("job-1", pack))
+                    self.assertEqual(index.search("retrieval"), expected)
+
+    def test_changed_completion_marker_refreshes_text_after_a_warm_search(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            root = Path(tempdir)
+            pack = self.make_pack(root)
+            index = EvidenceIndex(root / "index.sqlite3")
+            self.assertTrue(index.sync("job-1", pack))
+            self.assertFalse(index.sync("job-1", pack))
+            (pack / "ocr.jsonl").write_text(json.dumps({
+                "visual_state_ref": "visual-00001", "timestamp": 14.0,
+                "text": "corrected screen wording",
+            }) + "\n", encoding="utf-8")
+            marker = pack / "manifest.json"
+            marker.write_text(marker.read_text(encoding="utf-8") + "\n", encoding="utf-8")
+            self.assertTrue(index.sync("job-1", pack))
+            self.assertEqual(index.search("向量"), [])
+            self.assertEqual(index.search("corrected")[0]["hits"][0]["ref"], "visual-00001")
+
     def test_search_returns_only_newest_pack_for_the_same_source(self) -> None:
         with tempfile.TemporaryDirectory() as tempdir:
             root = Path(tempdir)

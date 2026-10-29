@@ -21,6 +21,7 @@ const classes = () => {
   };
 };
 const elements = new Map();
+const intervals = [];
 const element = (id) => {
   if (!elements.has(id)) elements.set(id, {
     id, value: '', hidden: false, innerHTML: '', textContent: '', dataset: {}, classList: classes(),
@@ -35,7 +36,8 @@ const context = vm.createContext({
   document: { getElementById: element, querySelectorAll: (selector) => rows[selector] || [] },
   window: { scrollY: 0, scrollTo(options) { this.scrolledTo = options; }, addEventListener() {}, matchMedia: () => ({ matches: false }) },
   navigator: {}, EventSource: class {},
-  fetch: () => new Promise(() => {}), setTimeout, clearTimeout, console,
+  fetch: () => new Promise(() => {}), setTimeout, clearTimeout,
+  setInterval: (callback, delay) => { intervals.push({callback, delay}); return intervals.length; }, console,
 });
 vm.runInContext(fs.readFileSync(process.argv[1], 'utf8'), context);
 vm.runInContext('render = () => {};', context);
@@ -67,6 +69,38 @@ class ResultReadingTests(unittest.TestCase):
             capture_output=True, text=True, timeout=20,
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_detail_error_is_visible_and_does_not_silently_ignore_click(self) -> None:
+        self.run_app(r"""
+  context.fetch = async () => ({ ok: false, json: async () => ({detail: 'Saved transcript is unreadable'}) });
+  await run(`openDetail('broken')`);
+  assert.match(element('error').textContent, /transcript is unreadable/);
+  assert.equal(element('error').hidden, false);
+  assert.equal(run('state.current'), null);
+  context.fetch = async () => { throw new Error('connection unavailable'); };
+  await run(`openDetail('offline')`);
+  assert.match(element('error').textContent, /connection unavailable/);
+""")
+
+    def test_slow_detail_cannot_replace_new_selection_or_reopen_after_back(self) -> None:
+        self.run_app(r"""
+  const pending = new Map();
+  context.fetch = (url) => new Promise((resolve) => pending.set(url, resolve));
+  const response = (id) => ({ ok: true, json: async () => ({id, title: id, transcript: []}) });
+  const first = run(`openDetail('first')`);
+  const second = run(`openDetail('second')`);
+  pending.get('/api/jobs/second')(response('second'));
+  await second;
+  pending.get('/api/jobs/first')(response('first'));
+  await first;
+  assert.equal(run('state.current.id'), 'second');
+  const third = run(`openDetail('third')`);
+  run(`setMode('library')`);
+  pending.get('/api/jobs/third')(response('third'));
+  await third;
+  assert.equal(run('state.view'), 'home');
+  assert.equal(run('state.current.id'), 'second');
+""")
 
     def test_moment_helpers(self) -> None:
         self.run_app(r"""

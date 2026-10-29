@@ -327,7 +327,7 @@ class DownloadTests(unittest.IsolatedAsyncioTestCase):
         """A transfer that notices the stop flag and takes a moment to unwind."""
         state = {"running": threading.Event(), "exited": threading.Event(), "completed": []}
 
-        def transfer(url, destination, chunk, stop):
+        def transfer(url, destination, chunk, stop, **kwargs):
             state["running"].set()
             try:
                 for _ in range(ticks):
@@ -347,7 +347,7 @@ class DownloadTests(unittest.IsolatedAsyncioTestCase):
     async def test_a_failing_address_falls_through_to_the_next(self):
         attempted = []
 
-        def transfer(url, destination, chunk, stop):
+        def transfer(url, destination, chunk, stop, **kwargs):
             attempted.append(url)
             if url.endswith("/bad"):
                 raise OSError("refused")
@@ -365,7 +365,7 @@ class DownloadTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(path, destination)
 
     async def test_no_usable_address_is_refused(self):
-        def transfer(url, destination, chunk, stop):
+        def transfer(url, destination, chunk, stop, **kwargs):
             raise OSError("refused")
 
         with tempfile.TemporaryDirectory() as temporary:
@@ -376,7 +376,7 @@ class DownloadTests(unittest.IsolatedAsyncioTestCase):
                     )
 
     async def test_an_empty_body_is_not_a_download(self):
-        def transfer(url, destination, chunk, stop):
+        def transfer(url, destination, chunk, stop, **kwargs):
             destination.write_bytes(b"")
             return 0
 
