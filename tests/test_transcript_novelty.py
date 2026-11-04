@@ -21,8 +21,8 @@ def frame(index: int, *, timestamp: float | None = None, phash: int = 0,
 
 class AlignmentTests(unittest.TestCase):
     def test_a_caption_repeating_the_speech_is_not_novel(self) -> None:
-        spoken = ((0.0, 3.0, "我们怎么相信你能扛住工作里的困难"),)
-        captioned = frame(0, timestamp=1.0, lines=("我们怎么相信你能扛住工作里的困难",))
+        spoken = ((0.0, 3.0, '\u6211\u4eec\u600e\u4e48\u76f8\u4fe1\u4f60\u80fd\u625b\u4f4f\u5de5\u4f5c\u91cc\u7684\u56f0\u96be'),)
+        captioned = frame(0, timestamp=1.0, lines=('\u6211\u4eec\u600e\u4e48\u76f8\u4fe1\u4f60\u80fd\u625b\u4f4f\u5de5\u4f5c\u91cc\u7684\u56f0\u96be',))
 
         total, novel, overlap = visual_states.transcript_alignment(captioned, spoken)
 
@@ -31,8 +31,8 @@ class AlignmentTests(unittest.TestCase):
         self.assertEqual(overlap, 1.0)
 
     def test_text_absent_from_the_speech_is_novel(self) -> None:
-        spoken = ((0.0, 3.0, "我们来看一下这个"),)
-        document = frame(0, timestamp=1.0, lines=("快速排序原理", "哈希冲突解决方案"))
+        spoken = ((0.0, 3.0, '\u6211\u4eec\u6765\u770b\u4e00\u4e0b\u8fd9\u4e2a'),)
+        document = frame(0, timestamp=1.0, lines=('\u5feb\u901f\u6392\u5e8f\u539f\u7406', '\u54c8\u5e0c\u51b2\u7a81\u89e3\u51b3\u65b9\u6848'))
 
         total, novel, overlap = visual_states.transcript_alignment(document, spoken)
 
@@ -41,7 +41,7 @@ class AlignmentTests(unittest.TestCase):
 
     def test_alignment_ignores_case_and_width_differences(self) -> None:
         spoken = ((0.0, 2.0, "FastAPI and Postgres"),)
-        shown = frame(0, timestamp=1.0, lines=("ｆａｓｔａｐｉ postgres",))
+        shown = frame(0, timestamp=1.0, lines=('\uff46\uff41\uff53\uff54\uff41\uff50\uff49 postgres',))
 
         _, novel, overlap = visual_states.transcript_alignment(shown, spoken)
 
@@ -59,8 +59,8 @@ class AlignmentTests(unittest.TestCase):
         self.assertEqual(novel, 10)
 
     def test_speech_outside_the_window_does_not_cover_the_frame(self) -> None:
-        spoken = ((300.0, 302.0, "哈希冲突"),)
-        shown = frame(0, timestamp=1.0, lines=("哈希冲突",))
+        spoken = ((300.0, 302.0, '\u54c8\u5e0c\u51b2\u7a81'),)
+        shown = frame(0, timestamp=1.0, lines=('\u54c8\u5e0c\u51b2\u7a81',))
 
         _, novel, overlap = visual_states.transcript_alignment(shown, spoken)
 
@@ -69,15 +69,15 @@ class AlignmentTests(unittest.TestCase):
 
     def test_a_frame_without_text_reports_zero_rather_than_dividing(self) -> None:
         self.assertEqual(
-            visual_states.transcript_alignment(frame(0), ((0.0, 1.0, "说话"),)),
+            visual_states.transcript_alignment(frame(0), ((0.0, 1.0, '\u8bf4\u8bdd'),)),
             (0, 0, 0.0),
         )
 
     def test_annotation_attaches_measurements_to_every_frame(self) -> None:
-        spoken = ((0.0, 4.0, "第一句"),)
+        spoken = ((0.0, 4.0, '\u7b2c\u4e00\u53e5'),)
         frames = [
-            frame(0, timestamp=0.0, lines=("第一句",)),
-            frame(1, timestamp=2.0, lines=("完全不同的画面文字",)),
+            frame(0, timestamp=0.0, lines=('\u7b2c\u4e00\u53e5',)),
+            frame(1, timestamp=2.0, lines=('\u5b8c\u5168\u4e0d\u540c\u7684\u753b\u9762\u6587\u5b57',)),
         ]
 
         visual_states.annotate_transcript_alignment(frames, spoken)
@@ -93,7 +93,7 @@ class PreviewSafetyNetTests(unittest.TestCase):
     def _talking_head_with_one_document(self) -> list[Frame]:
         # Visually near-identical frames: one continuous scene by dHash.
         frames = [
-            frame(i, timestamp=float(i * 10), phash=i, lines=("在讲话",))
+            frame(i, timestamp=float(i * 10), phash=i, lines=('\u5728\u8bb2\u8bdd',))
             for i in range(8)
         ]
         # Same visual neighbourhood, but the screen shows an unspoken document.
@@ -101,13 +101,13 @@ class PreviewSafetyNetTests(unittest.TestCase):
             4,
             timestamp=40.0,
             phash=4,
-            lines=("分布式一致性", "两阶段提交", "向量时钟", "租约与心跳检测"),
+            lines=('\u5206\u5e03\u5f0f\u4e00\u81f4\u6027', '\u4e24\u9636\u6bb5\u63d0\u4ea4', '\u5411\u91cf\u65f6\u949f', '\u79df\u7ea6\u4e0e\u5fc3\u8df3\u68c0\u6d4b'),
         )
         return frames
 
     def test_unspoken_document_enters_preview_despite_one_scene(self) -> None:
         frames = self._talking_head_with_one_document()
-        spoken = tuple((f.timestamp, f.timestamp + 5, "在讲话") for f in frames)
+        spoken = tuple((f.timestamp, f.timestamp + 5, '\u5728\u8bb2\u8bdd') for f in frames)
         visual_states.annotate_transcript_alignment(frames, spoken)
 
         preview = visual_states.derive_preview(frames, spoken_intervals=spoken)
@@ -116,10 +116,10 @@ class PreviewSafetyNetTests(unittest.TestCase):
 
     def test_the_safety_net_does_not_fire_on_captions_alone(self) -> None:
         frames = [
-            frame(i, timestamp=float(i * 10), phash=i, lines=(f"第{i}句话",))
+            frame(i, timestamp=float(i * 10), phash=i, lines=(f"\u7b2c{i}\u53e5\u8bdd",))
             for i in range(8)
         ]
-        spoken = tuple((f.timestamp, f.timestamp + 5, f"第{i}句话")
+        spoken = tuple((f.timestamp, f.timestamp + 5, f"\u7b2c{i}\u53e5\u8bdd")
                        for i, f in enumerate(frames))
         visual_states.annotate_transcript_alignment(frames, spoken)
 
@@ -130,7 +130,7 @@ class PreviewSafetyNetTests(unittest.TestCase):
     def test_novelty_never_removes_a_canonical_state(self) -> None:
         """Alignment is a measurement; canonical retention must ignore it."""
         frames = self._talking_head_with_one_document()
-        spoken = tuple((f.timestamp, f.timestamp + 5, "在讲话") for f in frames)
+        spoken = tuple((f.timestamp, f.timestamp + 5, '\u5728\u8bb2\u8bdd') for f in frames)
         visual_states.annotate_transcript_alignment(frames, spoken)
 
         self.assertEqual(len(frames), 8)
@@ -138,7 +138,7 @@ class PreviewSafetyNetTests(unittest.TestCase):
 
     def test_preview_stays_chronological_after_the_safety_net(self) -> None:
         frames = self._talking_head_with_one_document()
-        spoken = tuple((f.timestamp, f.timestamp + 5, "在讲话") for f in frames)
+        spoken = tuple((f.timestamp, f.timestamp + 5, '\u5728\u8bb2\u8bdd') for f in frames)
         visual_states.annotate_transcript_alignment(frames, spoken)
 
         preview = visual_states.derive_preview(frames, spoken_intervals=spoken)

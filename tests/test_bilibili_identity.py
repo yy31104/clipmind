@@ -22,7 +22,7 @@ PART_CASES = (
     ("?p=0", None), ("?p=", None), ("?p=-1", None),
     ("?p=1&p=7", None), ("?p=7&p=7", None),
     ("?p=abc", None), ("?p=7.0", None), ("?p=%207", None),
-    ("?p=７", None),
+    ('?p=\uff17', None),
 )
 
 

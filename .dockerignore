@@ -8,4 +8,3 @@ build
 __pycache__
 *.pyc
 .env
-ARCHITECTURE_REVIEW_2Y.md

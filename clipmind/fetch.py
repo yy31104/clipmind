@@ -134,7 +134,7 @@ def classify_generic(failure: AttemptFailure) -> str | None:
         "private video" in lowered
         or "video is private" in lowered
         or "private account" in lowered
-        or "仅自己" in reason
+        or '\u4ec5\u81ea\u5df1' in reason
     ):
         return "private_video"
     if "fresh cookies" in lowered:

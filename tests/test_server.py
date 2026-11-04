@@ -88,7 +88,7 @@ class ServerEventTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("YouTube, Douyin, local files", html)
         self.assertNotIn("Bilibili", html)
         self.assertNotIn("TikTok", html)
-        self.assertNotIn("小红书", html)
+        self.assertNotIn('\u5c0f\u7ea2\u4e66', html)
         self.assertIn('/static/style.css?v=7', html)
         self.assertIn('/static/app.js?v=9', html)
         self.assertIn('SOURCE_LABEL[item.platform] || item.platform', javascript)
@@ -174,7 +174,7 @@ class ServerEventTests(unittest.IsolatedAsyncioTestCase):
                 detail = await server.pack_detail("pack-1")
                 transcript = await server.pack_transcript("pack-1")
                 timeline = await server.pack_timeline("pack-1")
-                search = await server.pack_search("pack-1", "向量")
+                search = await server.pack_search("pack-1", '\u5411\u91cf')
                 frame = await server.pack_frame("pack-1", timestamp=3.0)
 
         self.assertEqual(listing["packs"][0]["pack_id"], "pack-1")

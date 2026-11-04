@@ -30,13 +30,13 @@ class CompactExportTests(unittest.TestCase):
         all_dir.mkdir(parents=True)
         (self.pack / "visual_states" / "preview").mkdir()
         frames = []
-        for index, text in enumerate(("重复讲解内容", "短暂出现的文档数据", "async def load(): return client.fetch()")):
+        for index, text in enumerate(('\u91cd\u590d\u8bb2\u89e3\u5185\u5bb9', '\u77ed\u6682\u51fa\u73b0\u7684\u6587\u6863\u6570\u636e', "async def load(): return client.fetch()")):
             path = all_dir / f"state-{index}.jpg"
             Image.effect_noise((240, 160), 80).convert("RGB").save(path, quality=90)
             frames.append(Frame(index, float(index), path, text=text, lines=(text,),
                 ocr_layout=({"text": text, "confidence": .98, "bbox": [.1, .2, .5, .1]},)))
-        speech = Transcript([Segment(0, 3, "重复讲解内容", (
-            Word(0, 1, "重复", .95), Word(1, 3, "讲解内容", .91)), "speaker-1")], engine="fixture")
+        speech = Transcript([Segment(0, 3, '\u91cd\u590d\u8bb2\u89e3\u5185\u5bb9', (
+            Word(0, 1, '\u91cd\u590d', .95), Word(1, 3, '\u8bb2\u89e3\u5185\u5bb9', .91)), "speaker-1")], engine="fixture")
         item = MediaAsset(self.pack / "nonexistent.mp4", {
             "id": "fixture", "title": "Synthetic compact fixture", "duration": 3.,
             "uploader": "fixture", "webpage_url": "https://example.test/video/fixture",
@@ -45,7 +45,7 @@ class CompactExportTests(unittest.TestCase):
                             timings={"asr_seconds": 12.3, "ocr_seconds": 23.4})
         # Byte preservation includes fields unknown to the current dataclasses.
         rows = self.rows(self.pack / "transcript.jsonl")
-        rows[0]["future_field"] = {"literal": "保留原文", "number": 7}
+        rows[0]["future_field"] = {"literal": '\u4fdd\u7559\u539f\u6587', "number": 7}
         (self.pack / "transcript.jsonl").write_text(
             json.dumps(rows[0], ensure_ascii=False) + "\n", encoding="utf-8")
         self.write_json(self.pack / "job.json", {"version": 1, "job": {

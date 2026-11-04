@@ -97,7 +97,7 @@ class MCPServerTests(unittest.TestCase):
             transcript = server.call_tool(
                 "clipmind.get_transcript", {"pack_id": "pack-1"}
             )
-            search = server.call_tool("clipmind.search_evidence", {"query": "向量"})
+            search = server.call_tool("clipmind.search_evidence", {"query": '\u5411\u91cf'})
             frame = server.call_tool(
                 "clipmind.get_frame", {"pack_id": "pack-1", "timestamp": 3}
             )

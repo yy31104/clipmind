@@ -42,8 +42,8 @@ def make_complete_pack(
             "id": "ocr-00001",
             "visual_state_ref": "visual-00001",
             "timestamp": 2.0,
-            "text": "向量数据库",
-            "lines": ["向量数据库"],
+            "text": '\u5411\u91cf\u6570\u636e\u5e93',
+            "lines": ['\u5411\u91cf\u6570\u636e\u5e93'],
         }
     ]
     timeline = [

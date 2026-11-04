@@ -29,7 +29,7 @@ PAGE = f"https://www.douyin.com/video/{WANTED}"
 SHARE_LINK = "https://v.douyin.com/bRras9xtBzo/"
 
 
-def payload(aweme_id=WANTED, desc="量化之王", **video_overrides):
+def payload(aweme_id=WANTED, desc='\u91cf\u5316\u4e4b\u738b', **video_overrides):
     video = {
         "duration": 604647,
         "play_addr": {"data_size": 93521000, "url_list": ["https://cdn.example/a"]},
@@ -155,7 +155,7 @@ class ResolveWiringTests(unittest.IsolatedAsyncioTestCase):
             await self.resolve(
                 PAGE,
                 f"https://www.douyin.com/video/{OTHER}?from=redirect",
-                [payload(aweme_id=OTHER, desc="重定向后的另一个视频")],
+                [payload(aweme_id=OTHER, desc='\u91cd\u5b9a\u5411\u540e\u7684\u53e6\u4e00\u4e2a\u89c6\u9891')],
             )
 
         self.assertIn(WANTED, str(raised.exception))
@@ -166,11 +166,11 @@ class ResolveWiringTests(unittest.IsolatedAsyncioTestCase):
         resolved = await self.resolve(
             PAGE,
             PAGE,
-            [payload(aweme_id=OTHER, desc="推荐视频"), payload()],
+            [payload(aweme_id=OTHER, desc='\u63a8\u8350\u89c6\u9891'), payload()],
         )
 
         self.assertEqual(resolved.info["id"], WANTED)
-        self.assertEqual(resolved.info["title"], "量化之王")
+        self.assertEqual(resolved.info["title"], '\u91cf\u5316\u4e4b\u738b')
 
     async def test_a_share_link_takes_its_identity_from_where_it_lands(self):
         # A share link names no video, so the landing page is the only source
@@ -186,7 +186,7 @@ class ResolveWiringTests(unittest.IsolatedAsyncioTestCase):
             await self.resolve(
                 SHARE_LINK,
                 f"https://www.douyin.com/jingxuan?previous_page=web_video_404_link&modal_id={OTHER}",
-                [payload(aweme_id=OTHER, desc="推荐视频")],
+                [payload(aweme_id=OTHER, desc='\u63a8\u8350\u89c6\u9891')],
             )
 
     async def test_a_page_that_returns_nothing_is_refused(self):

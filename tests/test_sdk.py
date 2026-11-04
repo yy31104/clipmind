@@ -29,7 +29,7 @@ class EvidencePackSDKTests(unittest.TestCase):
             pack = EvidencePack.open(make_complete_pack(Path(tempdir)))
 
             speech = pack.search("pipeline")
-            visual = pack.search("向量")
+            visual = pack.search('\u5411\u91cf')
             frame, record = pack.frame(timestamp=3.0)
 
         self.assertEqual(speech[0]["kind"], "transcript")

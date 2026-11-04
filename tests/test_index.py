@@ -50,7 +50,7 @@ class EvidenceIndexTests(unittest.TestCase):
         )
         (pack / "ocr.jsonl").write_text(
             json.dumps(
-                {"id": "ocr-00001", "visual_state_ref": "visual-00001", "timestamp": 14.0, "text": "向量数据库"},
+                {"id": "ocr-00001", "visual_state_ref": "visual-00001", "timestamp": 14.0, "text": '\u5411\u91cf\u6570\u636e\u5e93'},
                 ensure_ascii=False,
             ) + "\n",
             encoding="utf-8",
@@ -73,7 +73,7 @@ class EvidenceIndexTests(unittest.TestCase):
             self.assertTrue(index.sync("job-1", pack))
             self.assertFalse(index.sync("job-1", pack))
             english = index.search("retrieval")
-            chinese = index.search("向量")
+            chinese = index.search('\u5411\u91cf')
 
         self.assertEqual(english[0]["job_id"], "job-1")
         self.assertEqual(english[0]["hits"][0]["kind"], "transcript")

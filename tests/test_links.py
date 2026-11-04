@@ -26,8 +26,8 @@ class ExtractUrlsTests(unittest.TestCase):
 
     def test_extracts_a_short_link_from_share_text(self) -> None:
         text = (
-            "4.66 g@b.nQ 09/22 :5pm ULJ:/ 傻*面试官为什么老是问我底层？ "
-            "https://v.douyin.com/dTfIvetIbJw/ 复制此链接，打开Dou音搜索"
+            '4.66 g@b.nQ 09/22 :5pm ULJ:/ \u50bb*\u9762\u8bd5\u5b98\u4e3a\u4ec0\u4e48\u8001\u662f\u95ee\u6211\u5e95\u5c42\uff1f '
+            'https://v.douyin.com/dTfIvetIbJw/ \u590d\u5236\u6b64\u94fe\u63a5\uff0c\u6253\u5f00Dou\u97f3\u641c\u7d22'
         )
 
         self.assertEqual(
@@ -37,9 +37,9 @@ class ExtractUrlsTests(unittest.TestCase):
 
     def test_extracts_multiple_links_in_source_order(self) -> None:
         text = (
-            "任意开头 https://v.douyin.com/zmiAljffS3I/ 中间文字，"
-            "再来 https://www.douyin.com/video/7461234567890123456?from=share "
-            "最后 https://www.iesdouyin.com/share/note/7461234567890123457。"
+            '\u4efb\u610f\u5f00\u5934 https://v.douyin.com/zmiAljffS3I/ \u4e2d\u95f4\u6587\u5b57\uff0c'
+            '\u518d\u6765 https://www.douyin.com/video/7461234567890123456?from=share '
+            '\u6700\u540e https://www.iesdouyin.com/share/note/7461234567890123457\u3002'
         )
 
         self.assertEqual(
@@ -63,7 +63,7 @@ class ExtractUrlsTests(unittest.TestCase):
         )
 
     def test_invalid_or_empty_text_has_no_links(self) -> None:
-        for text in ("", "普通文字", None):
+        for text in ("", '\u666e\u901a\u6587\u5b57', None):
             with self.subTest(text=text):
                 self.assertEqual(extract_urls(text), [])
 

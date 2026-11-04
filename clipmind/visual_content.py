@@ -19,7 +19,7 @@ from .visual_states import transcript_alignment
 
 CONTENT_ALGORITHM = "independent-visual-content-v1"
 _LETTERS = re.compile(r"[a-z0-9_\u3400-\u9fff]", re.I)
-_BULLET = re.compile(r"^\s*(?:[-*•●▪]|\d{1,2}[.)、]|[一二三四五六七八九十][、.])\s*")
+_BULLET = re.compile('^\\s*(?:[-*\u2022\u25cf\u25aa]|\\d{1,2}[.)\u3001]|[\u4e00\u4e8c\u4e09\u56db\u4e94\u516d\u4e03\u516b\u4e5d\u5341][\u3001.])\\s*')
 _CODE = re.compile(
     r"^\s*(?:async\s+)?(?:def|class)\s+[a-z_]\w*(?:\([^\n]*\))?\s*:"
     r"|^\s*(?:from\s+[a-z_][\w.]*\s+import\s+|import\s+[a-z_][\w.]*)"

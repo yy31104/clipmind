@@ -6,8 +6,8 @@ from pathlib import Path
 
 from .sources.registry import canonicalize_source, source_id
 
-_URL_RE = re.compile(r"https?://[^\s<>\"'，。；！？、（）【】]+", re.IGNORECASE)
-_TRAILING = "。，、；：！？）」』】…,.;:!?)]}"
+_URL_RE = re.compile('https?://[^\\s<>\\"\'\uff0c\u3002\uff1b\uff01\uff1f\u3001\uff08\uff09\u3010\u3011]+', re.IGNORECASE)
+_TRAILING = '\u3002\uff0c\u3001\uff1b\uff1a\uff01\uff1f\uff09\u300d\u300f\u3011\u2026,.;:!?)]}'
 
 
 def extract_urls(text: str) -> list[str]:
