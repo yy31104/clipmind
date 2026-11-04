@@ -1,7 +1,7 @@
 # ClipMind
 
 ![Python](https://img.shields.io/badge/Python-3.12-2E7D6E?style=flat-square&labelColor=25292E)
-![Interface](https://img.shields.io/badge/Interface-Web%20%2B%20CLI-2E7D6E?style=flat-square&labelColor=25292E)
+[![CI](https://github.com/yy31104/clipmind/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/yy31104/clipmind/actions/workflows/tests.yml?query=branch%3Amain)
 
 A transcript misses the code, charts, and documents shown on screen.
 
