@@ -190,7 +190,7 @@ class JobStore:
         if job is None:
             raise KeyError(job_id)
         if job.status not in {"done", "error", "interrupted"}:
-            raise ValueError("正在处理或排队的任务不能删除，请等待任务结束。")
+            raise ValueError("Running or queued tasks cannot be removed. Wait for them to finish.")
         # Remove derived rows first: a crash before the rename is repaired by
         # normal startup indexing; a crash after it cannot resurrect the pack.
         self.index.remove(job_id)

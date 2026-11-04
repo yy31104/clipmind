@@ -51,7 +51,7 @@ please allow a reasonable remediation window before public disclosure.
   the operator provides a separate trusted security layer.
 - A user-authorized browser-cookie source gives yt-dlp broad read access to that
   browser's cookie database. That is a privacy boundary, documented in
-  `docs/PRIVACY.md`, not domain-scoped sandboxing.
+  `PRIVACY.md`, not domain-scoped sandboxing.
 - Evidence Packs intentionally contain source media evidence and can contain
   personal/confidential material. A trusted local user or connected agent with
   filesystem access can read it.

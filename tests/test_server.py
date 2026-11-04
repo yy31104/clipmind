@@ -85,7 +85,7 @@ class ServerEventTests(unittest.IsolatedAsyncioTestCase):
         html = (WEB_DIR / "index.html").read_text(encoding="utf-8")
         javascript = (WEB_DIR / "app.js").read_text(encoding="utf-8")
 
-        self.assertIn("YouTube, 抖音, 本地文件", html)
+        self.assertIn("YouTube, Douyin, local files", html)
         self.assertNotIn("Bilibili", html)
         self.assertNotIn("TikTok", html)
         self.assertNotIn("小红书", html)
@@ -97,8 +97,8 @@ class ServerEventTests(unittest.IsolatedAsyncioTestCase):
     def test_frontend_exposes_all_canonical_frames_and_ocr_failures(self) -> None:
         javascript = (WEB_DIR / "app.js").read_text(encoding="utf-8")
 
-        self.assertIn("查看全部 ${detail.states.length} 个画面", javascript)
-        self.assertIn("画面文字未完整识别", javascript)
+        self.assertIn("View all frames (${detail.states.length})", javascript)
+        self.assertIn("Some on-screen text was not recognized", javascript)
         self.assertIn('complete.ocr !== "complete"', javascript)
 
     async def test_handoff_requires_an_explicit_inbox_configuration(self) -> None:

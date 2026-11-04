@@ -17,7 +17,7 @@ PUBLISH = re.compile(r"(?:-p|--publish)[ =](\S+)")
 
 class DockerDocumentationTests(unittest.TestCase):
     def test_documented_docker_runs_publish_on_loopback_only(self) -> None:
-        for document in ("README.md", "docs/INSTALL.md"):
+        for document in ("docs/USAGE.md", "docs/INSTALL.md"):
             text = (ROOT / document).read_text(encoding="utf-8")
             commands = DOCKER_RUN.findall(text)
             self.assertTrue(commands, f"{document} no longer documents docker run")

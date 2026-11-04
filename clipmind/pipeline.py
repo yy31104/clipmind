@@ -1,8 +1,6 @@
-"""Per-video orchestration.
+"""Run acquisition, speech recognition, and visual analysis for one video.
 
-Speech and vision are independent, so they run concurrently and only rejoin
-when the Evidence Pack is written. Each stage reports progress so the UI can
-show real movement rather than a fake spinner.
+Speech and vision run concurrently before the Evidence Pack is written.
 """
 from __future__ import annotations
 
@@ -101,7 +99,6 @@ async def process(
     options = dict(options or {})
 
     try:
-        # --- acquire -------------------------------------------------------
         report("fetching", base, "resolving link")
         stage_started = time.perf_counter()
         async with pools.fetch:
@@ -115,7 +112,6 @@ async def process(
         base += STAGES[0][1]
         report("sampling", base, item.title)
 
-        # --- cheap prep ----------------------------------------------------
         stage_started = time.perf_counter()
         candidates = await media.sample_frames(
             item.video_path,
@@ -171,7 +167,6 @@ async def process(
             f"{len(candidates)} frames -> {len(canonical)} canonical states{diagnostic}",
         )
 
-        # --- speech and vision, concurrently ------------------------------
         async def speech():
             async with pools.asr:
                 report("analysing", base + 0.05, "transcribing speech")

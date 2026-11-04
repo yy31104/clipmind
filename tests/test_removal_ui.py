@@ -47,7 +47,7 @@ const run = code => vm.runInContext(code, context);
   assert.equal(run(`state.jobs.has('one')`), false);
   assert.equal(run(`state.jobs.has('two')`), true);
   assert.equal(run(`state.selected.failed.has('two')`), true);
-  assert.match(element('removal-notice').textContent, /1 项未删除/);
+  assert.match(element('removal-notice').textContent, /1 could not be removed/);
   assert.equal(run('state.removing'), false);
   run(`state.selected.library.add('visible'); state.selected.library.add('hidden');
        managementBar('library', [{id:'visible'}]);`);

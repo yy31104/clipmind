@@ -1,4 +1,4 @@
-"""FastAPI app: paste text in, watch progress over SSE, read the note."""
+"""FastAPI app for video extraction, progress updates, and Evidence Pack access."""
 from __future__ import annotations
 
 import asyncio
@@ -77,11 +77,11 @@ async def delete_jobs(body: DeleteJobsBody, request: Request):
             store.remove(job_id)
             deleted.append(job_id)
         except KeyError:
-            failed.append({"id": job_id, "message": "任务不存在，请刷新列表。"})
+            failed.append({"id": job_id, "message": "Task not found. Refresh the list."})
         except ValueError:
-            failed.append({"id": job_id, "message": "任务正在运行，或目录不可安全移出。"})
+            failed.append({"id": job_id, "message": "The task is running, or its directory cannot be moved safely."})
         except (OSError, sqlite3.Error):
-            failed.append({"id": job_id, "message": "文件被占用或无权限，任务未移出，请稍后重试。"})
+            failed.append({"id": job_id, "message": "Files are in use or permission was denied. The task was not removed; try again shortly."})
     return {"deleted": deleted, "failed": failed, "recoverable": True}
 
 

@@ -6,3 +6,10 @@ dist/
 *.egg-info/
 __pycache__/
 *.pyc
+
+# Local verification and editor output.
+.DS_Store
+.pytest_cache/
+.coverage
+htmlcov/
+reports/

@@ -14,7 +14,7 @@ const state = {
   detail: null,
 };
 
-function selectionControl(job, scope, label = "选择") {
+function selectionControl(job, scope, label = "Select") {
   return `<label class="select-job"><input type="checkbox" data-select="${esc(job.id)}" data-scope="${scope}"
     ${state.selected[scope].has(job.id) ? "checked" : ""} ${state.removing ? "disabled" : ""}>
     ${esc(label)}</label>`;
@@ -28,9 +28,9 @@ function managementBar(scope, jobs) {
   const count = state.selected[scope].size;
   return `<label class="select-job"><input type="checkbox" data-select-all="${scope}"
     ${jobs.length && count === jobs.length ? "checked" : ""} ${!jobs.length || state.removing ? "disabled" : ""}>
-    全选${scope === "library" ? "当前列表（含旧版本）" : "未完成任务"}</label>
-    <span>已选 ${count} 项</span>
-    <button class="secondary compact danger" data-remove="${scope}" ${!count || state.removing ? "disabled" : ""}>删除所选</button>`;
+    Select all ${scope === "library" ? "listed versions (including older ones)" : "unfinished tasks"}</label>
+    <span>${count} selected</span>
+    <button class="secondary compact danger" data-remove="${scope}" ${!count || state.removing ? "disabled" : ""}>Remove selected</button>`;
 }
 
 function visiblePackGroups() {
@@ -44,9 +44,9 @@ function visiblePackGroups() {
 async function removeSelected(scope) {
   const ids = [...state.selected[scope]];
   if (!ids.length || state.removing) return;
-  const description = scope === "library" ? "证据包版本" : "未完成任务";
+  const description = scope === "library" ? "pack versions" : "unfinished tasks";
   const dialog = $("remove-dialog");
-  $("remove-description").textContent = `将移出所选 ${ids.length} 个${description}，未勾选的项目不受影响。`;
+  $("remove-description").textContent = `Move ${ids.length} selected ${description} out of the library. Unselected items stay in place.`;
   dialog.returnValue = "cancel";
   const confirmed = new Promise((resolve) => dialog.addEventListener("close", () => resolve(dialog.returnValue === "remove"), { once: true }));
   dialog.showModal();
@@ -61,7 +61,7 @@ async function removeSelected(scope) {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ids: ids.slice(offset, offset + 500) }),
       });
-      if (!response.ok) throw new Error("删除请求失败，部分项目可能已移出；请刷新确认当前状态。");
+      if (!response.ok) throw new Error("Removal failed. Some items may already have moved; refresh to check their status.");
       const batch = await response.json();
       result.deleted.push(...batch.deleted);
       result.failed.push(...batch.failed);
@@ -71,8 +71,8 @@ async function removeSelected(scope) {
       state.selected[scope].delete(id);
     }
     state.searchResults = state.searchResults.filter((hit) => !result.deleted.includes(hit.job_id));
-    notice.textContent = `已移出 ${result.deleted.length} 项（文件保留在库目录 .trash 中）。`
-      + (result.failed.length ? ` ${result.failed.length} 项未删除：${result.failed[0].message}` : "");
+    notice.textContent = `Items moved: ${result.deleted.length} (files remain in the library .trash folder).`
+      + (result.failed.length ? ` ${result.failed.length} could not be removed: ${result.failed[0].message}` : "");
     await refreshJobs();
     if (state.searchQuery) await searchEvidence();
   } catch (error) {
@@ -104,26 +104,26 @@ const dateLabel = (seconds) => {
   if (!seconds) return "";
   const at = new Date(seconds * 1000);
   return at.toDateString() === new Date().toDateString()
-    ? at.toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" })
-    : at.toLocaleDateString("zh-CN", { month: "numeric", day: "numeric" });
+    ? at.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
+    : at.toLocaleDateString("en-GB", { month: "numeric", day: "numeric" });
 };
 
 const STAGE_LABEL = {
-  queued: "排队中",
-  fetching: "获取媒体",
-  sampling: "低成本抽帧",
-  preflight: "成本预检",
-  analysing: "语音与画面识别",
-  writing: "写入证据包",
-  done: "完成",
-  error: "失败",
-  interrupted: "已中断",
+  queued: "Queued",
+  fetching: "Fetching media",
+  sampling: "Sampling frames",
+  preflight: "Estimating cost",
+  analysing: "Recognizing speech and images",
+  writing: "Writing Evidence Pack",
+  done: "Complete",
+  error: "Failed",
+  interrupted: "Interrupted",
 };
 
 const SOURCE_LABEL = {
-  douyin: "抖音",
+  douyin: "Douyin",
   youtube: "YouTube",
-  local: "本地文件",
+  local: "Local files",
 };
 const SOURCE_ORDER = ["youtube", "douyin", "local"];
 
@@ -216,7 +216,7 @@ function render() {
 
   const packs = visiblePackGroups();
   $("library-label").hidden = false;
-  $("library-label").textContent = libraryMode ? "Library" : "最近的 Evidence Packs";
+  $("library-label").textContent = libraryMode ? "Library" : "Recent Evidence Packs";
   $("library").innerHTML = packs.map(libraryCard).join("");
   $("library-manage").innerHTML = managementBar("library", packs.flat());
   $("library").hidden = false;
@@ -225,7 +225,7 @@ function render() {
 
   const toggle = $("failed-toggle");
   toggle.hidden = failed.length === 0;
-  toggle.textContent = `${failed.length} 个未完成任务`;
+  toggle.textContent = `Unfinished tasks: ${failed.length}`;
   toggle.setAttribute("aria-expanded", String(state.showFailed));
   toggle.classList.toggle("open", state.showFailed);
   $("failed").hidden = failed.length === 0 || !state.showFailed;
@@ -295,25 +295,25 @@ function costEstimate(job) {
   const value = job.error_details;
   if (job.error_code !== "cost_limit_exceeded" || !value) return "";
   return `<dl class="cost-estimate">
-    <div><dt>时长</dt><dd>${clock(value.duration_seconds)}</dd></div>
-    <div><dt>视觉状态</dt><dd>约 ${value.estimated_canonical_states}</dd></div>
-    <div><dt>OCR</dt><dd>约 ${value.estimated_ocr_seconds} 秒</dd></div>
-    <div><dt>Evidence Pack</dt><dd>约 ${value.estimated_pack_mb} MB</dd></div>
+    <div><dt>Duration</dt><dd>${clock(value.duration_seconds)}</dd></div>
+    <div><dt>Visual states</dt><dd>About ${value.estimated_canonical_states}</dd></div>
+    <div><dt>OCR</dt><dd>About ${value.estimated_ocr_seconds} seconds</dd></div>
+    <div><dt>Evidence Pack</dt><dd>About ${value.estimated_pack_mb} MB</dd></div>
   </dl>`;
 }
 
 function jobCard(job) {
   const percent = Math.round((job.progress || 0) * 100);
   const failed = ["error", "interrupted"].includes(job.status);
-  const title = failed && urlish(job.title) ? "媒体无法处理" : job.title;
+  const title = failed && urlish(job.title) ? "Unable to process media" : job.title;
   const source = failed && urlish(job.title)
     ? `<div class="job-source">${esc(job.title.replace(/^\/+/, ""))}</div>`
     : "";
   const retry = job.error_code === "cost_limit_exceeded"
-    ? `<button class="primary compact" data-force="${job.id}">仍然完整处理</button>`
-    : `<button class="secondary compact" data-reprocess="${job.id}">重新处理</button>`;
+    ? `<button class="primary compact" data-force="${job.id}">Process anyway</button>`
+    : `<button class="secondary compact" data-reprocess="${job.id}">Reprocess</button>`;
   return `<article class="job ${failed ? "error" : job.status}">
-    ${failed ? selectionControl(job, "failed", "选择此任务") : ""}
+    ${failed ? selectionControl(job, "failed", "Select this task") : ""}
     <div class="job-head">
       <div class="job-title">${esc(title)}</div>
       <div class="job-time">${failed ? esc(STAGE_LABEL[job.status]) : `${percent}% / ${job.elapsed}s`}</div>
@@ -325,7 +325,7 @@ function jobCard(job) {
          ${costEstimate(job)}
          ${job.error_action ? `<div class="job-action">${esc(job.error_action)}</div>` : ""}
          ${retry}`
-      : `<div class="bar" role="progressbar" aria-label="处理进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}"><i style="width:${percent}%"></i></div>`}
+      : `<div class="bar" role="progressbar" aria-label="Processing progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}"><i style="width:${percent}%"></i></div>`}
   </article>`;
 }
 
@@ -338,7 +338,7 @@ function libraryCard(group) {
     : `<div class="thumb empty-thumb">${esc((current.result?.platform || "video").toUpperCase())}</div>`;
   const metadata = [
     clock(current.result?.duration || 0),
-    `${frames.length} 个预览画面`,
+    `Preview frames: ${frames.length}`,
     dateLabel(current.finished_at || current.created_at),
   ].filter(Boolean).join(" / ");
   return `<article class="pack-entry"><button class="card" data-open="${current.id}">
@@ -346,10 +346,10 @@ function libraryCard(group) {
     <span class="card-body">
       <span class="card-title">${esc(current.title)}</span>
       <span class="card-meta">${esc(metadata)}</span>
-      ${superseded.length ? `<span class="card-older">${superseded.length} 个旧版本</span>` : ""}
+      ${superseded.length ? `<span class="card-older">Older versions: ${superseded.length}</span>` : ""}
     </span>
   </button><div class="pack-selection">${group.map((job, index) => selectionControl(job, "library",
-    `${index ? "旧版本" : "当前版本"} · ${dateLabel(job.finished_at || job.created_at)}`)).join("")}</div></article>`;
+    `${index ? "Older version" : "Current version"} · ${dateLabel(job.finished_at || job.created_at)}`)).join("")}</div></article>`;
 }
 
 function frameUrl(jobId, frame, modern = true, collection = null) {
@@ -363,15 +363,15 @@ function frameUrl(jobId, frame, modern = true, collection = null) {
 function unspokenBadge(frame) {
   const novel = frame.transcript_novelty_char_count;
   if (!Number.isFinite(novel) || novel < 40) return "";
-  return `<span class="unspoken">${novel} 字仅在画面中</span>`;
+  return `<span class="unspoken">${novel} characters only on screen</span>`;
 }
 
 function contentBadge(frame) {
   const labels = {
-    caption: "字幕",
-    code_ui: "代码 / UI",
-    document_slide: "文档 / 幻灯片",
-    textual: "画面文字",
+    caption: "Captions",
+    code_ui: "Code / UI",
+    document_slide: "Documents / slides",
+    textual: "On-screen text",
   };
   const label = labels[frame.content_hint];
   return label ? `<span class="content-hint">${label}</span>` : "";
@@ -429,16 +429,16 @@ function openFrameContext(at) {
   const label = item.clock || clock(item.timestamp);
   $("frame-dialog-time").textContent = label;
   $("frame-dialog-image").src = frameUrl(detail.job.id, item, detail.modernFrames, collection);
-  $("frame-dialog-image").alt = `${label} 的画面`;
+  $("frame-dialog-image").alt = `Frame at ${label}`;
   $("frame-dialog-ocr").innerHTML = item.text
     ? `<p class="frame-dialog-text">${esc(item.text)}</p>`
-    : `<p class="hint">这个画面没有识别到文字。</p>`;
+    : `<p class="hint">No text was recognized in this frame.</p>`;
   const speech = nearbySpeech(detail.job.transcript || [], at);
   const current = speech.findIndex((segment) =>
     Number(segment.start) <= at && at <= Number(segment.end ?? segment.start));
   $("frame-dialog-speech").innerHTML = speech.length
     ? speech.map((segment, index) => `<div class="line${index === current ? " current" : ""}"><span class="ts">${clock(segment.start)}</span><span>${esc(segment.text)}</span></div>`).join("")
-    : `<p class="hint">前后 ${SPEECH_WINDOW_SECONDS} 秒内没有讲话。</p>`;
+    : `<p class="hint">No speech within ${SPEECH_WINDOW_SECONDS} seconds of this frame.</p>`;
   const dialog = $("frame-dialog");
   $("frame-dialog-transcript").onclick = () => {
     dialog.close();
@@ -470,18 +470,18 @@ function renderDetailFrames() {
   const frames = all ? detail.states : detail.frames;
   const collection = all ? "visual_states/all" : null;
   const description = detail.states.length
-    ? `当前显示 ${all ? `全部 ${detail.states.length}` : `精选 ${detail.frames.length}`} 个画面。`
-    : "当前结果包没有独立的完整画面列表。";
+    ? `Showing ${all ? `all frames (${detail.states.length})` : `selected frames (${detail.frames.length})`}.`
+    : "This pack has no separate list of all frames.";
   $("pane-frames").innerHTML = `<div class="frames-toolbar"><span>${description}</span>
-    ${detail.states.length ? `<button class="secondary compact" id="toggle-all-frames">${all ? "只看精选" : `查看全部 ${detail.states.length} 个画面`}</button>` : ""}</div>`
+    ${detail.states.length ? `<button class="secondary compact" id="toggle-all-frames">${all ? "Selected frames only" : `View all frames (${detail.states.length})`}</button>` : ""}</div>`
     + (frames.map((frame) => `
     <article class="frame" data-at="${Number(frame.timestamp) || 0}">
       <div class="frame-cap"><span class="ts">${esc(frame.clock || clock(frame.timestamp))}</span>${frameBadges(frame)}</div>
-      <button class="frame-open" data-context-at="${Number(frame.timestamp) || 0}" aria-label="查看 ${esc(frame.clock || clock(frame.timestamp))} 的画面文字和附近讲话">
-        <img loading="lazy" src="${frameUrl(detail.job.id, frame, detail.modernFrames, collection)}" alt="${esc(frame.clock || clock(frame.timestamp))} 的视觉证据">
+      <button class="frame-open" data-context-at="${Number(frame.timestamp) || 0}" aria-label="View on-screen text and nearby speech at ${esc(frame.clock || clock(frame.timestamp))}">
+        <img loading="lazy" src="${frameUrl(detail.job.id, frame, detail.modernFrames, collection)}" alt="Visual evidence at ${esc(frame.clock || clock(frame.timestamp))}">
       </button>
       ${frame.text ? `<div class="frame-ocr">${esc(frame.text)}</div>` : ""}
-    </article>`).join("") || `<p class="hint">未选出需要保留的图表、代码或文档截图。口播内容请看转写；原始采样画面仍可查看。</p>`);
+    </article>`).join("") || `<p class="hint">No charts, code, or document screenshots selected. Read the transcript for speech; all sampled frames remain available.</p>`);
   if ($("toggle-all-frames")) {
     $("toggle-all-frames").onclick = () => {
       detail.showAllFrames = !detail.showAllFrames;
@@ -518,63 +518,63 @@ async function openDetail(id, focus = null) {
     metadata.platform ? esc(metadata.platform) : null,
     metadata.uploader ? esc(metadata.uploader) : null,
     metadata.duration ? clock(metadata.duration) : null,
-    `${frames.length} 个预览画面`,
-    sourceUrl ? `<a href="${esc(sourceUrl)}" target="_blank" rel="noopener">打开原视频</a>` : null,
+    `Preview frames: ${frames.length}`,
+    sourceUrl ? `<a href="${esc(sourceUrl)}" target="_blank" rel="noopener">Open source video</a>` : null,
   ].filter(Boolean).join("<span>/</span>");
 
   if (metadata.evidence_pack) {
     const complete = metadata.evidence_pack.completeness || {};
     const preflight = metadata.preflight || {};
     const ocrWarning = complete.ocr && complete.ocr !== "complete"
-      ? `<aside class="quality-warning"><strong>画面文字未完整识别</strong><p>截图仍然完整保留，但搜索、笔记和精选画面可能遗漏屏幕文字。请先重启到最新版本，再重新处理；也可以使用本地 OCR 修复工具，只重新识别已有截图。</p></aside>`
+      ? `<aside class="quality-warning"><strong>Some on-screen text was not recognized</strong><p>All screenshots are retained, but search, notes, and selected frames may miss text. Restart with the latest version, then reprocess, or use the local OCR repair tool to recognize existing screenshots again.</p></aside>`
       : "";
-    $("pane-summary").innerHTML = `${ocrWarning}<p class="summary-lead">已保存 ${(job.transcript || []).length} 段讲话、${state.detail.states.length || frames.length} 个完整画面和 ${frames.length} 张精选预览。点开截图，可以同时看到画面文字和附近的讲话。</p>
+    $("pane-summary").innerHTML = `${ocrWarning}<p class="summary-lead">Saved ${(job.transcript || []).length} speech segments, ${state.detail.states.length || frames.length} full frames, and ${frames.length} selected previews. Open a screenshot to see on-screen text and nearby speech together.</p>
     <div class="actions">
-      <button class="primary action" id="copy-transcript">复制全文转写</button>
-      <a class="secondary action" href="/api/jobs/${job.id}/evidence.md" download>导出笔记（Markdown）</a>
-      <a class="primary action" href="/api/jobs/${job.id}/evidence.zip?profile=compact" download>下载精简资料（仅干货截图）</a>
-      ${sourceUrl ? `<a class="secondary action" href="${esc(sourceUrl)}" target="_blank" rel="noopener">打开原视频</a>` : ""}
+      <button class="primary action" id="copy-transcript">Copy full transcript</button>
+      <a class="secondary action" href="/api/jobs/${job.id}/evidence.md" download>Export notes (Markdown)</a>
+      <a class="primary action" href="/api/jobs/${job.id}/evidence.zip?profile=compact" download>Download compact pack (selected screenshots)</a>
+      ${sourceUrl ? `<a class="secondary action" href="${esc(sourceUrl)}" target="_blank" rel="noopener">Open source video</a>` : ""}
     </div>
     <div class="actions quiet-actions">
-      <a class="secondary action" href="/api/jobs/${job.id}/evidence.zip?profile=text" download>下载纯文字资料</a>
-      <a class="secondary action" href="/api/jobs/${job.id}/evidence.zip?profile=full" download>下载完整资料（全部截图）</a>
-      <button class="secondary action" id="reprocess">重新处理</button>
-      ${state.kbInbox ? `<button class="secondary action" id="send-kb">发送到知识库</button>` : ""}
+      <a class="secondary action" href="/api/jobs/${job.id}/evidence.zip?profile=text" download>Download text-only pack</a>
+      <a class="secondary action" href="/api/jobs/${job.id}/evidence.zip?profile=full" download>Download full pack (all screenshots)</a>
+      <button class="secondary action" id="reprocess">Reprocess</button>
+      ${state.kbInbox ? `<button class="secondary action" id="send-kb">Send to knowledge base</button>` : ""}
     </div>
-    <p class="hint">精简资料中，纯口播只留文字，图表、代码、文档等独立内容才附截图。完整资料保留原始采样画面。</p>
+    <p class="hint">Compact packs keep speech as text and include screenshots for charts, code, documents, and other visual content. Full packs retain all sampled frames.</p>
     <p id="handoff-status" class="hint"></p>
     <details class="developer">
-      <summary>开发者信息</summary>
+      <summary>Developer details</summary>
       <div class="pack-overview">
         <div><span>Schema</span><strong>${esc(metadata.evidence_pack.schema?.version || "")}</strong></div>
-        <div><span>转写</span><strong>${esc(complete.transcript || "unknown")}</strong></div>
+        <div><span>Transcript</span><strong>${esc(complete.transcript || "unknown")}</strong></div>
         <div><span>OCR</span><strong>${esc(complete.ocr || "unknown")}</strong></div>
-        <div><span>视觉状态</span><strong>${esc(complete.visual_states || "unknown")}</strong></div>
+        <div><span>Visual states</span><strong>${esc(complete.visual_states || "unknown")}</strong></div>
       </div>
       ${preflight.estimated_canonical_states !== undefined
-        ? `<p class="hint">预检估算 ${preflight.estimated_canonical_states} 个状态，${preflight.estimated_pack_mb} MB。</p>`
+        ? `<p class="hint">Preflight estimate: ${preflight.estimated_canonical_states} states, ${preflight.estimated_pack_mb} MB.</p>`
         : ""}
       <ul class="developer-links">
-        <li><a href="/api/packs/${job.id}" target="_blank" rel="noopener">Evidence Pack 摘要（JSON）</a></li>
-        <li><a href="/api/packs/${job.id}/transcript" target="_blank" rel="noopener">转写（JSON）</a></li>
-        <li><a href="/api/packs/${job.id}/ocr" target="_blank" rel="noopener">画面文字（JSON）</a></li>
-        <li><a href="/api/packs/${job.id}/timeline" target="_blank" rel="noopener">视觉时间线（JSON）</a></li>
+        <li><a href="/api/packs/${job.id}" target="_blank" rel="noopener">Evidence Pack summary (JSON)</a></li>
+        <li><a href="/api/packs/${job.id}/transcript" target="_blank" rel="noopener">Transcript (JSON)</a></li>
+        <li><a href="/api/packs/${job.id}/ocr" target="_blank" rel="noopener">On-screen text (JSON)</a></li>
+        <li><a href="/api/packs/${job.id}/timeline" target="_blank" rel="noopener">Visual timeline (JSON)</a></li>
       </ul>
-      <p class="hint">Agent 可以运行 <code>clipmind mcp</code>，通过 stdio MCP 读取整个本地库。</p>
+      <p class="hint">Agents can run <code>clipmind mcp</code> to read the local library over stdio MCP.</p>
     </details>`;
     $("reprocess").onclick = () => reprocess(job.id, false);
     $("copy-transcript").onclick = () => copyTranscript(job.transcript || []);
     if (state.kbInbox) $("send-kb").onclick = () => sendToKnowledgeBase(job.id);
   } else {
     $("pane-summary").innerHTML = markdown(job.note_markdown || "")
-      + `<a class="secondary action" href="/api/jobs/${job.id}/note.md" download>下载旧版 Markdown</a>`;
+      + `<a class="secondary action" href="/api/jobs/${job.id}/note.md" download>Download legacy Markdown</a>`;
   }
 
   renderDetailFrames();
 
   $("pane-transcript").innerHTML = (job.transcript || []).length
     ? job.transcript.map((segment) => `<div class="line" data-at="${Number(segment.start) || 0}"><span class="ts">${clock(segment.start)}</span><span>${esc(segment.text)}</span></div>`).join("")
-    : `<p class="hint">这个媒体没有可转写的语音。${metadata.asr_error ? esc(` (${metadata.asr_error})`) : ""}</p>`;
+    : `<p class="hint">This media has no speech to transcribe.${metadata.asr_error ? esc(` (${metadata.asr_error})`) : ""}</p>`;
 
   $("pane-timeline").innerHTML = timeline(job, frames, modernFrames);
   for (const element of document.querySelectorAll("#pane-timeline [data-context-at]")) {
@@ -596,19 +596,19 @@ function timeline(job, frames, modernFrames) {
     segment,
   }));
   const events = [...visual, ...speech].sort((a, b) => a.at - b.at || (a.kind === "visual" ? -1 : 1));
-  if (!events.length) return `<p class="hint">没有时间线事件。</p>`;
+  if (!events.length) return `<p class="hint">No timeline events.</p>`;
   return `<div class="timeline">${events.map((event) => {
     if (event.kind === "speech") {
       return `<article class="timeline-row speech-row">
-        <time>${clock(event.at)}</time><div><span class="kind">语音</span><p>${esc(event.segment.text)}</p></div>
+        <time>${clock(event.at)}</time><div><span class="kind">Speech</span><p>${esc(event.segment.text)}</p></div>
       </article>`;
     }
     const frame = event.frame;
     return `<article class="timeline-row visual-row">
       <time>${clock(event.at)}</time><div>
-        <span class="kind">画面</span>${frameBadges(frame)}
-        <button class="frame-open" data-context-at="${event.at}" aria-label="查看 ${clock(event.at)} 的画面文字和附近讲话">
-          <img loading="lazy" src="${frameUrl(job.id, frame, modernFrames)}" alt="${clock(event.at)} 的视觉证据">
+        <span class="kind">Frame</span>${frameBadges(frame)}
+        <button class="frame-open" data-context-at="${event.at}" aria-label="View on-screen text and nearby speech at ${clock(event.at)}">
+          <img loading="lazy" src="${frameUrl(job.id, frame, modernFrames)}" alt="Visual evidence at ${clock(event.at)}">
         </button>
         ${frame.text ? `<p>${esc(frame.text)}</p>` : ""}
       </div>
@@ -620,9 +620,9 @@ async function copyTranscript(segments) {
   const text = segments.map((segment) => `[${clock(segment.start)}] ${segment.text}`).join("\n");
   try {
     await navigator.clipboard.writeText(text);
-    $("copy-transcript").textContent = "已复制";
+    $("copy-transcript").textContent = "Copied";
   } catch (_error) {
-    $("handoff-status").textContent = "浏览器没有授予剪贴板权限。";
+    $("handoff-status").textContent = "Clipboard access was not granted by the browser.";
   }
 }
 
@@ -630,12 +630,12 @@ async function sendToKnowledgeBase(id) {
   const button = $("send-kb");
   const status = $("handoff-status");
   button.disabled = true;
-  status.textContent = "正在复制";
+  status.textContent = "Copying";
   try {
     const response = await fetch(`/api/jobs/${id}/handoff`, { method: "POST" });
     const result = await response.json();
-    if (!response.ok) throw new Error(result.detail || "发送失败");
-    status.textContent = result.status === "already_present" ? "知识库中已存在。" : "已发送到知识库 Inbox。";
+    if (!response.ok) throw new Error(result.detail || "Unable to send");
+    status.textContent = result.status === "already_present" ? "Already in the knowledge base." : "Sent to the knowledge base Inbox.";
   } catch (error) {
     status.textContent = error.message;
     button.disabled = false;
@@ -650,7 +650,7 @@ async function reprocess(id, force) {
       body: JSON.stringify({ force: Boolean(force) }),
     });
     const result = await response.json();
-    if (!response.ok) throw new Error(result.detail || "无法重新处理");
+    if (!response.ok) throw new Error(result.detail || "Unable to reprocess");
     state.jobs.set(result.id, result);
     setMode("inbox");
     render();
@@ -699,22 +699,22 @@ function setMode(mode) {
 function renderSettings() {
   const health = state.health || {};
   const checks = [
-    ["yt-dlp", health.yt_dlp, "获取链接媒体"],
-    ["FFmpeg", health.ffmpeg, "提取音频和画面"],
-    [health.asr_provider || "ASR", health.asr, "转写语音"],
-    [health.ocr_provider || "OCR", health.ocr, "识别画面文字"],
-    [health.diarization_provider || "说话人分离", health.diarization, "可选的说话人标签"],
+    ["yt-dlp", health.yt_dlp, "Download linked media"],
+    ["FFmpeg", health.ffmpeg, "Extract audio and frames"],
+    [health.asr_provider || "ASR", health.asr, "Transcribe speech"],
+    [health.ocr_provider || "OCR", health.ocr, "Recognize on-screen text"],
+    [health.diarization_provider || "Speaker diarization", health.diarization, "Optional speaker labels"],
   ];
   $("settings-grid").innerHTML = checks.map(([name, ready, purpose]) => `
     <article class="setting-row">
       <div><strong>${esc(name)}</strong><span>${esc(purpose)}</span></div>
-      <span class="status ${ready ? "ready" : "missing"}">${ready ? "就绪" : "不可用"}</span>
+      <span class="status ${ready ? "ready" : "missing"}">${ready ? "Ready" : "Unavailable"}</span>
     </article>`).join("") + `
     <article class="setting-row wide">
-      <div><strong>支持的来源</strong><span>${esc(supportedSourceLabels(health.supported_sources).join(", "))}</span></div>
+      <div><strong>Supported sources</strong><span>${esc(supportedSourceLabels(health.supported_sources).join(", "))}</span></div>
     </article>
     <article class="setting-row wide">
-      <div><strong>上传上限</strong><span>${esc(health.max_upload_mb || 0)} MB，每个文件</span></div>
+      <div><strong>Upload limit</strong><span>${esc(health.max_upload_mb || 0)} MB per file</span></div>
     </article>`;
 }
 
@@ -735,12 +735,12 @@ async function analyze() {
       body: JSON.stringify({ text }),
     });
     const data = await response.json();
-    if (!response.ok) throw new Error(data.detail || "提交失败");
+    if (!response.ok) throw new Error(data.detail || "Unable to submit");
     for (const job of data.jobs) state.jobs.set(job.id, job);
     $("input").value = "";
     $("detected").textContent = data.reused
-      ? `复用了 ${data.reused} 个 Evidence Pack`
-      : data.skipped ? `跳过 ${data.skipped} 个处理中任务` : "已加入队列";
+      ? `Reused Evidence Packs: ${data.reused}`
+      : data.skipped ? `Already processing: ${data.skipped}` : "Queued";
     $("detected").classList.remove("ready");
     render();
   } catch (error) {
@@ -757,18 +757,18 @@ async function uploadFiles(files) {
   let completed = 0;
   try {
     for (const file of files) {
-      $("detected").textContent = `正在添加 ${file.name}`;
+      $("detected").textContent = `Adding ${file.name}`;
       const response = await fetch(`/api/uploads?filename=${encodeURIComponent(file.name)}`, {
         method: "POST",
         headers: { "Content-Type": "application/octet-stream" },
         body: file,
       });
       const result = await response.json();
-      if (!response.ok) throw new Error(result.detail || `无法添加 ${file.name}`);
+      if (!response.ok) throw new Error(result.detail || `Unable to add ${file.name}`);
       state.jobs.set(result.id, result);
       completed += 1;
     }
-    $("detected").textContent = `已添加 ${completed} 个本地文件`;
+    $("detected").textContent = `Local files added: ${completed}`;
     setMode("inbox");
   } catch (error) {
     showError(error.message);
@@ -793,7 +793,7 @@ async function searchEvidence() {
   try {
     const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
     const data = await response.json();
-    if (!response.ok) throw new Error(data.detail || "搜索失败");
+    if (!response.ok) throw new Error(data.detail || "Search failed");
     if (query !== state.searchQuery) return;
     state.searchResults = data.results;
     render();
@@ -807,7 +807,7 @@ function renderSearchResults() {
   $("library").hidden = Boolean(state.searchQuery);
   container.hidden = !state.searchQuery;
   if (!state.searchResults.length) {
-    container.innerHTML = `<div class="empty compact-empty"><strong>没有匹配的证据</strong><p>尝试标题、说过的话或画面中的文字。</p></div>`;
+    container.innerHTML = `<div class="empty compact-empty"><strong>No matching evidence</strong><p>Try a title, spoken words, or on-screen text.</p></div>`;
     return;
   }
   // Each hit is its own button: it leads to that moment, not just the video.
@@ -819,10 +819,10 @@ function renderSearchResults() {
     ${result.hits.map((hit) => {
       const at = hit.timestamp === null || hit.timestamp === undefined ? "" : Number(hit.timestamp);
       return `<button class="search-hit" data-jump="${esc(result.job_id)}" data-kind="${esc(hit.kind)}" data-at="${at}">
-        <time>${clock(hit.timestamp)}</time><span>${esc(hit.text)}</span><span class="hit-kind">${hit.kind === "ocr" ? "画面文字" : "讲话"}</span>
+        <time>${clock(hit.timestamp)}</time><span>${esc(hit.text)}</span><span class="hit-kind">${hit.kind === "ocr" ? "On-screen text" : "Speech"}</span>
       </button>`;
     }).join("")}<div class="pack-selection">${(visiblePackGroups().find((group) => group.some((job) => job.id === result.job_id)) || [])
-      .map((job, index) => selectionControl(job, "library", `${index ? "旧版本" : "当前版本"} · ${dateLabel(job.finished_at || job.created_at)}`)).join("")}</div></article>`).join("");
+      .map((job, index) => selectionControl(job, "library", `${index ? "Older version" : "Current version"} · ${dateLabel(job.finished_at || job.created_at)}`)).join("")}</div></article>`).join("");
   wireDynamicActions();
 }
 
@@ -837,7 +837,7 @@ async function refreshJobs(attempt = 0) {
     if (state.view === "home") render();
   } catch (_error) {
     if (attempt >= 3) {
-      showError("无法同步任务状态，请刷新页面。");
+      showError("Unable to sync task status. Refresh the page.");
       return;
     }
     setTimeout(() => refreshJobs(attempt + 1), 500 * 2 ** attempt);
@@ -867,7 +867,7 @@ for (const item of document.querySelectorAll("[data-mode]")) {
 const URL_RE = /https?:\/\/[^\s<>"']+/g;
 $("input").addEventListener("input", () => {
   const count = new Set($("input").value.match(URL_RE) || []).size;
-  $("detected").textContent = count ? `识别到 ${count} 个链接` : "等待链接或文件";
+  $("detected").textContent = count ? `Links detected: ${count}` : "Waiting for links or files";
   $("detected").classList.toggle("ready", count > 0);
 });
 $("analyze").onclick = analyze;
@@ -925,6 +925,6 @@ events.onmessage = async (event) => {
     render();
   } catch (_error) {
     $("loading").hidden = true;
-    showError("ClipMind 服务尚未准备好，请稍后刷新页面。");
+    showError("ClipMind is not ready yet. Refresh the page shortly.");
   }
 })();

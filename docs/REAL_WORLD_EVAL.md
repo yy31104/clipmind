@@ -41,8 +41,8 @@ report unavailable fields as unrecorded.
 
 The checked-in machine-readable reports are historical suite-v1 snapshots from
 before explicit run modes were added; new runs use suite v2. They are
-[`eval-results-before-preview.json`](eval-results-before-preview.json) and
-[`eval-results.json`](eval-results.json). The production preview changed as
+[`eval-results-before-preview.json`](../devlog/evidence/eval-results-before-preview.json) and
+[`eval-results.json`](../devlog/evidence/eval-results.json). The production preview changed as
 follows while the canonical evidence sets remained unchanged:
 
 | Case | Canonical states | Old preview | v1 preview | Preview OCR coverage |
@@ -74,7 +74,7 @@ all-frame OCR failure leaves the existing pack unchanged.
 The long code/UI source was sampled at both the production 2 fps and a 4 fps
 probe rate. All 105 states that remained dHash-stable for at least 0.5 seconds
 at 4 fps were represented at 2 fps. The machine-readable result is
-[`sampling-coverage.json`](sampling-coverage.json).
+[`sampling-coverage.json`](../devlog/evidence/sampling-coverage.json).
 
 This evidence supports keeping uniform 2 fps sampling for v1. It does not claim
 that sub-0.5-second flashes are readable evidence, and it does not rule out
@@ -97,4 +97,4 @@ It is not a broad platform benchmark. Silent infographic videos and arbitrary
 whiteboard capture remain explicit real-world corpus gaps; they are listed as
 limitations rather than inferred from unrelated material. A separate generated
 four-slide video does exercise the real no-audio, FFmpeg, Vision OCR, preview,
-and Evidence Pack path reproducibly; see `silent-slides-eval.json`.
+and Evidence Pack path reproducibly; see [the recorded sample](../devlog/evidence/silent-slides-eval.json).

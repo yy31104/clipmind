@@ -1,12 +1,6 @@
-"""A generated sample video, so a first run needs no network and no account.
+"""Build a local four-slide sample without network access.
 
-The first thing a new install should prove is that extraction works at all.
-Reaching for a real link makes that depend on a live site, a signed-in browser
-and a URL that has not expired - none of which say anything about whether
-ClipMind is working. This builds a short silent slideshow locally instead.
-
-`scripts/evaluate_silent_slides.py` uses the same builder, so the evaluation
-fixture and the demo can never drift apart.
+The demo and silent-slide evaluation share this fixture builder.
 """
 from __future__ import annotations
 

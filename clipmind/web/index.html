@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,11 +11,11 @@
 <body>
 <div id="app">
   <header class="topbar">
-    <button class="brand" id="home-btn" aria-label="ClipMind 首页">
+    <button class="brand" id="home-btn" aria-label="ClipMind home">
       <span class="mark" aria-hidden="true"></span>
       <span>ClipMind</span>
     </button>
-    <nav class="main-nav" aria-label="主导航">
+    <nav class="main-nav" aria-label="Main navigation">
       <button class="nav-item active" data-mode="inbox">Inbox</button>
       <button class="nav-item" data-mode="library">Library</button>
       <button class="nav-item" data-mode="settings">Settings</button>
@@ -25,23 +25,23 @@
   <main class="view" id="view-home">
     <section class="hero" id="hero">
       <div class="hero-copy">
-        <h1>把视频变成可用证据</h1>
-        <p class="sub">粘贴链接或拖入文件，在本地提取语音、文字和完整视觉状态。</p>
-        <div class="source-list" id="source-list">YouTube, 抖音, 本地文件</div>
+        <h1>Turn videos into usable evidence</h1>
+        <p class="sub">Paste a link or drop a file to extract speech, text, and visual states locally.</p>
+        <div class="source-list" id="source-list">YouTube, Douyin, local files</div>
       </div>
 
       <div class="composer" id="composer">
-        <label for="input">视频链接</label>
+        <label for="input">Video links</label>
         <textarea id="input" rows="4" spellcheck="false"
-          placeholder="https://youtube.com/watch?v=...&#10;也可以粘贴分享文字或多个链接"></textarea>
-        <div class="drop-message" id="drop-message" hidden>松开以添加本地媒体</div>
+          placeholder="https://youtube.com/watch?v=...&#10;You can also paste share text or multiple links"></textarea>
+        <div class="drop-message" id="drop-message" hidden>Drop to add local media</div>
         <div class="composer-foot">
-          <span class="hint" id="detected" aria-live="polite">等待链接或文件</span>
+          <span class="hint" id="detected" aria-live="polite">Waiting for links or files</span>
           <div class="composer-actions">
             <input id="file-input" type="file" multiple hidden
               accept="video/*,audio/*,.mkv,.webm,.flac,.opus">
-            <button class="secondary" id="choose-file">选择文件</button>
-            <button class="primary" id="analyze">提取</button>
+            <button class="secondary" id="choose-file">Choose files</button>
+            <button class="primary" id="analyze">Extract</button>
           </div>
         </div>
       </div>
@@ -51,16 +51,16 @@
     <section class="board">
       <p id="removal-notice" role="status" aria-live="polite" hidden></p>
       <div id="active-section">
-        <h2 class="section-label" id="active-label" hidden>正在处理</h2>
+        <h2 class="section-label" id="active-label" hidden>Processing</h2>
         <div class="stack" id="active"></div>
       </div>
 
       <div class="library-head" id="library-head">
         <h2 id="library-label" hidden>Evidence Packs</h2>
         <label class="search-field" id="search-field">
-          <span>搜索证据</span>
+          <span>Search evidence</span>
           <input id="library-search" type="search"
-            placeholder="搜索转写、OCR 或标题" autocomplete="off">
+            placeholder="Search transcripts, OCR, or titles" autocomplete="off">
         </label>
       </div>
       <div id="library-manage" class="manage-bar"></div>
@@ -74,33 +74,33 @@
       </div>
 
       <div class="empty" id="loading" aria-live="polite">
-        <strong>正在读取本地 Evidence Packs</strong>
+        <strong>Loading local Evidence Packs</strong>
       </div>
       <div class="empty" id="empty" hidden>
-        <strong>还没有 Evidence Pack</strong>
-        <p>粘贴一个链接，或把本地视频拖到上面的输入区域。</p>
+        <strong>No Evidence Packs yet</strong>
+        <p>Paste a link or drop a local video into the input area above.</p>
       </div>
     </section>
   </main>
 
   <main class="view settings-view" id="view-settings" hidden>
     <header class="view-heading">
-      <h1>本地运行状态</h1>
-      <p>ClipMind 只在这台电脑上处理和保存媒体。</p>
+      <h1>Local services</h1>
+      <p>ClipMind processes and stores media on this computer.</p>
     </header>
     <section class="settings-grid" id="settings-grid"></section>
   </main>
 
   <main class="view" id="view-detail" hidden>
-    <button class="back" id="back">返回 Library</button>
+    <button class="back" id="back">Back to Library</button>
     <h1 class="detail-title" id="d-title"></h1>
     <div class="meta" id="d-meta"></div>
 
-    <nav class="tabs" id="tabs" aria-label="Evidence Pack 内容" role="tablist">
-      <button class="tab active" data-tab="summary" role="tab" aria-selected="true">概览</button>
-      <button class="tab" data-tab="timeline" role="tab" aria-selected="false">时间线</button>
-      <button class="tab" data-tab="frames" role="tab" aria-selected="false">画面</button>
-      <button class="tab" data-tab="transcript" role="tab" aria-selected="false">转写</button>
+    <nav class="tabs" id="tabs" aria-label="Evidence Pack contents" role="tablist">
+      <button class="tab active" data-tab="summary" role="tab" aria-selected="true">Overview</button>
+      <button class="tab" data-tab="timeline" role="tab" aria-selected="false">Timeline</button>
+      <button class="tab" data-tab="frames" role="tab" aria-selected="false">Frames</button>
+      <button class="tab" data-tab="transcript" role="tab" aria-selected="false">Transcript</button>
     </nav>
 
     <section class="pane" id="pane-summary" role="tabpanel"></section>
@@ -109,22 +109,22 @@
     <section class="pane" id="pane-transcript" role="tabpanel" hidden></section>
   </main>
 </div>
-<button class="back-to-top" id="back-to-top" type="button" hidden>↑ 回到顶部</button>
+<button class="back-to-top" id="back-to-top" type="button" hidden>↑ Back to top</button>
 <dialog id="frame-dialog" class="frame-dialog" aria-labelledby="frame-dialog-time">
   <form method="dialog" class="frame-dialog-close">
-    <button class="secondary compact" value="close">关闭</button>
+    <button class="secondary compact" value="close">Close</button>
   </form>
   <div class="frame-dialog-body">
     <img id="frame-dialog-image" alt="">
     <aside>
       <h2 id="frame-dialog-time"></h2>
-      <button class="secondary compact" id="frame-dialog-transcript">在转写中查看</button>
+      <button class="secondary compact" id="frame-dialog-transcript">View in transcript</button>
       <section>
-        <h3>画面文字</h3>
+        <h3>On-screen text</h3>
         <div id="frame-dialog-ocr"></div>
       </section>
       <section>
-        <h3>附近的讲话</h3>
+        <h3>Nearby speech</h3>
         <div id="frame-dialog-speech"></div>
       </section>
     </aside>
@@ -132,12 +132,12 @@
 </dialog>
 <dialog id="remove-dialog" aria-labelledby="remove-heading">
   <form method="dialog">
-    <h2 id="remove-heading">删除所选</h2>
+    <h2 id="remove-heading">Remove selected</h2>
     <p id="remove-description"></p>
-    <p>文件将移到本地库的 .trash 中，可手动恢复。不会删除原始视频或已导出的副本，也不会释放这部分磁盘空间。</p>
+    <p>Files move to .trash in the local library and can be restored manually. Original videos and exported copies stay in place. Moving files to .trash does not free disk space.</p>
     <div class="dialog-actions">
-      <button class="secondary" value="cancel" autofocus>取消</button>
-      <button class="secondary danger" value="remove">确认移出</button>
+      <button class="secondary" value="cancel" autofocus>Cancel</button>
+      <button class="secondary danger" value="remove">Confirm removal</button>
     </div>
   </form>
 </dialog>

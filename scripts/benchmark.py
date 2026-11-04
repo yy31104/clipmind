@@ -8,8 +8,8 @@ import json
 import sys
 import tempfile
 import time
+from dataclasses import replace
 from pathlib import Path
-from types import SimpleNamespace
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,7 +24,7 @@ async def run_batch(*, count: int, concurrency: int, delay: float) -> dict:
     peak = 0
     started = asyncio.Event()
 
-    async def simulated_process(url, workdir, pools, report):
+    async def simulated_process(url, workdir, pools, report, *, config, providers, options):
         nonlocal running, peak
         running += 1
         peak = max(peak, running)
@@ -41,7 +41,7 @@ async def run_batch(*, count: int, concurrency: int, delay: float) -> dict:
             patch.object(
                 jobs_module,
                 "settings",
-                SimpleNamespace(max_videos=concurrency),
+                replace(jobs_module.settings, max_videos=concurrency),
             ),
             patch.object(jobs_module, "process", new=simulated_process),
         ):

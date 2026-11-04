@@ -85,8 +85,8 @@ def _message_for(code: str, platform: str) -> tuple[str, str]:
             "ClipMind analyses complete recordings. Submit the replay link after the stream has ended.",
         ),
         "source_metadata_unavailable": (
-            "抖音视频信息获取失败，尚未取得视频文件。",
-            "浏览器可播放不代表当前下载器能够获取。此错误不能确认 cookies 过期，请勿反复刷新登录或重复提交。",
+            "Could not retrieve Douyin video metadata; no video file was acquired.",
+            "Browser playback does not guarantee a download. This error does not confirm expired cookies; avoid repeated logins or submissions.",
         ),
         "private_video": (
             f"This {platform} video is private.",

@@ -146,13 +146,13 @@ class ResultReadingTests(unittest.TestCase):
   assert.equal(element('frame-dialog').open, true);
   assert.equal(element('pane-summary').hidden, true);
   const summary = element('pane-summary').innerHTML;
-  for (const label of ['复制全文转写', '导出笔记（Markdown）', '下载精简资料（仅干货截图）', '下载纯文字资料', '下载完整资料（全部截图）', '开发者信息']) {
+  for (const label of ['Copy full transcript', 'Export notes (Markdown)', 'Download compact pack (selected screenshots)', 'Download text-only pack', 'Download full pack (all screenshots)', 'Developer details']) {
     assert.ok(summary.includes(label), label);
   }
   assert.match(summary, /evidence\.zip\?profile=compact/);
   assert.match(summary, /evidence\.zip\?profile=full/);
   assert.match(summary, /evidence\.zip\?profile=text/);
-  assert.ok(!summary.includes('打开原视频') && !element('d-meta').innerHTML.includes('打开原视频'),
+  assert.ok(!summary.includes('Open source video') && !element('d-meta').innerHTML.includes('Open source video'),
     'a local file has no source page to open');
 """)
 
@@ -160,9 +160,9 @@ class ResultReadingTests(unittest.TestCase):
         self.run_app(r"""
   run(`state.detail = ${DETAIL}; state.detail.frames = []; renderDetailFrames();`);
   const html = element('pane-frames').innerHTML;
-  assert.match(html, /未选出需要保留的图表、代码或文档截图/);
+  assert.match(html, /No charts, code, or document screenshots selected/);
   assert.doesNotMatch(html, /<article class="frame"/);
-  assert.match(html, /查看全部 2 个画面/);
+  assert.match(html, /View all frames \(2\)/);
 """)
 
     def test_compact_preview_can_reference_one_shared_canonical_image(self) -> None:
@@ -177,20 +177,20 @@ class ResultReadingTests(unittest.TestCase):
         self.run_app(r"""
   run(`state.detail = ${DETAIL}; renderDetailFrames();`);
   let html = element('pane-frames').innerHTML;
-  assert.match(html, /精选 1 个画面/);
-  assert.match(html, /查看全部 2 个画面/);
+  assert.match(html, /selected frames \(1\)/);
+  assert.match(html, /View all frames \(2\)/);
   assert.match(html, /visual_states\/preview\/03-38\.jpg/);
   assert.doesNotMatch(html, /visual_states\/all\/01-40\.jpg/);
 
   element('toggle-all-frames').onclick();
   html = element('pane-frames').innerHTML;
-  assert.match(html, /全部 2 个画面/);
-  assert.match(html, /只看精选/);
+  assert.match(html, /all frames \(2\)/);
+  assert.match(html, /Selected frames only/);
   assert.match(html, /visual_states\/all\/01-40\.jpg/);
   assert.match(html, /visual_states\/all\/03-38\.jpg/);
 
   element('toggle-all-frames').onclick();
-  assert.match(element('pane-frames').innerHTML, /查看全部 2 个画面/);
+  assert.match(element('pane-frames').innerHTML, /View all frames \(2\)/);
 """)
 
     def test_incomplete_ocr_is_prominently_disclosed(self) -> None:
@@ -207,9 +207,9 @@ class ResultReadingTests(unittest.TestCase):
   await run(`openDetail('job1')`);
   const summary = element('pane-summary').innerHTML;
   assert.match(summary, /quality-warning/);
-  assert.match(summary, /画面文字未完整识别/);
-  assert.match(summary, /截图仍然完整保留/);
-  assert.match(summary, /OCR 修复工具/);
+  assert.match(summary, /Some on-screen text was not recognized/);
+  assert.match(summary, /All screenshots are retained/);
+  assert.match(summary, /OCR repair tool/);
 """)
 
     def test_only_titles_that_overflow_fade(self) -> None:

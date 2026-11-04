@@ -212,7 +212,7 @@ not erasure (see below). To erase data, stop the app and delete the desired pack
 directory (including any copy under `.trash`) and the derived SQLite index from
 the local library. Security issues involving credentials, path boundaries, or
 unexpected disclosure should be reported privately as described in
-[`SECURITY.md`](../SECURITY.md), not posted with sensitive artifacts in a public
+[`SECURITY.md`](SECURITY.md), not posted with sensitive artifacts in a public
 issue.
 
 ## Removing tasks and library versions
