@@ -42,27 +42,15 @@ Requires Python 3.12, [uv](https://docs.astral.sh/uv/), FFmpeg, and Git. Linux a
 
 ```bash
 git clone https://github.com/yy31104/clipmind.git
-```
-
-```bash
 cd clipmind
-```
-
-```bash
 uv sync --frozen --python 3.12
-```
-
-```bash
 uv run --frozen clipmind doctor
 ```
 
-Extract the generated local sample:
+Extract the generated local sample and start the web interface:
 
 ```bash
 uv run --frozen clipmind demo
-```
-
-```bash
 uv run --frozen clipmind serve
 ```
 
@@ -72,9 +60,6 @@ Offline checks take about a minute locally:
 
 ```bash
 make test
-```
-
-```bash
 make eval-synthetic
 ```
 
