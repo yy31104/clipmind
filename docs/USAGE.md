@@ -117,4 +117,3 @@ docker run --rm -p 127.0.0.1:8420:8420 -v "$PWD/clipmind-data:/data" clipmind
 
 The image uses faster-whisper and Tesseract. It does not bundle browser cookies,
 GPU drivers, or model weights.
-
