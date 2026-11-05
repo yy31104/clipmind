@@ -63,6 +63,8 @@ make test
 make eval-synthetic
 ```
 
+The recorded synthetic results come from macOS Vision OCR. On Linux with Tesseract the same evaluation currently fails; see [the benchmark notes](docs/BENCHMARK.md#synthetic-silent-slides-on-linux-with-tesseract).
+
 ## Design notes
 
 Speech and visual processing run separately, then join at pack creation. This preserves screen text that was never spoken and keeps a usable record when one recognition provider is unavailable.
