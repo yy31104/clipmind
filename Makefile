@@ -1,7 +1,7 @@
 PYTHON ?= .venv/bin/python
 OUT ?= out
 
-.PHONY: test eval eval-reextract eval-synthetic bench run
+.PHONY: test eval eval-reextract eval-synthetic eval-noisy bench run
 
 test:
 	node --check clipmind/web/app.js
@@ -15,6 +15,9 @@ eval-reextract:
 
 eval-synthetic:
 	$(PYTHON) scripts/evaluate_silent_slides.py
+
+eval-noisy:
+	$(PYTHON) scripts/evaluate_noisy_slides.py --sweep
 
 bench:
 	$(PYTHON) scripts/benchmark.py

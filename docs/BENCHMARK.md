@@ -37,3 +37,45 @@ and observable backpressure.
 Newly generated manifests include per-stage wall time for acquisition, sampling,
 ASR, OCR, and preview derivation. Job state adds end-to-end time. Older v1 packs
 without the optional `timings` field remain valid.
+
+## Noisy silent slides and the ASR guard
+
+`make eval-noisy` builds two 30-second videos from the same four generated slides:
+one with a speech-free bed of pink noise and a quiet two-tone chord, one with the
+same bed plus a synthetic sentence (espeak-ng) placed at 4 s. Both go through
+`media.extract_audio`, then through the Silero VAD that faster-whisper runs when
+`vad_filter=True`, with faster-whisper's default `VadOptions`. That is what
+ClipMind's default `CLIPMIND_ASR_VAD_FILTER=1` requests. When the VAD finds no
+speech, faster-whisper decodes a zero-length array and returns no segments.
+
+Recorded run ([data](data/noisy-slides-vad-eval.json), faster-whisper 1.2.1, Linux):
+
+| Case | Level | VAD speech | Decoded with defaults |
+| --- | --- | --- | --- |
+| Noise bed, no speech | -38.9 dBFS | none | 0.0 s, so the transcript is empty |
+| Same bed + sentence at 4 s | -30.4 dBFS | 3.60-9.36 s | 5.76 s |
+
+The `--sweep` part checks both directions:
+
+- False speech: 0 of 24 speech-free beds (pink, white and brown noise, with and
+  without tones, up to -14.2 dBFS) produced any VAD speech.
+- Missed speech: the whole sentence (about 5.8 s) was kept down to about -9 dB
+  SNR, part of it between about -10 and -15 dB, and none below about -16 dB.
+
+Limits: the noise is stationary and synthetic. Music with vocals, keyboard
+clicks or crowd noise is harder and is not covered. The Whisper model was not run
+here (the model host is not reachable from the evaluation environment), so the
+transcript with the guards turned off is not measured; `--decode` adds that
+comparison where the model can be loaded.
+
+## Synthetic silent slides on Linux with Tesseract
+
+The recorded [silent-slides result](data/silent-slides-eval.json) used Apple
+Vision OCR. On Linux with Tesseract 5.3.4 (chi_sim+chi_tra+eng) the same
+evaluation fails ([data](data/silent-slides-eval-linux-tesseract.json)): OCR
+reads `ALPHA PLAN BETA SYSTEM MMA DATA REVIEW` (GAMMA read as `MMA`, DELTA
+missing), and with fewer recognized lines no frame meets the reading-layout rule,
+so the preview is empty (0 of 4). The canonical evidence is still complete. This
+is OCR coverage on the generated slides, not a bounding-box mismatch: both
+providers return top-left normalized boxes.
+
