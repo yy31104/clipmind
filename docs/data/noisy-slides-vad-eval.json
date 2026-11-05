@@ -1,0 +1,431 @@
+{
+  "cases": {
+    "control": {
+      "audio_rms_dbfs": -30.4,
+      "seconds_decoded_with_default_vad": 5.76,
+      "vad_speech_spans": [
+        {
+          "end": 9.36,
+          "start": 3.6
+        }
+      ]
+    },
+    "noise": {
+      "audio_rms_dbfs": -38.8,
+      "seconds_decoded_with_default_vad": 0.0,
+      "vad_speech_spans": []
+    }
+  },
+  "checks": {
+    "control_speech_found_where_it_was_placed": true,
+    "control_speech_is_detected": true,
+    "defaults_enable_vad": true,
+    "defaults_set_silence_threshold": true,
+    "noise_decodes_zero_seconds_so_transcript_is_empty": true,
+    "noise_has_no_detected_speech": true,
+    "noise_is_audible_not_digital_silence": true
+  },
+  "fixture": "generated-four-slide-video-30s-with-noise-bed",
+  "model_decoding": "not run (VAD stage only)",
+  "passed": true,
+  "settings": {
+    "hallucination_silence_threshold": 2.0,
+    "vad_filter": true,
+    "vad_options": "faster_whisper.vad.VadOptions() defaults"
+  },
+  "sweep": {
+    "false_speech": [
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.06,
+        "rms_dbfs": -39.2,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.0
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.06,
+        "rms_dbfs": -34.3,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.15
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.15,
+        "rms_dbfs": -31.2,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.0
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.15,
+        "rms_dbfs": -30.0,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.15
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.3,
+        "rms_dbfs": -25.3,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.0
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.3,
+        "rms_dbfs": -25.0,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.15
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.6,
+        "rms_dbfs": -19.2,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.0
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.6,
+        "rms_dbfs": -19.2,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.15
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.06,
+        "rms_dbfs": -34.3,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.0
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.06,
+        "rms_dbfs": -32.0,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.15
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.15,
+        "rms_dbfs": -26.3,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.0
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.15,
+        "rms_dbfs": -25.9,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.15
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.3,
+        "rms_dbfs": -20.3,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.0
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.3,
+        "rms_dbfs": -20.2,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.15
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.6,
+        "rms_dbfs": -14.3,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.0
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.6,
+        "rms_dbfs": -14.2,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.15
+      },
+      {
+        "noise": "brown",
+        "noise_amplitude": 0.06,
+        "rms_dbfs": -38.4,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.0
+      },
+      {
+        "noise": "brown",
+        "noise_amplitude": 0.06,
+        "rms_dbfs": -34.0,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.15
+      },
+      {
+        "noise": "brown",
+        "noise_amplitude": 0.15,
+        "rms_dbfs": -30.5,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.0
+      },
+      {
+        "noise": "brown",
+        "noise_amplitude": 0.15,
+        "rms_dbfs": -29.4,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.15
+      },
+      {
+        "noise": "brown",
+        "noise_amplitude": 0.3,
+        "rms_dbfs": -24.4,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.0
+      },
+      {
+        "noise": "brown",
+        "noise_amplitude": 0.3,
+        "rms_dbfs": -24.2,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.15
+      },
+      {
+        "noise": "brown",
+        "noise_amplitude": 0.6,
+        "rms_dbfs": -18.4,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.0
+      },
+      {
+        "noise": "brown",
+        "noise_amplitude": 0.6,
+        "rms_dbfs": -18.3,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.15
+      }
+    ],
+    "missed_speech": [
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.06,
+        "snr_db": 15.8,
+        "speech_seconds_kept": 5.8,
+        "speech_spans": 1,
+        "speech_volume": 0.8
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.06,
+        "snr_db": 7.4,
+        "speech_seconds_kept": 5.8,
+        "speech_spans": 1,
+        "speech_volume": 0.3
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.06,
+        "snr_db": -2.2,
+        "speech_seconds_kept": 5.9,
+        "speech_spans": 1,
+        "speech_volume": 0.1
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.15,
+        "snr_db": 7.9,
+        "speech_seconds_kept": 5.8,
+        "speech_spans": 1,
+        "speech_volume": 0.8
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.15,
+        "snr_db": -0.7,
+        "speech_seconds_kept": 5.9,
+        "speech_spans": 1,
+        "speech_volume": 0.3
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.15,
+        "snr_db": -10.3,
+        "speech_seconds_kept": 4.6,
+        "speech_spans": 1,
+        "speech_volume": 0.1
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.3,
+        "snr_db": 1.7,
+        "speech_seconds_kept": 5.9,
+        "speech_spans": 1,
+        "speech_volume": 0.8
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.3,
+        "snr_db": -6.9,
+        "speech_seconds_kept": 5.9,
+        "speech_spans": 1,
+        "speech_volume": 0.3
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.3,
+        "snr_db": -16.3,
+        "speech_seconds_kept": 0.0,
+        "speech_spans": 0,
+        "speech_volume": 0.1
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.6,
+        "snr_db": -4.0,
+        "speech_seconds_kept": 5.8,
+        "speech_spans": 1,
+        "speech_volume": 0.8
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.6,
+        "snr_db": -12.6,
+        "speech_seconds_kept": 1.5,
+        "speech_spans": 1,
+        "speech_volume": 0.3
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.6,
+        "snr_db": -22.5,
+        "speech_seconds_kept": 0.0,
+        "speech_spans": 0,
+        "speech_volume": 0.1
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.06,
+        "snr_db": 10.8,
+        "speech_seconds_kept": 5.8,
+        "speech_spans": 1,
+        "speech_volume": 0.8
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.06,
+        "snr_db": 2.3,
+        "speech_seconds_kept": 5.7,
+        "speech_spans": 1,
+        "speech_volume": 0.3
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.06,
+        "snr_db": -7.3,
+        "speech_seconds_kept": 5.8,
+        "speech_spans": 1,
+        "speech_volume": 0.1
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.15,
+        "snr_db": 2.8,
+        "speech_seconds_kept": 5.7,
+        "speech_spans": 1,
+        "speech_volume": 0.8
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.15,
+        "snr_db": -5.7,
+        "speech_seconds_kept": 5.8,
+        "speech_spans": 1,
+        "speech_volume": 0.3
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.15,
+        "snr_db": -15.2,
+        "speech_seconds_kept": 3.9,
+        "speech_spans": 1,
+        "speech_volume": 0.1
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.3,
+        "snr_db": -3.2,
+        "speech_seconds_kept": 5.9,
+        "speech_spans": 1,
+        "speech_volume": 0.8
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.3,
+        "snr_db": -11.7,
+        "speech_seconds_kept": 2.4,
+        "speech_spans": 1,
+        "speech_volume": 0.3
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.3,
+        "snr_db": -21.3,
+        "speech_seconds_kept": 0.0,
+        "speech_spans": 0,
+        "speech_volume": 0.1
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.6,
+        "snr_db": -9.2,
+        "speech_seconds_kept": 5.9,
+        "speech_spans": 1,
+        "speech_volume": 0.8
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.6,
+        "snr_db": -17.8,
+        "speech_seconds_kept": 0.0,
+        "speech_spans": 0,
+        "speech_volume": 0.3
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.6,
+        "snr_db": -27.3,
+        "speech_seconds_kept": 0.0,
+        "speech_spans": 0,
+        "speech_volume": 0.1
+      }
+    ]
+  },
+  "tools": {
+    "espeak_ng": true,
+    "faster_whisper": "1.2.1",
+    "ffmpeg": true
+  }
+}

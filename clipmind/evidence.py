@@ -396,6 +396,10 @@ def write_pack(
             "evidence_width": config.evidence_width,
             "dedupe_threshold": config.dedupe_threshold,
             "dedupe_algorithm": media.DEDUPE_ALGORITHM,
+            "asr_guards": {
+                "vad_filter": config.asr_vad_filter,
+                "hallucination_silence_threshold": config.asr_hallucination_silence_threshold,
+            },
             "preview_algorithm": preview_algorithm,
             "preflight": preflight_result,
         },

@@ -94,6 +94,18 @@ CLIPMIND_TESSERACT_LANGUAGES=chi_sim+chi_tra+eng
 First use can download a large ASR model. Select a different compatible model
 with `CLIPMIND_ASR_MODEL` or `CLIPMIND_FASTER_WHISPER_MODEL`.
 
+Two guards against Whisper inventing speech during silence or music are on by
+default and recorded under `configuration.asr_guards` in each manifest:
+
+```dotenv
+CLIPMIND_ASR_VAD_FILTER=1                       # faster-whisper only: Silero VAD before decoding
+CLIPMIND_ASR_HALLUCINATION_SILENCE_THRESHOLD=2.0  # seconds; 0 or off disables
+```
+
+The silence threshold applies to both providers and relies on word timestamps,
+which ClipMind always requests. MLX Whisper has no built-in VAD. Turn the VAD
+off if quiet speech over loud music is being dropped.
+
 Optional local speaker diarization is deliberately separate:
 
 ```bash
