@@ -122,6 +122,11 @@ class EvidencePackTests(unittest.TestCase):
                 manifest["configuration"]["preview_algorithm"],
                 "adaptive-scene-text-v2",
             )
+            # Which ASR hallucination guards produced the transcript.
+            self.assertEqual(
+                manifest["configuration"]["asr_guards"],
+                {"vad_filter": True, "hallucination_silence_threshold": 2.0},
+            )
             self.assertEqual(manifest["completeness"]["transcript"], "complete")
             self.assertEqual(manifest["completeness"]["ocr"], "complete")
             self.assertEqual(manifest["completeness"]["word_timing"], "unavailable")

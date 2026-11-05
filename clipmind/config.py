@@ -51,6 +51,27 @@ def _float(name: str, default: float) -> float:
         return default
 
 
+def _flag(name: str, default: bool) -> bool:
+    value = os.getenv(name, "").strip().casefold()
+    if not value:
+        return default
+    return value not in {"0", "false", "no", "off"}
+
+
+def _optional_seconds(name: str, default: float | None) -> float | None:
+    """A positive number of seconds; "0", "off" or "none" disable the setting."""
+    value = os.getenv(name, "").strip().casefold()
+    if not value:
+        return default
+    if value in {"off", "none", "false"}:
+        return None
+    try:
+        seconds = float(value)
+    except ValueError:
+        return default
+    return seconds if seconds > 0 else None
+
+
 def _csv(name: str, default: str) -> tuple[str, ...]:
     return tuple(
         item.strip()
@@ -91,6 +112,16 @@ class Settings:
     asr_model: str = "mlx-community/whisper-large-v3-turbo"
     faster_whisper_model: str = "large-v3-turbo"
     asr_language: str | None = "zh"
+    # Hallucination guards. Whisper can emit fluent text for silence or music
+    # (Koenecke et al., "Careless Whisper", FAccT 2024, link it to long pauses).
+    # In ClipMind such text also makes on-screen words look "already spoken"
+    # and demotes the frame in the preview, so both guards default on.
+    # - asr_vad_filter: faster-whisper runs Silero VAD and decodes speech only.
+    # - asr_hallucination_silence_threshold: when a hallucination is suspected,
+    #   skip silent stretches longer than this many seconds (both providers;
+    #   needs word timestamps, which ClipMind always requests). None disables.
+    asr_vad_filter: bool = True
+    asr_hallucination_silence_threshold: float | None = 2.0
 
     # --- optional speaker diarization ---
     diarization_provider: str = "none"
@@ -162,6 +193,10 @@ class Settings:
                 "CLIPMIND_FASTER_WHISPER_MODEL", "large-v3-turbo"
             ),
             asr_language=os.getenv("CLIPMIND_ASR_LANGUAGE", "zh") or None,
+            asr_vad_filter=_flag("CLIPMIND_ASR_VAD_FILTER", True),
+            asr_hallucination_silence_threshold=_optional_seconds(
+                "CLIPMIND_ASR_HALLUCINATION_SILENCE_THRESHOLD", 2.0
+            ),
             diarization_provider=os.getenv(
                 "CLIPMIND_DIARIZATION_PROVIDER", "none"
             ).casefold(),

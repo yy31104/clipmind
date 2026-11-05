@@ -82,7 +82,15 @@ def canonicalize_generic_source(source: str) -> str:
     stable_query = sorted(
         (key, item) for key, item in query if key.casefold() not in _TRACKING_KEYS
     )
-    return urlunsplit(("https", canonical_host(source), path, urlencode(stable_query), ""))
+    host = canonical_host(source)
+    encoded_query = urlencode(stable_query)
+    if not host and not path.startswith("/"):
+        # urlunsplit's output for a hostless relative path changed between
+        # CPython patch releases (3.12.3 gives "https:///x", later releases
+        # "https:x"). This string is a cache identity, so it must not depend on
+        # the interpreter; build the later form explicitly.
+        return f"https:{path}" + (f"?{encoded_query}" if encoded_query else "")
+    return urlunsplit(("https", host, path, encoded_query, ""))
 
 
 def generic_source_id(source: str) -> str | None:

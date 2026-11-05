@@ -98,12 +98,14 @@ def _transcribe_sync(audio: Path, config: Settings) -> Transcript:
         "condition_on_previous_text": False,
         "verbose": None,
     }
+    timed = {"word_timestamps": True}
+    if config.asr_hallucination_silence_threshold is not None:
+        timed["hallucination_silence_threshold"] = config.asr_hallucination_silence_threshold
     try:
-        result = mlx_whisper.transcribe(
-            str(audio), word_timestamps=True, **options
-        )
+        result = mlx_whisper.transcribe(str(audio), **timed, **options)
     except TypeError:
-        # Older mlx-whisper builds still produce valid segment timing.
+        # Older mlx-whisper builds still produce valid segment timing. The
+        # silence threshold depends on word timestamps, so it is dropped too.
         result = mlx_whisper.transcribe(str(audio), **options)
     segments = [
         Segment(
@@ -176,6 +178,8 @@ class FasterWhisperProvider:
             language=self.config.asr_language,
             condition_on_previous_text=False,
             word_timestamps=True,
+            vad_filter=self.config.asr_vad_filter,
+            hallucination_silence_threshold=self.config.asr_hallucination_silence_threshold,
         )
         records = [
             Segment(
