@@ -50,7 +50,9 @@ def build_sample_video(destination: Path) -> Path:
         image = Image.new("RGB", (1280, 720), "white")
         draw = ImageDraw.Draw(image)
         draw.rectangle((0, 0, 170 + index * 90, 720), fill=color)
-        draw.text((260, 280), label, fill="black", font=font)
+        # Keep every heading on white. The widest panel reaches x=440;
+        # putting all headings at x=260 hid GAMMA/DELTA in the dark panels.
+        draw.text((520, 280), label, fill="black", font=font)
         path = destination / f"slide-{index}.png"
         image.save(path)
         slides.append(path)

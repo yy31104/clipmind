@@ -1,0 +1,328 @@
+{
+  "all_decodes_succeeded": false,
+  "cases": {
+    "control": {
+      "audio_rms_dbfs": -30.4,
+      "audio_sha256": "5190e19c9f88040d37cf4ca9709dff15f53a4d19a30a79af07de132989bb622b",
+      "decoding": {
+        "default_guards": {
+          "elapsed_seconds": 4.0223,
+          "engine": "faster-whisper",
+          "error": null,
+          "language": "en",
+          "segments": [
+            {
+              "end": 8.64,
+              "speaker": null,
+              "start": 3.6,
+              "text": "Alpha Plan, Beta System, Gamma Data, Delta Review",
+              "words": [
+                {
+                  "end": 4.32,
+                  "probability": 0.7651074528694153,
+                  "start": 3.6,
+                  "text": "Alpha"
+                },
+                {
+                  "end": 4.8,
+                  "probability": 0.3100147843360901,
+                  "start": 4.32,
+                  "text": "Plan,"
+                },
+                {
+                  "end": 5.58,
+                  "probability": 0.9322699904441833,
+                  "start": 5.16,
+                  "text": "Beta"
+                },
+                {
+                  "end": 6.1,
+                  "probability": 0.953873336315155,
+                  "start": 5.58,
+                  "text": "System,"
+                },
+                {
+                  "end": 7.06,
+                  "probability": 0.7812170386314392,
+                  "start": 6.68,
+                  "text": "Gamma"
+                },
+                {
+                  "end": 7.36,
+                  "probability": 0.20893992483615875,
+                  "start": 7.06,
+                  "text": "Data,"
+                },
+                {
+                  "end": 8.2,
+                  "probability": 0.9946034550666809,
+                  "start": 7.88,
+                  "text": "Delta"
+                },
+                {
+                  "end": 8.64,
+                  "probability": 0.7382804155349731,
+                  "start": 8.2,
+                  "text": "Review"
+                }
+              ]
+            }
+          ],
+          "settings": {
+            "hallucination_silence_threshold": 2.0,
+            "vad_filter": true
+          },
+          "status": "ok",
+          "text": "Alpha Plan, Beta System, Gamma Data, Delta Review"
+        },
+        "guards_off": {
+          "elapsed_seconds": 5.1426,
+          "engine": "faster-whisper",
+          "error": null,
+          "language": "en",
+          "segments": [
+            {
+              "end": 8.76,
+              "speaker": null,
+              "start": 3.38,
+              "text": "Alpha Plan, Beta System, Camonator, Delta Renew",
+              "words": [
+                {
+                  "end": 4.32,
+                  "probability": 0.7573490142822266,
+                  "start": 3.38,
+                  "text": "Alpha"
+                },
+                {
+                  "end": 4.76,
+                  "probability": 0.24271363019943237,
+                  "start": 4.32,
+                  "text": "Plan,"
+                },
+                {
+                  "end": 5.6,
+                  "probability": 0.935648500919342,
+                  "start": 5.08,
+                  "text": "Beta"
+                },
+                {
+                  "end": 6.08,
+                  "probability": 0.8762215971946716,
+                  "start": 5.6,
+                  "text": "System,"
+                },
+                {
+                  "end": 7.44,
+                  "probability": 0.5657898982365926,
+                  "start": 6.54,
+                  "text": "Camonator,"
+                },
+                {
+                  "end": 8.24,
+                  "probability": 0.9874381422996521,
+                  "start": 7.86,
+                  "text": "Delta"
+                },
+                {
+                  "end": 8.76,
+                  "probability": 0.5834705531597137,
+                  "start": 8.24,
+                  "text": "Renew"
+                }
+              ]
+            }
+          ],
+          "settings": {
+            "hallucination_silence_threshold": null,
+            "vad_filter": false
+          },
+          "status": "ok",
+          "text": "Alpha Plan, Beta System, Camonator, Delta Renew"
+        },
+        "vad_only": {
+          "elapsed_seconds": 4.7784,
+          "engine": "faster-whisper",
+          "error": null,
+          "language": "en",
+          "segments": [
+            {
+              "end": 8.64,
+              "speaker": null,
+              "start": 3.6,
+              "text": "Alpha Plan, Beta System, Gamma Data, Delta Review",
+              "words": [
+                {
+                  "end": 4.32,
+                  "probability": 0.7651074528694153,
+                  "start": 3.6,
+                  "text": "Alpha"
+                },
+                {
+                  "end": 4.8,
+                  "probability": 0.3100147843360901,
+                  "start": 4.32,
+                  "text": "Plan,"
+                },
+                {
+                  "end": 5.58,
+                  "probability": 0.9322699904441833,
+                  "start": 5.16,
+                  "text": "Beta"
+                },
+                {
+                  "end": 6.1,
+                  "probability": 0.953873336315155,
+                  "start": 5.58,
+                  "text": "System,"
+                },
+                {
+                  "end": 7.06,
+                  "probability": 0.7812170386314392,
+                  "start": 6.68,
+                  "text": "Gamma"
+                },
+                {
+                  "end": 7.36,
+                  "probability": 0.20893992483615875,
+                  "start": 7.06,
+                  "text": "Data,"
+                },
+                {
+                  "end": 8.2,
+                  "probability": 0.9946034550666809,
+                  "start": 7.88,
+                  "text": "Delta"
+                },
+                {
+                  "end": 8.64,
+                  "probability": 0.7382804155349731,
+                  "start": 8.2,
+                  "text": "Review"
+                }
+              ]
+            }
+          ],
+          "settings": {
+            "hallucination_silence_threshold": null,
+            "vad_filter": true
+          },
+          "status": "ok",
+          "text": "Alpha Plan, Beta System, Gamma Data, Delta Review"
+        }
+      },
+      "seconds_decoded_with_default_vad": 5.76,
+      "vad_speech_spans": [
+        {
+          "end": 9.36,
+          "start": 3.6
+        }
+      ]
+    },
+    "noise": {
+      "audio_rms_dbfs": -38.9,
+      "audio_sha256": "526997a2dccec1697513131fdd1c1281f6f01ff5e45f3dcc119d1070ea72893f",
+      "decoding": {
+        "default_guards": {
+          "elapsed_seconds": 0.0734,
+          "engine": "faster-whisper",
+          "error": null,
+          "language": "en",
+          "segments": [],
+          "settings": {
+            "hallucination_silence_threshold": 2.0,
+            "vad_filter": true
+          },
+          "status": "ok",
+          "text": ""
+        },
+        "guards_off": {
+          "elapsed_seconds": 12.7369,
+          "engine": "faster-whisper",
+          "error": "Whisper evaluation failed: speech transcription failed (IndexError); reprocess after checking the local log",
+          "language": null,
+          "segments": [],
+          "settings": {
+            "hallucination_silence_threshold": null,
+            "vad_filter": false
+          },
+          "status": "error",
+          "text": null
+        },
+        "vad_only": {
+          "elapsed_seconds": 0.0875,
+          "engine": "faster-whisper",
+          "error": null,
+          "language": "en",
+          "segments": [],
+          "settings": {
+            "hallucination_silence_threshold": null,
+            "vad_filter": true
+          },
+          "status": "ok",
+          "text": ""
+        }
+      },
+      "seconds_decoded_with_default_vad": 0.0,
+      "vad_speech_spans": []
+    }
+  },
+  "checks": {
+    "all_decodes_succeeded": false,
+    "control_speech_found_where_it_was_placed": true,
+    "control_speech_is_detected": true,
+    "decoded_noise_transcript_empty_with_defaults": true,
+    "default_guards_retains_control_timing": true,
+    "default_guards_retains_control_words": true,
+    "defaults_enable_vad": true,
+    "defaults_set_silence_threshold": true,
+    "guards_off_retains_control_timing": true,
+    "guards_off_retains_control_words": false,
+    "noise_decodes_zero_seconds_so_transcript_is_empty": true,
+    "noise_has_no_detected_speech": true,
+    "noise_is_audible_not_digital_silence": true,
+    "vad_only_retains_control_timing": true,
+    "vad_only_retains_control_words": true
+  },
+  "decode_errors": [
+    {
+      "case": "noise",
+      "error": "Whisper evaluation failed: speech transcription failed (IndexError); reprocess after checking the local log",
+      "variant": "guards_off"
+    }
+  ],
+  "fixture": "generated-four-slide-video-30s-with-noise-bed",
+  "guard_checks_passed": false,
+  "model": {
+    "compute_type": "int8_float32",
+    "ctranslate2": "4.8.2",
+    "device": "cpu",
+    "faster_whisper": "1.2.1",
+    "language": "en",
+    "local_model_sha256": {
+      "config.json": "b0253ea6c0d3bea6b1e19e91a02acfd3b53f4467362efcb5a3e6b16c9b3a9b7e",
+      "model.bin": "e76620f83d5f5b69efd3d87e3dc180c1bd21df9fbebacfd4335e5e1efcc018da"
+    },
+    "local_snapshot_revision": "0a363e9161cbc7ed1431c9597a8ceaf0c4f78fcf",
+    "platform": "Linux-6.12.76-linuxkit-aarch64-with-glibc2.41",
+    "provider_entry": "clipmind.asr.FasterWhisperProvider.transcribe",
+    "python": "3.12.14",
+    "requested_model": "/models/models--mobiuslabsgmbh--faster-whisper-large-v3-turbo/snapshots/0a363e9161cbc7ed1431c9597a8ceaf0c4f78fcf",
+    "timing_note": "Sequential calls share the production model cache; the first call may include model loading. Times are not a speed comparison."
+  },
+  "model_decoding": "production provider run",
+  "passed": false,
+  "settings": {
+    "hallucination_silence_threshold": 2.0,
+    "noise_seed": 1729,
+    "speech_start_seconds": 4.0,
+    "speech_text": "Alpha plan. Beta system. Gamma data. Delta review.",
+    "vad_filter": true,
+    "vad_options": "faster_whisper.vad.VadOptions() defaults"
+  },
+  "sweep": null,
+  "tools": {
+    "espeak_ng": true,
+    "faster_whisper": "1.2.1",
+    "ffmpeg": true
+  }
+}

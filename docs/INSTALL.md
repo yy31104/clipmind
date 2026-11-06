@@ -54,6 +54,14 @@ Use the equivalent package manager on Fedora, Arch, Windows, or another
 distribution. `clipmind doctor --json` reports the selected providers and core
 runtime capabilities without starting a media job.
 
+The portable ASR dependency currently uses the immutable official faster-whisper
+commit `f6ef59b5e3b70d58e46641417894c3b73eaddb7a`, including its
+[empty-alignment fix](https://github.com/SYSTRAN/faster-whisper/pull/1460).
+The PyPI 1.2.1 build lacks the matching guard needed by the locked CTranslate2
+4.8.2. Both `pyproject.toml` and the pip requirements use the same archive;
+`uv.lock` additionally verifies its SHA256. This is an unreleased upstream fix,
+not a ClipMind fork or a downgrade of the native runtime.
+
 ## Development checkout
 
 ```bash

@@ -33,14 +33,16 @@ dependencies = [
   "pyobjc-framework-Vision>=10.3; sys_platform == 'darwin'",
   "pyobjc-framework-Quartz>=10.3; sys_platform == 'darwin'",
   "mlx-whisper>=0.4.2; sys_platform == 'darwin' and platform_machine == 'arm64'",
-  "faster-whisper>=1.1; sys_platform != 'darwin' or platform_machine != 'arm64'",
+  # Official empty-alignment fix (PR #1460), not yet in the 1.2.1 release.
+  # The locked CTranslate2 >=4.8.1 needs its matching Python-side guard.
+  "faster-whisper @ https://github.com/SYSTRAN/faster-whisper/archive/f6ef59b5e3b70d58e46641417894c3b73eaddb7a.tar.gz ; sys_platform != 'darwin' or platform_machine != 'arm64'",
   "pytesseract>=0.3.13; sys_platform != 'darwin'",
 ]
 
 [project.optional-dependencies]
 test = ["fastapi>=0.115,<1", "numpy>=2,<3", "pillow>=10.4,<13", "python-dotenv>=1,<2"]
 build = ["build>=1.2", "pyinstaller>=6.11"]
-portable = ["faster-whisper>=1.1", "pytesseract>=0.3.13"]
+portable = ["faster-whisper @ https://github.com/SYSTRAN/faster-whisper/archive/f6ef59b5e3b70d58e46641417894c3b73eaddb7a.tar.gz", "pytesseract>=0.3.13"]
 diarization = ["pyannote.audio>=3.3,<4"]
 
 [project.scripts]

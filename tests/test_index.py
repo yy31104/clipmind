@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import sqlite3
 import tempfile
 import unittest
@@ -94,6 +95,10 @@ class EvidenceIndexTests(unittest.TestCase):
             root = Path(tempdir)
             old = self.make_pack(root, name="old", transcript="shared old wording")
             new = self.make_pack(root, name="new", transcript="shared current wording")
+            # Fast filesystems may give both writes the same timestamp. The
+            # fixture must establish the ordering this test asks search to use.
+            os.utime(old / "manifest.json", (1, 1))
+            os.utime(new / "manifest.json", (2, 2))
             index = EvidenceIndex(root / "index.sqlite3")
 
             self.assertTrue(index.sync("old-job", old))
