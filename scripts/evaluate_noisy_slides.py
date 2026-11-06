@@ -21,33 +21,47 @@ When the VAD returns no speech, faster-whisper decodes an empty array (its
 without running the language model. The control proves the VAD is not simply
 returning nothing: it must find the synthetic speech.
 
-The Whisper model itself is not run here, so the transcript *without* the guard
-is not measured by this script. Pass `--decode` on a machine that can load the
-model to add that comparison.
+Without `--decode`, this is a VAD-only evaluation, not a transcription result.
+With `--decode`, the production FasterWhisperProvider processes the same audio
+with guards off, VAD only, and the default VAD plus silence threshold. VAD may
+legitimately skip inference for the speech-free case. The speech control must
+still be transcribed, so an empty transcript or a provider error cannot pass.
 """
 from __future__ import annotations
 
 import argparse
 import asyncio
+from dataclasses import asdict, replace
+import hashlib
+from importlib import metadata
 import json
-import os
+import platform
+import re
 import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
+from urllib.parse import urlsplit, urlunsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from clipmind import media  # noqa: E402
+from clipmind import asr, media  # noqa: E402
 from clipmind.config import Settings  # noqa: E402
 from clipmind.demo import build_sample_video  # noqa: E402
 
 DURATION = 30
 SPEECH_TEXT = "Alpha plan. Beta system. Gamma data. Delta review."
 SPEECH_START = 4.0
+NOISE_SEED = 1729
+DECODE_VARIANTS = (
+    ("guards_off", False, None),
+    ("vad_only", True, None),
+    ("default_guards", True, 2.0),
+)
 
 
 def _run(command: list[str]) -> None:
@@ -58,7 +72,7 @@ def _noise_bed(path: Path) -> None:
     """Pink noise plus a soft A3/E4 chord, normalized to a quiet but clearly non-silent level."""
     _run([
         "ffmpeg", "-y", "-loglevel", "error",
-        "-f", "lavfi", "-i", f"anoisesrc=color=pink:amplitude=0.06:duration={DURATION}:sample_rate=48000",
+        "-f", "lavfi", "-i", f"anoisesrc=color=pink:amplitude=0.06:duration={DURATION}:sample_rate=48000:seed={NOISE_SEED}",
         "-f", "lavfi", "-i", f"sine=frequency=220:duration={DURATION}:sample_rate=48000",
         "-f", "lavfi", "-i", f"sine=frequency=330:duration={DURATION}:sample_rate=48000",
         "-filter_complex",
@@ -131,7 +145,7 @@ def _sweep(workdir: Path) -> dict:
                 path = workdir / "sweep-noise.wav"
                 _run([
                     "ffmpeg", "-y", "-loglevel", "error",
-                    "-f", "lavfi", "-i", f"anoisesrc=color={color}:amplitude={amplitude}:duration=30:sample_rate=48000",
+                    "-f", "lavfi", "-i", f"anoisesrc=color={color}:amplitude={amplitude}:duration=30:sample_rate=48000:seed={NOISE_SEED}",
                     "-f", "lavfi", "-i", "sine=frequency=220:duration=30:sample_rate=48000",
                     "-f", "lavfi", "-i", "sine=frequency=330:duration=30:sample_rate=48000",
                     "-filter_complex",
@@ -154,7 +168,7 @@ def _sweep(workdir: Path) -> dict:
                 path = workdir / "sweep-mix.wav"
                 _run([
                     "ffmpeg", "-y", "-loglevel", "error",
-                    "-f", "lavfi", "-i", f"anoisesrc=color={color}:amplitude={amplitude}:duration=20:sample_rate=48000",
+                    "-f", "lavfi", "-i", f"anoisesrc=color={color}:amplitude={amplitude}:duration=20:sample_rate=48000:seed={NOISE_SEED}",
                     "-i", str(speech), "-filter_complex",
                     f"[1]adelay=4000|4000,volume={volume}[s];[0][s]amix=inputs=2:normalize=0:duration=first[o]",
                     "-map", "[o]", "-ac", "1", "-ar", "16000", str(path),
@@ -170,25 +184,179 @@ def _sweep(workdir: Path) -> dict:
     return {"false_speech": false_speech, "missed_speech": missed_speech}
 
 
-def _decode(wav: Path, *, vad_filter: bool, threshold: float | None) -> list[str]:
-    from faster_whisper import WhisperModel
+async def _decode(wav: Path, config: Settings) -> dict:
+    """Exercise the shipping provider, including consumption of lazy segments."""
+    started = time.perf_counter()
+    transcript = await asr.FasterWhisperProvider(config).transcribe(wav)
+    elapsed = time.perf_counter() - started
+    if transcript.error:
+        raise RuntimeError(f"Whisper evaluation failed: {transcript.error}")
+    return {
+        "status": "ok",
+        "error": None,
+        "engine": transcript.engine,
+        "language": transcript.language,
+        "text": transcript.text,
+        "segments": [asdict(segment) for segment in transcript.segments],
+        "elapsed_seconds": round(elapsed, 4),
+        "settings": {
+            "vad_filter": config.asr_vad_filter,
+            "hallucination_silence_threshold": config.asr_hallucination_silence_threshold,
+        },
+    }
 
-    model = WhisperModel(Settings().faster_whisper_model, device="auto", compute_type="auto")
-    segments, _ = model.transcribe(
-        str(wav),
-        language=Settings().asr_language,
-        condition_on_previous_text=False,
-        word_timestamps=True,
-        vad_filter=vad_filter,
-        hallucination_silence_threshold=threshold,
+
+async def _decode_variants(wav: Path, model: str) -> dict:
+    # The synthetic sentence is English. Production's default language is zh,
+    # which is not an appropriate evaluation setting for this fixture.
+    base = replace(
+        Settings(), asr_provider="faster-whisper", asr_language="en",
+        faster_whisper_model=model,
     )
-    return [segment.text.strip() for segment in segments if segment.text.strip()]
+    results = {}
+    for name, vad, threshold in DECODE_VARIANTS:
+        config = replace(
+            base, asr_vad_filter=vad,
+            asr_hallucination_silence_threshold=threshold,
+        )
+        started = time.perf_counter()
+        try:
+            results[name] = await _decode(wav, config)
+        except RuntimeError as exc:
+            # Keep the failed row and continue the comparison. A provider error
+            # is never an empty successful transcript, even for noise.
+            results[name] = {
+                "status": "error",
+                "error": str(exc),
+                "engine": "faster-whisper",
+                "language": None,
+                "text": None,
+                "segments": [],
+                "elapsed_seconds": round(time.perf_counter() - started, 4),
+                "settings": {
+                    "vad_filter": vad,
+                    "hallucination_silence_threshold": threshold,
+                },
+            }
+    return results
 
 
-async def evaluate(decode: bool, sweep: bool) -> dict:
-    for name in ("CLIPMIND_ASR_VAD_FILTER", "CLIPMIND_ASR_HALLUCINATION_SILENCE_THRESHOLD"):
-        os.environ.pop(name, None)
-    defaults = Settings.from_env()
+def _words(text: str) -> set[str]:
+    # Whisper sometimes joins correctly capitalized words, e.g. AlphaPlan.
+    # Split only an observed case boundary; do not repair misspelled words.
+    separated = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", text)
+    return set(re.findall(r"[a-z]+", separated.casefold()))
+
+
+def _control_word_measurements(cases: dict) -> dict:
+    """Measure the negative baseline without requiring perfect recognition."""
+    expected = _words(SPEECH_TEXT)
+    measurements = {}
+    for name, _, _ in DECODE_VARIANTS:
+        row = cases["control"]["decoding"][name]
+        words = _words(row["text"] or "")
+        missing = expected - words
+        measurements[name] = {
+            "all_expected_words_present": row["status"] == "ok" and not missing,
+            "missing_expected_words": sorted(missing),
+            "expected_unique_word_coverage": round(len(expected & words) / len(expected), 4),
+        }
+    return measurements
+
+
+def _decode_checks(cases: dict) -> dict[str, bool]:
+    noise = cases["noise"]["decoding"]["default_guards"]
+    checks = {
+        "decoded_noise_transcript_empty_with_defaults": (
+            noise["status"] == "ok" and not noise["text"].strip()
+        ),
+    }
+    measurements = _control_word_measurements(cases)
+    for name, _, _ in DECODE_VARIANTS:
+        control = cases["control"]["decoding"][name]
+        checks[f"{name}_retains_control_speech"] = (
+            control["status"] == "ok" and bool(control["text"].strip())
+        )
+        # This paired test measures whether guards erase speech relative to the
+        # same unguarded decode, not perfect ASR accuracy. Recognition errors in
+        # every row stay visible in the word measurements and raw transcript.
+        if name != "guards_off":
+            coverage = measurements[name]["expected_unique_word_coverage"]
+            baseline = measurements["guards_off"]["expected_unique_word_coverage"]
+            checks[f"{name}_control_word_coverage_not_worse_than_baseline"] = (
+                control["status"] == "ok" and coverage > 0 and coverage >= baseline
+            )
+        checks[f"{name}_retains_control_timing"] = control["status"] == "ok" and any(
+            segment["start"] <= SPEECH_START + 1.0
+            and segment["end"] >= SPEECH_START + 1.0
+            for segment in control["segments"]
+        )
+    return checks
+
+
+def _decoder_provenance() -> dict:
+    """Identify an unreleased dependency fix even if its version is unchanged."""
+    result = {"archive_url": None, "archive_sha256": None, "transcribe_source_sha256": None}
+    try:
+        package_file = getattr(__import__("faster_whisper"), "__file__", None)
+        if package_file:
+            source = Path(package_file).with_name("transcribe.py")
+            if source.is_file():
+                with source.open("rb") as handle:
+                    result["transcribe_source_sha256"] = hashlib.file_digest(handle, "sha256").hexdigest()
+        direct = json.loads(metadata.distribution("faster-whisper").read_text("direct_url.json") or "{}")
+    except (ImportError, OSError, ValueError, metadata.PackageNotFoundError):
+        return result
+    parsed = urlsplit(direct.get("url", ""))
+    if parsed.scheme == "https" and parsed.netloc == "github.com" and parsed.path.casefold().startswith(
+        "/systran/faster-whisper/archive/"
+    ):
+        # Only the public upstream archive is reportable: omit arbitrary local
+        # install paths, credentials, query strings, and other repository URLs.
+        result["archive_url"] = urlunsplit((parsed.scheme, parsed.netloc, parsed.path, "", ""))
+        sha256 = direct.get("archive_info", {}).get("hashes", {}).get("sha256")
+        if isinstance(sha256, str) and re.fullmatch(r"[0-9a-fA-F]{64}", sha256):
+            result["archive_sha256"] = sha256
+    return result
+
+
+def _model_metadata(model: str) -> dict:
+    # These are observations of the instance the production provider loaded;
+    # device='auto' alone would not identify the backend actually used.
+    loaded = asr._faster_models.get(model)
+    backend = getattr(loaded, "model", None)
+    local = Path(model).expanduser()
+    revision = local.name if local.parent.name == "snapshots" else None
+    assets = {}
+    for name in ("model.bin", "config.json"):
+        path = local / name
+        if path.is_file():
+            with path.open("rb") as handle:
+                assets[name] = hashlib.file_digest(handle, "sha256").hexdigest()
+    return {
+        "requested_model": model,
+        "local_snapshot_revision": revision,
+        "local_model_sha256": assets,
+        "language": "en",
+        "provider_entry": "clipmind.asr.FasterWhisperProvider.transcribe",
+        "device": getattr(backend, "device", None),
+        "compute_type": getattr(backend, "compute_type", None),
+        "faster_whisper": _version("faster_whisper"),
+        "faster_whisper_source": _decoder_provenance(),
+        "ctranslate2": _version("ctranslate2"),
+        "platform": platform.platform(),
+        "python": platform.python_version(),
+        "timing_note": (
+            "Sequential calls share the production model cache; the first call "
+            "may include model loading. Times are not a speed comparison."
+        ),
+    }
+
+
+async def evaluate(decode: bool, sweep: bool, model: str | None = None) -> dict:
+    # Evaluate declared defaults, independent of the user's environment or .env.
+    defaults = Settings()
+    model = model or defaults.faster_whisper_model
     with tempfile.TemporaryDirectory(prefix="clipmind-noisy-eval-") as tempdir:
         root = Path(tempdir)
         slides = build_sample_video(root)
@@ -204,17 +372,13 @@ async def evaluate(decode: bool, sweep: bool) -> dict:
                 raise RuntimeError(f"{name}: ClipMind found no audio track")
             spans, kept, level = _speech_chunks(wav)
             case = {
+                "audio_sha256": hashlib.sha256(wav.read_bytes()).hexdigest(),
                 "audio_rms_dbfs": level,
                 "vad_speech_spans": spans,
                 "seconds_decoded_with_default_vad": kept,
             }
             if decode:
-                case["transcript_default_guards"] = _decode(
-                    wav,
-                    vad_filter=defaults.asr_vad_filter,
-                    threshold=defaults.asr_hallucination_silence_threshold,
-                )
-                case["transcript_guards_off"] = _decode(wav, vad_filter=False, threshold=None)
+                case["decoding"] = await _decode_variants(wav, model)
             cases[name] = case
         sweep_result = _sweep(root) if sweep else None
 
@@ -233,21 +397,39 @@ async def evaluate(decode: bool, sweep: bool) -> dict:
             for span in control["vad_speech_spans"]
         ),
     }
+    decode_errors = []
     if decode:
-        checks["decoded_noise_transcript_empty_with_defaults"] = (
-            noise["transcript_default_guards"] == []
-        )
+        checks.update(_decode_checks(cases))
+        decode_errors = [
+            {"case": case_name, "variant": name, "error": row["error"]}
+            for case_name, case in cases.items()
+            for name, row in case["decoding"].items()
+            if row["status"] != "ok"
+        ]
+    guard_checks_passed = all(checks.values())
+    if decode:
+        checks["all_decodes_succeeded"] = not decode_errors
     return {
         "fixture": "generated-four-slide-video-30s-with-noise-bed",
         "passed": all(checks.values()),
         "checks": checks,
+        "guard_checks_passed": guard_checks_passed,
+        "measurements": {
+            "control_word_coverage": _control_word_measurements(cases),
+        } if decode else None,
+        "decode_errors": decode_errors,
+        "all_decodes_succeeded": not decode_errors if decode else None,
         "cases": cases,
         "settings": {
             "vad_filter": defaults.asr_vad_filter,
             "hallucination_silence_threshold": defaults.asr_hallucination_silence_threshold,
             "vad_options": "faster_whisper.vad.VadOptions() defaults",
+            "noise_seed": NOISE_SEED,
+            "speech_text": SPEECH_TEXT,
+            "speech_start_seconds": SPEECH_START,
         },
-        "model_decoding": "run" if decode else "not run (VAD stage only)",
+        "model_decoding": "production provider run" if decode else "not run (VAD stage only)",
+        "model": _model_metadata(model) if decode else None,
         "sweep": sweep_result,
         "tools": {
             "faster_whisper": _version("faster_whisper"),
@@ -270,7 +452,11 @@ def main() -> int:
     parser.add_argument(
         "--decode",
         action="store_true",
-        help="Also run the Whisper model with guards on and off (downloads the model).",
+        help="Run the production Whisper provider with guards off, VAD only, and defaults.",
+    )
+    parser.add_argument(
+        "--model", default=Settings().faster_whisper_model,
+        help="faster-whisper model name or local model directory (may download if not cached).",
     )
     parser.add_argument(
         "--sweep",
@@ -282,7 +468,7 @@ def main() -> int:
         if shutil.which(tool) is None:
             print(f"{tool} is required for this evaluation", file=sys.stderr)
             return 2
-    report = asyncio.run(evaluate(args.decode, args.sweep))
+    report = asyncio.run(evaluate(args.decode, args.sweep, args.model))
     rendered = json.dumps(report, indent=2, sort_keys=True) + "\n"
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)

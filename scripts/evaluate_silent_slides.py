@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import platform
 import subprocess
 import sys
 import tempfile
@@ -15,8 +16,8 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from clipmind import evidence, pipeline  # noqa: E402
-from clipmind.demo import build_sample_video  # noqa: E402
+from clipmind import acquisition, evidence  # noqa: E402
+from clipmind.demo import _font, build_sample_video  # noqa: E402
 from clipmind.jobs import JobStore  # noqa: E402
 
 
@@ -44,6 +45,14 @@ async def evaluate() -> dict:
             for line in (workdir / "ocr.jsonl").read_text(encoding="utf-8").splitlines()
         ]
         recognized = " ".join(record["text"] for record in ocr).upper()
+        acquisition_leftovers = acquisition.leftovers(workdir)
+        ocr_engine = store.providers.text.name
+        tesseract_version = None
+        if ocr_engine == "tesseract":
+            tesseract_version = subprocess.run(
+                ["tesseract", "--version"],
+                capture_output=True, text=True, check=True,
+            ).stdout.splitlines()[0]
         checks = {
             "transcript_explicitly_unavailable": (
                 manifest["completeness"]["transcript"] == "unavailable"
@@ -55,6 +64,7 @@ async def evaluate() -> dict:
             ),
             "visual_evidence_present": manifest["counts"]["canonical_visual_states"] >= 4,
             "evidence_pack_complete": manifest["status"] == "complete",
+            "temporary_acquisition_media_cleaned": acquisition_leftovers == [],
         }
         return {
             "fixture": "generated-silent-four-slide-video",
@@ -66,6 +76,20 @@ async def evaluate() -> dict:
             "recognized_text": recognized,
             "timings": manifest.get("timings", {}),
             "result_title": result["title"],
+            "acquisition_leftovers": acquisition_leftovers,
+            "environment": {
+                "system": platform.system(),
+                "machine": platform.machine(),
+                "python": platform.python_version(),
+                "ocr_engine": ocr_engine,
+                "ocr_languages": (
+                    store.config.tesseract_languages
+                    if ocr_engine == "tesseract"
+                    else list(store.config.ocr_languages)
+                ),
+                "tesseract_version": tesseract_version,
+                "font": list(_font(68).getname()),
+            },
         }
 
 

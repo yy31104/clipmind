@@ -585,8 +585,8 @@ requires-dist = [
     { name = "build", marker = "extra == 'build'", specifier = ">=1.2" },
     { name = "fastapi", specifier = ">=0.115,<1" },
     { name = "fastapi", marker = "extra == 'test'", specifier = ">=0.115,<1" },
-    { name = "faster-whisper", marker = "platform_machine != 'arm64' or sys_platform != 'darwin'", specifier = ">=1.1" },
-    { name = "faster-whisper", marker = "extra == 'portable'", specifier = ">=1.1" },
+    { name = "faster-whisper", marker = "platform_machine != 'arm64' or sys_platform != 'darwin'", url = "https://github.com/SYSTRAN/faster-whisper/archive/f6ef59b5e3b70d58e46641417894c3b73eaddb7a.tar.gz" },
+    { name = "faster-whisper", marker = "extra == 'portable'", url = "https://github.com/SYSTRAN/faster-whisper/archive/f6ef59b5e3b70d58e46641417894c3b73eaddb7a.tar.gz" },
     { name = "mlx-whisper", marker = "platform_machine == 'arm64' and sys_platform == 'darwin'", specifier = ">=0.4.2" },
     { name = "numpy", specifier = ">=2,<3" },
     { name = "numpy", marker = "extra == 'test'", specifier = ">=2,<3" },
@@ -876,7 +876,7 @@ wheels = [
 [[package]]
 name = "faster-whisper"
 version = "1.2.1"
-source = { registry = "https://pypi.org/simple" }
+source = { url = "https://github.com/SYSTRAN/faster-whisper/archive/f6ef59b5e3b70d58e46641417894c3b73eaddb7a.tar.gz" }
 dependencies = [
     { name = "av" },
     { name = "ctranslate2" },
@@ -885,9 +885,23 @@ dependencies = [
     { name = "tokenizers" },
     { name = "tqdm" },
 ]
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/05/99/49ee85903dee060d9f08297b4a342e5e0bcfca2f027a07b4ee0a38ab13f9/faster_whisper-1.2.1-py3-none-any.whl", hash = "sha256:79a66ad50688c0b794dd501dc340a736992a6342f7f95e5811be60b5224a26a7", size = 1118909, upload-time = "2025-10-31T11:35:47.794Z" },
+sdist = { hash = "sha256:9cdac00039a1cc176ef06b637e396bbf592dbb3fec591fb924c78ba443d96fd2" }
+
+[package.metadata]
+requires-dist = [
+    { name = "av", specifier = ">=11" },
+    { name = "black", marker = "extra == 'dev'", specifier = "==23.*" },
+    { name = "ctranslate2", specifier = ">=4.0,<5" },
+    { name = "flake8", marker = "extra == 'dev'", specifier = "==6.*" },
+    { name = "huggingface-hub", specifier = ">=0.23" },
+    { name = "isort", marker = "extra == 'dev'", specifier = "==5.*" },
+    { name = "onnxruntime", specifier = ">=1.14,<2" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = "==7.*" },
+    { name = "tokenizers", specifier = ">=0.13,<1" },
+    { name = "tqdm" },
+    { name = "transformers", extras = ["torch"], marker = "extra == 'conversion'", specifier = ">=4.23" },
 ]
+provides-extras = ["conversion", "dev"]
 
 [[package]]
 name = "filelock"

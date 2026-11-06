@@ -63,7 +63,7 @@ make test
 make eval-synthetic
 ```
 
-The recorded synthetic results come from macOS Vision OCR. On Linux with Tesseract the same evaluation currently fails; see [the benchmark notes](docs/BENCHMARK.md#synthetic-silent-slides-on-linux-with-tesseract).
+The synthetic OCR check has recorded passes with macOS Vision and Linux Tesseract. See the [Linux fixture repair](docs/BENCHMARK.md#synthetic-silent-slides-on-linux-with-tesseract) and [real Whisper comparison](docs/BENCHMARK.md#real-whisper-three-setting-comparison) for results and limits.
 
 ## Design notes
 

@@ -1,0 +1,44 @@
+{
+  "checks": {
+    "all_four_slides_recognized": false,
+    "evidence_pack_complete": true,
+    "ocr_complete": true,
+    "transcript_explicitly_unavailable": true,
+    "visual_evidence_present": true
+  },
+  "completeness": {
+    "ocr": "complete",
+    "speaker_diarization": "unavailable",
+    "transcript": "unavailable",
+    "visual_states": "complete",
+    "word_timing": "unavailable"
+  },
+  "counts": {
+    "candidate_frames": 15,
+    "canonical_visual_states": 4,
+    "ocr_records": 4,
+    "preview_visual_states": 0,
+    "progressive_build_groups": 0,
+    "scenes": 3,
+    "scroll_groups": 0,
+    "transcript_segments": 0
+  },
+  "diagnostics": {
+    "asr_error": "no audio track",
+    "dedupe_failure_count": 0,
+    "diarization_error": null,
+    "ocr_error": null,
+    "ocr_failure_count": 0
+  },
+  "fixture": "generated-silent-four-slide-video",
+  "passed": false,
+  "recognized_text": "ALPHA PLAN BETA SYSTEM MMA DATA REVIEW",
+  "result_title": "clipmind-demo",
+  "timings": {
+    "acquisition_seconds": 0.101,
+    "asr_seconds": 0.0,
+    "ocr_seconds": 0.537,
+    "preview_seconds": 0.023,
+    "sampling_seconds": 0.265
+  }
+}

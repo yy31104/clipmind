@@ -1,0 +1,725 @@
+{
+  "all_decodes_succeeded": true,
+  "cases": {
+    "control": {
+      "audio_rms_dbfs": -30.4,
+      "audio_sha256": "5190e19c9f88040d37cf4ca9709dff15f53a4d19a30a79af07de132989bb622b",
+      "decoding": {
+        "default_guards": {
+          "elapsed_seconds": 20.4951,
+          "engine": "faster-whisper",
+          "error": null,
+          "language": "en",
+          "segments": [
+            {
+              "end": 8.76,
+              "speaker": null,
+              "start": 3.6,
+              "text": "AlphaPlan, BetaSystem, GammaNator, DeltaReview",
+              "words": [
+                {
+                  "end": 4.82,
+                  "probability": 0.6121526012818018,
+                  "start": 3.6,
+                  "text": "AlphaPlan,"
+                },
+                {
+                  "end": 6.2,
+                  "probability": 0.8563928604125977,
+                  "start": 5.16,
+                  "text": "BetaSystem,"
+                },
+                {
+                  "end": 7.44,
+                  "probability": 0.7744213789701462,
+                  "start": 6.7,
+                  "text": "GammaNator,"
+                },
+                {
+                  "end": 8.76,
+                  "probability": 0.9283700784047445,
+                  "start": 7.92,
+                  "text": "DeltaReview"
+                }
+              ]
+            }
+          ],
+          "settings": {
+            "hallucination_silence_threshold": 2.0,
+            "vad_filter": true
+          },
+          "status": "ok",
+          "text": "AlphaPlan, BetaSystem, GammaNator, DeltaReview"
+        },
+        "guards_off": {
+          "elapsed_seconds": 19.5704,
+          "engine": "faster-whisper",
+          "error": null,
+          "language": "en",
+          "segments": [
+            {
+              "end": 8.76,
+              "speaker": null,
+              "start": 3.38,
+              "text": "Alpha Plan, Beta System, Camonator, Delta Renew",
+              "words": [
+                {
+                  "end": 4.32,
+                  "probability": 0.7573490142822266,
+                  "start": 3.38,
+                  "text": "Alpha"
+                },
+                {
+                  "end": 4.76,
+                  "probability": 0.24271363019943237,
+                  "start": 4.32,
+                  "text": "Plan,"
+                },
+                {
+                  "end": 5.6,
+                  "probability": 0.935648500919342,
+                  "start": 5.08,
+                  "text": "Beta"
+                },
+                {
+                  "end": 6.08,
+                  "probability": 0.8762215971946716,
+                  "start": 5.6,
+                  "text": "System,"
+                },
+                {
+                  "end": 7.44,
+                  "probability": 0.5657898982365926,
+                  "start": 6.54,
+                  "text": "Camonator,"
+                },
+                {
+                  "end": 8.24,
+                  "probability": 0.9874381422996521,
+                  "start": 7.86,
+                  "text": "Delta"
+                },
+                {
+                  "end": 8.76,
+                  "probability": 0.5834705531597137,
+                  "start": 8.24,
+                  "text": "Renew"
+                }
+              ]
+            }
+          ],
+          "settings": {
+            "hallucination_silence_threshold": null,
+            "vad_filter": false
+          },
+          "status": "ok",
+          "text": "Alpha Plan, Beta System, Camonator, Delta Renew"
+        },
+        "vad_only": {
+          "elapsed_seconds": 7.1477,
+          "engine": "faster-whisper",
+          "error": null,
+          "language": "en",
+          "segments": [
+            {
+              "end": 8.76,
+              "speaker": null,
+              "start": 3.6,
+              "text": "AlphaPlan, BetaSystem, GammaNator, DeltaReview",
+              "words": [
+                {
+                  "end": 4.82,
+                  "probability": 0.6121526012818018,
+                  "start": 3.6,
+                  "text": "AlphaPlan,"
+                },
+                {
+                  "end": 6.2,
+                  "probability": 0.8563928604125977,
+                  "start": 5.16,
+                  "text": "BetaSystem,"
+                },
+                {
+                  "end": 7.44,
+                  "probability": 0.7744213789701462,
+                  "start": 6.7,
+                  "text": "GammaNator,"
+                },
+                {
+                  "end": 8.76,
+                  "probability": 0.9283700784047445,
+                  "start": 7.92,
+                  "text": "DeltaReview"
+                }
+              ]
+            }
+          ],
+          "settings": {
+            "hallucination_silence_threshold": null,
+            "vad_filter": true
+          },
+          "status": "ok",
+          "text": "AlphaPlan, BetaSystem, GammaNator, DeltaReview"
+        }
+      },
+      "seconds_decoded_with_default_vad": 5.79,
+      "vad_speech_spans": [
+        {
+          "end": 9.39,
+          "start": 3.6
+        }
+      ]
+    },
+    "noise": {
+      "audio_rms_dbfs": -38.9,
+      "audio_sha256": "526997a2dccec1697513131fdd1c1281f6f01ff5e45f3dcc119d1070ea72893f",
+      "decoding": {
+        "default_guards": {
+          "elapsed_seconds": 0.236,
+          "engine": "faster-whisper",
+          "error": null,
+          "language": "en",
+          "segments": [],
+          "settings": {
+            "hallucination_silence_threshold": 2.0,
+            "vad_filter": true
+          },
+          "status": "ok",
+          "text": ""
+        },
+        "guards_off": {
+          "elapsed_seconds": 38.6522,
+          "engine": "faster-whisper",
+          "error": null,
+          "language": "en",
+          "segments": [
+            {
+              "end": 5.8,
+              "speaker": null,
+              "start": 0.0,
+              "text": "Thank you.",
+              "words": [
+                {
+                  "end": 1.88,
+                  "probability": 0.18095165491104126,
+                  "start": 0.0,
+                  "text": "Thank"
+                },
+                {
+                  "end": 5.8,
+                  "probability": 0.998977780342102,
+                  "start": 1.88,
+                  "text": "you."
+                }
+              ]
+            },
+            {
+              "end": 32.0,
+              "speaker": null,
+              "start": 30.0,
+              "text": "You",
+              "words": []
+            }
+          ],
+          "settings": {
+            "hallucination_silence_threshold": null,
+            "vad_filter": false
+          },
+          "status": "ok",
+          "text": "Thank you. You"
+        },
+        "vad_only": {
+          "elapsed_seconds": 0.5609,
+          "engine": "faster-whisper",
+          "error": null,
+          "language": "en",
+          "segments": [],
+          "settings": {
+            "hallucination_silence_threshold": null,
+            "vad_filter": true
+          },
+          "status": "ok",
+          "text": ""
+        }
+      },
+      "seconds_decoded_with_default_vad": 0.0,
+      "vad_speech_spans": []
+    }
+  },
+  "checks": {
+    "all_decodes_succeeded": true,
+    "control_speech_found_where_it_was_placed": true,
+    "control_speech_is_detected": true,
+    "decoded_noise_transcript_empty_with_defaults": true,
+    "default_guards_control_word_coverage_not_worse_than_baseline": true,
+    "default_guards_retains_control_speech": true,
+    "default_guards_retains_control_timing": true,
+    "defaults_enable_vad": true,
+    "defaults_set_silence_threshold": true,
+    "guards_off_retains_control_speech": true,
+    "guards_off_retains_control_timing": true,
+    "noise_decodes_zero_seconds_so_transcript_is_empty": true,
+    "noise_has_no_detected_speech": true,
+    "noise_is_audible_not_digital_silence": true,
+    "vad_only_control_word_coverage_not_worse_than_baseline": true,
+    "vad_only_retains_control_speech": true,
+    "vad_only_retains_control_timing": true
+  },
+  "decode_errors": [],
+  "fixture": "generated-four-slide-video-30s-with-noise-bed",
+  "guard_checks_passed": true,
+  "measurements": {
+    "control_word_coverage": {
+      "default_guards": {
+        "all_expected_words_present": false,
+        "expected_unique_word_coverage": 0.875,
+        "missing_expected_words": [
+          "data"
+        ]
+      },
+      "guards_off": {
+        "all_expected_words_present": false,
+        "expected_unique_word_coverage": 0.625,
+        "missing_expected_words": [
+          "data",
+          "gamma",
+          "review"
+        ]
+      },
+      "vad_only": {
+        "all_expected_words_present": false,
+        "expected_unique_word_coverage": 0.875,
+        "missing_expected_words": [
+          "data"
+        ]
+      }
+    }
+  },
+  "model": {
+    "compute_type": "int8_float32",
+    "ctranslate2": "4.8.2",
+    "device": "cpu",
+    "faster_whisper": "1.2.1",
+    "faster_whisper_source": {
+      "archive_sha256": "9cdac00039a1cc176ef06b637e396bbf592dbb3fec591fb924c78ba443d96fd2",
+      "archive_url": "https://github.com/SYSTRAN/faster-whisper/archive/f6ef59b5e3b70d58e46641417894c3b73eaddb7a.tar.gz",
+      "transcribe_source_sha256": "a713ea26db0899687eae720ef71820f61118b37be7ab90d2582fced5ca75e759"
+    },
+    "language": "en",
+    "local_model_sha256": {
+      "config.json": "b0253ea6c0d3bea6b1e19e91a02acfd3b53f4467362efcb5a3e6b16c9b3a9b7e",
+      "model.bin": "e76620f83d5f5b69efd3d87e3dc180c1bd21df9fbebacfd4335e5e1efcc018da"
+    },
+    "local_snapshot_revision": "0a363e9161cbc7ed1431c9597a8ceaf0c4f78fcf",
+    "platform": "Linux-6.12.76-linuxkit-aarch64-with-glibc2.41",
+    "provider_entry": "clipmind.asr.FasterWhisperProvider.transcribe",
+    "python": "3.12.14",
+    "requested_model": "/models/models--mobiuslabsgmbh--faster-whisper-large-v3-turbo/snapshots/0a363e9161cbc7ed1431c9597a8ceaf0c4f78fcf",
+    "timing_note": "Sequential calls share the production model cache; the first call may include model loading. Times are not a speed comparison."
+  },
+  "model_decoding": "production provider run",
+  "passed": true,
+  "settings": {
+    "hallucination_silence_threshold": 2.0,
+    "noise_seed": 1729,
+    "speech_start_seconds": 4.0,
+    "speech_text": "Alpha plan. Beta system. Gamma data. Delta review.",
+    "vad_filter": true,
+    "vad_options": "faster_whisper.vad.VadOptions() defaults"
+  },
+  "sweep": {
+    "false_speech": [
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.06,
+        "rms_dbfs": -39.2,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.0
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.06,
+        "rms_dbfs": -34.3,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.15
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.15,
+        "rms_dbfs": -31.3,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.0
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.15,
+        "rms_dbfs": -30.0,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.15
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.3,
+        "rms_dbfs": -25.3,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.0
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.3,
+        "rms_dbfs": -24.9,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.15
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.6,
+        "rms_dbfs": -19.2,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.0
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.6,
+        "rms_dbfs": -19.1,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.15
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.06,
+        "rms_dbfs": -34.3,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.0
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.06,
+        "rms_dbfs": -32.0,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.15
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.15,
+        "rms_dbfs": -26.3,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.0
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.15,
+        "rms_dbfs": -25.9,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.15
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.3,
+        "rms_dbfs": -20.3,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.0
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.3,
+        "rms_dbfs": -20.2,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.15
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.6,
+        "rms_dbfs": -14.3,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.0
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.6,
+        "rms_dbfs": -14.2,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.15
+      },
+      {
+        "noise": "brown",
+        "noise_amplitude": 0.06,
+        "rms_dbfs": -38.4,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.0
+      },
+      {
+        "noise": "brown",
+        "noise_amplitude": 0.06,
+        "rms_dbfs": -34.0,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.15
+      },
+      {
+        "noise": "brown",
+        "noise_amplitude": 0.15,
+        "rms_dbfs": -30.4,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.0
+      },
+      {
+        "noise": "brown",
+        "noise_amplitude": 0.15,
+        "rms_dbfs": -29.4,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.15
+      },
+      {
+        "noise": "brown",
+        "noise_amplitude": 0.3,
+        "rms_dbfs": -24.4,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.0
+      },
+      {
+        "noise": "brown",
+        "noise_amplitude": 0.3,
+        "rms_dbfs": -24.1,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.15
+      },
+      {
+        "noise": "brown",
+        "noise_amplitude": 0.6,
+        "rms_dbfs": -18.4,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.0
+      },
+      {
+        "noise": "brown",
+        "noise_amplitude": 0.6,
+        "rms_dbfs": -18.3,
+        "speech_seconds": 0.0,
+        "speech_spans": 0,
+        "tone_volume": 0.15
+      }
+    ],
+    "missed_speech": [
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.06,
+        "snr_db": 15.6,
+        "speech_seconds_kept": 5.8,
+        "speech_spans": 1,
+        "speech_volume": 0.8
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.06,
+        "snr_db": 7.1,
+        "speech_seconds_kept": 5.8,
+        "speech_spans": 1,
+        "speech_volume": 0.3
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.06,
+        "snr_db": -2.4,
+        "speech_seconds_kept": 5.9,
+        "speech_spans": 1,
+        "speech_volume": 0.1
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.15,
+        "snr_db": 7.7,
+        "speech_seconds_kept": 5.8,
+        "speech_spans": 1,
+        "speech_volume": 0.8
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.15,
+        "snr_db": -0.8,
+        "speech_seconds_kept": 5.9,
+        "speech_spans": 1,
+        "speech_volume": 0.3
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.15,
+        "snr_db": -10.4,
+        "speech_seconds_kept": 0.0,
+        "speech_spans": 0,
+        "speech_volume": 0.1
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.3,
+        "snr_db": 1.7,
+        "speech_seconds_kept": 5.9,
+        "speech_spans": 1,
+        "speech_volume": 0.8
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.3,
+        "snr_db": -6.9,
+        "speech_seconds_kept": 5.5,
+        "speech_spans": 1,
+        "speech_volume": 0.3
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.3,
+        "snr_db": -16.4,
+        "speech_seconds_kept": 0.0,
+        "speech_spans": 0,
+        "speech_volume": 0.1
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.6,
+        "snr_db": -4.4,
+        "speech_seconds_kept": 5.9,
+        "speech_spans": 1,
+        "speech_volume": 0.8
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.6,
+        "snr_db": -12.9,
+        "speech_seconds_kept": 0.0,
+        "speech_spans": 0,
+        "speech_volume": 0.3
+      },
+      {
+        "noise": "pink",
+        "noise_amplitude": 0.6,
+        "snr_db": -22.4,
+        "speech_seconds_kept": 0.0,
+        "speech_spans": 0,
+        "speech_volume": 0.1
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.06,
+        "snr_db": 10.8,
+        "speech_seconds_kept": 5.7,
+        "speech_spans": 1,
+        "speech_volume": 0.8
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.06,
+        "snr_db": 2.2,
+        "speech_seconds_kept": 5.7,
+        "speech_spans": 1,
+        "speech_volume": 0.3
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.06,
+        "snr_db": -7.3,
+        "speech_seconds_kept": 5.6,
+        "speech_spans": 1,
+        "speech_volume": 0.1
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.15,
+        "snr_db": 2.8,
+        "speech_seconds_kept": 5.7,
+        "speech_spans": 1,
+        "speech_volume": 0.8
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.15,
+        "snr_db": -5.7,
+        "speech_seconds_kept": 5.9,
+        "speech_spans": 1,
+        "speech_volume": 0.3
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.15,
+        "snr_db": -15.3,
+        "speech_seconds_kept": 0.0,
+        "speech_spans": 0,
+        "speech_volume": 0.1
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.3,
+        "snr_db": -3.2,
+        "speech_seconds_kept": 5.9,
+        "speech_spans": 1,
+        "speech_volume": 0.8
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.3,
+        "snr_db": -11.7,
+        "speech_seconds_kept": 0.0,
+        "speech_spans": 0,
+        "speech_volume": 0.3
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.3,
+        "snr_db": -21.3,
+        "speech_seconds_kept": 0.0,
+        "speech_spans": 0,
+        "speech_volume": 0.1
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.6,
+        "snr_db": -9.2,
+        "speech_seconds_kept": 1.9,
+        "speech_spans": 1,
+        "speech_volume": 0.8
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.6,
+        "snr_db": -17.8,
+        "speech_seconds_kept": 0.0,
+        "speech_spans": 0,
+        "speech_volume": 0.3
+      },
+      {
+        "noise": "white",
+        "noise_amplitude": 0.6,
+        "snr_db": -27.3,
+        "speech_seconds_kept": 0.0,
+        "speech_spans": 0,
+        "speech_volume": 0.1
+      }
+    ]
+  },
+  "tools": {
+    "espeak_ng": true,
+    "faster_whisper": "1.2.1",
+    "ffmpeg": true
+  }
+}

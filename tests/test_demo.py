@@ -6,6 +6,7 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from clipmind import cli, demo
 from clipmind.links import extract_sources
@@ -17,6 +18,33 @@ needs_ffmpeg = unittest.skipUnless(
     shutil.which("ffmpeg") and shutil.which("ffprobe"),
     "ffmpeg/ffprobe not installed",
 )
+
+
+class SampleLayoutTests(unittest.TestCase):
+    def test_every_heading_has_white_space_behind_it_and_fits_on_the_slide(self) -> None:
+        """Inspect the actual rendered slides, without requiring an encoder."""
+        from PIL import Image
+
+        with tempfile.TemporaryDirectory() as tempdir:
+            root = Path(tempdir)
+            with patch.object(demo.subprocess, "run"):
+                demo.build_sample_video(root)
+            for index, (label, _) in enumerate(demo.SLIDES):
+                with self.subTest(label=label), Image.open(root / f"slide-{index}.png") as image:
+                    panel_right = max(
+                        x for x in range(image.width)
+                        if image.getpixel((x, 0)) != (255, 255, 255)
+                    )
+                    # All panels are lighter than this cutoff; only the black
+                    # heading contributes ink, even when it overlaps a panel.
+                    ink = image.convert("L").point(lambda value: 255 if value < 24 else 0)
+                    bounds = ink.getbbox()
+                    self.assertIsNotNone(bounds, "the heading was not rendered")
+                    left, top, right, bottom = bounds
+                    self.assertGreater(left, panel_right + 30)
+                    self.assertLess(right, image.width - 30)
+                    self.assertGreater(top, 30)
+                    self.assertLess(bottom, image.height - 30)
 
 
 @needs_ffmpeg
