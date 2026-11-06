@@ -38,8 +38,9 @@ jobs:
   ocr-linux:
     # Run the actual decoder and OCR provider: import-only and stubbed unit
     # checks cannot catch unreadable generated slides.
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # Keep the OCR fixture gate on a fixed LTS; other Linux jobs track latest.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     env:
       PYTHON_DOTENV_DISABLED: "1"
       CLIPMIND_OCR_PROVIDER: tesseract
@@ -49,7 +50,7 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      - run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-dejavu-core tesseract-ocr tesseract-ocr-eng tesseract-ocr-chi-sim tesseract-ocr-chi-tra
+      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg fonts-dejavu-core tesseract-ocr tesseract-ocr-eng tesseract-ocr-chi-sim tesseract-ocr-chi-tra
       - run: python -m pip install -r requirements-test.txt pytesseract
       - run: python scripts/evaluate_silent_slides.py --output linux-ocr-eval.json
       - uses: actions/upload-artifact@v4
