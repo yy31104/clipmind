@@ -19,7 +19,7 @@ import sys
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
-from scripts.screen_evaluation import sha256
+from scripts.screen_evaluation import sha256, case_source_url
 
 FIELDS = ("annotation_id", "case_id", "kind", "clip_seconds", "source_seconds",
           "description", "reference_text", "decision", "corrected_seconds", "corrected_text", "notes")
@@ -66,7 +66,7 @@ def annotation_rows(corpus: dict, labels: dict) -> list[dict]:
                          "source_seconds": case["sample_start_seconds"] + timestamp,
                          "description": description, "reference_text": text, "roi": roi, "duration": duration,
                          "decision": "", "corrected_seconds": "", "corrected_text": "", "notes": "",
-                         "title": case.get("title", identity), "source_url": case.get("page_url", ""),
+                         "title": case.get("title", identity), "source_url": case_source_url(case),
                          "license": case.get("license", corpus.get("license", "See corpus source attribution"))})
     return rows
 

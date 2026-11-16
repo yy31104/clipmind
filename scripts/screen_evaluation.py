@@ -29,8 +29,8 @@ def boundary_inventory(reference: list[float], states: list[dict], *,
     """Keep every event while using the existing sorted one-to-one matcher.
 
     Missing or unfamiliar change kinds are included conservatively. Only an
-    explicit non-information kind can remove a state from the information
-    score; it remains in the inventory and in the canonical control.
+    explicit non-information kind without extraction warnings can remove a
+    state from the information score; it remains in the canonical control.
     """
     truth = [{"id": f"reference-{index:04d}", "timestamp": float(value)}
              for index, value in enumerate(sorted(reference), 1)]
@@ -40,10 +40,12 @@ def boundary_inventory(reference: list[float], states: list[dict], *,
         if not start < timestamp < end:
             continue
         kind = state.get("change_kind")
-        included = not information_only or not isinstance(kind, str) or kind not in NON_INFORMATION_KINDS
+        warning = any(state.get(key) for key in ("dedupe_warning", "ocr_warning", "ocr_error", "error"))
+        included = (not information_only or warning or not isinstance(kind, str)
+                    or kind not in NON_INFORMATION_KINDS)
         guesses.append({"id": f"prediction-{index:04d}", "timestamp": timestamp,
                         "visual_state_id": state.get("id"), "change_kind": kind,
-                        "included": included})
+                        "extraction_warning": warning, "included": included})
     guesses.sort(key=lambda row: row["timestamp"])
     eligible = [row for row in guesses if row["included"]]
     i = j = 0
@@ -86,6 +88,14 @@ def reserve_record(path: Path, record: dict) -> None:
     with path.open("x", encoding="utf-8") as stream:
         json.dump(record, stream, ensure_ascii=False, indent=2, allow_nan=False)
         stream.write("\n")
+
+
+def case_source_url(case: dict) -> str:
+    for key in ("page_url", "source_page", "source_url"):
+        value = case.get(key)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+    return ""
 
 
 def safe_report(value, workdir: Path):

@@ -137,6 +137,17 @@ class BoundaryInventoryTests(unittest.TestCase):
         event["source_frames"] = ["before.jpg", "after.jpg"]
         self.assertEqual(screen.attribution_summary([event])["reviewed"], 1)
 
+    def test_warned_non_information_states_remain_in_the_information_score(self):
+        states = [{"id": str(index), "start": index + 1, "change_kind": kind,
+                   warning: "observation failed"}
+                  for index, (kind, warning) in enumerate([
+                      ("speaker", "dedupe_warning"), ("layout", "ocr_warning"),
+                      ("animation", "ocr_error"), ("speaker", "error")])]
+        states.append({"id": "clean", "start": 5, "change_kind": "speaker"})
+        result = screen.boundary_inventory([], states, start=0, end=10, information_only=True)
+        self.assertEqual(result["score"]["prediction_count"], 4)
+        self.assertEqual([row["included"] for row in result["predictions"]], [True] * 4 + [False])
+
     def test_report_reservation_and_campaign_tokens_never_replace_an_old_attempt(self):
         with tempfile.TemporaryDirectory() as temporary:
             path = Path(temporary) / "once.json"

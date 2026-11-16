@@ -135,7 +135,7 @@ class Settings:
 
     # --- OCR provider ---
     ocr_provider: str = "auto"
-    tesseract_languages: str = "chi_sim+chi_tra+eng"
+    tesseract_languages: str = "eng+chi_sim+chi_tra"
 
     # --- concurrency ---
     # Distinct resource pools so one heavy stage cannot starve the others.
@@ -212,7 +212,7 @@ class Settings:
             diarization_token=os.getenv("HF_TOKEN") or None,
             ocr_provider=os.getenv("CLIPMIND_OCR_PROVIDER", "auto").casefold(),
             tesseract_languages=os.getenv(
-                "CLIPMIND_TESSERACT_LANGUAGES", "chi_sim+chi_tra+eng"
+                "CLIPMIND_TESSERACT_LANGUAGES", "eng+chi_sim+chi_tra"
             ),
             max_videos=_int("CLIPMIND_MAX_VIDEOS", 4),
             max_fetch=_int("CLIPMIND_MAX_FETCH", 4),

@@ -1,4 +1,5 @@
 import unittest
+import os
 import tempfile
 import hashlib
 import threading
@@ -11,6 +12,7 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 from clipmind import ocr
+from clipmind.config import Settings
 
 
 def _controlled_vision_command():
@@ -354,6 +356,17 @@ class LayoutOrderTests(unittest.TestCase):
                 ).recognize(path)
         self.assertEqual(result.lines, ["left", "right"])
         self.assertEqual(result.blocks[0].bbox, (0.05, 0.25, 0.15, 0.0625))
+
+
+class TesseractLanguageConfigurationTests(unittest.TestCase):
+    def test_default_prefers_english_and_keeps_both_chinese_models(self):
+        with patch.dict(os.environ, {}, clear=True):
+            self.assertEqual(Settings().tesseract_languages, "eng+chi_sim+chi_tra")
+            self.assertEqual(Settings.from_env().tesseract_languages, "eng+chi_sim+chi_tra")
+
+    def test_explicit_language_order_is_preserved(self):
+        with patch.dict(os.environ, {"CLIPMIND_TESSERACT_LANGUAGES": "chi_tra+eng"}):
+            self.assertEqual(Settings.from_env().tesseract_languages, "chi_tra+eng")
 
 
 if __name__ == "__main__":
