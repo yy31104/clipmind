@@ -299,7 +299,18 @@ function costEstimate(job) {
     <div><dt>Visual states</dt><dd>About ${value.estimated_canonical_states}</dd></div>
     <div><dt>OCR</dt><dd>About ${value.estimated_ocr_seconds} seconds</dd></div>
     <div><dt>Evidence Pack</dt><dd>About ${value.estimated_pack_mb} MB</dd></div>
+    ${analysisTime(value) ? `<div><dt>Analysis time</dt><dd>${analysisTime(value)}</dd></div>` : ""}
   </dl>`;
+}
+
+function analysisTime(value) {
+  const range = value?.estimated_analysis_seconds;
+  if (!Array.isArray(range) || range.length !== 2 || !range.every(Number.isFinite)) return "";
+  const [lower, upper] = range;
+  const interval = upper < 60
+    ? `${Math.ceil(lower)}–${Math.ceil(upper)} seconds`
+    : `${Math.max(1, Math.ceil(lower / 60))}–${Math.ceil(upper / 60)} minutes`;
+  return `<div class="hint">Estimated analysis time: about ${interval}. ${esc(value.time_estimate_note || "")}</div>`;
 }
 
 function jobCard(job) {
@@ -320,6 +331,7 @@ function jobCard(job) {
     </div>
     ${source}
     <div class="job-note">${esc(STAGE_LABEL[job.stage] || job.stage)}${job.note ? ` / ${esc(job.note)}` : ""}</div>
+    ${!failed ? analysisTime(job.processing_estimate) : ""}
     ${failed
       ? `<div class="job-error">${esc(job.error || "")}</div>
          ${costEstimate(job)}
@@ -378,7 +390,11 @@ function contentBadge(frame) {
 }
 
 function frameBadges(frame) {
-  return `${contentBadge(frame)}${unspokenBadge(frame)}`;
+  const kinds = { content: "Screen change", build: "Progressive build", speaker: "Speaker motion", layout: "Camera layout", animation: "Animation", uncertain: "Uncertain change" };
+  const kind = kinds[frame.change_kind];
+  const capture = Number.isFinite(frame.source_timestamp) && Math.abs(frame.source_timestamp - frame.timestamp) > 0.05
+    ? `<span class="content-hint" title="The state starts earlier; this is the actual screenshot time.">Image at ${frame.source_timestamp.toFixed(2)}s</span>` : "";
+  return `${capture}${kind ? `<span class="content-hint" title="${esc(frame.change_reason || "")}">${kind}</span>` : ""}${contentBadge(frame)}${unspokenBadge(frame)}`;
 }
 
 // Speech this close to a screenshot is shown beside it: long enough to cover

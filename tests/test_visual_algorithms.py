@@ -66,7 +66,8 @@ class SamplingTests(unittest.IsolatedAsyncioTestCase):
                 Path("video.mp4"), Path(tempdir), width=1280
             )
 
-        self.assertIn("fps=3.0,scale=1280:-2", captured)
+        self.assertIn("scale=1280:-2,showinfo", captured[captured.index("-vf") + 1])
+        self.assertIn("select=", captured[captured.index("-vf") + 1])
         self.assertEqual([(frame.index, frame.timestamp) for frame in frames], [(0, 0.0)])
 
 
@@ -109,6 +110,13 @@ class OCRAnnotationTests(unittest.IsolatedAsyncioTestCase):
 
 
 class DedupeTests(unittest.TestCase):
+    def setUp(self) -> None:
+        # These unit tests isolate the original coarse-hash fallback. Actual
+        # image/detail behavior is exercised by the screen-capture fixtures.
+        detail = patch.object(media, "_detail_signature", return_value=media.np.zeros((180, 320)))
+        detail.start()
+        self.addCleanup(detail.stop)
+
     def test_dedupe_compares_against_the_last_kept_frame(self) -> None:
         frames = [make_frame(index) for index in range(3)]
 

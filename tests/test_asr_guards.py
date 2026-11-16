@@ -19,6 +19,16 @@ from clipmind.config import Settings
 
 
 class SettingsFromEnvTests(unittest.TestCase):
+    def test_language_defaults_to_detection_without_an_environment_override(self) -> None:
+        with patch.dict(os.environ, {}, clear=True):
+            self.assertIsNone(Settings().asr_language)
+            self.assertIsNone(Settings.from_env().asr_language)
+
+    def test_language_override_and_explicit_detection(self) -> None:
+        for value, expected in (("en", "en"), ("zh", "zh"), ("", None), ("auto", None)):
+            with self.subTest(value=value), patch.dict(os.environ, {"CLIPMIND_ASR_LANGUAGE": value}):
+                self.assertEqual(Settings.from_env().asr_language, expected)
+
     def test_guards_default_on(self) -> None:
         with patch.dict(os.environ, {}, clear=False):
             os.environ.pop("CLIPMIND_ASR_VAD_FILTER", None)
@@ -85,6 +95,11 @@ class ProviderWiringTests(unittest.TestCase):
         kwargs = self._faster(config)
         self.assertFalse(kwargs["vad_filter"])
         self.assertIsNone(kwargs["hallucination_silence_threshold"])
+
+    def test_faster_whisper_receives_language_detection_and_override(self) -> None:
+        for language in (None, "en", "zh"):
+            with self.subTest(language=language):
+                self.assertEqual(self._faster(replace(Settings(), asr_language=language))["language"], language)
 
     def _mlx(self, config: Settings, *, legacy: bool = False) -> list[dict]:
         calls: list[dict] = []

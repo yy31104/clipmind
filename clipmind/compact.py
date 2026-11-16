@@ -83,6 +83,9 @@ def _load_frames(pack: Path, timeline: list[dict], records: list[dict], *, hash_
             raise evidence.EvidencePackError("duplicate canonical image name")
         names.add(path.name.casefold())
         frame = media.Frame(index, row["start"], path,
+            source_timestamp=row.get("source_timestamp"),
+            change_kind=row.get("change_kind", "uncertain"),
+            change_reason=row.get("change_reason", ""),
             text=text["text"], lines=tuple(text.get("lines", ())),
             ocr_layout=tuple(text.get("layout", ())), ocr_warning=text.get("error"),
             dedupe_warning=row.get("dedupe_warning"),

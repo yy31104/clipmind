@@ -14,11 +14,98 @@ from typing import Iterable
 import numpy as np
 from PIL import Image
 
-from . import media, ocr
+from . import media, ocr, screen_faces, screen_motion
 from .media import Frame
 from .providers import TextRecognizer
 
 PREVIEW_ALGORITHM = "adaptive-scene-text-v2"
+INFORMATION_BOUNDARY_ALGORITHM = "supported-pane-layout-v2"
+
+
+def _screen_lines(frame: Frame, overlays: set[str]) -> tuple[str, ...]:
+    return tuple(text for line in frame.lines
+                 if (text := "".join(unicodedata.normalize("NFKC", line).split()))
+                 and text not in overlays
+                 and not (len(text) <= 8 and any(value.startswith(text) for value in overlays if len(value) <= 8)))
+
+
+def _screen_layout(frame: Frame, lines: tuple[str, ...]) -> dict[str, tuple]:
+    return {text: tuple(block["bbox"]) for block in frame.ocr_layout
+            if (text := "".join(unicodedata.normalize("NFKC", block.get("text", "")).split())) in lines
+            and isinstance(block.get("bbox"), (list, tuple)) and len(block["bbox"]) == 4}
+
+
+def _same_viewport(earlier: Frame, later: Frame, old_layout: dict, layout: dict) -> bool:
+    """Confirm unchanged image content under the text's camera transform."""
+    common = old_layout.keys() & layout.keys()
+    if len(common) < 2:
+        return False
+    try:
+        import cv2
+        sx = statistics.median(layout[text][2] / old_layout[text][2] for text in common if old_layout[text][2] > 0)
+        sy = statistics.median(layout[text][3] / old_layout[text][3] for text in common if old_layout[text][3] > 0)
+        tx = statistics.median(layout[text][0] - sx * old_layout[text][0] for text in common)
+        ty = statistics.median(layout[text][1] - sy * old_layout[text][1] for text in common)
+        before, after = media._detail_signature(earlier.path), media._detail_signature(later.path)
+        transform = np.array([[sx, 0, tx*320], [0, sy, ty*180]], dtype=np.float32)
+        aligned = cv2.warpAffine(before.astype(np.float32), transform, (320, 180))
+        overlap = cv2.warpAffine(np.ones_like(before, dtype=np.uint8), transform, (320, 180)).astype(bool)
+        for x, y, width, height in (*screen_faces.boxes(earlier.path), *screen_faces.boxes(later.path)):
+            overlap[max(0, int((y-height)*180)):min(180, int((y+6*height)*180)+1),
+                    max(0, int((x-width)*320)):min(320, int((x+2*width)*320)+1)] = False
+        return np.count_nonzero(overlap) >= overlap.size * 0.4 and np.mean(np.abs(aligned[overlap]-after[overlap]) > 32) < 0.002
+    except (ImportError, OSError, ValueError):
+        return False
+
+
+def annotate_change_kinds(frames: list[Frame]) -> None:
+    """Distinguish information from camera/motion without deleting any frame.
+
+    OCR failure and unclear image-only changes stay uncertain and therefore
+    count as information boundaries. Repeated headers are ignored for this
+    comparison only; the original OCR and images stay in the pack.
+    """
+    if not frames:
+        return
+    frequency = Counter(text for frame in frames for text in set(_screen_lines(frame, set())))
+    edge_text = {text for frame in frames for text, box in _screen_layout(frame, _screen_lines(frame, set())).items()
+                 if box[1] < 0.06 or box[1] + box[3] > 0.94 or (box[0] + box[2] > 0.94 and box[2] < 0.25 and box[1] < 0.3)}
+    overlays = {text for text, count in frequency.items()
+                if len(text) <= 32 and text in edge_text and count >= max(3, 0.4 * len(frames))}
+    motion = screen_motion.screen_motion_evidence(frames)
+    anchor: Frame | None = None
+    anchor_lines: tuple[str, ...] = ()
+    for position, frame in enumerate(frames):
+        frame.change_kind, frame.change_reason = "uncertain", "Unresolved visual change."
+        lines = _screen_lines(frame, overlays)
+        if position == 0:
+            frame.change_kind, frame.change_reason = "content", "Initial screen."
+        elif frame.ocr_warning or frame.dedupe_warning:
+            frame.change_reason = "Recognition or comparison failed; boundary retained."
+        elif motion[frame.index].kind == "speaker":
+            frame.change_kind = "speaker"
+            frame.change_reason = motion[frame.index].reason
+        elif not lines:
+            # Empty OCR, or a repeated title alone, cannot prove a speaker:
+            # a new diagram may have no readable text at all.
+            frame.change_reason = "No new readable text; image-only change remains unresolved."
+        elif anchor is not None and anchor_lines:
+            old, new = "\n".join(anchor_lines), "\n".join(lines)
+            common = set(anchor_lines) & set(lines)
+            layout = _screen_layout(frame, lines)
+            old_layout = _screen_layout(anchor, anchor_lines)
+            offsets = [abs(layout[text][axis] - old_layout[text][axis])
+                       for text in common & layout.keys() & old_layout.keys() for axis in (0, 1, 2, 3)]
+            if old == new and offsets and max(offsets) > 0.04 and _same_viewport(anchor, frame, old_layout, layout):
+                frame.change_kind, frame.change_reason = "layout", "Same screen text in a different camera layout."
+            elif len(new) > len(old) and common and sum(len(text) for text in common) >= 0.75 * len(old.replace("\n", "")):
+                frame.change_kind, frame.change_reason = "build", "Persistent text added to the preceding screen."
+            elif old != new:
+                frame.change_kind, frame.change_reason = "content", "Screen text changed."
+        else:
+            frame.change_kind, frame.change_reason = "content", "Screen information appears."
+        if lines and frame.change_kind in {"content", "build", "uncertain"}:
+            anchor, anchor_lines = frame, lines
 
 
 @dataclass(frozen=True)
@@ -148,13 +235,24 @@ def _extends(
     window: float,
     coverage: float,
 ) -> bool:
-    earlier_chars = _characters(earlier)
-    later_chars = _characters(later)
+    earlier_chars = Counter(character for character in "".join(earlier.lines) if not character.isspace())
+    later_chars = Counter(character for character in "".join(later.lines) if not character.isspace())
+    # Repeated punctuation/keywords do not establish a monotonic build: the
+    # earlier lines must still occur in the same order, with their values.
+    later_lines = [re.findall(r"\w+|[^\w\s]", unicodedata.normalize("NFKC", line)) for line in later.lines]
+    offset = 0
+    for line in earlier.lines:
+        value = re.findall(r"\w+|[^\w\s]", unicodedata.normalize("NFKC", line))
+        found = next((i for i in range(offset, len(later_lines))
+                      if value and later_lines[i][:len(value)] == value), None)
+        if found is None:
+            return False
+        offset = found + 1
     return (
         bool(earlier_chars)
         and later.timestamp - earlier.timestamp <= window
-        and len(later_chars) > len(earlier_chars)
-        and len(earlier_chars & later_chars) >= coverage * len(earlier_chars)
+        and later_chars.total() > earlier_chars.total()
+        and (earlier_chars & later_chars).total() >= coverage * earlier_chars.total()
     )
 
 
@@ -299,15 +397,31 @@ async def annotate(
         async with ocr_semaphore:
             try:
                 rich_reader = getattr(recognizer, "recognize", None)
+                reader = rich_reader or (recognizer.read_text if recognizer is not None else ocr.read_text)
+                reading = asyncio.create_task(asyncio.to_thread(reader, frame.path))
+                try:
+                    value = await asyncio.shield(reading)
+                except asyncio.CancelledError:
+                    # The thread owns temporary OCR images until it returns.
+                    # Repeated cancellation must not race their cleanup.
+                    while not reading.done():
+                        try:
+                            await asyncio.shield(reading)
+                        except asyncio.CancelledError:
+                            continue
+                        except Exception:
+                            break
+                    if not reading.cancelled():
+                        reading.exception()
+                    raise
                 if rich_reader is not None:
-                    result = await asyncio.to_thread(rich_reader, frame.path)
+                    result = value
                     lines = list(result.lines)
                     frame.ocr_layout = tuple(
                         block.public() for block in result.blocks
                     )
                 else:
-                    reader = recognizer.read_text if recognizer is not None else ocr.read_text
-                    lines = await asyncio.to_thread(reader, frame.path)
+                    lines = value
             except Exception as exc:  # noqa: BLE001
                 frame.ocr_warning = (
                     f"{type(exc).__name__}: OCR failed; image retained"
@@ -345,7 +459,7 @@ def retain_all(
 def group_progressive_builds(
     frames: list[Frame],
     *,
-    window: float = 6.0,
+    window: float = 30.0,
     coverage: float = 0.8,
 ) -> list[BuildGroup]:
     """Label adjacent monotonic OCR builds without removing canonical states.

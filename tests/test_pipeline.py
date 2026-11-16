@@ -420,6 +420,26 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse((self.workdir / "samples").exists())
         self.assertFalse(self.source_path.exists())
 
+    async def test_time_estimate_is_saved_and_reported_before_audio_or_analysis(self) -> None:
+        events = []
+        observed = {}
+
+        async def inspect_audio(video, dest):
+            self.assertTrue(any(stage == "preflight" for stage, _, _ in events))
+            observed.update(json.loads((self.workdir / "preflight.json").read_text()))
+            self.assertIsInstance(observed["estimated_analysis_seconds"], list)
+            return await self.fake_extract_audio(video, dest)
+
+        with self.patched_pipeline(extract_audio=inspect_audio, write_all=pipeline.render.write_all):
+            await pipeline.process("https://example.org/video", self.workdir, self.pools(),
+                                   lambda *event: events.append(event))
+        preflight_event = next(note for stage, _, note in events if stage == "preflight")
+        self.assertIn("Estimated analysis time:", preflight_event)
+        self.assertIn("model downloads are extra", preflight_event)
+        manifest = json.loads((self.workdir / "manifest.json").read_text())
+        self.assertEqual(manifest["configuration"]["preflight"]["estimated_analysis_seconds"],
+                         observed["estimated_analysis_seconds"])
+
     async def test_force_produces_a_complete_untruncated_pack(self) -> None:
         configured = Settings(
             max_canonical_states=0,
@@ -560,7 +580,8 @@ class PipelineTests(unittest.IsolatedAsyncioTestCase):
             for index in range(2):
                 path = dest_dir / f"sample-{index}.jpg"
                 prefix = "high-" if width else ""
-                path.write_bytes(f"{prefix}state-{index}".encode())
+                from PIL import Image
+                Image.new("RGB", (32, 24), "white" if index else "black").save(path)
                 frames.append(Frame(index=index, timestamp=float(index), path=path))
             return frames
 

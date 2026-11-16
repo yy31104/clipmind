@@ -1,0 +1,134 @@
+from pathlib import Path
+import asyncio
+import shutil
+import subprocess
+import tempfile
+import unittest
+
+from PIL import Image, ImageDraw
+
+from clipmind import media, visual_states
+from clipmind.media import Frame
+
+
+class IncrementalScreenTests(unittest.TestCase):
+    def test_settled_image_keeps_interval_onset_and_its_own_capture_time(self):
+        with tempfile.TemporaryDirectory() as directory:
+            frames = []
+            for index, (timestamp, level) in enumerate(((0, 15), (0.5, 20), (1, 25), (3, 30))):
+                path = Path(directory)/f'{index}.png'
+                image = Image.new('RGB', (640, 360), (level, level, level))
+                ImageDraw.Draw(image).text((30, 90), 'A stable information page', fill='white')
+                image.save(path)
+                frames.append(Frame(index, timestamp, path, source_timestamp=timestamp))
+            kept = media.dedupe(frames)
+            self.assertEqual(len(kept), 1)
+            self.assertEqual(kept[0].timestamp, 0)
+            self.assertEqual(kept[0].source_timestamp, 1)
+            self.assertEqual(kept[0].path.name, '2.png')
+            self.assertEqual(kept[0].stable_duration, 3)
+
+    def test_repeated_characters_still_form_a_complete_build(self):
+        frames = [Frame(0, 0, Path('a.jpg'), lines=('x = x + x',)),
+                  Frame(1, 12, Path('b.jpg'), lines=('x = x + x', 'x = x + x'))]
+        groups = visual_states.group_progressive_builds(frames)
+        self.assertEqual(len(groups), 1)
+        self.assertIs(groups[0].representative, frames[1])
+
+    def test_replaced_values_are_not_a_monotonic_build(self):
+        frames = [Frame(0, 0, Path('a.jpg'), lines=('print(1)',)),
+                  Frame(1, 12, Path('b.jpg'), lines=('print(2)', 'print(2)'))]
+        self.assertEqual(visual_states.group_progressive_builds(frames), [])
+
+    @unittest.skipUnless(shutil.which('ffmpeg'), 'needs local FFmpeg')
+    def test_sample_image_and_capture_time_refer_to_the_same_source_frame(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for index in range(10):
+                Image.new('RGB', (64, 64), 'white' if index < 2 else 'red').save(root/f'{index:02d}.png')
+            subprocess.run(['ffmpeg', '-v', 'error', '-framerate', '10', '-i', str(root/'%02d.png'),
+                            '-c:v', 'ffv1', str(root/'input.mkv')], check=True)
+            frames = asyncio.run(media.sample_frames(root/'input.mkv', root/'sampled', fps=2, width=64))
+            self.assertEqual([frame.source_timestamp for frame in frames], [0.0, 0.5])
+            with Image.open(frames[0].path) as image:
+                self.assertGreater(min(image.getpixel((32, 32))), 240)
+
+    @unittest.skipUnless(shutil.which('ffmpeg'), 'needs local FFmpeg')
+    def test_sampling_uses_fixed_time_buckets_without_accumulating_frame_rounding(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            subprocess.run(['ffmpeg', '-v', 'error', '-f', 'lavfi', '-i', 'color=white:s=64x64:r=25:d=4',
+                            '-c:v', 'ffv1', str(root/'input.mkv')], check=True)
+            frames = asyncio.run(media.sample_frames(root/'input.mkv', root/'sampled', fps=2, width=64))
+            self.assertEqual(len(frames), 8)
+            self.assertEqual([frame.source_timestamp for frame in frames], [0, 0.52, 1, 1.52, 2, 2.52, 3, 3.52])
+
+    def test_layout_and_new_code_are_distinguished_without_removing_frames(self):
+        lines = ('let receiver = channel();', 'send(receiver, 1);')
+        with tempfile.TemporaryDirectory() as directory:
+            frames = []
+            for index, x in enumerate((0.1, 0.25, 0.25)):
+                text = lines if index < 2 else (*lines, 'send(receiver, 2);')
+                path = Path(directory)/f'{index}.png'
+                image = Image.new('RGB', (640, 360), '#171717')
+                draw = ImageDraw.Draw(image)
+                for i, line in enumerate(text):
+                    draw.text((int(x*640), int((0.3+i*0.08)*360)), line, fill='white')
+                image.save(path)
+                frame = Frame(index, index, path, lines=text)
+                frame.ocr_layout = tuple({'text': line, 'bbox': [x, 0.3 + i * 0.08, 0.5, 0.05]}
+                                         for i, line in enumerate(frame.lines))
+                frames.append(frame)
+            visual_states.annotate_change_kinds(frames)
+            self.assertEqual([frame.change_kind for frame in frames], ['content', 'layout', 'build'])
+            self.assertEqual(len(frames), 3)
+
+    def test_unreadable_or_image_only_change_stays_uncertain(self):
+        frames = [Frame(0, 0, Path('a.jpg'), lines=('A page',)),
+                  Frame(1, 1, Path('b.jpg'), ocr_warning='OCR failed'),
+                  Frame(2, 2, Path('c.jpg'))]
+        visual_states.annotate_change_kinds(frames)
+        self.assertEqual([frame.change_kind for frame in frames[1:]], ['uncertain', 'uncertain'])
+
+    def test_small_persistent_code_additions_survive_global_hash_deduplication(self):
+        with tempfile.TemporaryDirectory() as directory:
+            frames = []
+            for index, lines in enumerate((1, 1, 2, 2, 3, 3)):
+                path = Path(directory) / f'{index}.png'
+                image = Image.new('RGB', (640, 360), '#171717')
+                draw = ImageDraw.Draw(image)
+                draw.text((35, 25), 'Sending a message', fill='white')
+                for line in range(lines):
+                    draw.text((35, 130 + line * 18), f'send_message(connection, {line}, data);', fill='white')
+                image.save(path)
+                frames.append(Frame(index, index / 2, path, source_timestamp=index / 2))
+            self.assertLessEqual(media.hamming(media.dhash(frames[0].path), media.dhash(frames[-1].path)), 6)
+            kept = media.dedupe(frames)
+            self.assertEqual([frame.timestamp for frame in kept], [0, 1, 2])
+            self.assertEqual(kept[-1].source_timestamp, 2)
+            self.assertEqual(kept[-1].observed_sample_count, 2)
+            # Reading representatives may compact a build; the saved states
+            # and their information times still include each addition.
+            for frame, count in zip(kept, (1, 2, 3)):
+                frame.lines = tuple(f'line {i}' for i in range(count))
+            group = visual_states.group_progressive_builds(kept)[0]
+            self.assertIs(group.representative, kept[-1])
+            self.assertEqual(len(kept), 3)
+
+    def test_one_sample_pixel_flash_does_not_become_a_detail_build(self):
+        with tempfile.TemporaryDirectory() as directory:
+            frames = []
+            for index in range(4):
+                image = Image.new('RGB', (640, 360), 'black')
+                draw = ImageDraw.Draw(image)
+                draw.text((30, 30), 'Persistent page', fill='white')
+                if index == 1:
+                    draw.text((30, 150), 'compression flash', fill='white')
+                path = Path(directory) / f'{index}.png'
+                image.save(path)
+                frames.append(Frame(index, index / 2, path))
+            self.assertEqual(len(media.dedupe(frames)), 1)
+
+
+if __name__ == '__main__':
+    unittest.main()

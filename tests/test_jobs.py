@@ -1,4 +1,5 @@
 import asyncio
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -193,6 +194,25 @@ class JobStoreTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(job.error_code, "cost_limit_exceeded")
         self.assertEqual(job.error_details["estimated_canonical_states"], 1)
         self.assertIn("Process anyway", job.error_action)
+
+    async def test_processing_estimate_survives_later_progress_and_reload(self) -> None:
+        value = {"estimated_analysis_seconds": [30, 300], "time_estimate_basis": "portable ASR on CPU"}
+
+        async def measured_process(url, workdir, pools, report, **kwargs):
+            (workdir / "preflight.json").write_text(json.dumps(value))
+            report("preflight", .2, "Estimated analysis time")
+            report("analysing", .4, "transcribing speech")
+            return {"title": "Done"}
+
+        store = JobStore()
+        queue = store.subscribe()
+        with patch("clipmind.jobs.process", new=measured_process):
+            job = store.submit("https://example.org/video", "Video")
+            events = await self._events_until_terminal(queue)
+        analysing = next(event for event in events if event["stage"] == "analysing")
+        self.assertEqual(analysing["processing_estimate"], value)
+        self.assertEqual(JobStore().jobs[job.id].processing_estimate, value)
+        self.assertIsNone(Job.from_record({"id": "old", "url": "https://example.org", "title": "Old"}).processing_estimate)
 
     async def test_two_independent_jobs_can_enter_process_together(self) -> None:
         entered = 0
