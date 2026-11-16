@@ -13,6 +13,8 @@ from __future__ import annotations
 
 import threading
 import shutil
+import math
+import tempfile
 import atexit
 import subprocess
 import sys
@@ -21,6 +23,7 @@ import json
 import queue
 from collections import deque
 import time
+from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -77,6 +80,99 @@ class OCRResult:
     @property
     def lines(self) -> list[str]:
         return [block.text for block in self.blocks if block.text]
+
+
+def _foreground_threshold(histogram: list[int]) -> int:
+    """Otsu separation of a dark background layer from brighter foreground."""
+    total = sum(histogram)
+    weighted = sum(value * count for value, count in enumerate(histogram))
+    background_count = background_sum = 0
+    best_score = -1.0
+    threshold = 0
+    for value, count in enumerate(histogram):
+        background_count += count
+        background_sum += value * count
+        foreground_count = total - background_count
+        if not background_count or not foreground_count:
+            continue
+        difference = (background_sum / background_count -
+                      (weighted - background_sum) / foreground_count)
+        score = background_count * foreground_count * difference * difference
+        if score > best_score:
+            best_score, threshold = score, value
+    return threshold
+
+
+@contextmanager
+def _recognition_image(path: Path, *, portable: bool = False):
+    """A bounded, temporary OCR derivative; evidence images stay untouched."""
+    from PIL import Image, ImageChops
+
+    with Image.open(path) as original:
+        image = original.convert("RGB")
+    width, height = image.size
+    # Value, rather than luminance, preserves bright red/green code syntax.
+    red, green, blue = image.split()
+    value = ImageChops.lighter(ImageChops.lighter(red, green), blue)
+    histogram = value.histogram()
+    total = width * height
+    dark = (sum(histogram[:96]) / total >= 0.7 and
+            sum(histogram[192:]) / total < 0.12)
+    if dark:
+        # A broad bright panel can contain its own dark code panel. Keep
+        # that mixed-polarity content intact instead of erasing dim syntax.
+        threshold = _foreground_threshold(histogram)
+        image = value.point([255 if level <= threshold else 0
+                             for level in range(256)])
+    factor = (min(2.0, 2560 / width, math.sqrt(6_000_000 / total))
+              if portable or dark else 1)
+    if factor > 1:
+        image = image.resize((round(width * factor), round(height * factor)),
+                             Image.Resampling.LANCZOS)
+    if not dark and factor <= 1:
+        yield path
+        return
+    with tempfile.TemporaryDirectory(prefix="clipmind-ocr-") as folder:
+        prepared = Path(folder) / "recognition.png"
+        image.save(prepared)
+        yield prepared
+
+
+def _reading_order(blocks: list[OCRBlock]) -> tuple[OCRBlock, ...]:
+    """Read separated columns before the next column, with headers above them."""
+    positioned = [block for block in blocks if block.bbox is not None]
+    unpositioned = [block for block in blocks if block.bbox is None]
+
+    def ordered(items: list[OCRBlock]) -> list[OCRBlock]:
+        if len(items) < 2:
+            return items
+        for axis, minimum_gap in ((0, 0.025), (1, 0.02)):
+            intervals = sorted((block.bbox[axis], block.bbox[axis] +
+                                block.bbox[axis + 2]) for block in items)
+            end = intervals[0][1]
+            gaps = []
+            for start, stop in intervals[1:]:
+                if start - end >= minimum_gap:
+                    gaps.append((start - end, (start + end) / 2))
+                end = max(end, stop)
+            if gaps:
+                _, split = max(gaps)
+                before = [block for block in items if block.bbox[axis] < split]
+                after = [block for block in items if block.bbox[axis] >= split]
+                return ordered(before) + ordered(after)
+        rows: list[list[OCRBlock]] = []
+        for block in sorted(items, key=lambda block: block.bbox[1]):
+            if rows:
+                first = rows[-1][0]
+                overlap = min(first.bbox[1] + first.bbox[3], block.bbox[1] + block.bbox[3])
+                overlap -= max(first.bbox[1], block.bbox[1])
+                if overlap >= min(first.bbox[3], block.bbox[3]) / 2:
+                    rows[-1].append(block)
+                    continue
+            rows.append([block])
+        return [block for row in rows for block in sorted(row, key=lambda block: block.bbox[0])]
+
+    return tuple(ordered(positioned) + unpositioned)
 
 
 def recognize(
@@ -307,7 +403,9 @@ class VisionTextRecognizer:
         return self.recognize(image).lines
 
     def recognize(self, image: Path) -> OCRResult:
-        return _recognize_in_worker(image, languages=self.config.ocr_languages)
+        with _recognition_image(image) as prepared:
+            result = _recognize_in_worker(prepared, languages=self.config.ocr_languages)
+        return OCRResult(_reading_order(list(result.blocks)))
 
 
 def tesseract_available() -> bool:
@@ -341,12 +439,13 @@ class TesseractTextRecognizer:
         import pytesseract
         from PIL import Image
 
-        with Image.open(image) as source:
+        with _recognition_image(image, portable=True) as prepared, Image.open(prepared) as source:
             width, height = source.size
             data = pytesseract.image_to_data(
                 source,
                 lang=self.config.tesseract_languages,
                 output_type=pytesseract.Output.DICT,
+                config="--psm 11",
             )
         grouped: dict[tuple[int, int, int], list[int]] = {}
         for index, text in enumerate(data.get("text", [])):
@@ -360,7 +459,22 @@ class TesseractTextRecognizer:
             grouped.setdefault(key, []).append(index)
 
         blocks: list[OCRBlock] = []
+        lines = []
         for indices in grouped.values():
+            # A page-segmentation engine may join distant columns into one
+            # line. Preserve each column's spatial box and reading order.
+            current = []
+            for index in sorted(indices, key=lambda i: int(data["left"][i])):
+                if current:
+                    previous = current[-1]
+                    gap = (int(data["left"][index]) - int(data["left"][previous]) -
+                           int(data["width"][previous]))
+                    if gap > 3 * max(int(data["height"][previous]), int(data["height"][index])):
+                        lines.append(current)
+                        current = []
+                current.append(index)
+            lines.append(current)
+        for indices in lines:
             words = [str(data["text"][index]).strip() for index in indices]
             left = min(int(data["left"][index]) for index in indices)
             top = min(int(data["top"][index]) for index in indices)
@@ -384,7 +498,7 @@ class TesseractTextRecognizer:
                     bbox=(left / width, top / height, (right - left) / width, (bottom - top) / height),
                 )
             )
-        return OCRResult(tuple(blocks))
+        return OCRResult(_reading_order(blocks))
 
 
 def available() -> bool:
