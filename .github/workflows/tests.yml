@@ -17,7 +17,7 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      - run: python -m pip install -r requirements-test.txt
+      - run: python -m pip install -r requirements-test.txt -r scripts/requirements-eval.txt
       - run: node --check clipmind/web/app.js
       - run: python -m unittest discover -s tests -v
 
@@ -96,3 +96,38 @@ jobs:
         with:
           name: python-package
           path: dist/*
+
+  container-smoke:
+    # Exercise the one-command Linux distribution before the release is tagged.
+    # This needs neither model downloads nor registry write credentials.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build --build-arg VCS_REF="$GITHUB_SHA" -t clipmind-smoke .
+      - run: docker run --rm --entrypoint clipmind clipmind-smoke doctor
+      - name: Verify actual stdio initialization and tools
+        run: |
+          python - <<'PY'
+          import json
+          import subprocess
+
+          messages = [
+              {"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {
+                  "protocolVersion": "2025-06-18", "capabilities": {},
+                  "clientInfo": {"name": "release-smoke", "version": "1"}}},
+              {"jsonrpc": "2.0", "method": "notifications/initialized"},
+              {"jsonrpc": "2.0", "id": 2, "method": "tools/list"},
+          ]
+          result = subprocess.run(
+              ["docker", "run", "--rm", "-i", "--entrypoint", "clipmind-mcp", "clipmind-smoke"],
+              input="".join(json.dumps(message) + "\n" for message in messages),
+              text=True, capture_output=True, timeout=60, check=True)
+          replies = [json.loads(line) for line in result.stdout.splitlines()]
+          assert replies[0]["result"]["serverInfo"]["name"] == "clipmind"
+          names = {tool["name"] for tool in replies[1]["result"]["tools"]}
+          assert names == {"clipmind." + name for name in (
+              "extract_video", "get_transcript", "get_visual_timeline",
+              "search_evidence", "get_frame", "export_pack")}
+          print("Container CLI, dependency readiness and MCP transport passed")
+          PY

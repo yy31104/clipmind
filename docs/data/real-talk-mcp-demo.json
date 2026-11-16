@@ -1,0 +1,227 @@
+{
+  "date": "2026-11-16",
+  "client": "Codex CLI, existing ChatGPT subscription; forced ChatGPT authentication, no API-key billing",
+  "question": "How does Xous transfer memory between processes while preserving Rust ownership?",
+  "source_url": "https://media.ccc.de/v/39c3-xous-a-pure-rust-rethink-of-the-embedded-operating-system",
+  "pack_id": "90939b84cd6c",
+  "capture": "Actual MCP calls. Text excerpts shortened; image bytes replaced by digests. No simulated calls.",
+  "tool_calls": [
+    {
+      "tool": "clipmind.search_evidence",
+      "arguments": {
+        "query": "Xous memory ownership",
+        "limit": 10
+      },
+      "status": "completed",
+      "error": null,
+      "result_content": [
+        {
+          "type": "text",
+          "excerpt": "{\n  \"query\": \"Xous memory ownership\",\n  \"results\": []\n}",
+          "full_characters": 55,
+          "sha256": "dc070d013c9dd6879ea7cafaa29b12cc701929cdf0559eb7c02d35e1f62c38dd"
+        }
+      ]
+    },
+    {
+      "tool": "clipmind.search_evidence",
+      "arguments": {
+        "query": "Xous",
+        "limit": 10
+      },
+      "status": "completed",
+      "error": null,
+      "result_content": [
+        {
+          "type": "text",
+          "excerpt": "{\n  \"query\": \"Xous\",\n  \"results\": [\n    {\n      \"job_id\": \"90939b84cd6c\",\n      \"title\": \"Xous: A Pure-Rust Rethink of the Embedded Operating System\",\n      \"platform\": \"web\",\n      \"source_url\": \"https://media.ccc.de/v/39c3-xous-a-pure-rust-rethink-of-the-embedded-operating-system\",\n      \"score\": 47,\n      \"hits\": [\n        {\n          \"kind\": \"ocr\",\n          \"ref\": \"visual-00013\",\n          \"timestamp\": 8.0,\n          \"text\": \"XOUS: A PURE-RUST RETHINK OF THE\\nbunnie\\nSean \\\"xobs\\\" Cross\"\n        },\n        {\n          \"kind\": \"ocr\",\n          \"ref\": \"visual-00016\",\n          \"timestamp\": 15.0,\n          \"text\": \"A Pure-Rust Rethink of the Embedded OS\\n•and Baochip: Custom Silicon for Running Xous\\nbunnie| masto： @bunnie@treehouse.Systems | bluesky： @bunnie.org\\nXobs ｜ Github / Discord：@xobs ｜ Matrix：@xobs@matrix.org\"\n        },\n        {\n          \"kind\": \"ocr\",\n          \"ref\": \"visual-00017\",\n          \"timestamp\": 22.5,\n          \"text\": \"Xous\\nA Pure-Rust Rethink of the Embedded OS\\n..and Baochip: Custom Silicon for Running Xous\\nbunnie ｜ masto： @bunnie@treehouse.systems |bluesky： @bunnie.org\"\n        },\n        {\n          \"kind\": \"ocr\",\n          \"ref\": \"visual-00018\",\n          \"timestamp\": 23.0,\n          \"text\": \"POWER CYCLES\\nXous\\nA Pure-Rust Rethink of the Embedded OS\\n…and Baochip: Custom Silicon for Running Xous\\nbunnie | masto： @bunnie@treehouse.systems | bluesky： @bunnie.org\\nXobs | Github / Discord： @xobs |Matrix： @xobs@matrix.org\\n3903\\nDWER CVCLES\"\n        },\n        {\n          \"kind\": \"ocr\",\n          \"ref\": \"visual-00030\",\n          \"timestamp\": 98.5,\n          \"text\": \"68030 （1987）：\\nXOUS X BAOCHIP\"\n        }\n      ]\n    }\n  ]\n}",
+          "full_characters": 1684,
+          "sha256": "1443434fe65fc6adf7914058c05c9ebb8617cdf6fa0fe20be430144cd9dd67fd"
+        }
+      ]
+    },
+    {
+      "tool": "clipmind.search_evidence",
+      "arguments": {
+        "pack_id": "90939b84cd6c",
+        "query": "ownership",
+        "limit": 10
+      },
+      "status": "completed",
+      "error": null,
+      "result_content": [
+        {
+          "type": "text",
+          "excerpt": "{\n  \"pack_id\": \"90939b84cd6c\",\n  \"query\": \"ownership\",\n  \"hits\": [\n    {\n      \"kind\": \"transcript\",\n      \"ref\": \"transcript-00321\",\n      \"timestamp\": 1093.68,\n      \"text\": \"The tick timer takes ownership of the hardware timer on the particular bit of hardware.\"\n    },\n    {\n      \"kind\": \"transcript\",\n      \"ref\": \"transcript-00705\",\n      \"timestamp\": 2199.76,\n      \"text\": \"considering that logging is something you do often it sounds very expensive to change ownership of\"\n    },\n    {\n      \"kind\": \"ocr\",\n      \"ref\": \"ocr-00111\",\n      \"timestamp\": 713.5,\n      \"text\": \"POWER CYCLES\\nRust Rule: Only One Owner Allowed\\nMutable XOR Shared\\nThe Three Ownership Types: Function Calls\\nthis function\\nmove（a： String）\\n3903\\nPOWER CYCLES\"\n    },\n    {\n      \"kind\": \"ocr\",\n      \"ref\": \"ocr-00112\",\n      \"timestamp\": 714.0,\n      \"text\": \"The Three Ownership Types: Function Calls\\nPOWER CYCLES\\narg'may be accessed but not modified\\nfn _borrow（b： &String）｛•・｝\\n3903\\nPOWER CYCLES\"\n    },\n    {\n      \"kind\": \"ocr\",\n      \"ref\": \"ocr-00113\",\n      \"timestamp\": 748.0,\n      \"text\": \"The Three Ownership Types: Associated Functions\\nPOWER CYCLES\\nfn\\n/// Multiple threads can call this function\\nfn\\n/// Only one thread may call this function\\nfn\\n3903\\nPOWER CYCLES\"\n    },\n    {\n      \"kind\": \"ocr\",\n      \"ref\": \"ocr-00114\",\n      \"timestamp\": 750.0,\n      \"text\": \"The Three Ownership Types: Associated Functions\\nPOWER CYCLES\\nfn\\n/// Multiple threads can call this function\\nfn\\n3903\\nPOWER CVCLES\"\n    },\n    {\n      \"kind\": \"ocr\",\n      \"ref\": \"ocr-00120\",\n      \"timestamp\": 838.5,\n      \"text\": \"POWER CYCLES\\nMMIO is Just Memory\\n0x40084400\\nLEUARTO\\n0x40084000\\n0x40080400\\nRTC\\n0x40080000\\n0x40010c00\\nTIMER2\\n0x40010800\\nTIMER1\\n0x40010400\\n• Only one process can own a periphe",
+          "full_characters": 3118,
+          "sha256": "0ebb1a25a8dc251a9640ff432c1717232af47efbacb6d108bab62884508b8795"
+        }
+      ]
+    },
+    {
+      "tool": "clipmind.get_visual_timeline",
+      "arguments": {
+        "pack_id": "90939b84cd6c",
+        "start": 700,
+        "end": 815
+      },
+      "status": "completed",
+      "error": null,
+      "result_content": [
+        {
+          "type": "text",
+          "excerpt": "{\n  \"pack_id\": \"90939b84cd6c\",\n  \"visual_states\": [\n    {\n      \"build_group_id\": \"build-00026\",\n      \"build_position\": 2,\n      \"build_size\": 3,\n      \"content_hint\": \"textual\",\n      \"end\": 700.5,\n      \"file\": \"visual_states/all/11-33-00108.jpg\",\n      \"id\": \"visual-00109\",\n      \"in_preview\": false,\n      \"observed_sample_count\": 14,\n      \"ocr_char_count\": 53,\n      \"ocr_ref\": \"ocr-00109\",\n      \"scene_boundary\": false,\n      \"scene_change_score\": 0.1094,\n      \"scene_id\": \"scene-00031\",\n      \"stable_duration_seconds\": 6.5,\n      \"start\": 693.5,\n      \"transcript_novelty_char_count\": 42,\n      \"transcript_overlap_ratio\": 0.2075,\n      \"transcript_refs\": [\n        \"transcript-00220\",\n        \"transcript-00221\"\n      ]\n    },\n    {\n      \"content_hint\": \"textual\",\n      \"end\": 713.5,\n      \"file\": \"visual_states/all/11-40-00109.jpg\",\n      \"id\": \"visual-00110\",\n      \"in_preview\": false,\n      \"observed_sample_count\": 26,\n      \"ocr_char_count\": 69,\n      \"ocr_ref\": \"ocr-00110\",\n      \"scene_boundary\": false,\n      \"scene_change_score\": 0.1562,\n      \"scene_id\": \"scene-00031\",\n      \"stable_duration_seconds\": 12.5,\n      \"start\": 700.5,\n      \"transcript_novelty_char_count\": 45,\n      \"transcript_overlap_ratio\": 0.3478,\n      \"transcript_refs\": [\n        \"transcript-00221\",\n        \"transcript-00222\",\n        \"transcript-00223\"\n      ]\n    },\n    {\n      \"build_group_id\": \"build-00027\",\n      \"build_position\": 0,\n      \"build_size\": 2,\n      \"content_hint\": \"code_ui\",\n      \"end\": 714.0,\n      \"file\": \"visual_states/all/11-53-00110.jpg\",\n      \"id\": \"visual-00111\",\n      \"in_preview\": true,\n      \"observed_sample_count\": 1,\n      \"ocr_char_count\": 127,\n      \"ocr_ref\": \"ocr-00111\",\n      \"preview_file\": \"visual_states/preview/11-53-00110.jpg\",\n      \"scene_boundary",
+          "full_characters": 8301,
+          "sha256": "d00c4684c867cdbde34718f3b7759c92342e379a66a409652dfdd4384be2f13d"
+        }
+      ]
+    },
+    {
+      "tool": "clipmind.get_visual_timeline",
+      "arguments": {
+        "pack_id": "90939b84cd6c",
+        "start": 930,
+        "end": 1050
+      },
+      "status": "completed",
+      "error": null,
+      "result_content": [
+        {
+          "type": "text",
+          "excerpt": "{\n  \"pack_id\": \"90939b84cd6c\",\n  \"visual_states\": [\n    {\n      \"content_hint\": \"textual\",\n      \"end\": 939.0,\n      \"file\": \"visual_states/all/15-25-00139.jpg\",\n      \"id\": \"visual-00140\",\n      \"in_preview\": false,\n      \"observed_sample_count\": 28,\n      \"ocr_char_count\": 15,\n      \"ocr_ref\": \"ocr-00140\",\n      \"scene_boundary\": false,\n      \"scene_change_score\": 0.1094,\n      \"scene_id\": \"scene-00037\",\n      \"stable_duration_seconds\": 13.5,\n      \"start\": 925.0,\n      \"transcript_novelty_char_count\": 8,\n      \"transcript_overlap_ratio\": 0.4667,\n      \"transcript_refs\": [\n        \"transcript-00278\",\n        \"transcript-00279\",\n        \"transcript-00280\",\n        \"transcript-00281\",\n        \"transcript-00282\",\n        \"transcript-00283\"\n      ]\n    },\n    {\n      \"content_hint\": \"textual\",\n      \"end\": 943.5,\n      \"file\": \"visual_states/all/15-39-00140.jpg\",\n      \"id\": \"visual-00141\",\n      \"in_preview\": false,\n      \"observed_sample_count\": 9,\n      \"ocr_char_count\": 51,\n      \"ocr_ref\": \"ocr-00141\",\n      \"scene_boundary\": false,\n      \"scene_change_score\": 0.1094,\n      \"scene_id\": \"scene-00037\",\n      \"stable_duration_seconds\": 4.0,\n      \"start\": 939.0,\n      \"transcript_novelty_char_count\": 45,\n      \"transcript_overlap_ratio\": 0.1176,\n      \"transcript_refs\": [\n        \"transcript-00283\",\n        \"transcript-00284\",\n        \"transcript-00285\",\n        \"transcript-00286\"\n      ]\n    },\n    {\n      \"build_group_id\": \"build-00033\",\n      \"build_position\": 0,\n      \"build_size\": 2,\n      \"content_hint\": \"textual\",\n      \"end\": 944.0,\n      \"file\": \"visual_states/all/15-43-00141.jpg\",\n      \"id\": \"visual-00142\",\n      \"in_preview\": false,\n      \"observed_sample_count\": 1,\n      \"ocr_char_count\": 55,\n      \"ocr_ref\": \"ocr-00142\",\n      \"scene_boundary\": false,\n    ",
+          "full_characters": 6425,
+          "sha256": "4df0255dea1851155036217f34d964009d8580d6df865b7262210fd2b552c9e6"
+        }
+      ]
+    },
+    {
+      "tool": "clipmind.get_frame",
+      "arguments": {
+        "pack_id": "90939b84cd6c",
+        "visual_state_id": "visual-00147"
+      },
+      "status": "completed",
+      "error": null,
+      "result_content": [
+        {
+          "type": "text",
+          "excerpt": "{\n  \"pack_id\": \"90939b84cd6c\",\n  \"visual_state\": {\n    \"content_hint\": \"document_slide\",\n    \"end\": 1014.5,\n    \"file\": \"visual_states/all/16-47-00146.jpg\",\n    \"id\": \"visual-00147\",\n    \"in_preview\": false,\n    \"observed_sample_count\": 14,\n    \"ocr_char_count\": 90,\n    \"ocr_ref\": \"ocr-00147\",\n    \"scene_boundary\": false,\n    \"scene_change_score\": 0.2031,\n    \"scene_id\": \"scene-00038\",\n    \"stable_duration_seconds\": 6.5,\n    \"start\": 1007.5,\n    \"transcript_novelty_char_count\": 56,\n    \"transcript_overlap_ratio\": 0.3778,\n    \"transcript_refs\": [\n      \"transcript-00302\",\n      \"transcript-00303\",\n      \"transcript-00304\"\n    ]\n  },\n  \"file\": \"16-47-00146.jpg\"\n}",
+          "full_characters": 669,
+          "sha256": "e278a762d2786dda910e251901244a867705d23270e7070bf7bc47f68bcadfcc"
+        },
+        {
+          "type": "image",
+          "mimeType": "image/jpeg",
+          "bytes": 43840,
+          "sha256": "2fc7b78b73542b908b73f726c9d523ee1892121f4ca3dbaf8beed3f8b3f63e3e"
+        }
+      ]
+    },
+    {
+      "tool": "clipmind.search_evidence",
+      "arguments": {
+        "pack_id": "90939b84cd6c",
+        "query": "memory",
+        "limit": 30
+      },
+      "status": "completed",
+      "error": null,
+      "result_content": [
+        {
+          "type": "text",
+          "excerpt": "{\n  \"pack_id\": \"90939b84cd6c\",\n  \"query\": \"memory\",\n  \"hits\": [\n    {\n      \"kind\": \"transcript\",\n      \"ref\": \"transcript-00013\",\n      \"timestamp\": 47.82,\n      \"text\": \"But we also wanted to have memory safety.\"\n    },\n    {\n      \"kind\": \"transcript\",\n      \"ref\": \"transcript-00015\",\n      \"timestamp\": 54.24,\n      \"text\": \"And we also thought it'd be great to have some sort of hardware memory protection, but you know, but how will we do this like?\"\n    },\n    {\n      \"kind\": \"transcript\",\n      \"ref\": \"transcript-00016\",\n      \"timestamp\": 61.1,\n      \"text\": \"Technic techniques like cherry were not really mature at the time a bunch of the hardware many memory protection stuff was a bit proprietary\"\n    },\n    {\n      \"kind\": \"transcript\",\n      \"ref\": \"transcript-00017\",\n      \"timestamp\": 68.03999999999999,\n      \"text\": \"And so we thought maybe we'll use a memory management unit right memory management units were invented in 1960\"\n    },\n    {\n      \"kind\": \"transcript\",\n      \"ref\": \"transcript-00019\",\n      \"timestamp\": 79.04,\n      \"text\": \"And it gives you stuff like page-level memory protection,\"\n    },\n    {\n      \"kind\": \"transcript\",\n      \"ref\": \"transcript-00020\",\n      \"timestamp\": 82.39999999999999,\n      \"text\": \"hypervisors, virtual address spaces, swap memory.\"\n    },\n    {\n      \"kind\": \"transcript\",\n      \"ref\": \"transcript-00032\",\n      \"timestamp\": 116.04,\n      \"text\": \"to have memory security in OSs, and therefore the chips\"\n    },\n    {\n      \"kind\": \"transcript\",\n      \"ref\": \"transcript-00056\",\n      \"timestamp\": 179.4,\n      \"text\": \"But this also quarter sort of created a new sort of power cycle of poor memory security and embedded IOT, right?\"\n    },\n    {\n      \"kind\": \"transcript\",\n      \"ref\": \"transcript-00057\",\n      \"timestamp\": ",
+          "full_characters": 5772,
+          "sha256": "065bb35ff088fac82992b1445712aad254bab7f725f8625a3238d64e3a00f4bc"
+        }
+      ]
+    },
+    {
+      "tool": "clipmind.get_frame",
+      "arguments": {
+        "pack_id": "90939b84cd6c",
+        "visual_state_id": "visual-00119"
+      },
+      "status": "completed",
+      "error": null,
+      "result_content": [
+        {
+          "type": "text",
+          "excerpt": "{\n  \"pack_id\": \"90939b84cd6c\",\n  \"visual_state\": {\n    \"build_group_id\": \"build-00028\",\n    \"build_position\": 1,\n    \"build_size\": 2,\n    \"content_hint\": \"document_slide\",\n    \"end\": 838.5,\n    \"file\": \"visual_states/all/13-26-00118.jpg\",\n    \"id\": \"visual-00119\",\n    \"in_preview\": false,\n    \"observed_sample_count\": 65,\n    \"ocr_char_count\": 161,\n    \"ocr_ref\": \"ocr-00119\",\n    \"scene_boundary\": false,\n    \"scene_change_score\": 0.2969,\n    \"scene_id\": \"scene-00033\",\n    \"scroll_group_id\": \"scroll-00014\",\n    \"scroll_position\": 1,\n    \"scroll_size\": 2,\n    \"stable_duration_seconds\": 32.0,\n    \"start\": 806.0,\n    \"transcript_novelty_char_count\": 158,\n    \"transcript_overlap_ratio\": 0.0186,\n    \"transcript_refs\": [\n      \"transcript-00247\",\n      \"transcript-00248\",\n      \"transcript-00249\",\n      \"transcript-00250\",\n      \"transcript-00251\",\n      \"transcript-00252\",\n      \"transcript-00253\",\n      \"transcript-00254\",\n      \"transcript-00255\",\n      \"transcript-00256\"\n    ]\n  },\n  \"file\": \"13-26-00118.jpg\"\n}",
+          "full_characters": 1022,
+          "sha256": "3ca7ec97a6b8f46118db2d4312f95506ed7bbd8241eba0992613f6a606ff4d05"
+        },
+        {
+          "type": "image",
+          "mimeType": "image/jpeg",
+          "bytes": 55982,
+          "sha256": "0ae971c5878e1bfc84052bf8cb85133ada66e960941eff91747887c692893ad5"
+        }
+      ]
+    },
+    {
+      "tool": "clipmind.search_evidence",
+      "arguments": {
+        "pack_id": "90939b84cd6c",
+        "query": "process",
+        "limit": 100
+      },
+      "status": "completed",
+      "error": null,
+      "result_content": [
+        {
+          "type": "text",
+          "excerpt": "{\n  \"pack_id\": \"90939b84cd6c\",\n  \"query\": \"process\",\n  \"hits\": [\n    {\n      \"kind\": \"transcript\",\n      \"ref\": \"transcript-00149\",\n      \"timestamp\": 450.42,\n      \"text\": \"We also want process isolation.\"\n    },\n    {\n      \"kind\": \"transcript\",\n      \"ref\": \"transcript-00150\",\n      \"timestamp\": 452.34,\n      \"text\": \"So we don't want to have any arbitrary process be able to change its memory mapping and give itself access to things we don't\"\n    },\n    {\n      \"kind\": \"transcript\",\n      \"ref\": \"transcript-00154\",\n      \"timestamp\": 467.3,\n      \"text\": \"So we don't want to have a system with an MMU where we have to rewrite the page tables in order to switch from one process to the next\"\n    },\n    {\n      \"kind\": \"transcript\",\n      \"ref\": \"transcript-00159\",\n      \"timestamp\": 488.76,\n      \"text\": \"are available to which process.\"\n    },\n    {\n      \"kind\": \"transcript\",\n      \"ref\": \"transcript-00161\",\n      \"timestamp\": 493.62,\n      \"text\": \"on the left side there, you have the virtual process memory.\"\n    },\n    {\n      \"kind\": \"transcript\",\n      \"ref\": \"transcript-00167\",\n      \"timestamp\": 518.36,\n      \"text\": \"So in the end, you can actually have multiple processes that are all running in the system\"\n    },\n    {\n      \"kind\": \"transcript\",\n      \"ref\": \"transcript-00175\",\n      \"timestamp\": 548.16,\n      \"text\": \"They don't have access to the memory of any other process.\"\n    },\n    {\n      \"kind\": \"transcript\",\n      \"ref\": \"transcript-00176\",\n      \"timestamp\": 551.2,\n      \"text\": \"Even the kernel, in this case, cannot access memory of the processes\"\n    },\n    {\n      \"kind\": \"transcript\",\n      \"ref\": \"transcript-00180\",\n      \"timestamp\": 566.92,\n      \"text\": \"So we need to get away for these processes that are isolated in this sea of individual ",
+          "full_characters": 10400,
+          "sha256": "24825b8408f3eb7f2612bf4e3459865071f3f399a7cae8d88a1ace4478ff063c"
+        }
+      ]
+    },
+    {
+      "tool": "clipmind.get_frame",
+      "arguments": {
+        "pack_id": "90939b84cd6c",
+        "visual_state_id": "visual-00112"
+      },
+      "status": "completed",
+      "error": null,
+      "result_content": [
+        {
+          "type": "text",
+          "excerpt": "{\n  \"pack_id\": \"90939b84cd6c\",\n  \"visual_state\": {\n    \"build_group_id\": \"build-00027\",\n    \"build_position\": 1,\n    \"build_size\": 2,\n    \"content_hint\": \"document_slide\",\n    \"end\": 748.0,\n    \"file\": \"visual_states/all/11-54-00111.jpg\",\n    \"id\": \"visual-00112\",\n    \"in_preview\": false,\n    \"observed_sample_count\": 68,\n    \"ocr_char_count\": 107,\n    \"ocr_ref\": \"ocr-00112\",\n    \"scene_boundary\": true,\n    \"scene_boundary_reason\": \"text_replacement\",\n    \"scene_change_score\": 0.2969,\n    \"scene_id\": \"scene-00032\",\n    \"scroll_group_id\": \"scroll-00013\",\n    \"scroll_position\": 1,\n    \"scroll_size\": 2,\n    \"stable_duration_seconds\": 33.5,\n    \"start\": 714.0,\n    \"transcript_novelty_char_count\": 87,\n    \"transcript_overlap_ratio\": 0.1869,\n    \"transcript_refs\": [\n      \"transcript-00223\",\n      \"transcript-00224\",\n      \"transcript-00225\",\n      \"transcript-00226\",\n      \"transcript-00227\",\n      \"transcript-00228\",\n      \"transcript-00229\",\n      \"transcript-00230\",\n      \"transcript-00231\",\n      \"transcript-00232\"\n    ]\n  },\n  \"file\": \"11-54-00111.jpg\"\n}",
+          "full_characters": 1069,
+          "sha256": "aefe7b5d2d9f704c067ccf8c88a5c9bbdd1b7cc28099bc6059e6236e9ba97f7c"
+        },
+        {
+          "type": "image",
+          "mimeType": "image/jpeg",
+          "bytes": 58869,
+          "sha256": "f8b674910c53f2461c5152f96df012a513464a9e3ddbdf64dcd96b51c234fd39"
+        }
+      ]
+    },
+    {
+      "tool": "clipmind.get_frame",
+      "arguments": {
+        "pack_id": "90939b84cd6c",
+        "visual_state_id": "visual-00117"
+      },
+      "status": "completed",
+      "error": null,
+      "result_content": [
+        {
+          "type": "text",
+          "excerpt": "{\n  \"pack_id\": \"90939b84cd6c\",\n  \"visual_state\": {\n    \"content_hint\": \"document_slide\",\n    \"end\": 805.5,\n    \"file\": \"visual_states/all/13-04-00116.jpg\",\n    \"id\": \"visual-00117\",\n    \"in_preview\": false,\n    \"observed_sample_count\": 42,\n    \"ocr_char_count\": 136,\n    \"ocr_ref\": \"ocr-00117\",\n    \"scene_boundary\": false,\n    \"scene_change_score\": 0.1094,\n    \"scene_id\": \"scene-00033\",\n    \"stable_duration_seconds\": 20.5,\n    \"start\": 784.5,\n    \"transcript_novelty_char_count\": 69,\n    \"transcript_overlap_ratio\": 0.4926,\n    \"transcript_refs\": [\n      \"transcript-00242\",\n      \"transcript-00243\",\n      \"transcript-00244\",\n      \"transcript-00245\",\n      \"transcript-00246\"\n    ]\n  },\n  \"file\": \"13-04-00116.jpg\"\n}",
+          "full_characters": 721,
+          "sha256": "48e4913dd9b5e2ccd5d8ffac9f3e1b748a69cfd441fe249d301ae8d631dc2f3c"
+        },
+        {
+          "type": "image",
+          "mimeType": "image/jpeg",
+          "bytes": 74320,
+          "sha256": "c620084c243a41f7340c959262011c811ec5a1e256938430a5e91f5947789df0"
+        }
+      ]
+    }
+  ],
+  "answer": "Xous transfers memory by **detaching a page from the sender’s address space and attaching it to the receiver’s**, with the MMU enforcing ownership.\n\n- **Speech, 12:52.96–13:10.18:** The speaker explains page detachment/reattachment; for lending, memory is unavailable to process A until B returns it. At **13:10.18**, he explicitly says the MMU enforces Rust’s rules.\n- **Speech, 16:54.26–17:03.52:** A permanent send moves memory wholesale into the other process; the sender loses access.\n- **Slides:** The ownership slide at **11:54.00** distinguishes owned `String`, read-only `&String`, and exclusive `&mut String`. The lending slide at **13:04.50** states: “Memory is unavailable to Process A until Process B returns it.”\n\nSource: [Xous: A Pure-Rust Rethink of the Embedded Operating System](https://media.ccc.de/v/39c3-xous-a-pure-rust-rethink-of-the-embedded-operating-system)."
+}

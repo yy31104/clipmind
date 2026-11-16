@@ -1,0 +1,1568 @@
+{
+  "schema_version": 1,
+  "mode": "run",
+  "clipmind_version": "1.3.0",
+  "created_at": "2026-11-16T13:41:37Z",
+  "code_revision": "da24151a9ee050dc811f463920455ef4e5ff3741",
+  "working_tree_dirty": true,
+  "runtime_code_fingerprint": {
+    "sha256": "b28b3712a67322b6f4fecb809ddd5c305fb1150ea2fe29e79be4d648f513e9e4",
+    "files": {
+      "clipmind/__init__.py": "454460b15940288af943d5006b75bcf7fae627ee4b98204aff8e922e59b4f2fc",
+      "clipmind/acquisition.py": "4371d307ba4a653bd2f5aeab5a863345318c478e01a1df80aea12f4e3890dba1",
+      "clipmind/asr.py": "4636d409baa1ffaf33978a6560d3e0fd712c0224923b980e4380570b614a31a0",
+      "clipmind/cli.py": "cc62a51046b5104079d498b9d05acc01c44b21f8aa3deb1ecd4b93e71c9a40f4",
+      "clipmind/compact.py": "cd0f702b76e498e7e2446d90b14f3a49d02a75ff76759f74f7b1dd614aa2e353",
+      "clipmind/config.py": "99d7f8cb0411670c48129d4e737d3a40bed076ccab9256a18a68f79f6667f00c",
+      "clipmind/demo.py": "291e73c47d3b7206b96cc6e411bc836148218e7ac45a9b7267b0aba07f6f2a4a",
+      "clipmind/desktop.py": "6326cdc34553ceaeb8bbc191c625bb2dbe502624f5cfac692bdd73676f37b96c",
+      "clipmind/evidence.py": "56178886b489fc80a965a293c3ff30b38cd70fe434a1f39cd8e9c00bb53b1b2d",
+      "clipmind/fetch.py": "b0550da8beb2cbdf340789aeb654819198d3b86e9154d60be80513da2f891835",
+      "clipmind/handoff.py": "3a047ebfacfdaaef8bdc7dc655ca72aced0f47bfd528739d220e713104de727e",
+      "clipmind/index.py": "5d752d76d6793c5cd093d9171f4c54995488df183e45b86bd5ece31a1e4c7d76",
+      "clipmind/jobs.py": "49cef613b745e08d8dbcc8f87caa0a1e5f1575af768b2cf8e295c2c9ae6412c9",
+      "clipmind/links.py": "a3188bcf6c3b8300060bcd846c2bee7e79e22833e54593cd7e33c8fa59acdd4b",
+      "clipmind/mcp.py": "f6883bfe68a33fc91322c44bfaf93181a0e3d9fbdbc82f499f8234d7d6fdb04e",
+      "clipmind/media.py": "ca0b7a8c4fe7d86c5eb9ce72ca44a89d46017932143f4e0f48b6d0d81fc7a49f",
+      "clipmind/ocr.py": "f1606b355aa2d1a3c2c55fcc4ff4f3cf2329a315226483a9829b7492d2bfc284",
+      "clipmind/pipeline.py": "5dd9d17c1c3a226746b036b59c12290930d6c55f74917cbe5dfe1995a7c8695c",
+      "clipmind/preflight.py": "e937616829c0b2c5ef6e10e825b7b1db9cb0de763a357e59faa33f6ab61471d6",
+      "clipmind/probe_worker.py": "23c1c255960caefecee80cb5955dd9c8f70f7ee581e641c023cc061f4f96d0b0",
+      "clipmind/providers.py": "4eadc9502f58aa4ed2a59b455a6b74999204c066da48a599521af239c14ff177",
+      "clipmind/render.py": "00c36d11661b9bfb38ee83c664109f486b88d221f8c2019edadd56fb029f47f0",
+      "clipmind/sdk.py": "559555d60cfe6aac1c00db73f1fcf43c9b563fcfd9ea1616be2d880ede7b8713",
+      "clipmind/server.py": "5e2e265227dd26070dc2a58941db8860b504fb2a5695809faceabebff00dd13d",
+      "clipmind/sources/__init__.py": "6bf89308f3959a7b1a79035e07603fb60dad92f2ffa7c710c1241e9e16f0e68d",
+      "clipmind/sources/base.py": "71fd9af644aa7499d32ec86f1155dc951e764b35404d475e46a9321202afc9d2",
+      "clipmind/sources/conformance.py": "55f44d24d52a9ca39761230b924528a205d1b446da0c64775888912089d0f60e",
+      "clipmind/sources/direct.py": "701ef7051e489ba68a31eab238ad758f9fdcd0fe4a661955ba7767a499e631fa",
+      "clipmind/sources/douyin.py": "a500af011a1873b1b757a51942ec92e1db6f299f46f67fa82e4b8046af4ac13b",
+      "clipmind/sources/douyin_browser.py": "fb34d3ef926c7e056a00123cf7ee493b704296dae87da19fef73cec4d0a09622",
+      "clipmind/sources/identity.py": "1655722e7930ff118d5f6ea5c884e686ae476d12c93b60ab6d34a3fef1bcc3c5",
+      "clipmind/sources/local.py": "f07caae42c3ec87d098f97a2dc777c7bad024d3a9d96e9483f6850efb342f0c9",
+      "clipmind/sources/registry.py": "10f10c5841891b40854e0cbf84395dae06e4bc99bc25e68d3204a6dcbf2a6224",
+      "clipmind/sources/youtube.py": "57e9216ab3b59a3d8f55ecd1055a76a30f93a1e8f5721afd2658a3a030b1631a",
+      "clipmind/storage.py": "9ce09cd64b29f9faa7e17c1a4cb6375b1fe76c722f4746b5bd822386324191ab",
+      "clipmind/subprocesses.py": "9a6da07023be1c8dbf33c419894b8924e84fcda37a9c1151f341a9b0488a0212",
+      "clipmind/visual_content.py": "146496c4ae8a2300abbede10bc5536a8f79c47fad3bb07e40f063047954939bd",
+      "clipmind/visual_states.py": "5f2277f0bf695158153359f8760ab1fa2436dfbff208b5e1a9b8c21b36c94b55",
+      "clipmind/web/app.js": "35ca4d3c7b3a1a4539cb02cc4233fc89516a9373fca0aec200472f95e23b8a3d",
+      "clipmind/web/index.html": "74890054aa0d725c267305effb9924513583c4116d377c813e584b39bd42390e",
+      "clipmind/web/style.css": "848e19aee42c12fa28b5a675de7796ca833591a706d12b4f926b45a4c45b94df"
+    }
+  },
+  "dependency_versions": {
+    "Jinja2": "3.1.6",
+    "MarkupSafe": "3.0.3",
+    "PyYAML": "6.0.3",
+    "RapidFuzz": "3.14.6",
+    "annotated-doc": "0.0.5",
+    "annotated-types": "0.8.0",
+    "anyio": "4.15.0",
+    "certifi": "2026.7.22",
+    "charset-normalizer": "3.5.1",
+    "click": "8.5.0",
+    "clipmind": "1.3.0",
+    "fastapi": "0.141.1",
+    "filelock": "3.32.5",
+    "fsspec": "2026.7.0",
+    "greenlet": "3.5.5",
+    "h11": "0.16.0",
+    "hf-xet": "1.6.0",
+    "httpcore": "1.0.9",
+    "httptools": "0.8.0",
+    "httpx": "0.28.1",
+    "huggingface_hub": "1.30.0",
+    "idna": "3.19",
+    "jiwer": "4.0.0",
+    "llvmlite": "0.49.0",
+    "mlx": "0.32.2",
+    "mlx-metal": "0.32.2",
+    "mlx-whisper": "0.4.3",
+    "more-itertools": "11.1.0",
+    "mpmath": "1.3.0",
+    "networkx": "3.6.1",
+    "numba": "0.67.0",
+    "numpy": "2.5.2",
+    "packaging": "26.3",
+    "pillow": "12.3.0",
+    "playwright": "1.62.0",
+    "pydantic": "2.13.5",
+    "pydantic_core": "2.46.5",
+    "pyee": "13.0.1",
+    "pyobjc-core": "12.2.2",
+    "pyobjc-framework-Cocoa": "12.2.2",
+    "pyobjc-framework-CoreML": "12.2.2",
+    "pyobjc-framework-Quartz": "12.2.2",
+    "pyobjc-framework-Vision": "12.2.2",
+    "python-dotenv": "1.2.3",
+    "regex": "2026.9.3",
+    "requests": "2.34.2",
+    "scipy": "1.18.1",
+    "setuptools": "84.0.0",
+    "starlette": "1.6.0",
+    "sympy": "1.14.0",
+    "tiktoken": "0.14.0",
+    "torch": "2.14.0",
+    "tqdm": "4.70.0",
+    "typing-inspection": "0.4.4",
+    "typing_extensions": "4.16.0",
+    "urllib3": "2.7.0",
+    "uvicorn": "0.52.4",
+    "uvloop": "0.22.1",
+    "watchfiles": "1.2.0",
+    "websockets": "17.1",
+    "yt-dlp": "2026.8.19"
+  },
+  "tool_versions": {
+    "ffmpeg": "ffmpeg version 9.0.1 Copyright (c) 2000-2026 the FFmpeg developers",
+    "ffprobe": "ffprobe version 9.0.1 Copyright (c) 2007-2026 the FFmpeg developers"
+  },
+  "evaluator_sha256": "871b1066b1d7e6a961e5a8bf2adf2efd99ddea4f574df82297fa75d0ce932e36",
+  "corpus_sha256": "159929975dbfb56e40500149892ebf531fe51db21909719e3224c949c0b3e153",
+  "labels_sha256": "a32597d8a4746526b5ec39e888e5a777bb25962c76c36c68325df97793e99904",
+  "configuration": {
+    "cookie_sources": [
+      "-"
+    ],
+    "cookie_file": null,
+    "fetch_format": "bv*+ba/b",
+    "sample_fps": 2.0,
+    "sample_width": 640,
+    "evidence_width": 1280,
+    "dedupe_threshold": 6,
+    "ocr_languages": [
+      "en-US"
+    ],
+    "max_canonical_states": 1000,
+    "max_estimated_ocr_seconds": 180.0,
+    "max_estimated_pack_mb": 150.0,
+    "estimated_ocr_seconds_per_state": 0.15,
+    "estimated_pack_mb_per_state": 0.08,
+    "asr_provider": "mlx",
+    "asr_model": "mlx-community/whisper-large-v3-turbo",
+    "faster_whisper_model": "large-v3-turbo",
+    "asr_language": "en",
+    "asr_vad_filter": true,
+    "asr_hallucination_silence_threshold": 2.0,
+    "diarization_provider": "none",
+    "diarization_model": "pyannote/speaker-diarization-3.1",
+    "diarization_token": null,
+    "ocr_provider": "vision",
+    "tesseract_languages": "eng",
+    "max_videos": 1,
+    "max_fetch": 1,
+    "max_asr": 1,
+    "max_ocr": 2,
+    "douyin_browser_enabled": false,
+    "douyin_browser_timeout": 90.0,
+    "probe_timeout": 20.0,
+    "probe_socket_timeout": 8.0,
+    "probe_max_bytes": 33554432,
+    "probe_max_requests": 12,
+    "keep_source_video": false,
+    "knowledge_base_inbox": null,
+    "max_upload_mb": 10240
+  },
+  "status": "measured",
+  "planned_case_count": 10,
+  "platform": "macOS-27.2-arm64-arm-64bit",
+  "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.4.2)]",
+  "metric_notes": {
+    "boundaries": "all canonical state starts versus independently annotated informational page changes; not a semantic slide classifier",
+    "ocr": "source ROI versus retained-frame layout; NFKC, whitespace removed, case-sensitive CER; end-to-end retention plus OCR",
+    "speech": "NFKC/lowercase/punctuation-removed WER against publisher-generated captions; not human ground truth"
+  },
+  "cases": [
+    {
+      "case_id": "39c3-2042",
+      "title": "Code to Craft: Procedural Generation for the Physical World",
+      "source_url": "https://media.ccc.de/v/39c3-code-to-craft-procedural-generation-for-the-physical-world",
+      "input_sha256": "6ee5fb351fe2f140b7e5bebb5c38671b5770d337b4e1e56a1809b0b7c5c6195a",
+      "captions_sha256": "6a9754f22d512227ea91c8e7971e49bf61c33554d801db67a9a94eb52cbd923d",
+      "source_interval": [
+        840,
+        1020
+      ],
+      "preparation_sha256": "1cd12007640bdd6ab069967465c140439cb8a79203ccee911f946a90747aec01",
+      "pack_path": "<WORKDIR>/39c3-2042/library/a0c38058b19a",
+      "completeness": {
+        "ocr": "complete",
+        "speaker_diarization": "unavailable",
+        "transcript": "complete",
+        "visual_states": "complete",
+        "word_timing": "complete"
+      },
+      "diagnostics": {
+        "asr_error": null,
+        "dedupe_failure_count": 0,
+        "diarization_error": null,
+        "ocr_error": null,
+        "ocr_failure_count": 0
+      },
+      "timings": {
+        "acquisition_seconds": 0.065,
+        "asr_seconds": 9.593,
+        "ocr_seconds": 5.094,
+        "preview_seconds": 0.376,
+        "sampling_seconds": 1.889
+      },
+      "counts": {
+        "candidate_frames": 360,
+        "canonical_visual_states": 93,
+        "ocr_records": 93,
+        "preview_visual_states": 0,
+        "progressive_build_groups": 12,
+        "scenes": 12,
+        "scroll_groups": 1,
+        "transcript_segments": 46
+      },
+      "canonical_boundary_score": {
+        "status": "not_applicable",
+        "reason": "All 180 seconds reviewed: craft/demo montage, generated snowflake animation, rotating hanging ornaments, and flipping notebooks. No conventional stable slide deck or code in this fixed window. Ordinary animated/video scene changes are not slide-boundary ground truth; slide precision/recall is not applicable. The presenter/layout cut at 50s does not change instructional content.",
+        "prediction_count": 92,
+        "recall": null,
+        "precision": null
+      },
+      "ocr_references": [],
+      "roi_ocr_cer": null,
+      "roi_ocr_reference_units": 0,
+      "roi_ocr_errors": 0,
+      "roi_ocr_failed_references": 0,
+      "publisher_caption_agreement": {
+        "status": "measured",
+        "value": 0.04780876494023904,
+        "reference_units": 502,
+        "errors": 24,
+        "substitutions": 6,
+        "deletions": 12,
+        "insertions": 6,
+        "reference": "this is now sort of going full circle so what i did here is i recorded little video snippets and im holding an empty paper in my hand im taking a still of this video let it run through my generative algorithm and then render the animation back with blender into the video this is why it looks so funky but this is really nice because thats the thing that you can do with vector graphics in more or less one click because its just line information and animating this line is two lines of code maybe onto different machines and different projects now so its wintertime and i think one of the nicest and coolest generative systems that nature has for us and nature has a lot of cool generative systems is of course snowflake like every child knows every snowflake just exists once so i thought oh man maybe building my own generative snowflake system would be a fun thing to do so i made fr0zensystem its like a really neat generator and i just threw it on the laser cutter because laser cutters are also very nice to watch sadly not as portable as a pen plotter but also very nice to watch and you can still work with paper as a medium what i really enjoy i also really enjoy watching them and i made little interesting decoration pieces out of that what i really want to emphasize on my projects is that i really want them to be shareable in some sort of way so as youve seen the fr0zensystem project for example is just a website that you can call yourself and generate your own svgs to use for 3d printing laser cutting whatever you want to do to make your own winter decorations i think this is really important to have shareable art pieces this is a really important point for me what i did here is then also play a bit with the medium which is another mantra that im taking with me is always exploring the mediums that i have in hand currently and what i did here is cut out the main pieces as youve seen but also cut out an extra shape this is tracing paper so slightly translucent paper and then you can also start engraving this paper so youre not fully cutting through but just slightly etching the top of the paper and then you can still see these traces that looks really nice i would say a different laser cutting project that i did similar also with paper is this one this is you could say a fork or an alternation of the bugs and beetle project as youve seen before and this one were 200 badges for an event for a bug bounty program so i think the topic was a very nice fit and it was a pretty hefty assembling process so it was about 200 badges and each badge consisted of two sides two papers",
+        "hypothesis": "is now sort of going full circle so what i did here is i recorded little video snippets and im holding an empty paper in my hand im taking a still of this video let it run through my generative algorithm and then render the animation back with blender into the video this is why it looks so funky but this is really nice because thats a thing that you can do with vector graphics in more or less one click because its just line information and animating this line is two lines of code maybe on to different machines and different projects now so its wintertime and i think one of the nicest and coolest generative systems that nature has for us and nature has a lot of cool generative systems is of course snowflake every child knows every snowflake just exists once so i thought oh man maybe building my own generative snowflake system would be a fun thing to do so i made frozen system its like a really neat generator and i just threw it on the laser cutter because laser cutters are also very nice to watch sadly not as portable as a pen plotter but also very nice to watch and you can still work with paper as a medium what i really enjoy and i also really enjoy watching them and i made little interesting decoration pieces out of that what i really want to emphasize on my projects is that i really want them to be shareable in some sort of way as youve seen the frozen system project for example is just a website that you can call yourself and generate your own svgs to use for 3d printing laser cutting whatever you want to do to make your own winter decorations and i think this is really important to have shareable art pieces this is a really important point for me what i did here is also play a bit of the medium which is another mantra that im taking with me is always exploring the mediums that i have in hand currently what i did here is cut out the main pieces as youve seen but also cut out an extra shape theres tracing paper so slightly translucent paper start engraving this paper so youre not fully cutting through but just slightly etching the top of the paper and then you can still see these traces that looks really nice i would say a different laser cutting project that i did similar also with paper is this one this is like you could say a fork or an alternation of the bugs and beetle project as youve seen before and this one were 200 badges for an event for a bug bounty program so i think the topic was a very nice fit and it was a pretty hefty assembling process so it was about 200 badges and each badge consisted of two sides two",
+        "clip_interval": [
+          0.399,
+          177.0
+        ],
+        "publisher_cue_count": 46,
+        "word_timed_segment_count": 46,
+        "metric": "published_caption_agreement_wer"
+      },
+      "status": "measured",
+      "wall_seconds": 11.969,
+      "cleanup_leftovers": {}
+    },
+    {
+      "case_id": "39c3-1611",
+      "title": "Asahi Linux - Porting Linux to Apple Silicon",
+      "source_url": "https://media.ccc.de/v/39c3-asahi-linux-porting-linux-to-apple-silicon",
+      "input_sha256": "075c9c8012fe35400d414dab1833db15e9258a7bfe9320a24f957b8ed9ed399a",
+      "captions_sha256": "6e170038ef6c679f3ec1efd4fcef540bc8527d25a790990c1191595bd11b1c4d",
+      "source_interval": [
+        900,
+        1080
+      ],
+      "preparation_sha256": "e2a4a6e7f758d46770f008f4731bfb1fc4dd27660583556af7f49531130b06b0",
+      "pack_path": "<WORKDIR>/39c3-1611/library/0a7977ff13ae",
+      "completeness": {
+        "ocr": "complete",
+        "speaker_diarization": "unavailable",
+        "transcript": "complete",
+        "visual_states": "complete",
+        "word_timing": "complete"
+      },
+      "diagnostics": {
+        "asr_error": null,
+        "dedupe_failure_count": 0,
+        "diarization_error": null,
+        "ocr_error": null,
+        "ocr_failure_count": 0
+      },
+      "timings": {
+        "acquisition_seconds": 0.054,
+        "asr_seconds": 7.597,
+        "ocr_seconds": 3.589,
+        "preview_seconds": 0.25,
+        "sampling_seconds": 1.549
+      },
+      "counts": {
+        "candidate_frames": 360,
+        "canonical_visual_states": 54,
+        "ocr_records": 54,
+        "preview_visual_states": 27,
+        "progressive_build_groups": 9,
+        "scenes": 14,
+        "scroll_groups": 2,
+        "transcript_segments": 40
+      },
+      "canonical_boundary_score": {
+        "reference_count": 12,
+        "prediction_count": 53,
+        "matched": 9,
+        "matches": [
+          [
+            30,
+            29.0
+          ],
+          [
+            42,
+            42.0
+          ],
+          [
+            70,
+            69.0
+          ],
+          [
+            74,
+            74.0
+          ],
+          [
+            94,
+            93.0
+          ],
+          [
+            100,
+            99.0
+          ],
+          [
+            112,
+            112.0
+          ],
+          [
+            143,
+            142.5
+          ],
+          [
+            157,
+            156.5
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 0.75,
+        "precision": 0.16981132075471697
+      },
+      "ocr_references": [],
+      "roi_ocr_cer": null,
+      "roi_ocr_reference_units": 0,
+      "roi_ocr_errors": 0,
+      "roi_ocr_failed_references": 0,
+      "publisher_caption_agreement": {
+        "status": "measured",
+        "value": 0.05860805860805861,
+        "reference_units": 546,
+        "errors": 32,
+        "substitutions": 5,
+        "deletions": 17,
+        "insertions": 10,
+        "reference": "some audio stuff not all of it parts of the gpu especially the user space and were in much better shape now we still have two fairly big kernel drivers the display controller and the gpu that are only downstream but we will continue to work on pushing these upstream and yeah thats our current focus just upstreaming all these things before we build new features and now that ive talked about how the reverse engineering tooling and all that works lets im going to walk through how i used all of this to reverse engineer the usb ports and what makes them so special and why they are so complicated yeah why its so complicated to support them on these machines now usb is fairly old in 1996 the first version dropped 15mbits they called it low speed two years later they realized this is actually quite nice of a bus so we could need more bandwidth lets do full speed well eventually this was also too slow and after full obviously comes high speed with usb 2 so this is 480mbits per second again today this is still slow so were going to do super speed with five gigabit per second because this naming was not confusing enough were going to do super speed plus with 10 gigabits per second now at this point even the usb implementers from realize that maybe the naming gets a little bit confusing because if you tell a random person oh yeah i have a usb full speed device you would expect its very fast well its actually very very slow and so what they finally did was that they when they introduced the 20 gigabit version they just called it usb 20 gigabit per second and they changed all the names i mean not all of them they kept low full and high but all the others they just changed the marketing names to essentially just how fast the usb was actually is to make this a bit easier and then in 2019 we got usb 4 which does up to 40 gigabit per second and usb 4 is a little bit special because its not just another iteration of usb with more speed this is actually thunderbolt open source version because the specification is fully available its very very long and usb 4 then also supports stuff like pcie tunneling and displayport tunneling and so on but the point im trying to make here this is a very complex piece of hardware with lots of moving parts that we all have to get supported and while improving the bandwidth they also need new connectors at some point so originally probably all of them are with usb a and b and theres mini and micro and then the usb 3 variants and so on so lots of these connectors you probably know how it goes you always need three tries to get these things working and at least in theory with usbc this is no longer the case so this is the new connector which has a lot of pins its symmetric so at least in theory you can just rotate it and everything will work fine and this can also carry a lot of different signals",
+        "hypothesis": "audio stuff not all of it parts of the gpu especially the user space and were in much better shape now we still have two fairly big kernel drivers the display controller and the gpu that are only downstream but we will continue to work on pushing these upstream and yeah thats our current focus just upstreaming all these things before we build new features and now that ive talked about how the reverse engineering tooling and all that works lets im going to walk through how i used all of this to reverse engineer the usb ports and what makes them so special and why its so complicated to support them on these machines now usb is fairly old in 1996 the first version dropped 1 5 mbits they called it low speed two years later they realized this is actually quite nice of a bus so we could need more bandwidth lets do full speed speed well eventually this was also too slow and after full obviously comes high speed with usb 2 so this is 480 mbit per second again today this is still slow so were going to do super speed with 5 gigabit per second because this naming was not confusing enough were going to do super speed plus with 10 gigabits per second now at this point even the usb implementers from realize that maybe the naming gets a little bit confusing if you tell a random person oh yeah i have a usb full speed device you would expect its very fast well its actually very very slow and so what they finally did was that they when they introduced the 20 gigabit version they just called it usb 20 gigabit per second and they changed all the names i mean not all of them they kept low full and high but all the others they just changed the marketing names to essentially just how fast the usb was actually is to make this a bit easier and then in 2019 we got usb 4 which does up to 40 gigabit per second usb 4 0 is a little bit special because its not just another iteration of usb with more speed this is actually thunderbolt open source version because the specification is fully available its very very long and usb 4 0 then also supports stuff like pcie tunneling and displayport tunneling and so on but the point im trying to make here this is a very complex piece of hardware with lots of moving parts that we all have to get supported it and while improving the bandwidth they also need new connectors at some point so originally probably all of them were with usb a and b and theres mini and micro and then the usb 3 variants and so on so there are lots of these connectors you probably know how it goes you always need three tries to get these things working and at least in theory with usb c this is no longer the case so this is the new connector which so at least in theory you can just rotate it and everything will work fine and this can also carry a lot of different",
+        "clip_interval": [
+          1.259,
+          177.299
+        ],
+        "publisher_cue_count": 57,
+        "word_timed_segment_count": 40,
+        "metric": "published_caption_agreement_wer"
+      },
+      "status": "measured",
+      "wall_seconds": 9.499,
+      "cleanup_leftovers": {}
+    },
+    {
+      "case_id": "39c3-2154",
+      "title": "Variable Fonts — It Was Never About File Size",
+      "source_url": "https://media.ccc.de/v/39c3-variable-fonts-it-was-never-about-file-size",
+      "input_sha256": "fc7192e34cd776f5095ade504f018e92ea0bf40b76ee3e83e4647b791fea69f3",
+      "captions_sha256": "9048a920de258c3a5d380ec4919a058ff70685871145e1110dc7a7b54296bdaf",
+      "source_interval": [
+        1020,
+        1200
+      ],
+      "preparation_sha256": "1794f7e0c936fc14618db4943b77575e59bf29621db0ce179ec14e9a1517b6bd",
+      "pack_path": "<WORKDIR>/39c3-2154/library/cfafa57231d0",
+      "completeness": {
+        "ocr": "complete",
+        "speaker_diarization": "unavailable",
+        "transcript": "complete",
+        "visual_states": "complete",
+        "word_timing": "complete"
+      },
+      "diagnostics": {
+        "asr_error": null,
+        "dedupe_failure_count": 0,
+        "diarization_error": null,
+        "ocr_error": null,
+        "ocr_failure_count": 0
+      },
+      "timings": {
+        "acquisition_seconds": 0.051,
+        "asr_seconds": 7.358,
+        "ocr_seconds": 6.135,
+        "preview_seconds": 0.488,
+        "sampling_seconds": 1.278
+      },
+      "counts": {
+        "candidate_frames": 360,
+        "canonical_visual_states": 100,
+        "ocr_records": 100,
+        "preview_visual_states": 14,
+        "progressive_build_groups": 26,
+        "scenes": 8,
+        "scroll_groups": 7,
+        "transcript_segments": 37
+      },
+      "canonical_boundary_score": {
+        "status": "not_applicable",
+        "reason": "Full source window reviewed: Optical Size title, glyph design-space examples, browser font-resizing demonstration, width/weight diagram, and continuously animated TYPO/LABS and EDITABLE TEXT. Most changes are font morphing or resizing rather than discrete stable slides; whole-window slide precision/recall is not applicable. Main semantic segment changes are recorded separately for context, never mixed into slide scoring. The sole code ROI is a CSS declaration displayed as a slide label, not a multi-line source-code block. Reference text transcribed directly from a 1280x720 source frame at 60s.",
+        "prediction_count": 99,
+        "recall": null,
+        "precision": null
+      },
+      "ocr_references": [
+        {
+          "timestamp": 60,
+          "roi": [
+            0.37,
+            0.02,
+            0.26,
+            0.055
+          ],
+          "text": "CSS: FONT-OPTICAL-SIZING: AUTO;",
+          "kind": "code",
+          "notes": "Single CSS declaration label; display is uppercase and includes printed CSS: prefix. Not evidence of multi-line code-block OCR accuracy.",
+          "status": "measured",
+          "value": 0.0,
+          "reference_units": 29,
+          "errors": 0,
+          "substitutions": 0,
+          "deletions": 0,
+          "insertions": 0,
+          "reference": "CSS:FONT-OPTICAL-SIZING:AUTO;",
+          "hypothesis": "CSS:FONT-OPTICAL-SIZING:AUTO;",
+          "visual_state_id": "visual-00011",
+          "frame_interval": [
+            58.0,
+            66.5
+          ]
+        }
+      ],
+      "roi_ocr_cer": 0.0,
+      "roi_ocr_reference_units": 29,
+      "roi_ocr_errors": 0,
+      "roi_ocr_failed_references": 0,
+      "publisher_caption_agreement": {
+        "status": "measured",
+        "value": 0.03526448362720403,
+        "reference_units": 397,
+        "errors": 14,
+        "substitutions": 5,
+        "deletions": 5,
+        "insertions": 4,
+        "reference": "it should be interpolating now right so this is like the optical sizes came from metal type setting and now it interpolates because weve got variable fonts but just because it came from metal type setting and from serif text typefaces doesnt mean that we cant use it for something completely different so what do we have here a one dimensional design space but thats not the point and also these arent point compatible the outline structure is completely different so how is it supposed to interpolate well it doesnt turns out we can also have breakpoints along one axis where the design and the outline structure changes and for this example i added stroke weight changes along the optical size axis in short opsz and breakpoints you might be wondering why i used opsz for that the answer is simple opsz is active by default in most browsers so if you use a font size relative to your view width and you scale the browser window the font changes as well these changes could be subtle they could be used for something like it was intended for like small subtle text adjustments but it could also be used for display type for making the design more detailed adding more lines to the design or reducing the amount of lines when its getting smaller and the cool thing is it works in the browser out of the box you dont need to write any code for that so you just need a font with an opsz axis for it to work the next design space shows the setup of the typolabs font that was used as a key element of a visual identity for a font technology conference the design space is rather traditional the width probably not its also like really condensed and what might also be interesting is the release date of this why because this was probably the first identity to use a variable font when we worked on the identity there was no browser support for variable fonts and the major design apps also did not support variable fonts yet so we had an svg animation on the website and instead of having a fallback we had a fall forward because chrome and safari already had developer versions and beta versions that were supporting variable fonts so as soon as the next version",
+        "hypothesis": "it should be interpolating now right so this is like the optical sizes came from metal type setting and now it interpolates because weve got variable fonts but just because it came from metal type setting and from serif text typefaces doesnt mean that we cant use it for something completely different so what do we have here a one dimensional design space but thats not the point and also these arent point compatible the outline structure is completely different so how is it supposed to interpolate well it doesnt turns out we can also have break points along one axis where the design and the outline structure changes and for this in this example i added stroke weight changes along the optical size axis in short opsz and breakpoints you might be wondering why i used opsz for that the answer is simple opsz is active by default in most browsers so if you use a font size relative to your view width and you scale the browser window the font changes as well be subtle they could be used for something like it was intended for like small subtle text adjustments but it could also be used for display type for making the design more detailed adding more lines to the design or reducing the amount of lines when its getting smaller and the cool thing is it works in the browser out of the box you dont need to write any code for that so you just need a font with an opsc axis for it to work the next design space shows the setup of the typolabs font that was used as a key element of a visual identity for a font technology conference the design space is rather traditional the width probably not is also really condensed what might also be interesting is the release date of this why because this was probably the first identity to use a variable font when we worked on the identity there was no browser support for variable fonts and and the major design apps also did not support wearable fonts yet so we had an svg animation on the website and instead of having a fallback we had a fall forward because chrome and safari already had developer versions and beta versions that were supporting wearable fonts so as soon as the next version",
+        "clip_interval": [
+          1.11,
+          178.809
+        ],
+        "publisher_cue_count": 41,
+        "word_timed_segment_count": 37,
+        "metric": "published_caption_agreement_wer"
+      },
+      "status": "measured",
+      "wall_seconds": 9.222,
+      "cleanup_leftovers": {}
+    },
+    {
+      "case_id": "39c3-2188",
+      "title": "Pwn2Roll: Who Needs a 595€ Remote When You Have wheelchair.py?",
+      "source_url": "https://media.ccc.de/v/39c3-pwn2roll-who-needs-a-599-remote-when-you-have-wheelchair-py",
+      "input_sha256": "62e4f80bd51ee3dc5ba77cb8f9d11c7d023f18936ec453deca211a5aa57d9437",
+      "captions_sha256": "0791ae5de02631e6d8163ea60269f1a0ab824b2bc0ddcd9e9318c8f479eecb5c",
+      "source_interval": [
+        1350,
+        1530
+      ],
+      "preparation_sha256": "aa15235f26e8ca56d4d651915b51c1748eec9d395f6fce7441643c945ce9f846",
+      "pack_path": "<WORKDIR>/39c3-2188/library/61d988b9ea5e",
+      "completeness": {
+        "ocr": "complete",
+        "speaker_diarization": "unavailable",
+        "transcript": "complete",
+        "visual_states": "complete",
+        "word_timing": "complete"
+      },
+      "diagnostics": {
+        "asr_error": null,
+        "dedupe_failure_count": 0,
+        "diarization_error": null,
+        "ocr_error": null,
+        "ocr_failure_count": 0
+      },
+      "timings": {
+        "acquisition_seconds": 0.059,
+        "asr_seconds": 7.138,
+        "ocr_seconds": 0.237,
+        "preview_seconds": 0.02,
+        "sampling_seconds": 1.934
+      },
+      "counts": {
+        "candidate_frames": 360,
+        "canonical_visual_states": 5,
+        "ocr_records": 5,
+        "preview_visual_states": 0,
+        "progressive_build_groups": 0,
+        "scenes": 2,
+        "scroll_groups": 0,
+        "transcript_segments": 28
+      },
+      "canonical_boundary_score": {
+        "status": "not_applicable",
+        "reason": "Every contact-sheet cell reviewed: entire 180-second sample is a presenter shot with a sign-language interpreter inset. One camera framing change around 69-81s is excluded; no instructional slide or code is visible. Slide-boundary and code-OCR metrics are not applicable, not perfect zero-error scores.",
+        "prediction_count": 4,
+        "recall": null,
+        "precision": null
+      },
+      "ocr_references": [],
+      "roi_ocr_cer": null,
+      "roi_ocr_reference_units": 0,
+      "roi_ocr_errors": 0,
+      "roi_ocr_failed_references": 0,
+      "publisher_caption_agreement": {
+        "status": "measured",
+        "value": 0.12885154061624648,
+        "reference_units": 357,
+        "errors": 46,
+        "substitutions": 8,
+        "deletions": 36,
+        "insertions": 2,
+        "reference": "they made its not they are very very upfront with it to yeah in manual state yeah just scan this key to pair the manufacturer training videos show it also the maintenance application shows it so its yeah its i think its they know about this and said its okay the beautiful part of this is the crypto is actually okay its aes 128 cbc they use ecb too which is a bit weird but its another topic they just use standard libraries so at least they did not build their own crypto there but i think um the crypto team and the key distribution team should maybe met someday because they are just yeah theyre doing it and they are shipping out devices like this all the time and these devices are quite popular i already saw on this congress i think two or three different beside of mine so yeah dont scan peoples qr codes on apps please uh because you may cause harm good so i already said bluetooth is not deactivated you cannot deactivate the bluetooth never it you have to unsolder the bluetooth module from the um from the drive itself one could patch it i did not try but its it seems like it could be patched so uh yeah there might be hope but uh yeah avoiding your warranty is always fun so the paywall is theater and the security also theater that got me even more interested into everything and uh people who know me know that i love reverse engineering and wireless protocols encryption security quirks and funny stuff so i thought hey this can be fun and when i spent several hundred hours having fun with this and uh i did some basics like uh decompiling the android app from the app store with jadx and this is some really really convenient way to get into stuff um if people dont know it it decompiles the java classes and there was one method called is speed enabled um in in the part it was referenced by the part by the billing stuff so maybe the speed feature",
+        "hypothesis": "they made they are very upfront with it in manual state just scan this key to pair the manufacturer training videos show it also the maintenance application shows it so its yeah i think they know about this and said its okay the beautiful part of this is the crypto is actually okay its as128cbc they use ecb too which is a bit weird but its another topic they just use standard libraries so at least they did not build their own crypto there but i think the crypto team and the key distribution team should maybe meet someday because they are just doing it and they are shipping out devices like this all the time and these devices are quite popular i already saw on this congress i think two or three different side of mine so yeah dont scan peoples qr codes on hubs please because you may cause harm good so i already said bluetooth is not deactivated you cannot deactivate bluetooth never you have to unsolder the bluetooth module from the drive itself one could patch it i did not try but it seems like it could be patched so yeah there might be hope but yeah avoiding your warranty is always fun so the paywalls theater the security also theater that got me even more interested into everything and people who know me know that i love reverse engineering and wireless protocols encryption security quirks and funny stuff so i thought hey this can be fun and then i spent several hundred hours having fun with this and i did some basics like decompiling the android app from the app store with gadx and this is some really really convenient way to get into stuff if people dont know it it decompiles the java classes and there was one method called isspeedenabled in the part it was referenced by the part who were by the billing stuff speed",
+        "clip_interval": [
+          0.43,
+          178.289
+        ],
+        "publisher_cue_count": 34,
+        "word_timed_segment_count": 28,
+        "metric": "published_caption_agreement_wer"
+      },
+      "status": "measured",
+      "wall_seconds": 9.188,
+      "cleanup_leftovers": {}
+    },
+    {
+      "case_id": "39c3-2274",
+      "title": "Reverse engineering the Pixel TitanM2 firmware",
+      "source_url": "https://media.ccc.de/v/39c3-reverse-engineering-the-pixel-titanm2-firmware",
+      "input_sha256": "1ce923120997691c7ebc27e162d095e2051c0fad34f02d22394454092e65ec4a",
+      "captions_sha256": "d27a2a5febcd320d05cc04c2040900b8b6c55ec9952efeeb03dd83d983cc4c0b",
+      "source_interval": [
+        870,
+        1050
+      ],
+      "preparation_sha256": "d0f568a2755a01ad51c96f2fd8ee63e250ca6663603eb3fc84888952494e253b",
+      "pack_path": "<WORKDIR>/39c3-2274/library/6038c85fa6db",
+      "completeness": {
+        "ocr": "complete",
+        "speaker_diarization": "unavailable",
+        "transcript": "complete",
+        "visual_states": "complete",
+        "word_timing": "complete"
+      },
+      "diagnostics": {
+        "asr_error": null,
+        "dedupe_failure_count": 0,
+        "diarization_error": null,
+        "ocr_error": null,
+        "ocr_failure_count": 0
+      },
+      "timings": {
+        "acquisition_seconds": 0.041,
+        "asr_seconds": 6.647,
+        "ocr_seconds": 0.956,
+        "preview_seconds": 0.055,
+        "sampling_seconds": 1.194
+      },
+      "counts": {
+        "candidate_frames": 360,
+        "canonical_visual_states": 12,
+        "ocr_records": 12,
+        "preview_visual_states": 12,
+        "progressive_build_groups": 2,
+        "scenes": 7,
+        "scroll_groups": 1,
+        "transcript_segments": 27
+      },
+      "canonical_boundary_score": {
+        "reference_count": 5,
+        "prediction_count": 11,
+        "matched": 4,
+        "matches": [
+          [
+            16,
+            15.5
+          ],
+          [
+            59,
+            58.5
+          ],
+          [
+            80,
+            80.5
+          ],
+          [
+            139,
+            138.5
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 0.8,
+        "precision": 0.36363636363636365
+      },
+      "ocr_references": [
+        {
+          "timestamp": 112,
+          "roi": [
+            0.025,
+            0.53,
+            0.5,
+            0.055
+          ],
+          "text": "67 active_tasks[eVar1].field1_0x8 = 0;\n68 active_tasks[eVar1].field48_0x54 = uVar2;",
+          "kind": "code",
+          "status": "measured",
+          "value": 0.06578947368421052,
+          "reference_units": 76,
+          "errors": 5,
+          "substitutions": 5,
+          "deletions": 0,
+          "insertions": 0,
+          "reference": "67active_tasks[eVar1].field1_0x8=0;68active_tasks[eVar1].field48_0x54=uVar2;",
+          "hypothesis": "67active_tasks[eVarll.fieldl_0x8=0;68active_tasks[eVarll.field48_0x54=uVar2;",
+          "visual_state_id": "visual-00008",
+          "frame_interval": [
+            107.0,
+            130.0
+          ]
+        }
+      ],
+      "roi_ocr_cer": 0.06578947368421052,
+      "roi_ocr_reference_units": 76,
+      "roi_ocr_errors": 5,
+      "roi_ocr_failed_references": 0,
+      "publisher_caption_agreement": {
+        "status": "measured",
+        "value": 0.03038674033149171,
+        "reference_units": 362,
+        "errors": 11,
+        "substitutions": 5,
+        "deletions": 5,
+        "insertions": 1,
+        "reference": "that ghidra was not able to disassemble properly and try to see some structure in there so the bit patterns i looked for the risc v instruction set how is this usually encoded theres the specification its on github the risc v opcodes repository and its relatively readable because it just gives you ranges of bits and the meaning so these values like imm20 thats specified as somewhere the well i didnt write it down here its probably the last 20 bits of the d word im not quite sure because i didnt write that down i dont remember the exact details but then i tried to match that with the unknown opcodes that i found and im thinking this must be immediate this must be a register and some other part of the things must be then a function code or so so what i did i created some dummy instructions this is what the specification language from ghidorah looks like and i called these instructions google 0 google 1 and google 2 and google 3 because i had no clue what they were and i just put these bit patterns in there and then you get some the code completely disassembles and you get your google 0 as an unknown function basically in your decompilation so then next i tried to figure out whats going in and out because you see there its using something from the csr read function before it and then the result is doing something and then i had about 50 functions or so where i could look at that at some point i took this nugget os the scheduler because i did have source code for that and i tried to match it up because i did notice where the scheduler was and then i figured out ah this must be a bit scan because it was trying to match active processes in a slot of bits so these instructions they are actually quite simple theres nothing magic about these instructions this is what i found after several days of just staring at the disassembly and figuring out what what these unknown instructions must do",
+        "hypothesis": "that ghidra was not able to disassemble properly and try to see some structure in there so the bit patterns i looked for the risc v instruction set how it is usually encoded theres the specification its on github the risc v opcode repository and its relatively readable because it just gives you ranges of bits and the meaning so these values like imm20 thats specified as somewhere the i didnt write it down here its probably the last 20 bits of the d word im not quite sure because i didnt write that down i dont remember the exact details but then i tried to match that with the unknown opcodes that i found and im thinking this must be immediate this must be a register and some other parts of things must be then a function code or so so what i did i created some dummy instructions this is what the specification language from ghidorah looks like and i call these instructions google 0 google 1 and google 2 and google 3 because i had no clue what they were and i just put these bit patterns in there and then you get some the code completely disassembles and you get your google zero as an unknown function basically in your decompilation so then next i try to figure out whats going in and out because you see there its using something from the csr read function before it and then the result is doing something and then i had about 50 functions or so where i could look at that at some point i took this nugget os the scheduler because i did have source code for that and i tried to match it up because i did notice where the scheduler was and then i figured out ah this must be a bit scan because it was trying to match active processes in a slot of bits so these instructions they are actually quite simple theres nothing magic about these instructions this is what i found after several days of just staring at the disassembly and figuring out what these unknown instructions must",
+        "clip_interval": [
+          5.789,
+          178.13
+        ],
+        "publisher_cue_count": 30,
+        "word_timed_segment_count": 27,
+        "metric": "published_caption_agreement_wer"
+      },
+      "status": "measured",
+      "wall_seconds": 7.977,
+      "cleanup_leftovers": {}
+    },
+    {
+      "case_id": "39c3-1317",
+      "title": "Xous: A Pure-Rust Rethink of the Embedded Operating System",
+      "source_url": "https://media.ccc.de/v/39c3-xous-a-pure-rust-rethink-of-the-embedded-operating-system",
+      "input_sha256": "257cbae3d65b7de306ab6f1e247dd2c95ae81520abfadda2ccde507cd0b7c959",
+      "captions_sha256": "e4d92a2a778edf4ff5b88739d74fe832586de5778fb6054b134ca7b6bc47b1c3",
+      "source_interval": [
+        930,
+        1110
+      ],
+      "preparation_sha256": "a212ed02522fa872ac8df1235ebd43547d74c50e92df85f18aecd5749070b3ba",
+      "pack_path": "<WORKDIR>/39c3-1317/library/1a35dabf1716",
+      "completeness": {
+        "ocr": "complete",
+        "speaker_diarization": "unavailable",
+        "transcript": "complete",
+        "visual_states": "complete",
+        "word_timing": "complete"
+      },
+      "diagnostics": {
+        "asr_error": null,
+        "dedupe_failure_count": 0,
+        "diarization_error": null,
+        "ocr_error": null,
+        "ocr_failure_count": 0
+      },
+      "timings": {
+        "acquisition_seconds": 0.043,
+        "asr_seconds": 7.055,
+        "ocr_seconds": 0.857,
+        "preview_seconds": 0.068,
+        "sampling_seconds": 1.243
+      },
+      "counts": {
+        "candidate_frames": 360,
+        "canonical_visual_states": 15,
+        "ocr_records": 15,
+        "preview_visual_states": 15,
+        "progressive_build_groups": 3,
+        "scenes": 2,
+        "scroll_groups": 4,
+        "transcript_segments": 42
+      },
+      "canonical_boundary_score": {
+        "reference_count": 10,
+        "prediction_count": 14,
+        "matched": 6,
+        "matches": [
+          [
+            9,
+            9.0
+          ],
+          [
+            28,
+            28.0
+          ],
+          [
+            77,
+            77.0
+          ],
+          [
+            130,
+            130.0
+          ],
+          [
+            147,
+            147.0
+          ],
+          [
+            151,
+            150.5
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 0.6,
+        "precision": 0.42857142857142855
+      },
+      "ocr_references": [
+        {
+          "timestamp": 4,
+          "roi": [
+            0.06,
+            0.395,
+            0.79,
+            0.075
+          ],
+          "text": "let srv = create_server(b\"0123456789abcdef\");",
+          "kind": "code",
+          "status": "measured",
+          "value": 0.023809523809523808,
+          "reference_units": 42,
+          "errors": 1,
+          "substitutions": 1,
+          "deletions": 0,
+          "insertions": 0,
+          "reference": "letsrv=create_server(b\"0123456789abcdef\");",
+          "hypothesis": "letsrv=create_server(b'0123456789abcdef\");",
+          "visual_state_id": "visual-00001",
+          "frame_interval": [
+            0.0,
+            9.0
+          ]
+        },
+        {
+          "timestamp": 68,
+          "roi": [
+            0.05,
+            0.32,
+            0.61,
+            0.19
+          ],
+          "text": "let connection = connect(b\"0123456789abcdef\");\nscalar_message(connection, 1, 2, 3, 4, 5);\nlend_message(connection, 1, &slice, 4, 5);",
+          "kind": "code",
+          "status": "measured",
+          "value": 0.635593220338983,
+          "reference_units": 118,
+          "errors": 75,
+          "substitutions": 0,
+          "deletions": 75,
+          "insertions": 0,
+          "reference": "letconnection=connect(b\"0123456789abcdef\");scalar_message(connection,1,2,3,4,5);lend_message(connection,1,&slice,4,5);",
+          "hypothesis": "letconnection=connect(b\"0123456789abcdef\");",
+          "visual_state_id": "visual-00006",
+          "frame_interval": [
+            28.5,
+            77.0
+          ]
+        }
+      ],
+      "roi_ocr_cer": 0.475,
+      "roi_ocr_reference_units": 160,
+      "roi_ocr_errors": 76,
+      "roi_ocr_failed_references": 0,
+      "publisher_caption_agreement": {
+        "status": "measured",
+        "value": 0.011472275334608031,
+        "reference_units": 523,
+        "errors": 6,
+        "substitutions": 0,
+        "deletions": 6,
+        "insertions": 0,
+        "reference": "if that server happens to already be created you would get an error but ultimately you create the server this way and then you just pass that to receive message so conceptually this is what it looks like its actually very close to the way the real implementation goes the actual implementation of the message is slightly different but ultimately you create the server and then you constantly receive messages on that and you act on those messages as the server as the client its very similar its the opposite where you connect to the server by passing the address there if the server doesnt exist this will actually block until the server is created and this means that when youre starting up a new system you dont have to worry so much about concurrency because it will wait until the server is available so for example the printf function the printf function is provided by a server this connect wont succeed until the server is actually started and then once you have that connection you just call scalar message or lend or whatever on that and thats how you actually send a message to this other server lend messages means you can pass references to memory to slices as long as they are page aligned and pages in length and from this you actually get the different message types that we support theres the move borrow and mutable borrow again for move you can either send memory which detaches it from your process and actually moves it wholesale into the other process and that means you never can see that memory again because it has now been moved into the process memory space of the server for just numbers you can send scalars and the interesting bit about this is that these two in red are actually non blocking because youve moved the memory to another process why would you have to wait for it to respond theres not going to be a response so as soon as you send memory or send a scalar value your program just continues executing in contrast for borrow if youre borrowing memory to the other process if youre lending it then that is a lend message and if the memory that youre lending is mutable its a lend mutt and for scalar there really is no difference between a borrow and a mutable borrow so both of these use blocking scalars which return five scalar values back so that is the basic messaging architecture but of course messaging architecture does not an operating system make so lets go over the actual implementation a bit and im going to start with the tick timer because any time you start a new operating system one of the first things that you work on is the timing system how do you get the quantum going how do you switch between processes so the tick timer takes ownership of the hardware timer on the particular bit of hardware this might be the sys tick on an arm platform if we had one but this is a special hardware timer",
+        "hypothesis": "if that server happens to already be created you would get an error but ultimately you create the server this way and then you just pass that to receive message so conceptually this is what it looks like its actually very close to the way the real implementation goes the actual implementation of the message is slightly different but ultimately you create the server and then you constantly receive messages on that and you act on those messages as the server as the client its very similar its the opposite where you connect to the server by passing the address there if the server doesnt exist this will actually block until the server is created and this means that when youre starting up a new system you dont have to worry so much about concurrency because it will wait until the server is available so for example the printf function is provided by a server this connect wont succeed until the server is actually started and then once you have that connection you just call scalar message or lend or whatever on that and thats how you actually send a message to this other server lend messages means you can pass references to memory to slices as long as they are page aligned and pages in length and from this you actually get the different message types that we support theres the move borrow and mutable borrow again you can either send memory which detaches it from your process and actually moves it wholesale into the other process and that means you never can see that memory again because it has now been moved into the process memory space of the server for just numbers you can send scalars and the interesting bit about this is that these two in red are actually non blocking because youve moved the memory to another process why would you have to wait for it to respond theres not going to be a response so as soon as you send memory or send a scalar value your program just continues executing in contrast for borrow if youre borrowing memory to the other process if youre lending it then that is a lend message and if the memory that youre lending is mutable its a lend mutt and for scalar there really is no difference between a borrow and a mutable borrow so both of these use blocking scalars which return five scalar values so that is the basic messaging architecture but of course messaging architecture does not an operating system make so lets go over the actual implementation a bit and im going to start with the tick timer because any time you start a new operating system one of the first things that you work on is the timing system how do you get the quantum going how do you switch between processes so the tick timer takes ownership of the hardware timer on the particular bit of hardware this might be the sys tick on an arm platform if we had one but this is a special hardware timer",
+        "clip_interval": [
+          2.62,
+          175.44
+        ],
+        "publisher_cue_count": 43,
+        "word_timed_segment_count": 42,
+        "metric": "published_caption_agreement_wer"
+      },
+      "status": "measured",
+      "wall_seconds": 8.45,
+      "cleanup_leftovers": {}
+    },
+    {
+      "case_id": "39c3-1989",
+      "title": "How To Minimize Bugs in Cryptography Code",
+      "source_url": "https://media.ccc.de/v/39c3-how-to-minimize-bugs-in-cryptography-code",
+      "input_sha256": "631a6d1aca378d0a3374f1ab94d1874666f602715582125fbeb4d2655232144e",
+      "captions_sha256": "278671c12099431f7ec654626bab35dcfaa6e2e9299cef814adedde63e16ddde",
+      "source_interval": [
+        960,
+        1140
+      ],
+      "preparation_sha256": "735d588b71fdebb659d7fe6437f2e07e3c177fd40490a6ca4fe91333c3551dc9",
+      "pack_path": "<WORKDIR>/39c3-1989/library/dae90060ea58",
+      "completeness": {
+        "ocr": "complete",
+        "speaker_diarization": "unavailable",
+        "transcript": "complete",
+        "visual_states": "complete",
+        "word_timing": "complete"
+      },
+      "diagnostics": {
+        "asr_error": null,
+        "dedupe_failure_count": 0,
+        "diarization_error": null,
+        "ocr_error": null,
+        "ocr_failure_count": 0
+      },
+      "timings": {
+        "acquisition_seconds": 0.043,
+        "asr_seconds": 7.86,
+        "ocr_seconds": 0.399,
+        "preview_seconds": 0.025,
+        "sampling_seconds": 1.109
+      },
+      "counts": {
+        "candidate_frames": 360,
+        "canonical_visual_states": 6,
+        "ocr_records": 6,
+        "preview_visual_states": 4,
+        "progressive_build_groups": 0,
+        "scenes": 3,
+        "scroll_groups": 0,
+        "transcript_segments": 38
+      },
+      "canonical_boundary_score": {
+        "reference_count": 4,
+        "prediction_count": 5,
+        "matched": 3,
+        "matches": [
+          [
+            19,
+            19.0
+          ],
+          [
+            119,
+            118.0
+          ],
+          [
+            139,
+            138.5
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 0.75,
+        "precision": 0.6
+      },
+      "ocr_references": [
+        {
+          "timestamp": 5,
+          "roi": [
+            0.425,
+            0.1,
+            0.39,
+            0.125
+          ],
+          "text": "method Maximum(values: seq<int>) returns (max: int)\nrequires values != []\nensures max in values\nensures forall i | 0 <= i < |values| :: values[i] <= max",
+          "kind": "code",
+          "status": "measured",
+          "value": 0.05555555555555555,
+          "reference_units": 126,
+          "errors": 7,
+          "substitutions": 5,
+          "deletions": 2,
+          "insertions": 0,
+          "reference": "methodMaximum(values:seq<int>)returns(max:int)requiresvalues!=[]ensuresmaxinvaluesensuresforalli|0<=i<|values|::values[i]<=max",
+          "hypothesis": "methodMaximum(values:seq<int>)returns(max:int)requiresvalues!=[]ensuresmaxinvaluesensuresforalli|0‹i‹[values]::values[i]‹max",
+          "visual_state_id": "visual-00001",
+          "frame_interval": [
+            0.0,
+            19.0
+          ]
+        }
+      ],
+      "roi_ocr_cer": 0.05555555555555555,
+      "roi_ocr_reference_units": 126,
+      "roi_ocr_errors": 7,
+      "roi_ocr_failed_references": 0,
+      "publisher_caption_agreement": {
+        "status": "measured",
+        "value": 0.022641509433962263,
+        "reference_units": 530,
+        "errors": 12,
+        "substitutions": 4,
+        "deletions": 5,
+        "insertions": 3,
+        "reference": "it always returns the correct value according to this specification so this is really really powerful for cryptographic code where we have this giant input space and we want to say something thats logically always true no matter what the input is this is just a little graphic about what the approximate workflow looks like when youre working with one of these satr smt solvers you write some code you write a specification a tool translates that into an equation or a formula that the solver can understand you forward that on to the solver and then it tries to solve the equations it actually tries to solve two it tries to solve one saying that your specification holds and one saying that your specification does not hold and depending on which one of those it solves it either tells you yes your codes correct or it tells you no and most tools can actually translate the no into a counterexample so theyll tell you not only your specification doesnt hold but theyll tell you your specification doesnt hold when x is zero and y is one so maybe take a closer look at that case this is really useful but some of you who have taken theoretical computer science classes might be looking at this and saying what on earth is in that solver because sat boolean satisfiability is a classic example of an np complete problem theres no efficient algorithm that can reliably say yes or no to this question so whats happening there well the answer is solvers are pretty smart they have some good heuristics for how to solve equations but theres a third case here which is the solver times out with the smt solvers youre always working with a timeout and if it times out you really dont know which case youre in maybe your code is wrong and it just couldnt find a counterexample in time maybe your code is right but the reasons why its right are a little bit complicated and the solver just didnt find the solution so in that case you would go back and you would add some hints so you kind of try to nudge the solver in a certain direction in the proof you maybe give it some facts that you think might be helpful and then you try to kind of help it along and see if it doesnt time out this time so in practice it looks a little bit more like a back and forth so this is a quote from project everest from a retrospective its a very large undertaking it was this 10 year effort to formalize tls and fstar so i defer to them about using smt solvers at scale and to paraphrase what they say here they say that the big advantage of this kind of heavy automation is the scale where they had a lot of proofs and they were able to crunch through them using these heavily automated tools with solvers but the trade off for that was that they had opacity in the proofs it wasnt always clear how the solver was coming to a solution",
+        "hypothesis": "it always returns the correct value according to the specification so this is really really powerful for cryptographic code where we have this giant input space and we want to say something thats logically always true no matter what the input is this is just a little graphic about what the approximate workflow looks like when youre working with one of these satr smt solvers you write some code you write a specification a tool translates that into an equation or a formula that the solver can understand you forward that on to the solver and then it tries to solve the equations it actually tries to solve two it tries to solve one saying that your specification holds and one saying that your specification does not hold and depending depending on which one of those it solves it either tells you yes your codes correct or it tells you no and most tools can actually translate the no into a counter example so theyll tell you not only your specification doesnt hold but theyll tell you your specification doesnt hold when x is zero and y is one so maybe take a closer look at that case this is really useful but some of you who have taken theoretical computer science classes might be looking at this and saying what on earth is in that solver and satisfiability is a classic example of an np complete problem theres no efficient algorithm that can reliably say yes or no to this question so whats happening there well the answer is solvers are pretty smart they have some good heuristics for how to solve equations but theres a third case here which is the solver times out with the smt solvers youre always working with a timeout and if it times out you really dont know which case youre in maybe your code is wrong and it just couldnt find a time maybe your code is right but the reasons why its right are a little bit complicated and the solver just didnt find the solution so in that case you would go back and you would add some hints so you kind of try to nudge the solver in a certain direction in the proof you maybe give it some facts that you think might be helpful and then you try to kind of help it along and see if it doesnt time out this time so in practice it looks a little bit more like a back and forth so this is a quote from project everest from a retrospective its a very large undertaking it was this 10 year effort to formalize tls and f star so i defer to them about using smt solvers at scale and to paraphrase what they say here they say that the big advantage of this kind of heavy automation is the scale where they had a lot of proofs and they were able to crunch through them using these heavily automated tools with solvers but the trade off for that was that they had opacity in the proofs it wasnt always clear how the solver was coming to a",
+        "clip_interval": [
+          2.799,
+          176.009
+        ],
+        "publisher_cue_count": 44,
+        "word_timed_segment_count": 38,
+        "metric": "published_caption_agreement_wer"
+      },
+      "status": "measured",
+      "wall_seconds": 9.075,
+      "cleanup_leftovers": {}
+    },
+    {
+      "case_id": "39c3-1979",
+      "title": "The art of text (rendering)",
+      "source_url": "https://media.ccc.de/v/39c3-the-art-of-text-rendering",
+      "input_sha256": "7dc914cb4bb2ecb78069ba614f3d42a688f9ebee6ea3d19106267118efc9d024",
+      "captions_sha256": "6a20ecf86cb0733960d6a016e6e97f18c600c684f38dca0a0fcc429651ddcc73",
+      "source_interval": [
+        900,
+        1080
+      ],
+      "preparation_sha256": "7393dabc69742c7dbbfae82df83de5cc2537e449b7af9738cd6596d588899e37",
+      "pack_path": "<WORKDIR>/39c3-1979/library/a923003e99bf",
+      "completeness": {
+        "ocr": "complete",
+        "speaker_diarization": "unavailable",
+        "transcript": "complete",
+        "visual_states": "complete",
+        "word_timing": "complete"
+      },
+      "diagnostics": {
+        "asr_error": null,
+        "dedupe_failure_count": 0,
+        "diarization_error": null,
+        "ocr_error": null,
+        "ocr_failure_count": 0
+      },
+      "timings": {
+        "acquisition_seconds": 0.048,
+        "asr_seconds": 6.94,
+        "ocr_seconds": 0.484,
+        "preview_seconds": 0.029,
+        "sampling_seconds": 1.552
+      },
+      "counts": {
+        "candidate_frames": 360,
+        "canonical_visual_states": 5,
+        "ocr_records": 5,
+        "preview_visual_states": 5,
+        "progressive_build_groups": 0,
+        "scenes": 1,
+        "scroll_groups": 0,
+        "transcript_segments": 34
+      },
+      "canonical_boundary_score": {
+        "reference_count": 3,
+        "prediction_count": 4,
+        "matched": 3,
+        "matches": [
+          [
+            40,
+            40.0
+          ],
+          [
+            124,
+            124.5
+          ],
+          [
+            147,
+            147.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 1.0,
+        "precision": 0.75
+      },
+      "ocr_references": [
+        {
+          "timestamp": 125,
+          "roi": [
+            0.234375,
+            0.177778,
+            0.515625,
+            0.116667
+          ],
+          "text": "Use horizontal RGB sub-pixel anti-aliasing for LCD flat panels.\nUse vertical hinting only and completely discard the horizontal one.\nUse accurate glyph advance values from unhinted glyph.\nUse accurate, high resolution values from the kerning table.",
+          "kind": "slide_text",
+          "note": "Four recommendation lines; Roman numeral bullets are outside the ROI.",
+          "status": "measured",
+          "value": 0.004694835680751174,
+          "reference_units": 213,
+          "errors": 1,
+          "substitutions": 0,
+          "deletions": 1,
+          "insertions": 0,
+          "reference": "UsehorizontalRGBsub-pixelanti-aliasingforLCDflatpanels.Useverticalhintingonlyandcompletelydiscardthehorizontalone.Useaccurateglyphadvancevaluesfromunhintedglyph.Useaccurate,highresolutionvaluesfromthekerningtable.",
+          "hypothesis": "UsehorizontalRGBsub-pixelanti-aliasingforLCDflatpanels.Useverticalhintingonlyandcompletelydiscardthehorizontalone.UseaccurateglyphadvancevaluesfromunhintedglyphUseaccurate,highresolutionvaluesfromthekerningtable.",
+          "visual_state_id": "visual-00003",
+          "frame_interval": [
+            124.5,
+            147.0
+          ]
+        }
+      ],
+      "roi_ocr_cer": 0.004694835680751174,
+      "roi_ocr_reference_units": 213,
+      "roi_ocr_errors": 1,
+      "roi_ocr_failed_references": 0,
+      "publisher_caption_agreement": {
+        "status": "measured",
+        "value": 0.04295942720763723,
+        "reference_units": 419,
+        "errors": 18,
+        "substitutions": 5,
+        "deletions": 10,
+        "insertions": 3,
+        "reference": "in terms of gpu you only need to render two triangles with your texture and you can rotate it you can scale it to some point and then you can pack a lot of glyphs inside a texture so this is one example and you can fit quite a lot of glyphs into a single texture and then you can use it in game or even in browser if you want of course the quality is lets say okay because if you have a big magnification of your texture then you will start to see a lot of artifacts so its okay for games maybe its not so much okay for lets say document if you use this technique to render a pdf on screen maybe its not the best one way to improve the rendering is to enforce what i call vertical h inting so explain that h inting so here on the left can you see okay no you cannot see my so when you have no h inting you have your shape okay as bezier curve and behind you have all the pixels that will be on and off depending if they are inside or outside the shape and on the border this is where you put some anti aliasing for native h inting so the designer of the typeface for this specific size say oh you have to modify the path just to fit the grid and its a bit nicer but you have also auto hinting so you try to compute everything automatically but its not as nice as for the native h inting and the last one is vertical h inting you only enforce inting in the vertical direction and you keep it free on the horizontal direction and when you do that then you can have very precise rendering because you can position your text with tenths of pixel position so you dont have to align your text on the pixel grid you can put it everywhere of course it only works with horizontal text but it provides you quite a good quality and then you have another problem which is called well subpixel zoo so theres a nice site that shows you all the different displays so depending if youre on a computer on a mobile or some weird mobile or some weird screen this is what is really a pixel so what ive explained with anti aliasing most of the time we use lcd so this is the second one",
+        "hypothesis": "terms of gpu you only need to render two triangles with your texture and you can rotate it you can scale it to some point and then you can pack a lot of glyphs inside a texture so this is one example and you can fit quite a lot of glyphs into a single texture and then you can use it in game or even in browser if you want of course the quality is lets say ok because if you have a big magnification of your texture then you will start to see a lot of artifacts so its okay for games maybe its not so much okay for lets say document if you use this technique to render a pdf on screen maybe its not the best one way to improve the rendering is to enforce what i call vertical inting so explain that inting so here on the left can you okay no you cannot see my so when you have no inting you have your shape okay as a basic curve and behind you have all the pixels that will be on and off depending if they are inside or outside the shape and on the border this is where you put some anti aliasing for native inting so the designer of the typeface for this specific size you have to modify the path just to fit the grid and its a bit nicer but you have also auto inting so you try to compute everything automatically but its not as nice as for the native inting and the last one is vertical inting you only enforce inting in the vertical direction and you keep it free on the horizontal direction and when you do that then you can have very precise rendering because you can position your text with a tenth of pixel position so you dont have to align your text on the pixel grid you can put it everywhere of course it only works with horizontal text but it provides you quite a good quality and then you have another problem which is called well subpixel zoo so there is a nice site that shows you all the different displays so depending if youre on a computer on a mobile or some weird mobile or some weird screen this is what is really a pixel so what ive explained with anti aliasing most of the time we use lcd so this is the second one",
+        "clip_interval": [
+          8.799,
+          175.0
+        ],
+        "publisher_cue_count": 36,
+        "word_timed_segment_count": 34,
+        "metric": "published_caption_agreement_wer"
+      },
+      "status": "measured",
+      "wall_seconds": 8.614,
+      "cleanup_leftovers": {}
+    },
+    {
+      "case_id": "39c3-2372",
+      "title": "The Eyes of Photon Science: Imaging, Simulation and the Quest to Make the Invisible Visible",
+      "source_url": "https://media.ccc.de/v/39c3-the-eyes-of-photon-science-imaging-simulation-and-the-quest-to-make-the-invisible-visible",
+      "input_sha256": "01ae56db455b3207d60989a6691d09e0ed33acd4e1c1347c4b39719136de1113",
+      "captions_sha256": "241952237308d48933ed7ba7b0b764aa76efdb9200803eebe6b7a6de99bc905a",
+      "source_interval": [
+        930,
+        1110
+      ],
+      "preparation_sha256": "eddaaef61083cc7082848f1e89d7e771d818e9bba86036810c7280b617a7867b",
+      "pack_path": "<WORKDIR>/39c3-2372/library/a60e0458bfa5",
+      "completeness": {
+        "ocr": "complete",
+        "speaker_diarization": "unavailable",
+        "transcript": "complete",
+        "visual_states": "complete",
+        "word_timing": "complete"
+      },
+      "diagnostics": {
+        "asr_error": null,
+        "dedupe_failure_count": 0,
+        "diarization_error": null,
+        "ocr_error": null,
+        "ocr_failure_count": 0
+      },
+      "timings": {
+        "acquisition_seconds": 0.055,
+        "asr_seconds": 7.172,
+        "ocr_seconds": 2.114,
+        "preview_seconds": 0.19,
+        "sampling_seconds": 1.814
+      },
+      "counts": {
+        "candidate_frames": 360,
+        "canonical_visual_states": 39,
+        "ocr_records": 39,
+        "preview_visual_states": 2,
+        "progressive_build_groups": 4,
+        "scenes": 8,
+        "scroll_groups": 2,
+        "transcript_segments": 40
+      },
+      "canonical_boundary_score": {
+        "reference_count": 10,
+        "prediction_count": 38,
+        "matched": 6,
+        "matches": [
+          [
+            16,
+            16.0
+          ],
+          [
+            69,
+            69.5
+          ],
+          [
+            94,
+            93.5
+          ],
+          [
+            112,
+            111.0
+          ],
+          [
+            149,
+            148.0
+          ],
+          [
+            171,
+            170.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 0.6,
+        "precision": 0.15789473684210525
+      },
+      "ocr_references": [
+        {
+          "timestamp": 130,
+          "roi": [
+            0.3125,
+            0.216667,
+            0.25,
+            0.041667
+          ],
+          "text": "Electric connection solder bumps",
+          "kind": "diagram_label",
+          "status": "measured",
+          "value": 0.0,
+          "reference_units": 29,
+          "errors": 0,
+          "substitutions": 0,
+          "deletions": 0,
+          "insertions": 0,
+          "reference": "Electricconnectionsolderbumps",
+          "hypothesis": "Electricconnectionsolderbumps",
+          "visual_state_id": "visual-00028",
+          "frame_interval": [
+            124.0,
+            146.5
+          ]
+        },
+        {
+          "timestamp": 130,
+          "roi": [
+            0.628906,
+            0.631944,
+            0.101563,
+            0.065278
+          ],
+          "text": "Single pixel\nread-out cell",
+          "kind": "diagram_label",
+          "status": "measured",
+          "value": 0.0,
+          "reference_units": 23,
+          "errors": 0,
+          "substitutions": 0,
+          "deletions": 0,
+          "insertions": 0,
+          "reference": "Singlepixelread-outcell",
+          "hypothesis": "Singlepixelread-outcell",
+          "visual_state_id": "visual-00028",
+          "frame_interval": [
+            124.0,
+            146.5
+          ]
+        }
+      ],
+      "roi_ocr_cer": 0.0,
+      "roi_ocr_reference_units": 52,
+      "roi_ocr_errors": 0,
+      "roi_ocr_failed_references": 0,
+      "publisher_caption_agreement": {
+        "status": "measured",
+        "value": 0.02676864244741874,
+        "reference_units": 523,
+        "errors": 14,
+        "substitutions": 7,
+        "deletions": 4,
+        "insertions": 3,
+        "reference": "some of the devices are operated in ultrahigh vacuum so they must be vacuum compatible we need cooling power dissipation is of the order of a few hundred watts and data management is a big point we produce 16 gigabytes per second with such a camera and if we accumulate data over a year in 2024 we have taken 33 petabytes of raw data with such a device in total during the last year since 2017 we have accumulated of the order of 140 petabytes in our data archives the core and the heart of such a device is the sensor which is shown here on the left and an asic applicationspecific integrated circuit so that bit does all the fancy work in processing the signal etc and each of the pixels has such an electronics so we have one million readout channels with such a camera which is quite a lot which means at the end if you operate such a camera we have to understand 150 million parameters to have it under control and to create good pictures thats the same device on the left as it installed at our instruments one at mid the block the part in the middle the block thats the camera and around all the cabling and infrastructure on the right side you can see a camera which is operated in air its the same size provides the same speed just a different environment and a bit different technology so lets have a bit of closer look in the camera this is the droplet with the sample with the tux that come from the top the x rays are from the right and from time to time we hit the drop and we produce scattered light and this light produces an image on the sensor which is shown here and if we zoom into the sensor and look from the side we can see how the sensor is structured we have a piece of silicon monolithic which is the sensor chip which is rather thick 700 microns on top we have a filter that blocks obstacle lights and then the bottom of the sensor chip we have the pixel structure and the interesting part here is that underneath the pixel structure we have a second chip or a second wafer which carries the asics so each individual pixel has its own readout electronics and the connection between the two is done with these bumps with the solder bumps electric connection between the two layers if we zoom in into one pixel we can have a look how this works its the same structure the sensor the filter from the top then metallic connections to the bump and at the bottom the asic and if a photon enters the sensor from the top it produces electrons and these electrons move down and are then moved across the metal contact to the bumps and then to the asic where the signal is processed now if you talk about such a detector system it has a thick sensor and this has some consequences on the imaging quality and that",
+        "hypothesis": "some of the devices are operated in ultra high vacuum so they must be vacuum compatible we need cooling power dissipation is of the order of a few hundred watts and data management is a big point we produce 16 gigabytes per second with such a camera and if we accumulate the data over a year in 2024 we have taken 33 petabytes of raw data with such a device during the last year since 2017 we have accumulated of the order of 140 petabytes in our data archives the core and the heart of such device is the sensor which is shown here on the left and an asic application specific integrated circuit so that bit does all the fancy work in processing the signal etc and each of the pixels has such an electronics so we have 1 million readout channels with such a camera which is quite a lot which means at the end if you operate such a camera we have to understand 150 million parameters to have it under control and to create good pictures thats the same device on the left as it installed at our instruments one at mad the book the part in the middle the block thats the camera and around all the cabling and infrastructure on the right side you can see a camera which is operated in air its the same size provides the same speed just a different environment and a bit different technology so lets have a bit of closer look in the camera this is the droplet with the sample with the tucs that come from the top the x rays are from the right and from time to time we hit the drop and we produce scattered light and this light produces an image on the sensor which is shown here and if we zoom into the sensor and look from the side we can see how the sensor is structured we have a piece of silicon monolithic which is the sensor chip which is rather thick 700 microns on top we have a filter that blocks obstacle lights and then the bottom of the sensor chip we have the pixel structure and the interesting part here is that underneath the pixel structure we have a second chip or a second wafer which carries the asics so each individual pixel has its own readout electronics and the connection between the two is done with these bumps with the solder bumps electric connection between the two layers if we zoom in into one pixel we can have a look how this works its the same structure the sensor the filter from the top then metallic connections to the bump and at the bottom the asic and if a photon enters the sensor from the top it produces electrons and these electrons move down and are then moved across the metal to the bumps and then to the asic where the signal is processed now if you talk about such as detector system it has a thick sensor and this has some consequences on the imaging quality and that",
+        "clip_interval": [
+          4.24,
+          178.38
+        ],
+        "publisher_cue_count": 44,
+        "word_timed_segment_count": 40,
+        "metric": "published_caption_agreement_wer"
+      },
+      "status": "measured",
+      "wall_seconds": 9.281,
+      "cleanup_leftovers": {}
+    },
+    {
+      "case_id": "39c3-1508",
+      "title": "Demystifying Fuzzer Behaviour",
+      "source_url": "https://media.ccc.de/v/39c3-demystifying-fuzzer-behaviour",
+      "input_sha256": "f514284d9f182834d5f9281e10a16dfa428f09f74d1be7c774622aee30d6ae06",
+      "captions_sha256": "b964e20a9aceb348367af919c3eaba550059d4ea8146cfb7c18db8a8b868f481",
+      "source_interval": [
+        930,
+        1110
+      ],
+      "preparation_sha256": "d3ffe473c4f2fe93065ee109aafcba92f96f82616c844f7371bbbf7c8d39704a",
+      "pack_path": "<WORKDIR>/39c3-1508/library/a18302c57c48",
+      "completeness": {
+        "ocr": "complete",
+        "speaker_diarization": "unavailable",
+        "transcript": "complete",
+        "visual_states": "complete",
+        "word_timing": "complete"
+      },
+      "diagnostics": {
+        "asr_error": null,
+        "dedupe_failure_count": 0,
+        "diarization_error": null,
+        "ocr_error": null,
+        "ocr_failure_count": 0
+      },
+      "timings": {
+        "acquisition_seconds": 0.057,
+        "asr_seconds": 7.005,
+        "ocr_seconds": 2.47,
+        "preview_seconds": 0.173,
+        "sampling_seconds": 1.913
+      },
+      "counts": {
+        "candidate_frames": 360,
+        "canonical_visual_states": 35,
+        "ocr_records": 35,
+        "preview_visual_states": 15,
+        "progressive_build_groups": 7,
+        "scenes": 9,
+        "scroll_groups": 4,
+        "transcript_segments": 37
+      },
+      "canonical_boundary_score": {
+        "reference_count": 16,
+        "prediction_count": 34,
+        "matched": 13,
+        "matches": [
+          [
+            13,
+            13.0
+          ],
+          [
+            19,
+            19.5
+          ],
+          [
+            27,
+            27.0
+          ],
+          [
+            52,
+            51.5
+          ],
+          [
+            62,
+            62.0
+          ],
+          [
+            68,
+            68.0
+          ],
+          [
+            99,
+            99.0
+          ],
+          [
+            102,
+            102.0
+          ],
+          [
+            115,
+            115.0
+          ],
+          [
+            124,
+            124.0
+          ],
+          [
+            134,
+            134.0
+          ],
+          [
+            143,
+            143.5
+          ],
+          [
+            166,
+            166.5
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 0.8125,
+        "precision": 0.38235294117647056
+      },
+      "ocr_references": [
+        {
+          "timestamp": 3,
+          "roi": [
+            0.035156,
+            0.284722,
+            0.253906,
+            0.256944
+          ],
+          "text": "fn do_thing(x: &str) -> bool {\n  for c in x.chars() {\n    if !c.is_ascii() {\n      return false;\n    }\n  }\n  true\n}",
+          "kind": "code",
+          "note": "Foreground white Rust code; the intentionally dark AFL console background is not part of the reference.",
+          "status": "measured",
+          "value": 0.4605263157894737,
+          "reference_units": 76,
+          "errors": 35,
+          "substitutions": 3,
+          "deletions": 1,
+          "insertions": 31,
+          "reference": "fndo_thing(x:&str)->bool{forcinx.chars(){if!c.is_ascii(){returnfalse;}}true}",
+          "hypothesis": "fndo_thing(x:&str)->bool{forcinx.chars(){if!c.is_ascii(){(96.88%)returnfalseisM61.2k/secstrategyyleldstrue",
+          "visual_state_id": "visual-00001",
+          "frame_interval": [
+            0.0,
+            13.0
+          ]
+        },
+        {
+          "timestamp": 32,
+          "roi": [
+            0.035156,
+            0.188889,
+            0.273438,
+            0.5
+          ],
+          "text": "fn do_another(x: &str) -> bool {\n  let mut v = 0;\n  if x[0..1] == “a” {\n    v += 1;\n  }\n  if x[1..2] == “b” {\n    v += 1;\n  }\n  if x[2..3] == “c” {\n    v += 1;\n  }\n  if x[3..4] == “d” {\n    v += 1;\n  }\n  v == 4\n}",
+          "kind": "code",
+          "note": "Smart quotation marks follow the visible slide; foreground white code only, excluding the dark console background.",
+          "status": "measured",
+          "value": 0.873015873015873,
+          "reference_units": 126,
+          "errors": 110,
+          "substitutions": 14,
+          "deletions": 7,
+          "insertions": 89,
+          "reference": "fndo_another(x:&str)->bool{letmutv=0;ifx[0..1]==“a”{v+=1;}ifx[1..2]==“b”{v+=1;}ifx[2..3]==“c”{v+=1;}ifx[3..4]==“d”{v+=1;}v==4}",
+          "hypothesis": ">bool{fndo_another(x:&str)letmutv=0;ifx[0..1]==\"a\"{0.00%+=1;14ifx[1..2]==\"b\"{(96.88%)v+=1;2.55Mifx[2..3]==\"c\"{/secleldsv+=1;n/an/an/3,n/aifx[3..4]==\"d\".{/a,n/an/an/a.v+=1;n/aп/а,п/а,n/av==4506/1.05M,193/1.44M",
+          "visual_state_id": "visual-00006",
+          "frame_interval": [
+            30.0,
+            43.0
+          ]
+        }
+      ],
+      "roi_ocr_cer": 0.7178217821782178,
+      "roi_ocr_reference_units": 202,
+      "roi_ocr_errors": 145,
+      "roi_ocr_failed_references": 0,
+      "publisher_caption_agreement": {
+        "status": "measured",
+        "value": 0.0387409200968523,
+        "reference_units": 413,
+        "errors": 16,
+        "substitutions": 3,
+        "deletions": 13,
+        "insertions": 0,
+        "reference": "structurally it looks pretty similar oh but theres a couple of pesky mutations happening it looks like were not just checking each character anymore now were actually doing something with those characters right so how bad could it possibly be i mean surely this kind of state accumulation couldnt be too much of a problem well heres a comparable problem that i ran with lib afl for a bit um any takes on how long it takes the fuzzer to figure out how to get v equal to 4 yeah it takes about 250 000 to 34 million executions of lib afl with havoc to actually find v equals 4 right this is not a hard program right state is actually surprisingly really hard to solve so the thing is right think about it in terms of the sokoban puzzles again right we have one function which describes all sokoban puzzles right this one function describes all sokoban puzzles and what that means for us right is that if we use a fuzzer which is code coverage guided right every single puzzle has the same guidance which is insane that does not work so most software is actually highly stateful you might be familiar with typical uses of this we have client servers we have interactive programs like guis and stuff but like that may be what most user facing software is but this also applies to other kinds of software i mean think about a cpu right a cpu really is just a sokoban puzzle with more steps right you know like think about compilers right the inherent complexity and the enormous amount of state that we build when were actually building programs right think about databases right interactions in databases that have to be sequential in order to actually find different behavior in these programs and you know i really think this is important to stress right because we talked about how partitioning earlier really should be giving us a better indicator of how well weve tested something but partitioning in the ways that we do classically really just does not model state very well at all and we just dont have a general way to do it so yeah thats just an unfortunate reality of what were doing so lets think about another problem right what happens when we actually mutate an input right i might say that a mutation here is to apply a move right i moved left",
+        "hypothesis": "structurally it looks pretty similar oh but theres a couple of pesky mutations happening it looks like were not just checking each character anymore now were actually doing something with those characters right so how bad could it possibly be i mean surely this kind of state accumulation couldnt be too much of a problem well heres a comparable problem that i ran with lib afl for a bit any takes on how long it takes the fuzzer to figure out how to get v equal to four yeah it takes about 250 000 to 34 million executions of lib afl with havoc to actually find v equals four right hard program right state is actually surprisingly really hard to solve so the thing is right think about it in terms of the sokoban puzzles again right we have one function which describes all sokoban puzzles right this one function describes all sokoban puzzles and what that means for us right is that if we use a fuzzer which is code coverage guided right every single puzzle has the same guidance which is insane that does not work so most software is actually highly stateful you might be familiar with typical uses of this we have client servers we have interactive programs like guis and stuff but that may be what most user facing software is but this also applies to other kinds of software i mean think about a cpu right a cpu really is just a sogoban puzzle with more steps right think about compilers right the inherent complexity and the enormous amount of state that we build when were actually building programs right right interactions in databases that have to be sequential in order to actually find different behavior in these programs and you know i really think this is important to stress right because we talked about how partitioning earlier really should be giving us a better indicator of how well weve tested something but partitioning in the ways that we do classically really just does not model state very well at all and we just dont have a general way to do it so yeah thats just an unfortunate reality of what were doing so lets think about another problem right what happens when we actually mutate an input right i might say that a mutation here is to apply a move right i moved",
+        "clip_interval": [
+          4.549,
+          178.819
+        ],
+        "publisher_cue_count": 40,
+        "word_timed_segment_count": 37,
+        "metric": "published_caption_agreement_wer"
+      },
+      "status": "measured",
+      "wall_seconds": 9.195,
+      "cleanup_leftovers": {}
+    }
+  ],
+  "extraction_provenance": {
+    "code_revision": "da24151a9ee050dc811f463920455ef4e5ff3741",
+    "working_tree_dirty": true,
+    "runtime_code_fingerprint": {
+      "sha256": "b28b3712a67322b6f4fecb809ddd5c305fb1150ea2fe29e79be4d648f513e9e4",
+      "files": {
+        "clipmind/__init__.py": "454460b15940288af943d5006b75bcf7fae627ee4b98204aff8e922e59b4f2fc",
+        "clipmind/acquisition.py": "4371d307ba4a653bd2f5aeab5a863345318c478e01a1df80aea12f4e3890dba1",
+        "clipmind/asr.py": "4636d409baa1ffaf33978a6560d3e0fd712c0224923b980e4380570b614a31a0",
+        "clipmind/cli.py": "cc62a51046b5104079d498b9d05acc01c44b21f8aa3deb1ecd4b93e71c9a40f4",
+        "clipmind/compact.py": "cd0f702b76e498e7e2446d90b14f3a49d02a75ff76759f74f7b1dd614aa2e353",
+        "clipmind/config.py": "99d7f8cb0411670c48129d4e737d3a40bed076ccab9256a18a68f79f6667f00c",
+        "clipmind/demo.py": "291e73c47d3b7206b96cc6e411bc836148218e7ac45a9b7267b0aba07f6f2a4a",
+        "clipmind/desktop.py": "6326cdc34553ceaeb8bbc191c625bb2dbe502624f5cfac692bdd73676f37b96c",
+        "clipmind/evidence.py": "56178886b489fc80a965a293c3ff30b38cd70fe434a1f39cd8e9c00bb53b1b2d",
+        "clipmind/fetch.py": "b0550da8beb2cbdf340789aeb654819198d3b86e9154d60be80513da2f891835",
+        "clipmind/handoff.py": "3a047ebfacfdaaef8bdc7dc655ca72aced0f47bfd528739d220e713104de727e",
+        "clipmind/index.py": "5d752d76d6793c5cd093d9171f4c54995488df183e45b86bd5ece31a1e4c7d76",
+        "clipmind/jobs.py": "49cef613b745e08d8dbcc8f87caa0a1e5f1575af768b2cf8e295c2c9ae6412c9",
+        "clipmind/links.py": "a3188bcf6c3b8300060bcd846c2bee7e79e22833e54593cd7e33c8fa59acdd4b",
+        "clipmind/mcp.py": "f6883bfe68a33fc91322c44bfaf93181a0e3d9fbdbc82f499f8234d7d6fdb04e",
+        "clipmind/media.py": "ca0b7a8c4fe7d86c5eb9ce72ca44a89d46017932143f4e0f48b6d0d81fc7a49f",
+        "clipmind/ocr.py": "f1606b355aa2d1a3c2c55fcc4ff4f3cf2329a315226483a9829b7492d2bfc284",
+        "clipmind/pipeline.py": "5dd9d17c1c3a226746b036b59c12290930d6c55f74917cbe5dfe1995a7c8695c",
+        "clipmind/preflight.py": "e937616829c0b2c5ef6e10e825b7b1db9cb0de763a357e59faa33f6ab61471d6",
+        "clipmind/probe_worker.py": "23c1c255960caefecee80cb5955dd9c8f70f7ee581e641c023cc061f4f96d0b0",
+        "clipmind/providers.py": "4eadc9502f58aa4ed2a59b455a6b74999204c066da48a599521af239c14ff177",
+        "clipmind/render.py": "00c36d11661b9bfb38ee83c664109f486b88d221f8c2019edadd56fb029f47f0",
+        "clipmind/sdk.py": "559555d60cfe6aac1c00db73f1fcf43c9b563fcfd9ea1616be2d880ede7b8713",
+        "clipmind/server.py": "5e2e265227dd26070dc2a58941db8860b504fb2a5695809faceabebff00dd13d",
+        "clipmind/sources/__init__.py": "6bf89308f3959a7b1a79035e07603fb60dad92f2ffa7c710c1241e9e16f0e68d",
+        "clipmind/sources/base.py": "71fd9af644aa7499d32ec86f1155dc951e764b35404d475e46a9321202afc9d2",
+        "clipmind/sources/conformance.py": "55f44d24d52a9ca39761230b924528a205d1b446da0c64775888912089d0f60e",
+        "clipmind/sources/direct.py": "701ef7051e489ba68a31eab238ad758f9fdcd0fe4a661955ba7767a499e631fa",
+        "clipmind/sources/douyin.py": "a500af011a1873b1b757a51942ec92e1db6f299f46f67fa82e4b8046af4ac13b",
+        "clipmind/sources/douyin_browser.py": "fb34d3ef926c7e056a00123cf7ee493b704296dae87da19fef73cec4d0a09622",
+        "clipmind/sources/identity.py": "1655722e7930ff118d5f6ea5c884e686ae476d12c93b60ab6d34a3fef1bcc3c5",
+        "clipmind/sources/local.py": "f07caae42c3ec87d098f97a2dc777c7bad024d3a9d96e9483f6850efb342f0c9",
+        "clipmind/sources/registry.py": "10f10c5841891b40854e0cbf84395dae06e4bc99bc25e68d3204a6dcbf2a6224",
+        "clipmind/sources/youtube.py": "57e9216ab3b59a3d8f55ecd1055a76a30f93a1e8f5721afd2658a3a030b1631a",
+        "clipmind/storage.py": "9ce09cd64b29f9faa7e17c1a4cb6375b1fe76c722f4746b5bd822386324191ab",
+        "clipmind/subprocesses.py": "9a6da07023be1c8dbf33c419894b8924e84fcda37a9c1151f341a9b0488a0212",
+        "clipmind/visual_content.py": "146496c4ae8a2300abbede10bc5536a8f79c47fad3bb07e40f063047954939bd",
+        "clipmind/visual_states.py": "5f2277f0bf695158153359f8760ab1fa2436dfbff208b5e1a9b8c21b36c94b55",
+        "clipmind/web/app.js": "35ca4d3c7b3a1a4539cb02cc4233fc89516a9373fca0aec200472f95e23b8a3d",
+        "clipmind/web/index.html": "74890054aa0d725c267305effb9924513583c4116d377c813e584b39bd42390e",
+        "clipmind/web/style.css": "848e19aee42c12fa28b5a675de7796ca833591a706d12b4f926b45a4c45b94df"
+      }
+    },
+    "dependency_versions": {
+      "Jinja2": "3.1.6",
+      "MarkupSafe": "3.0.3",
+      "PyYAML": "6.0.3",
+      "RapidFuzz": "3.14.6",
+      "annotated-doc": "0.0.5",
+      "annotated-types": "0.8.0",
+      "anyio": "4.15.0",
+      "certifi": "2026.7.22",
+      "charset-normalizer": "3.5.1",
+      "click": "8.5.0",
+      "clipmind": "1.3.0",
+      "fastapi": "0.141.1",
+      "filelock": "3.32.5",
+      "fsspec": "2026.7.0",
+      "greenlet": "3.5.5",
+      "h11": "0.16.0",
+      "hf-xet": "1.6.0",
+      "httpcore": "1.0.9",
+      "httptools": "0.8.0",
+      "httpx": "0.28.1",
+      "huggingface_hub": "1.30.0",
+      "idna": "3.19",
+      "jiwer": "4.0.0",
+      "llvmlite": "0.49.0",
+      "mlx": "0.32.2",
+      "mlx-metal": "0.32.2",
+      "mlx-whisper": "0.4.3",
+      "more-itertools": "11.1.0",
+      "mpmath": "1.3.0",
+      "networkx": "3.6.1",
+      "numba": "0.67.0",
+      "numpy": "2.5.2",
+      "packaging": "26.3",
+      "pillow": "12.3.0",
+      "playwright": "1.62.0",
+      "pydantic": "2.13.5",
+      "pydantic_core": "2.46.5",
+      "pyee": "13.0.1",
+      "pyobjc-core": "12.2.2",
+      "pyobjc-framework-Cocoa": "12.2.2",
+      "pyobjc-framework-CoreML": "12.2.2",
+      "pyobjc-framework-Quartz": "12.2.2",
+      "pyobjc-framework-Vision": "12.2.2",
+      "python-dotenv": "1.2.3",
+      "regex": "2026.9.3",
+      "requests": "2.34.2",
+      "scipy": "1.18.1",
+      "setuptools": "84.0.0",
+      "starlette": "1.6.0",
+      "sympy": "1.14.0",
+      "tiktoken": "0.14.0",
+      "torch": "2.14.0",
+      "tqdm": "4.70.0",
+      "typing-inspection": "0.4.4",
+      "typing_extensions": "4.16.0",
+      "urllib3": "2.7.0",
+      "uvicorn": "0.52.4",
+      "uvloop": "0.22.1",
+      "watchfiles": "1.2.0",
+      "websockets": "17.1",
+      "yt-dlp": "2026.8.19"
+    },
+    "tool_versions": {
+      "ffmpeg": "ffmpeg version 9.0.1 Copyright (c) 2000-2026 the FFmpeg developers",
+      "ffprobe": "ffprobe version 9.0.1 Copyright (c) 2007-2026 the FFmpeg developers"
+    },
+    "platform": "macOS-27.2-arm64-arm-64bit",
+    "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 17.0.0 (clang-1700.6.4.2)]",
+    "configuration": {
+      "cookie_sources": [
+        "-"
+      ],
+      "cookie_file": null,
+      "fetch_format": "bv*+ba/b",
+      "sample_fps": 2.0,
+      "sample_width": 640,
+      "evidence_width": 1280,
+      "dedupe_threshold": 6,
+      "ocr_languages": [
+        "en-US"
+      ],
+      "max_canonical_states": 1000,
+      "max_estimated_ocr_seconds": 180.0,
+      "max_estimated_pack_mb": 150.0,
+      "estimated_ocr_seconds_per_state": 0.15,
+      "estimated_pack_mb_per_state": 0.08,
+      "asr_provider": "mlx",
+      "asr_model": "mlx-community/whisper-large-v3-turbo",
+      "faster_whisper_model": "large-v3-turbo",
+      "asr_language": "en",
+      "asr_vad_filter": true,
+      "asr_hallucination_silence_threshold": 2.0,
+      "diarization_provider": "none",
+      "diarization_model": "pyannote/speaker-diarization-3.1",
+      "diarization_token": null,
+      "ocr_provider": "vision",
+      "tesseract_languages": "eng",
+      "max_videos": 1,
+      "max_fetch": 1,
+      "max_asr": 1,
+      "max_ocr": 2,
+      "douyin_browser_enabled": false,
+      "douyin_browser_timeout": 90.0,
+      "probe_timeout": 20.0,
+      "probe_socket_timeout": 8.0,
+      "probe_max_bytes": 33554432,
+      "probe_max_requests": 12,
+      "keep_source_video": false,
+      "knowledge_base_inbox": null,
+      "max_upload_mb": 10240
+    }
+  }
+}

@@ -1,0 +1,323 @@
+{
+  "schema_version": 1,
+  "source_checked_date": "2026-11-16",
+  "source_collection": "39C3: Power Cycles (2025), media.ccc.de",
+  "purpose": "Ten deterministic three-minute real-talk excerpts plus one separately declared full-talk end-to-end demo. This manifest contains sources and sampling only, not quality labels or results.",
+  "sampling_rule": "For each source, start=floor((duration_seconds*0.4)/30)*30; end=start+180. Freeze independent source-frame annotations before running production extraction. This run uses AI-assisted visual review, not human-verified ground truth.",
+  "caption_metric": "agreement with publisher captions, not human-verified transcription accuracy",
+  "media_downloaded_during_research": false,
+  "demo_case_id": "39c3-1317",
+  "demo_scope": "full original Xous talk, separate from three-minute benchmark sampling",
+  "cases": [
+    {
+      "case_id": "39c3-2042",
+      "guid": "6938a1f1-4ee3-5fca-ae37-d59274e529de",
+      "title": "Code to Craft: Procedural Generation for the Physical World",
+      "authors": [
+        "bleeptrack"
+      ],
+      "original_language": "eng",
+      "page_url": "https://media.ccc.de/v/39c3-code-to-craft-procedural-generation-for-the-physical-world",
+      "metadata_url": "https://api.media.ccc.de/public/events/6938a1f1-4ee3-5fca-ae37-d59274e529de",
+      "video_url": "https://cdn.media.ccc.de/congress/2025/h264-hd/39c3-2042-eng-Code_to_Craft_Procedural_Generation_for_the_Physical_World.mp4",
+      "video_height": 1080,
+      "video_language": "eng",
+      "video_size_mb_publisher": 536,
+      "captions_url": "https://static.media.ccc.de/media/congress/2025/2042-6938a1f1-4ee3-5fca-ae37-d59274e529de-eng.vtt",
+      "captions_provenance": "publisher-hosted; generated using transcribee; not independently human-verified",
+      "license": "CC-BY-4.0",
+      "license_url": "http://creativecommons.org/licenses/by/4.0",
+      "license_proof_url": "https://api.media.ccc.de/public/events/6938a1f1-4ee3-5fca-ae37-d59274e529de",
+      "license_proof_text": "Licensed to the public under http://creativecommons.org/licenses/by/4.0",
+      "duration_seconds": 2157,
+      "sample_start_seconds": 840,
+      "sample_end_seconds": 1020,
+      "estimated_visual_categories": [
+        "slides",
+        "procedural-art",
+        "code"
+      ],
+      "visual_categories_reviewed": false,
+      "ground_truth_status": "unreviewed; no slide boundaries or OCR references annotated"
+    },
+    {
+      "case_id": "39c3-1611",
+      "guid": "e0739bd6-f804-5fde-8cf6-fc940567bf45",
+      "title": "Asahi Linux - Porting Linux to Apple Silicon",
+      "authors": [
+        "sven"
+      ],
+      "original_language": "eng",
+      "page_url": "https://media.ccc.de/v/39c3-asahi-linux-porting-linux-to-apple-silicon",
+      "metadata_url": "https://api.media.ccc.de/public/events/e0739bd6-f804-5fde-8cf6-fc940567bf45",
+      "video_url": "https://cdn.media.ccc.de/congress/2025/h264-hd/39c3-1611-eng-Asahi_Linux_-_Porting_Linux_to_Apple_Silicon.mp4",
+      "video_height": 1080,
+      "video_language": "eng",
+      "video_size_mb_publisher": 498,
+      "captions_url": "https://static.media.ccc.de/media/congress/2025/1611-e0739bd6-f804-5fde-8cf6-fc940567bf45-eng.vtt",
+      "captions_provenance": "publisher-hosted; generated using transcribee; not independently human-verified",
+      "license": "CC-BY-4.0",
+      "license_url": "http://creativecommons.org/licenses/by/4.0",
+      "license_proof_url": "https://api.media.ccc.de/public/events/e0739bd6-f804-5fde-8cf6-fc940567bf45",
+      "license_proof_text": "Licensed to the public under http://creativecommons.org/licenses/by/4.0",
+      "duration_seconds": 2276,
+      "sample_start_seconds": 900,
+      "sample_end_seconds": 1080,
+      "estimated_visual_categories": [
+        "slides",
+        "hardware-diagrams"
+      ],
+      "visual_categories_reviewed": false,
+      "ground_truth_status": "unreviewed; no slide boundaries or OCR references annotated"
+    },
+    {
+      "case_id": "39c3-2154",
+      "guid": "62a4c15d-6efb-5d85-b41d-5363e08ebeae",
+      "title": "Variable Fonts — It Was Never About File Size",
+      "authors": [
+        "Bernd"
+      ],
+      "original_language": "eng",
+      "page_url": "https://media.ccc.de/v/39c3-variable-fonts-it-was-never-about-file-size",
+      "metadata_url": "https://api.media.ccc.de/public/events/62a4c15d-6efb-5d85-b41d-5363e08ebeae",
+      "video_url": "https://cdn.media.ccc.de/congress/2025/h264-hd/39c3-2154-eng-Variable_Fonts_-_It_Was_Never_About_File_Size.mp4",
+      "video_height": 1080,
+      "video_language": "eng",
+      "video_size_mb_publisher": 484,
+      "captions_url": "https://static.media.ccc.de/media/congress/2025/2154-62a4c15d-6efb-5d85-b41d-5363e08ebeae-eng.vtt",
+      "captions_provenance": "publisher-hosted; generated using transcribee; not independently human-verified",
+      "license": "CC-BY-4.0",
+      "license_url": "http://creativecommons.org/licenses/by/4.0",
+      "license_proof_url": "https://api.media.ccc.de/public/events/62a4c15d-6efb-5d85-b41d-5363e08ebeae",
+      "license_proof_text": "Licensed to the public under http://creativecommons.org/licenses/by/4.0",
+      "duration_seconds": 2613,
+      "sample_start_seconds": 1020,
+      "sample_end_seconds": 1200,
+      "estimated_visual_categories": [
+        "slides",
+        "typography",
+        "animation"
+      ],
+      "visual_categories_reviewed": false,
+      "ground_truth_status": "unreviewed; no slide boundaries or OCR references annotated"
+    },
+    {
+      "case_id": "39c3-2188",
+      "guid": "4435af8f-b96a-5593-be42-47a04ba5f47e",
+      "title": "Pwn2Roll: Who Needs a 595€ Remote When You Have wheelchair.py?",
+      "authors": [
+        "elfy"
+      ],
+      "original_language": "eng",
+      "page_url": "https://media.ccc.de/v/39c3-pwn2roll-who-needs-a-599-remote-when-you-have-wheelchair-py",
+      "metadata_url": "https://api.media.ccc.de/public/events/4435af8f-b96a-5593-be42-47a04ba5f47e",
+      "video_url": "https://cdn.media.ccc.de/congress/2025/h264-hd/39c3-2188-eng-Pwn2Roll_Who_Needs_a_595_Remote_When_You_Have_wheelchairpy_hd.mp4",
+      "video_height": 1080,
+      "video_language": "eng",
+      "video_size_mb_publisher": 1173,
+      "captions_url": "https://static.media.ccc.de/media/congress/2025/2188-4435af8f-b96a-5593-be42-47a04ba5f47e-eng.vtt",
+      "captions_provenance": "publisher-hosted; generated using transcribee; not independently human-verified",
+      "license": "CC-BY-4.0",
+      "license_url": "http://creativecommons.org/licenses/by/4.0",
+      "license_proof_url": "https://api.media.ccc.de/public/events/4435af8f-b96a-5593-be42-47a04ba5f47e",
+      "license_proof_text": "Licensed to the public under http://creativecommons.org/licenses/by/4.0",
+      "duration_seconds": 3405,
+      "sample_start_seconds": 1350,
+      "sample_end_seconds": 1530,
+      "estimated_visual_categories": [
+        "slides",
+        "code",
+        "hardware-demo"
+      ],
+      "visual_categories_reviewed": false,
+      "ground_truth_status": "unreviewed; no slide boundaries or OCR references annotated"
+    },
+    {
+      "case_id": "39c3-2274",
+      "guid": "c553ee23-bc27-585a-b8d0-d8fee999e75a",
+      "title": "Reverse engineering the Pixel TitanM2 firmware",
+      "authors": [
+        "willem"
+      ],
+      "original_language": "eng",
+      "page_url": "https://media.ccc.de/v/39c3-reverse-engineering-the-pixel-titanm2-firmware",
+      "metadata_url": "https://api.media.ccc.de/public/events/c553ee23-bc27-585a-b8d0-d8fee999e75a",
+      "video_url": "https://cdn.media.ccc.de/congress/2025/h264-hd/39c3-2274-eng-Reverse_engineering_the_Pixel_TitanM2_firmware.mp4",
+      "video_height": 1080,
+      "video_language": "eng",
+      "video_size_mb_publisher": 408,
+      "captions_url": "https://static.media.ccc.de/media/congress/2025/2274-c553ee23-bc27-585a-b8d0-d8fee999e75a-eng.vtt",
+      "captions_provenance": "publisher-hosted; generated using transcribee; not independently human-verified",
+      "license": "CC-BY-4.0",
+      "license_url": "http://creativecommons.org/licenses/by/4.0",
+      "license_proof_url": "https://api.media.ccc.de/public/events/c553ee23-bc27-585a-b8d0-d8fee999e75a",
+      "license_proof_text": "Licensed to the public under http://creativecommons.org/licenses/by/4.0",
+      "duration_seconds": 2233,
+      "sample_start_seconds": 870,
+      "sample_end_seconds": 1050,
+      "estimated_visual_categories": [
+        "slides",
+        "code",
+        "disassembly"
+      ],
+      "visual_categories_reviewed": false,
+      "ground_truth_status": "unreviewed; no slide boundaries or OCR references annotated"
+    },
+    {
+      "case_id": "39c3-1317",
+      "guid": "d92af8c4-40fb-54e2-9535-bcc683f4a010",
+      "title": "Xous: A Pure-Rust Rethink of the Embedded Operating System",
+      "authors": [
+        "bunnie",
+        "Sean \"xobs\" Cross"
+      ],
+      "original_language": "eng",
+      "page_url": "https://media.ccc.de/v/39c3-xous-a-pure-rust-rethink-of-the-embedded-operating-system",
+      "metadata_url": "https://api.media.ccc.de/public/events/d92af8c4-40fb-54e2-9535-bcc683f4a010",
+      "video_url": "https://cdn.media.ccc.de/congress/2025/h264-hd/39c3-1317-eng-Xous_A_Pure-Rust_Rethink_of_the_Embedded_Operating_System.mp4",
+      "video_height": 1080,
+      "video_language": "eng",
+      "video_size_mb_publisher": 346,
+      "captions_url": "https://static.media.ccc.de/media/congress/2025/1317-d92af8c4-40fb-54e2-9535-bcc683f4a010-eng.vtt",
+      "captions_provenance": "publisher-hosted; generated using transcribee; not independently human-verified",
+      "license": "CC-BY-4.0",
+      "license_url": "http://creativecommons.org/licenses/by/4.0",
+      "license_proof_url": "https://api.media.ccc.de/public/events/d92af8c4-40fb-54e2-9535-bcc683f4a010",
+      "license_proof_text": "Licensed to the public under http://creativecommons.org/licenses/by/4.0",
+      "duration_seconds": 2364,
+      "sample_start_seconds": 930,
+      "sample_end_seconds": 1110,
+      "estimated_visual_categories": [
+        "slides",
+        "code",
+        "architecture-diagrams"
+      ],
+      "visual_categories_reviewed": false,
+      "ground_truth_status": "unreviewed; no slide boundaries or OCR references annotated"
+    },
+    {
+      "case_id": "39c3-1989",
+      "guid": "3f442497-4f90-5868-ac13-3f4b0f857c59",
+      "title": "How To Minimize Bugs in Cryptography Code",
+      "authors": [
+        "Jade"
+      ],
+      "original_language": "eng",
+      "page_url": "https://media.ccc.de/v/39c3-how-to-minimize-bugs-in-cryptography-code",
+      "metadata_url": "https://api.media.ccc.de/public/events/3f442497-4f90-5868-ac13-3f4b0f857c59",
+      "video_url": "https://cdn.media.ccc.de/congress/2025/h264-hd/39c3-1989-eng-How_To_Minimize_Bugs_in_Cryptography_Code.mp4",
+      "video_height": 1080,
+      "video_language": "eng",
+      "video_size_mb_publisher": 328,
+      "captions_url": "https://static.media.ccc.de/media/congress/2025/1989-3f442497-4f90-5868-ac13-3f4b0f857c59-eng.vtt",
+      "captions_provenance": "publisher-hosted; generated using transcribee; not independently human-verified",
+      "license": "CC-BY-4.0",
+      "license_url": "http://creativecommons.org/licenses/by/4.0",
+      "license_proof_url": "https://api.media.ccc.de/public/events/3f442497-4f90-5868-ac13-3f4b0f857c59",
+      "license_proof_text": "Licensed to the public under http://creativecommons.org/licenses/by/4.0",
+      "duration_seconds": 2403,
+      "sample_start_seconds": 960,
+      "sample_end_seconds": 1140,
+      "estimated_visual_categories": [
+        "slides",
+        "code",
+        "mathematics"
+      ],
+      "visual_categories_reviewed": false,
+      "ground_truth_status": "unreviewed; no slide boundaries or OCR references annotated"
+    },
+    {
+      "case_id": "39c3-1979",
+      "guid": "7c12c5be-5414-5673-a856-697a3889f824",
+      "title": "The art of text (rendering)",
+      "authors": [
+        "Nicolas Rougier"
+      ],
+      "original_language": "eng",
+      "page_url": "https://media.ccc.de/v/39c3-the-art-of-text-rendering",
+      "metadata_url": "https://api.media.ccc.de/public/events/7c12c5be-5414-5673-a856-697a3889f824",
+      "video_url": "https://cdn.media.ccc.de/congress/2025/h264-hd/39c3-1979-eng-The_art_of_text_rendering.mp4",
+      "video_height": 1080,
+      "video_language": "eng",
+      "video_size_mb_publisher": 458,
+      "captions_url": "https://static.media.ccc.de/media/congress/2025/1979-7c12c5be-5414-5673-a856-697a3889f824-eng.vtt",
+      "captions_provenance": "publisher-hosted; generated using transcribee; not independently human-verified",
+      "license": "CC-BY-4.0",
+      "license_url": "http://creativecommons.org/licenses/by/4.0",
+      "license_proof_url": "https://api.media.ccc.de/public/events/7c12c5be-5414-5673-a856-697a3889f824",
+      "license_proof_text": "Licensed to the public under http://creativecommons.org/licenses/by/4.0",
+      "duration_seconds": 2309,
+      "sample_start_seconds": 900,
+      "sample_end_seconds": 1080,
+      "estimated_visual_categories": [
+        "slides",
+        "typography",
+        "diagrams"
+      ],
+      "visual_categories_reviewed": false,
+      "ground_truth_status": "unreviewed; no slide boundaries or OCR references annotated"
+    },
+    {
+      "case_id": "39c3-2372",
+      "guid": "44d1ae6d-febc-5035-8379-d2030e7f59a2",
+      "title": "The Eyes of Photon Science: Imaging, Simulation and the Quest to Make the Invisible Visible",
+      "authors": [
+        "MarKuster"
+      ],
+      "original_language": "eng",
+      "page_url": "https://media.ccc.de/v/39c3-the-eyes-of-photon-science-imaging-simulation-and-the-quest-to-make-the-invisible-visible",
+      "metadata_url": "https://api.media.ccc.de/public/events/44d1ae6d-febc-5035-8379-d2030e7f59a2",
+      "video_url": "https://cdn.media.ccc.de/congress/2025/h264-hd/39c3-2372-eng-The_Eyes_of_Photon_Science_Imaging_Simulation_and_the_Quest_to_Make_the_Invisible_Visible.mp4",
+      "video_height": 1080,
+      "video_language": "eng",
+      "video_size_mb_publisher": 504,
+      "captions_url": "https://static.media.ccc.de/media/congress/2025/2372-44d1ae6d-febc-5035-8379-d2030e7f59a2-eng.vtt",
+      "captions_provenance": "publisher-hosted; generated using transcribee; not independently human-verified",
+      "license": "CC-BY-4.0",
+      "license_url": "http://creativecommons.org/licenses/by/4.0",
+      "license_proof_url": "https://api.media.ccc.de/public/events/44d1ae6d-febc-5035-8379-d2030e7f59a2",
+      "license_proof_text": "Licensed to the public under http://creativecommons.org/licenses/by/4.0",
+      "duration_seconds": 2351,
+      "sample_start_seconds": 930,
+      "sample_end_seconds": 1110,
+      "estimated_visual_categories": [
+        "slides",
+        "scientific-plots",
+        "imaging"
+      ],
+      "visual_categories_reviewed": false,
+      "ground_truth_status": "unreviewed; no slide boundaries or OCR references annotated"
+    },
+    {
+      "case_id": "39c3-1508",
+      "guid": "077fbf39-e49b-5f13-8a6f-c5c71bcb309c",
+      "title": "Demystifying Fuzzer Behaviour",
+      "authors": [
+        "Addison"
+      ],
+      "original_language": "eng",
+      "page_url": "https://media.ccc.de/v/39c3-demystifying-fuzzer-behaviour",
+      "metadata_url": "https://api.media.ccc.de/public/events/077fbf39-e49b-5f13-8a6f-c5c71bcb309c",
+      "video_url": "https://cdn.media.ccc.de/congress/2025/h264-hd/39c3-1508-eng-Demystifying_Fuzzer_Behaviour.mp4",
+      "video_height": 1080,
+      "video_language": "eng",
+      "video_size_mb_publisher": 605,
+      "captions_url": "https://static.media.ccc.de/media/congress/2025/1508-077fbf39-e49b-5f13-8a6f-c5c71bcb309c-eng.vtt",
+      "captions_provenance": "publisher-hosted; generated using transcribee; not independently human-verified",
+      "license": "CC-BY-4.0",
+      "license_url": "http://creativecommons.org/licenses/by/4.0",
+      "license_proof_url": "https://api.media.ccc.de/public/events/077fbf39-e49b-5f13-8a6f-c5c71bcb309c",
+      "license_proof_text": "Licensed to the public under http://creativecommons.org/licenses/by/4.0",
+      "duration_seconds": 2364,
+      "sample_start_seconds": 930,
+      "sample_end_seconds": 1110,
+      "estimated_visual_categories": [
+        "slides",
+        "code",
+        "plots"
+      ],
+      "visual_categories_reviewed": false,
+      "ground_truth_status": "unreviewed; no slide boundaries or OCR references annotated"
+    }
+  ]
+}

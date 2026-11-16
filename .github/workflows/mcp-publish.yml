@@ -1,0 +1,115 @@
+name: Publish MCP Registry metadata
+
+# Run deliberately after the release image has become publicly pullable.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mcp-registry-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.repository == 'yy31104/clipmind' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      MCP_PUBLISHER_VERSION: v1.8.1
+      MCP_PUBLISHER_SHA256: a06c9096dcb9727c13555b6be26c7effa707b01f06a4c561ba7a3635443cf2cc
+    steps:
+      - name: Check out the reviewed main revision
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check metadata and published release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import os
+          import re
+          import tomllib
+          from pathlib import Path
+
+          server = json.loads(Path("server.json").read_text())
+          project = tomllib.loads(Path("pyproject.toml").read_text())["project"]
+          assert server["name"] == "io.github.yy31104/clipmind"
+          assert server["version"] == project["version"], "Metadata/package version mismatch"
+          assert re.fullmatch(r"\d+\.\d+\.\d+", server["version"])
+          assert len(server["description"]) <= 100
+          assert len(server["packages"]) == 1
+          package = server["packages"][0]
+          image = f"ghcr.io/yy31104/clipmind:v{server['version']}"
+          assert package["registryType"] == "oci" and package["identifier"] == image
+          assert package["transport"] == {"type": "stdio"}
+          with open(os.environ["GITHUB_ENV"], "a") as output:
+              output.write(f"RELEASE_VERSION={server['version']}\nRELEASE_IMAGE={image}\n")
+          PY
+          RELEASE_VERSION="$(jq -r '.version' server.json)"
+          gh release view "v$RELEASE_VERSION" --json isDraft,isPrerelease,tagName > "$RUNNER_TEMP/mcp-release.json"
+          jq -e '.isDraft == false and .isPrerelease == false' "$RUNNER_TEMP/mcp-release.json"
+          revision="$(git rev-list -n 1 "v$RELEASE_VERSION")"
+          git merge-base --is-ancestor "$revision" HEAD
+          echo "RELEASE_REVISION=$revision" >> "$GITHUB_ENV"
+
+      - name: Check the public image and its ownership labels
+        run: |
+          set -euo pipefail
+          # Empty config deliberately avoids runner credentials: private images fail here.
+          mkdir "$RUNNER_TEMP/mcp-anonymous-docker"
+          docker --config "$RUNNER_TEMP/mcp-anonymous-docker" pull "$RELEASE_IMAGE"
+          docker image inspect "$RELEASE_IMAGE" > "$RUNNER_TEMP/mcp-image.json"
+          jq -e --arg revision "$RELEASE_REVISION" --arg version "$RELEASE_VERSION" '
+            .[0].Config.Labels as $labels |
+            $labels["io.modelcontextprotocol.server.name"] == "io.github.yy31104/clipmind" and
+            $labels["org.opencontainers.image.version"] == $version and
+            $labels["org.opencontainers.image.revision"] == $revision
+          ' "$RUNNER_TEMP/mcp-image.json"
+
+      - name: Install Sigstore verifier
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+
+      - name: Download and verify the pinned publisher
+        run: |
+          set -euo pipefail
+          archive="mcp-publisher_linux_amd64.tar.gz"
+          base_url="https://github.com/modelcontextprotocol/registry/releases/download/$MCP_PUBLISHER_VERSION"
+          curl --fail --location --silent --show-error --output "$RUNNER_TEMP/$archive" "$base_url/$archive"
+          curl --fail --location --silent --show-error --output "$RUNNER_TEMP/$archive.sigstore.json" "$base_url/$archive.sigstore.json"
+          echo "$MCP_PUBLISHER_SHA256  $RUNNER_TEMP/$archive" | sha256sum --check
+          cosign verify-blob \
+            --bundle "$RUNNER_TEMP/$archive.sigstore.json" \
+            --certificate-identity "https://github.com/modelcontextprotocol/registry/.github/workflows/release.yml@refs/tags/$MCP_PUBLISHER_VERSION" \
+            --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+            "$RUNNER_TEMP/$archive"
+          tar xzf "$RUNNER_TEMP/$archive" -C "$RUNNER_TEMP" mcp-publisher
+
+      - name: Validate metadata without publishing
+        run: '"$RUNNER_TEMP/mcp-publisher" validate server.json'
+
+      - name: Authenticate with GitHub OIDC and publish
+        run: |
+          set -euo pipefail
+          "$RUNNER_TEMP/mcp-publisher" login github-oidc
+          "$RUNNER_TEMP/mcp-publisher" publish server.json
+
+      - name: Verify the public registry record
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error \
+            "https://registry.modelcontextprotocol.io/v0.1/servers/io.github.yy31104%2Fclipmind/versions/$RELEASE_VERSION" \
+            > "$RUNNER_TEMP/mcp-published.json"
+          jq -e --arg version "$RELEASE_VERSION" --arg image "$RELEASE_IMAGE" '
+            .server.name == "io.github.yy31104/clipmind" and
+            .server.version == $version and .server.packages[0].identifier == $image
+          ' "$RUNNER_TEMP/mcp-published.json"

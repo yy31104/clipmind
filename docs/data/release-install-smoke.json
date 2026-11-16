@@ -1,0 +1,60 @@
+{
+  "date": "2026-11-16",
+  "scope": "Local pre-release candidate; public tag/image verification is a separate release step",
+  "native_source_install": {
+    "version": "1.3.0",
+    "installation": "isolated native uv tool, current dependency resolution",
+    "case": "39c3-1317 first12s of prepared excerpt",
+    "language": "en",
+    "model": "cached whisper-large-v3-turbo snapshot, offline",
+    "completeness": {
+      "ocr": "complete",
+      "speaker_diarization": "unavailable",
+      "transcript": "complete",
+      "visual_states": "complete",
+      "word_timing": "complete"
+    },
+    "transcript_segments": 5,
+    "transcript_excerpt": "in there as the argument, and you'd get your server out.",
+    "ocr_records": 2,
+    "visual_states": 2,
+    "temporary_media_leftovers": [],
+    "source_sha256": "d8f4f0199325b32bb6b3371e7ef46a0d9e92245c1b45d2475ece681a71870e74",
+    "source_preserved": true,
+    "pack": "<TASK_SCRATCH>/install-smoke/inference-library/deb6e4821f03",
+    "zip": "<TASK_SCRATCH>/install-smoke/complete-12s.zip"
+  },
+  "docker": {
+    "platform": "linux/arm64",
+    "asr": "faster-whisper tiny.en (smoke only, not benchmark quality)",
+    "ocr": "Tesseract",
+    "duration_seconds": 12,
+    "completeness": {
+      "ocr": "complete",
+      "speaker_diarization": "unavailable",
+      "transcript": "complete",
+      "visual_states": "complete",
+      "word_timing": "complete"
+    },
+    "counts": {
+      "candidate_frames": 24,
+      "canonical_visual_states": 2,
+      "ocr_records": 2,
+      "preview_visual_states": 2,
+      "progressive_build_groups": 0,
+      "scenes": 1,
+      "scroll_groups": 0,
+      "transcript_segments": 3
+    },
+    "timings": {
+      "acquisition_seconds": 0.432,
+      "asr_seconds": 9.331,
+      "ocr_seconds": 0.303,
+      "preview_seconds": 0.014,
+      "sampling_seconds": 0.345
+    },
+    "temporary_media_leftovers": [],
+    "mcp_initialize": "passed",
+    "mcp_tool_count": 6
+  }
+}

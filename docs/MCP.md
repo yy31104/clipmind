@@ -1,5 +1,8 @@
 # MCP integration
 
+[Actual agent question-answering demo](REAL_TALK_DEMO.md#a-real-agent-used-the-mcp-tools)
+· [Docker client configuration and Registry publishing](MCP_PUBLISHING.md)
+
 ClipMind includes a dependency-free Model Context Protocol server over standard
 input/output. It lets local agents extract new media and read complete Evidence
 Packs without scraping the web UI or parsing private implementation files.

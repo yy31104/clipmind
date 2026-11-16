@@ -10,6 +10,8 @@ permissions:
 jobs:
   python-assets:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.identity.outputs.version }}
     env:
       RELEASE_TAG: ${{ github.event.release.tag_name }}
     steps:
@@ -19,6 +21,18 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Read the tagged package version
+        id: identity
+        run: |
+          python - <<'PY'
+          import os
+          import tomllib
+          from pathlib import Path
+
+          version = tomllib.loads(Path("pyproject.toml").read_text())["project"]["version"]
+          with open(os.environ["GITHUB_OUTPUT"], "a") as output:
+              output.write(f"version={version}\n")
+          PY
       - run: python -m pip install build
       - run: python scripts/build_release_assets.py --tag "$RELEASE_TAG"
       - uses: actions/upload-artifact@v4
@@ -32,3 +46,43 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh release upload "$RELEASE_TAG" dist/*.whl dist/*.tar.gz dist/SHA256SUMS --repo "$GITHUB_REPOSITORY" --clobber
+
+  container-image:
+    # Release publication is the authorization boundary. PRs never receive a
+    # registry write token, and Python artifact validation must finish first.
+    needs: python-assets
+    if: ${{ !github.event.release.prerelease }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+      - name: Enable the additional Linux architecture
+        uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3
+      - name: Set up the image builder
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+      - name: Authenticate to the repository's Container registry
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and publish the versioned image
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/yy31104/clipmind:${{ github.event.release.tag_name }}
+            ghcr.io/yy31104/clipmind:latest
+          build-args: |
+            VERSION=${{ needs.python-assets.outputs.version }}
+            VCS_REF=${{ github.sha }}
+          provenance: mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
