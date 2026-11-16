@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "frozen_at": "2026-11-16T21:24:11.286697+00:00",
+  "corpus_id": "screen-holdout-v140",
+  "runtime_base_commit": "cb786db3cee00cbe7a053bafaac702f4c0f3a855",
+  "runtime_code_sha256": "b28b3712a67322b6f4fecb809ddd5c305fb1150ea2fe29e79be4d648f513e9e4",
+  "files": {
+    "docs/HOLDOUT_SCREEN_PROTOCOL.md": "86da14df6eebd1c216c0383f0eafbcdd4a4ddf46260df669b59ee44d0e305f53",
+    "docs/data/v140-holdout-cases.json": "e5e3961c52431b82925f11824ebece1aa740ac3a339aaea9d733e77e20606145",
+    "docs/data/v140-holdout-labels.json": "4f6b067d3802d54f4ed37c1f5fe5cf4ad13a7579d8046c11307e8f67398ff20c",
+    "scripts/prepare_screen_holdout.py": "53ffcf2e8f1bca3450bfab07d7b197526e68482274ad8766c8ffb1a2034d3424"
+  },
+  "cases": {
+    "coscup2020-python": {
+      "input_sha256": "f048f03dc1d874079ab0e659b4020f3c36de4d4503fb3dffe4723398ff864c25",
+      "original_sha256": "d5705f79cc22208e515d0285a30d320e05d5fb510cbc9cec347005bcd3e35f90"
+    },
+    "enthusiasticon-shell": {
+      "input_sha256": "47781f495823dd355a5aba279aa17b28417c567f885dd7ff977f92f5f456d651",
+      "original_sha256": "0abea1a591ac9a01fa07eb6e6a9ed56f8c33570efba27cde29ce9c62fea75373"
+    },
+    "wikimania-wikipie": {
+      "input_sha256": "f6debc728ad29a377ed9580e824294839d40952bad8318c5613d5ad5e6b2818e",
+      "original_sha256": "b8ebf1e552e41218979c03bf8ea8658af64e8e31bf19553b24a555a0fb254b9b"
+    }
+  },
+  "primary_change_count": 78,
+  "code_roi_count": 15,
+  "full_recording_count": 3,
+  "duration_seconds": 2400.312956,
+  "attempt_policy": "One final campaign on one locked runtime commit: one Mac MLX/Vision attempt and one Linux Docker CPU/faster-whisper/Tesseract attempt per case. No post-result tuning or replacement. Failed attempts remain public.",
+  "annotation_provenance": "AI-assisted annotations; human review pending."
+}

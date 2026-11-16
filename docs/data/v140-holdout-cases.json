@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "corpus_id": "screen-holdout-v140",
+  "split": "holdout",
+  "selected_at": "2026-11-16T21:19:24.919153+00:00",
+  "selection_protocol": "Three complete published recordings, none from the existing 39C3 development corpus. Public direct media with per-file CC BY-SA 4.0; Chinese projected slides/maps, English source-code slides/live terminal, and English research slides. Selection and annotations use source material only.",
+  "protocol": "docs/HOLDOUT_SCREEN_PROTOCOL.md",
+  "annotation_provenance": "AI-assisted annotations; human review pending.",
+  "cases": [
+    {
+      "case_id": "coscup2020-python",
+      "title": "Python cancer spatial-cluster map visualization",
+      "speakers": "Mok",
+      "publisher": "COSCUP 2020",
+      "source_page": "https://commons.wikimedia.org/wiki/File:OSMxWikidata_COSCUP_2020_04.webm",
+      "source_url": "https://upload.wikimedia.org/wikipedia/commons/9/9b/OSMxWikidata_COSCUP_2020_04.webm",
+      "license": "CC-BY-SA-4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Mok; Wikidata Taiwan; COSCUP 2020; CC BY-SA 4.0",
+      "language": "zh",
+      "ocr_languages": [
+        "zh-Hant",
+        "en-US"
+      ],
+      "tesseract_languages": "chi_tra+eng",
+      "sample_start_seconds": 0,
+      "sample_end_seconds": 960.26175,
+      "scope": "full published recording",
+      "captions_available": false,
+      "captions_reason": "No publisher caption file accompanies the selected Commons recording. No automatic captions are substituted.",
+      "original_bytes": 420883492,
+      "original_sha1": "03361f132b5ed8326778c58c221907a1e3f28aa0",
+      "original_sha256": "d5705f79cc22208e515d0285a30d320e05d5fb510cbc9cec347005bcd3e35f90",
+      "input_sha256": "f048f03dc1d874079ab0e659b4020f3c36de4d4503fb3dffe4723398ff864c25",
+      "transformation": "Full recording, 1280x720 letterbox, H.264 CRF20, AAC128k. No temporal crop."
+    },
+    {
+      "case_id": "enthusiasticon-shell",
+      "title": "OMG, building a shell in ten minutes",
+      "speakers": "Stefanie Schirmer",
+      "publisher": "EnthusiastiCon",
+      "source_page": "https://commons.wikimedia.org/wiki/File:EnthusiastiCon_-_Stefanie_Schirmer_%E2%80%9COMG_building_a_shell_in_10_minutes%E2%80%9D.webm",
+      "source_url": "https://upload.wikimedia.org/wikipedia/commons/0/0b/EnthusiastiCon_-_Stefanie_Schirmer_%E2%80%9COMG_building_a_shell_in_10_minutes%E2%80%9D.webm",
+      "license": "CC-BY-SA-4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Stefanie Schirmer; Jusc(wmde); EnthusiastiCon; CC BY-SA 4.0",
+      "language": "en",
+      "ocr_languages": [
+        "en-US"
+      ],
+      "tesseract_languages": "eng",
+      "sample_start_seconds": 0,
+      "sample_end_seconds": 1020.019206,
+      "scope": "full published recording",
+      "captions_available": false,
+      "captions_reason": "No publisher caption file accompanies the selected Commons recording. No automatic captions are substituted.",
+      "original_bytes": 45455303,
+      "original_sha1": "92ebfb5539846d444c6bacbf7cbff2fd89a397e9",
+      "original_sha256": "0abea1a591ac9a01fa07eb6e6a9ed56f8c33570efba27cde29ce9c62fea75373",
+      "input_sha256": "47781f495823dd355a5aba279aa17b28417c567f885dd7ff977f92f5f456d651",
+      "transformation": "Full recording, 1280x720 letterbox, H.264 CRF20, AAC128k. No temporal crop."
+    },
+    {
+      "case_id": "wikimania-wikipie",
+      "title": "Wiki-Pie: a policy invocation and enactment English Wikipedia dataset",
+      "speakers": "Sohyeon Hwang and Nathan TeBlunthuis",
+      "publisher": "Wiki Workshop 2026",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Wikimania_presentation,_Wiki_Pie_Wikipedia_Policy_and_Invocation_Dataset.webm",
+      "source_url": "https://upload.wikimedia.org/wikipedia/commons/1/1c/Wikimania_presentation%2C_Wiki_Pie_Wikipedia_Policy_and_Invocation_Dataset.webm",
+      "license": "CC-BY-SA-4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Sohyeon Hwang and Nathan TeBlunthuis; Groceryheist; Wiki Workshop 2026; CC BY-SA 4.0",
+      "language": "en",
+      "ocr_languages": [
+        "en-US"
+      ],
+      "tesseract_languages": "eng",
+      "sample_start_seconds": 0,
+      "sample_end_seconds": 420.032,
+      "scope": "full published recording",
+      "captions_available": false,
+      "captions_reason": "No publisher caption file accompanies the selected Commons recording. No automatic captions are substituted.",
+      "original_bytes": 15263613,
+      "original_sha1": "e44ade7d035aaad9537eab6bafbee19e237049f3",
+      "original_sha256": "b8ebf1e552e41218979c03bf8ea8658af64e8e31bf19553b24a555a0fb254b9b",
+      "input_sha256": "f6debc728ad29a377ed9580e824294839d40952bad8318c5613d5ad5e6b2818e",
+      "transformation": "Full recording, 1280x720 letterbox, H.264 CRF20, AAC128k. No temporal crop.",
+      "source_note": "The Commons filename says Wikimania; the source title slide identifies Wiki Workshop 2026, March 25–26."
+    }
+  ],
+  "frozen_at": "2026-11-16T21:24:11.286697+00:00",
+  "evaluation_matrix": [
+    {
+      "id": "mac-mlx-vision",
+      "asr_provider": "mlx",
+      "asr_model": "mlx-community/whisper-large-v3-turbo",
+      "asr_language": null,
+      "ocr_provider": "vision",
+      "ocr_languages": "per case",
+      "attempts": 1
+    },
+    {
+      "id": "docker-cpu-tesseract",
+      "asr_provider": "faster-whisper",
+      "faster_whisper_model": "large-v3-turbo",
+      "asr_language": null,
+      "device": "cpu",
+      "compute_type": "int8",
+      "ocr_provider": "tesseract",
+      "tesseract_languages": "per case",
+      "attempts": 1
+    }
+  ],
+  "preparation_command": "python scripts/prepare_screen_holdout.py --workdir ../holdout-sources",
+  "ffmpeg_version": "ffmpeg version 9.0.1 Copyright (c) 2000-2026 the FFmpeg developers",
+  "language_source": {
+    "coscup2020-python": [
+      "https://coscup.org/2020/zh-TW/agenda",
+      "https://www.youtube.com/watch?v=ZifsHetUAMw"
+    ],
+    "enthusiasticon-shell": [
+      "https://commons.wikimedia.org/wiki/Category:Wikimedia_videos_in_English"
+    ],
+    "wikimania-wikipie": [
+      "https://commons.wikimedia.org/wiki/Category:Wikimedia_videos_in_English"
+    ]
+  }
+}
