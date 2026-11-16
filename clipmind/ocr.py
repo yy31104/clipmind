@@ -14,7 +14,12 @@ from __future__ import annotations
 import threading
 import shutil
 import atexit
-import multiprocessing
+import subprocess
+import sys
+import os
+import json
+import queue
+from collections import deque
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -35,6 +40,10 @@ _probe_result: tuple[bool, str | None] | None = None
 _vision_lock = threading.Lock()
 _worker_lock = threading.Lock()
 _worker_process = _worker_connection = _worker_idle_timer = None
+_worker_reader = _worker_error_reader = _worker_replies = None
+_worker_stderr = deque(maxlen=16)
+_worker_stderr_tail = ""
+_worker_module_path = None
 _worker_requests = 0
 _VISION_REQUEST_TIMEOUT = 10.0
 _VISION_MAX_REQUESTS = 32
@@ -143,43 +152,65 @@ def read_text(
     ).lines
 
 
-def _vision_worker_loop(connection) -> None:
-    """Spawn imports Vision on the worker's main thread, without forking MLX."""
+def _vision_worker_command() -> list[str]:
+    return [sys.executable, "-u", "-P", "-m", "clipmind.ocr_worker"]
+
+
+def _read_vision_replies(stream, replies) -> None:
     try:
-        while True:
-            message = connection.recv()
-            if message is None:
-                return
-            image, languages = message
+        for line in stream:
             try:
-                result = recognize(Path(image), languages=languages)
-                connection.send(("ok", result))
-            except Exception as exc:
-                connection.send(("error", f"{type(exc).__name__}: {exc}"))
-    except (EOFError, BrokenPipeError):
-        pass
+                message = ("reply", json.loads(line))
+            except ValueError:
+                message = ("error", "Vision worker returned invalid output")
+            try:
+                replies.put_nowait(message)
+            except queue.Full:
+                return
+            if message[0] != "reply":
+                return
     finally:
-        connection.close()
+        try:
+            replies.put_nowait(("error", "Vision worker exited before returning a result"))
+        except queue.Full:
+            pass
+
+
+def _read_vision_errors(stream, messages) -> None:
+    for chunk in iter(lambda: stream.read(4096), ""):
+        messages.append(chunk)
 
 
 def _stop_vision_worker() -> None:
-    """Called with the parent lock held; reap only this module's own child."""
+    """Reap only this module's interpreter and its bounded pipe readers."""
     global _worker_process, _worker_connection, _worker_idle_timer, _worker_requests
+    global _worker_reader, _worker_error_reader, _worker_replies, _worker_stderr_tail
     if _worker_idle_timer is not None:
         _worker_idle_timer.cancel()
         _worker_idle_timer = None
+    process, _worker_process = _worker_process, None
     if _worker_connection is not None:
-        _worker_connection.close()
+        try:
+            _worker_connection.close()
+        except (BrokenPipeError, OSError):
+            pass
         _worker_connection = None
-    if _worker_process is not None:
-        process, _worker_process = _worker_process, None
-        if process.is_alive():
+    if process is not None:
+        if process.poll() is None:
             process.terminate()
-        process.join(timeout=1)
-        if process.is_alive():
+        try:
+            process.wait(timeout=1)
+        except subprocess.TimeoutExpired:
             process.kill()
-            process.join(timeout=1)
-        process.close()
+            process.wait(timeout=1)
+    for reader in (_worker_reader, _worker_error_reader):
+        if reader is not None:
+            reader.join(timeout=1)
+    if process is not None:
+        process.stdout.close()
+        process.stderr.close()
+    _worker_stderr_tail = "".join(_worker_stderr)
+    _worker_reader = _worker_error_reader = _worker_replies = None
     _worker_requests = 0
 
 
@@ -196,46 +227,69 @@ def _expire_vision_worker(process, requests: int) -> None:
 
 def _recognize_in_worker(image: Path, *, languages: tuple[str, ...]) -> OCRResult:
     global _worker_process, _worker_connection, _worker_requests, _worker_idle_timer
+    global _worker_reader, _worker_error_reader, _worker_replies, _worker_module_path
     with _worker_lock:
         started = time.monotonic()
         if _worker_idle_timer is not None:
             _worker_idle_timer.cancel()
             _worker_idle_timer = None
-        if (_worker_process is None or not _worker_process.is_alive() or
+        if (_worker_process is None or _worker_process.poll() is not None or
                 _worker_requests >= _VISION_MAX_REQUESTS):
             _stop_vision_worker()
-            context = multiprocessing.get_context("spawn")
-            _worker_connection, child = context.Pipe()
-            _worker_process = context.Process(target=_vision_worker_loop,
-                                              args=(child,), daemon=True)
+            _worker_stderr.clear()
+            # Use this package, including an ablation worktree, rather than
+            # whichever checkout an editable environment happens to point at.
+            environment = dict(os.environ, PYTHONPATH=str(Path(__file__).resolve().parents[1]),
+                               PYTHONUTF8="1", PYTHONIOENCODING="utf-8")
             try:
-                _worker_process.start()
-            except Exception as exc:
-                child.close()
-                _worker_connection.close()
-                _worker_process = _worker_connection = None
+                _worker_process = subprocess.Popen(
+                    _vision_worker_command(), stdin=subprocess.PIPE,
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                    encoding="utf-8", errors="replace", env=environment,
+                    cwd=Path(__file__).resolve().parents[1],
+                )
+            except OSError as exc:
                 raise OCRError(f"Vision worker could not start: {exc}") from exc
-            child.close()
+            _worker_connection = _worker_process.stdin
+            _worker_replies = queue.Queue(maxsize=1)
+            _worker_reader = threading.Thread(target=_read_vision_replies,
+                args=(_worker_process.stdout, _worker_replies), daemon=True)
+            _worker_error_reader = threading.Thread(target=_read_vision_errors,
+                args=(_worker_process.stderr, _worker_stderr), daemon=True)
+            _worker_reader.start()
+            _worker_error_reader.start()
         try:
-            _worker_connection.send((str(image.resolve()), languages))
-            if not _worker_connection.poll(max(0, _VISION_REQUEST_TIMEOUT -
-                                                (time.monotonic() - started))):
-                raise OCRError("Vision recognition exceeded its 10-second deadline")
-            status, value = _worker_connection.recv()
-        except (EOFError, BrokenPipeError, OSError, OCRError) as exc:
+            _worker_connection.write(json.dumps({"image": str(image.resolve()),
+                                                 "languages": languages}) + "\n")
+            _worker_connection.flush()
+            kind, value = _worker_replies.get(timeout=max(0, _VISION_REQUEST_TIMEOUT -
+                                                            (time.monotonic() - started)))
+            if kind != "reply":
+                raise OCRError(value)
+            if value.get("status") != "ok":
+                raise OCRError(value.get("error", "Vision worker returned no result"))
+            result = OCRResult(tuple(OCRBlock(block["text"], block.get("confidence"),
+                tuple(block["bbox"]) if block.get("bbox") is not None else None)
+                for block in value["blocks"]))
+            _worker_module_path = value.get("ocr_module")
+        except (queue.Empty, BrokenPipeError, OSError, OCRError, KeyError, TypeError) as exc:
             _stop_vision_worker()
-            if isinstance(exc, OCRError):
-                raise
-            raise OCRError("Vision worker exited before returning a result") from exc
+            if isinstance(exc, queue.Empty):
+                error = OCRError("Vision recognition exceeded its 10-second deadline")
+            elif isinstance(exc, OCRError):
+                error = exc
+            else:
+                error = OCRError("Vision worker exited before returning a valid result")
+            if _worker_stderr_tail:
+                error.add_note(_worker_stderr_tail)
+            raise error from exc
         _worker_requests += 1
         process = _worker_process
         _worker_idle_timer = threading.Timer(_VISION_IDLE_SECONDS, _expire_vision_worker,
                                              args=(process, _worker_requests))
         _worker_idle_timer.daemon = True
         _worker_idle_timer.start()
-        if status != "ok":
-            raise OCRError(value)
-        return value
+        return result
 
 
 atexit.register(_close_vision_worker)
