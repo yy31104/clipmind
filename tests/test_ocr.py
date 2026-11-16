@@ -1,4 +1,7 @@
 import unittest
+import threading
+import time
+from concurrent.futures import ThreadPoolExecutor
 from contextlib import nullcontext
 from pathlib import Path
 from types import SimpleNamespace
@@ -63,6 +66,33 @@ class VisionCompatibilityTests(unittest.TestCase):
 
         self.assertEqual(result.blocks, ())
         self.assertEqual(seen, [("fixture.png", None)])
+
+
+    def test_native_requests_are_serial_even_with_two_ocr_workers(self):
+        active = maximum = 0
+        guard = threading.Lock()
+
+        class Handler(_Handler):
+            def performRequests_error_(self, requests, error):
+                nonlocal active, maximum
+                with guard:
+                    active += 1
+                    maximum = max(maximum, active)
+                time.sleep(0.02)
+                with guard:
+                    active -= 1
+                return True, None
+
+        vision = SimpleNamespace(VNImageRequestHandler=Handler([]),
+                                 VNRecognizeTextRequest=_Request())
+        with patch.multiple(
+            ocr, _IMPORT_ERROR=None, Vision=vision,
+            NSURL=SimpleNamespace(fileURLWithPath_=str),
+            objc=SimpleNamespace(autorelease_pool=lambda: nullcontext()),
+        ):
+            with ThreadPoolExecutor(max_workers=2) as workers:
+                list(workers.map(ocr.recognize, [Path("a.png"), Path("b.png")]))
+        self.assertEqual(maximum, 1)
 
 
 if __name__ == "__main__":

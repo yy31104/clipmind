@@ -29,6 +29,7 @@ except Exception as exc:  # noqa: BLE001 - macOS-only dependency
 
 _probe_lock = threading.Lock()
 _probe_result: tuple[bool, str | None] | None = None
+_vision_lock = threading.Lock()
 
 
 class OCRError(RuntimeError):
@@ -75,7 +76,7 @@ def recognize(
         raise OCRError(f"Vision unavailable ({_IMPORT_ERROR})")
 
     url = NSURL.fileURLWithPath_(str(path))
-    with objc.autorelease_pool():
+    with _vision_lock, objc.autorelease_pool():
         handler = Vision.VNImageRequestHandler.alloc().initWithURL_options_(url, None)
         if handler is None:
             raise OCRError(f"could not open image: {path}")
