@@ -80,6 +80,9 @@ def rebuild(workdir: Path, *, refresh_ocr: bool = False, text_only: bool = False
             media.Frame(
                 index=index,
                 timestamp=float(row["start"]),
+                source_timestamp=row.get("source_timestamp"),
+                change_kind=row.get("change_kind", "uncertain"),
+                change_reason=row.get("change_reason", ""),
                 path=path,
                 phash=media.dhash(path),
                 text=ocr.get("text", ""),

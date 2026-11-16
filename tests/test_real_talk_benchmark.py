@@ -7,7 +7,7 @@ from pathlib import Path
 import tempfile
 from types import SimpleNamespace
 import unittest
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
 from clipmind.sdk import EvidencePack
 from scripts import evaluate_real_talks as benchmark
@@ -15,6 +15,21 @@ from tests.pack_fixture import make_complete_pack
 
 
 class BoundaryTests(unittest.TestCase):
+    def test_full_build_coverage_checks_actual_frame_capture_not_its_broad_interval(self):
+        pack = SimpleNamespace(frame=lambda timestamp: (None, {"id": "early", "start": 0, "end": 30,
+                                                               "source_timestamp": 1}))
+        label = {"review_end": 30, "build_groups": [{"id": "build", "start": 0, "complete_start": 10,
+                                                    "complete_end": 20, "reference_timestamp": 15}]}
+        result = benchmark.complete_build_coverage(pack, label)
+        self.assertEqual(result["value"], 0)
+        self.assertFalse(result["groups"][0]["covered"])
+        pack.frame = lambda timestamp: (None, {"id": "full", "source_timestamp": 12})
+        self.assertEqual(benchmark.complete_build_coverage(pack, label)["value"], 1)
+        pack.frame = lambda timestamp: (None, {"id": "old", "start": 12, "end": 20})
+        result = benchmark.complete_build_coverage(pack, label)
+        self.assertIsNone(result["value"])
+        self.assertEqual(result["unknown_count"], 1)
+
     def test_whole_non_slide_window_is_na_even_with_many_canonical_states(self):
         pack = SimpleNamespace(
             manifest={"completeness": {"transcript": "complete", "ocr": "complete", "visual_states": "complete"}},
@@ -128,6 +143,110 @@ class AnnotationGateTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'outside'):
                 benchmark.validate_inputs(corpus, labels, benchmark.REPO / 'out')
 
+    def test_full_talk_without_publisher_captions_is_explicitly_supported(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            corpus, labels = self.prepare(root)
+            for case in corpus['cases']:
+                case.update(sample_end_seconds=1100, captions_available=False,
+                            captions_reason='publisher does not provide a transcript')
+                labels['cases'][case['case_id']]['review_end'] = 1000
+                (root / case['case_id'] / 'captions.vtt').unlink()
+            benchmark.validate_inputs(corpus, labels, root)
+
+    def test_existing_output_or_consumed_campaign_blocks_before_sdk_and_retains_failure(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            corpus, labels = self.prepare(root)
+            for case in corpus['cases']:
+                case.update(title='Source talk', page_url='https://example.org/talk')
+            corpus_file, labels_file = root / 'corpus.json', root / 'labels.json'
+            corpus_file.write_text(json.dumps(corpus))
+            labels_file.write_text(json.dumps(labels))
+            args = argparse.Namespace(corpus=corpus_file, labels=labels_file, workdir=root,
+                                      output=root / 'attempt-one.json', once_token=root / 'campaign.json',
+                                      force=True,
+                                      asr_provider='mlx', ocr_provider='vision', mode='run')
+            with patch.object(benchmark, 'edit_score', return_value={}), \
+                 patch.object(benchmark, 'tool_versions', return_value={}), \
+                 patch('clipmind.sdk.ClipMind.analyze', new_callable=AsyncMock, side_effect=RuntimeError('model failed')) as analyze:
+                result = benchmark.benchmark(args)
+                self.assertEqual(result['status'], 'has_failures')
+                self.assertEqual(result['planned_primary_change_count'], 2)
+                self.assertEqual(sum(row['canonical_boundary_score']['reference_count'] for row in result['cases']), 2)
+                self.assertEqual(sum(row['canonical_boundary_score']['matched'] for row in result['cases']), 0)
+                self.assertEqual(analyze.await_count, 2)
+                self.assertTrue(all(call.kwargs['force'] is True and call.kwargs['reprocess'] is True
+                                    for call in analyze.await_args_list))
+                self.assertTrue(result['processing_options']['force'])
+                old_bytes = args.output.read_bytes()
+                with self.assertRaises(FileExistsError):
+                    benchmark.benchmark(args)
+                self.assertEqual(args.output.read_bytes(), old_bytes)
+                args.output = root / 'attempt-two.json'
+                with self.assertRaises(FileExistsError):
+                    benchmark.benchmark(args)
+                self.assertEqual(analyze.await_count, 2)
+                self.assertEqual(json.loads(args.output.read_text())['status'], 'blocked')
+                self.assertEqual(json.loads(args.once_token.read_text())['status'], 'attempt_started')
+
+    def test_score_cannot_use_the_previous_report_as_its_output(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            corpus, labels = self.prepare(root)
+            corpus_file, labels_file = root / 'corpus.json', root / 'labels.json'
+            corpus_file.write_text(json.dumps(corpus))
+            labels_file.write_text(json.dumps(labels))
+            previous_file = root / 'previous.json'
+            previous = {"labels_sha256": benchmark.file_digest(labels_file),
+                        "corpus_sha256": benchmark.file_digest(corpus_file), "cases": []}
+            previous_file.write_text(json.dumps(previous))
+            old_bytes = previous_file.read_bytes()
+            args = argparse.Namespace(corpus=corpus_file, labels=labels_file, workdir=root,
+                                      output=previous_file, previous=previous_file,
+                                      asr_provider='mlx', ocr_provider='vision', mode='score')
+            with patch.object(benchmark, 'edit_score', return_value={}), \
+                 patch.object(benchmark, 'tool_versions', return_value={}), \
+                 patch('clipmind.sdk.ClipMind.analyze') as analyze:
+                with self.assertRaises(FileExistsError):
+                    benchmark.benchmark(args)
+                analyze.assert_not_called()
+            self.assertEqual(previous_file.read_bytes(), old_bytes)
+
+    def test_cancelled_extraction_keeps_its_consumed_token_and_interrupted_record(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            corpus, labels = self.prepare(root)
+            for case in corpus['cases']:
+                case.update(title='Source talk', page_url='https://example.org/talk')
+            corpus_file, labels_file = root / 'corpus.json', root / 'labels.json'
+            corpus_file.write_text(json.dumps(corpus))
+            labels_file.write_text(json.dumps(labels))
+            args = argparse.Namespace(corpus=corpus_file, labels=labels_file, workdir=root,
+                                      output=root / 'interrupted.json', once_token=root / 'once.json',
+                                      asr_provider='mlx', ocr_provider='vision', mode='run')
+            with patch.object(benchmark, 'edit_score', return_value={}), \
+                 patch.object(benchmark, 'tool_versions', return_value={}), \
+                 patch('clipmind.sdk.ClipMind.analyze', new_callable=AsyncMock,
+                       side_effect=benchmark.asyncio.CancelledError) as analyze:
+                with self.assertRaises(benchmark.asyncio.CancelledError):
+                    benchmark.benchmark(args)
+                self.assertEqual(analyze.await_count, 1)
+            self.assertEqual(json.loads(args.output.read_text())['status'], 'interrupted')
+            self.assertEqual(len(json.loads(args.output.read_text())['cases']), 1)
+            self.assertEqual(json.loads(args.once_token.read_text())['status'], 'attempt_started')
+
+    def test_wrong_candidate_fingerprint_stops_before_source_or_sdk_calls(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            expected = root / 'candidate.json'
+            expected.write_text(json.dumps({"sha256": "wrong", "files": {}}))
+            args = argparse.Namespace(expected_runtime_fingerprint=expected, installed_runtime=False)
+            with patch('clipmind.sdk.ClipMind.analyze') as analyze:
+                with self.assertRaisesRegex(ValueError, 'expected candidate'):
+                    benchmark.benchmark(args)
+                analyze.assert_not_called()
+
 
 class CaptionParsingTests(unittest.TestCase):
     def test_vtt_tags_entities_and_cue_settings_are_parsed(self):
@@ -148,17 +267,51 @@ class CaptionParsingTests(unittest.TestCase):
             python = root / 'clipmind/__init__.py'
             python.write_text('__version__ = "1.3.0"\n')
             (root / 'clipmind/web/app.js').write_text('const version = 1;\n')
-            tracked = b'clipmind/__init__.py\0clipmind/web/app.js\0'
-            with patch.object(benchmark, 'REPO', root), patch.object(benchmark.subprocess, 'check_output', return_value=tracked):
+            with patch.object(benchmark, 'REPO', root):
                 original = benchmark.runtime_code_fingerprint()
                 python.write_text('__version__ = "1.3.1"\n')
                 changed = benchmark.runtime_code_fingerprint()
+                (root / 'clipmind/new_module.py').write_text('VALUE = "new, not committed yet"\n')
+                with_new_module = benchmark.runtime_code_fingerprint()
             self.assertNotEqual(original['sha256'], changed['sha256'])
             self.assertEqual(set(changed['files']), {'clipmind/__init__.py', 'clipmind/web/app.js'})
+            self.assertNotEqual(changed['sha256'], with_new_module['sha256'])
+            self.assertIn('clipmind/new_module.py', with_new_module['files'])
 
 
 @unittest.skipUnless(importlib.util.find_spec('jiwer'), 'Install scripts/requirements-eval.txt for WER/CER tests')
 class RealMetricTests(unittest.TestCase):
+    def test_missing_or_failed_ocr_keeps_deleted_reference_units_in_code_cer(self):
+        from clipmind.evidence import EvidencePackError
+        label = {"review_start": 0, "review_end": 20, "slide_changes": [10],
+                 "ocr": [{"timestamp": 12, "roi": [0, 0, 1, 1], "text": 'code()', "kind": 'code'}],
+                 "build_groups": [{"id": "build", "start": 0, "complete_start": 10,
+                                   "complete_end": 19, "reference_timestamp": 12}]}
+        case = {"sample_start_seconds": 0, "sample_end_seconds": 20, "captions_available": False}
+        def missing_frame(**kwargs):
+            raise EvidencePackError('frame is missing')
+        pack = SimpleNamespace(manifest={"completeness": {"transcript": "complete", "ocr": "complete"}},
+                               visual_timeline=[], ocr=[], transcript=[], frame=missing_frame)
+        result = benchmark.score_pack(pack, case, label, Path('unused-captions.vtt'))
+        self.assertEqual(result['code_roi_ocr_reference_units'], 6)
+        self.assertEqual(result['code_roi_ocr_errors'], 6)
+        self.assertEqual(result['code_roi_ocr_cer'], 1)
+        self.assertEqual(result['code_roi_ocr_failed_references'], 1)
+        self.assertFalse(result['ocr_references'][0]['retained_frame_available'])
+        self.assertEqual(result['complete_build_coverage']['value'], 0)
+        self.assertEqual(result['complete_build_coverage']['failed_count'], 1)
+        pack.frame = lambda **kwargs: (None, {"id": "state", "start": 0, "end": 20})
+        pack.ocr = [{"visual_state_ref": "state", "error": "recognizer unavailable"}]
+        result = benchmark.score_pack(pack, case, label, Path('unused-captions.vtt'))
+        self.assertEqual(result['code_roi_ocr_reference_units'], 6)
+        self.assertEqual(result['code_roi_ocr_cer'], 1)
+        self.assertEqual(result['ocr_references'][0]['status'], 'failed')
+        failed = benchmark.failed_case_scores(case, label, Path('unused-captions.vtt'))
+        self.assertEqual(failed['canonical_boundary_score']['reference_count'], 1)
+        self.assertEqual(failed['canonical_boundary_score']['recall'], 0)
+        self.assertEqual(failed['code_roi_ocr_reference_units'], 6)
+        self.assertEqual(failed['code_roi_ocr_cer'], 1)
+
     def test_rescore_accepts_production_local_sha_id_and_records_a_mismatch_as_failure(self):
         self.enterContext(patch.object(benchmark, 'tool_versions', return_value={'ffmpeg': 'test fixture'}))
         with tempfile.TemporaryDirectory() as temporary:
@@ -182,8 +335,10 @@ class RealMetricTests(unittest.TestCase):
             previous = {"labels_sha256": benchmark.file_digest(labels_file), "corpus_sha256": benchmark.file_digest(corpus_file),
                         "cases": [{"case_id": 'talk', "pack_path": str(pack), "wall_seconds": 42,
                                    "captions_sha256": benchmark.file_digest(source.parent / 'captions.vtt')}]}
-            output.write_text(json.dumps(previous))
+            previous_file = root / 'previous-report.json'
+            previous_file.write_text(json.dumps(previous))
             args = argparse.Namespace(corpus=corpus_file, labels=labels_file, workdir=root, output=output,
+                                      previous=previous_file,
                                       asr_provider='mlx', ocr_provider='vision', mode='score')
             result = benchmark.benchmark(args)
             self.assertEqual(result['status'], 'measured')
@@ -191,11 +346,13 @@ class RealMetricTests(unittest.TestCase):
             self.assertEqual(result['cases'][0]['publisher_caption_agreement']['value'], 0)
             manifest['source']['id'] = 'some other video'
             (pack / 'manifest.json').write_text(json.dumps(manifest))
+            args.output = root / 'mismatch-report.json'
             result = benchmark.benchmark(args)
             self.assertEqual(result['status'], 'has_failures')
             self.assertEqual(result['cases'][0]['status'], 'failed')
             self.assertIn('does not match', result['cases'][0]['error'])
             (source.parent / 'captions.vtt').write_text('WEBVTT\n\nchanged reference\n')
+            args.output = root / 'changed-captions-report.json'
             with self.assertRaisesRegex(ValueError, 'unchanged publisher captions'):
                 benchmark.benchmark(args)
 
@@ -259,6 +416,7 @@ class RealMetricTests(unittest.TestCase):
             self.assertEqual(result['roi_ocr_cer'], 0)
             self.assertEqual(result['ocr_references'][0]['visual_state_id'], 'covering')
             self.assertEqual(result['canonical_boundary_score']['matched'], 1)
+            self.assertEqual(result['canonical_boundary_inventory']['score'], result['canonical_boundary_score'])
             label['ocr'] = []
             self.assertIsNone(benchmark.score_pack(EvidencePack.open(root), case, label, captions)['roi_ocr_cer'])
 

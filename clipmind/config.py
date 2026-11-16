@@ -80,6 +80,11 @@ def _csv(name: str, default: str) -> tuple[str, ...]:
     )
 
 
+def _asr_language() -> str | None:
+    value = os.getenv("CLIPMIND_ASR_LANGUAGE", "").strip()
+    return None if value.casefold() in {"", "auto"} else value
+
+
 @dataclass(frozen=True)
 class Settings:
     # --- acquisition ---
@@ -111,7 +116,7 @@ class Settings:
     asr_provider: str = "auto"
     asr_model: str = "mlx-community/whisper-large-v3-turbo"
     faster_whisper_model: str = "large-v3-turbo"
-    asr_language: str | None = "zh"
+    asr_language: str | None = None
     # Hallucination guards. Whisper can emit fluent text for silence or music
     # (Koenecke et al., "Careless Whisper", FAccT 2024, link it to long pauses).
     # In ClipMind such text also makes on-screen words look "already spoken"
@@ -192,7 +197,7 @@ class Settings:
             faster_whisper_model=os.getenv(
                 "CLIPMIND_FASTER_WHISPER_MODEL", "large-v3-turbo"
             ),
-            asr_language=os.getenv("CLIPMIND_ASR_LANGUAGE", "zh") or None,
+            asr_language=_asr_language(),
             asr_vad_filter=_flag("CLIPMIND_ASR_VAD_FILTER", True),
             asr_hallucination_silence_threshold=_optional_seconds(
                 "CLIPMIND_ASR_HALLUCINATION_SILENCE_THRESHOLD", 2.0

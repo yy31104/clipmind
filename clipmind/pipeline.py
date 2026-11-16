@@ -126,6 +126,8 @@ async def process(
             unique,
             config,
             forced=bool(options.get("force")),
+            asr_provider=providers.transcript.name,
+            ocr_provider=providers.text.name,
         )
         preflight.write(workdir, estimate)
         report(
@@ -133,7 +135,7 @@ async def process(
             base,
             f"preflight: ~{estimate.estimated_canonical_states} states, "
             f"~{estimate.estimated_ocr_seconds:g}s OCR, "
-            f"~{estimate.estimated_pack_mb:g} MB",
+            f"~{estimate.estimated_pack_mb:g} MB. {estimate.time_message()}",
         )
         if not estimate.within_budget and not estimate.forced:
             raise preflight.CostLimitExceeded(estimate)
@@ -203,6 +205,7 @@ async def process(
         # membership: an ASR or OCR slip must not be able to delete evidence.
         visual_states.annotate_transcript_alignment(canonical, spoken)
         visual_states.annotate_structure(canonical, spoken_intervals=spoken)
+        visual_states.annotate_change_kinds(canonical)
         selected = visual_content.select_content_frames(canonical, spoken_intervals=spoken)
         preview = visual_states.materialize_preview(
             selected,

@@ -10,7 +10,7 @@ from .asr import Segment, Transcript
 from .config import Settings, settings
 from .fetch import Media
 from .media import Frame
-from .visual_states import PREVIEW_ALGORITHM, BuildGroup, ScrollGroup
+from .visual_states import INFORMATION_BOUNDARY_ALGORITHM, PREVIEW_ALGORITHM, BuildGroup, ScrollGroup
 
 SCHEMA_NAME = "clipmind-evidence-pack"
 SCHEMA_VERSION = "1.3.0"
@@ -161,6 +161,7 @@ def _timeline_records(
         record = {
             "id": f"visual-{position:05d}",
             "start": frame.timestamp,
+            "source_timestamp": frame.source_timestamp,
             "end": end,
             "file": frame.path.relative_to(dest).as_posix(),
             "ocr_ref": f"ocr-{position:05d}",
@@ -177,6 +178,8 @@ def _timeline_records(
             "observed_sample_count": frame.observed_sample_count,
             "stable_duration_seconds": round(frame.stable_duration, 3),
             "content_hint": frame.content_hint,
+            "change_kind": frame.change_kind,
+            "change_reason": frame.change_reason,
         }
         if preview_frame is not None:
             record["preview_file"] = preview_frame.path.relative_to(dest).as_posix()
@@ -396,6 +399,7 @@ def write_pack(
             "evidence_width": config.evidence_width,
             "dedupe_threshold": config.dedupe_threshold,
             "dedupe_algorithm": media.DEDUPE_ALGORITHM,
+            "information_boundary_algorithm": INFORMATION_BOUNDARY_ALGORITHM,
             "asr_guards": {
                 "vad_filter": config.asr_vad_filter,
                 "hallucination_silence_threshold": config.asr_hallucination_silence_threshold,

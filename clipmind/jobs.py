@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 import time
 import uuid
@@ -41,6 +42,7 @@ class Job:
     created_at: float = field(default_factory=time.time)
     started_at: float | None = None
     finished_at: float | None = None
+    processing_estimate: dict | None = None
 
     @property
     def elapsed(self) -> float:
@@ -226,6 +228,13 @@ class JobStore:
                 job.stage = stage
                 job.progress = max(job.progress, min(float(progress), 1.0))
                 job.note = note
+                if stage == "preflight":
+                    try:
+                        value = json.loads((self.workdir(job.id) / "preflight.json").read_text(encoding="utf-8"))
+                        if isinstance(value, dict):
+                            job.processing_estimate = value
+                    except (OSError, ValueError):
+                        logger.warning("Could not read a job's processing-time estimate")
                 # pipeline reports the resolved title as the 'sampling' note
                 if stage == "sampling" and note:
                     job.title = note

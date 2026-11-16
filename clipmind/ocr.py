@@ -21,6 +21,7 @@ import sys
 import os
 import json
 import queue
+import signal
 from collections import deque
 import time
 from contextlib import contextmanager
@@ -285,20 +286,36 @@ def _stop_vision_worker() -> None:
         _worker_idle_timer.cancel()
         _worker_idle_timer = None
     process, _worker_process = _worker_process, None
+    if process is not None:
+        def stop_group(*, force=False):
+            try:
+                if os.name == "posix":
+                    # Descendants can retain these pipes after the interpreter
+                    # exits, so poll() is not a reason to skip its owned group.
+                    os.killpg(process.pid, signal.SIGKILL if force else signal.SIGTERM)
+                elif process.poll() is None:
+                    process.kill() if force else process.terminate()
+            except ProcessLookupError:
+                pass
+            except PermissionError:
+                if process.poll() is None:
+                    process.kill() if force else process.terminate()
+
+        stop_group()
+        try:
+            process.wait(timeout=1)
+        except subprocess.TimeoutExpired:
+            stop_group(force=True)
+            process.wait(timeout=1)
+        # An interpreter can exit immediately while a native helper ignores
+        # SIGTERM. Close all inherited pipe writers before joining readers.
+        stop_group(force=True)
     if _worker_connection is not None:
         try:
             _worker_connection.close()
         except (BrokenPipeError, OSError):
             pass
         _worker_connection = None
-    if process is not None:
-        if process.poll() is None:
-            process.terminate()
-        try:
-            process.wait(timeout=1)
-        except subprocess.TimeoutExpired:
-            process.kill()
-            process.wait(timeout=1)
     for reader in (_worker_reader, _worker_error_reader):
         if reader is not None:
             reader.join(timeout=1)
@@ -343,6 +360,7 @@ def _recognize_in_worker(image: Path, *, languages: tuple[str, ...]) -> OCRResul
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
                     encoding="utf-8", errors="replace", env=environment,
                     cwd=Path(__file__).resolve().parents[1],
+                    start_new_session=os.name == "posix",
                 )
             except OSError as exc:
                 raise OCRError(f"Vision worker could not start: {exc}") from exc
@@ -446,6 +464,7 @@ class TesseractTextRecognizer:
                 lang=self.config.tesseract_languages,
                 output_type=pytesseract.Output.DICT,
                 config="--psm 11",
+                timeout=30,
             )
         grouped: dict[tuple[int, int, int], list[int]] = {}
         for index, text in enumerate(data.get("text", [])):
@@ -523,11 +542,15 @@ def _smoke_test() -> tuple[bool, str | None]:
 
     from PIL import Image
 
+    image: Path | None = None
     try:
         with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as handle:
-            Image.new("RGB", (64, 32), "white").save(handle.name)
-            read_text(Path(handle.name))
-            Path(handle.name).unlink(missing_ok=True)
+            image = Path(handle.name)
+        Image.new("RGB", (64, 32), "white").save(image)
+        _recognize_in_worker(image, languages=settings.ocr_languages)
         return True, None
     except Exception as exc:  # noqa: BLE001
         return False, f"{type(exc).__name__}: {exc}"
+    finally:
+        if image is not None:
+            image.unlink(missing_ok=True)
