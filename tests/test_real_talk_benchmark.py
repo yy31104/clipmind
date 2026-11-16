@@ -56,6 +56,18 @@ class BoundaryTests(unittest.TestCase):
         self.assertEqual(score["recall"], 1)
         self.assertEqual(score["precision"], .25)
 
+    def test_ocr_record_error_prevents_information_boundary_exclusion(self):
+        pack = SimpleNamespace(
+            manifest={"completeness": {"transcript": "complete", "ocr": "incomplete", "visual_states": "complete"}},
+            visual_timeline=[{"id": "state", "start": 10, "end": 20, "change_kind": "speaker"}],
+            ocr=[{"visual_state_ref": "state", "error": "recognition failed"}], transcript=[])
+        label = {"review_start": 0, "review_end": 30, "slide_changes": [], "ocr": []}
+        with tempfile.TemporaryDirectory() as temporary:
+            result = benchmark.score_pack(pack, {"captions_available": False}, label,
+                                          Path(temporary) / "absent.vtt")
+        self.assertEqual(result["information_boundary_score"]["prediction_count"], 1)
+        self.assertEqual(result["canonical_boundary_score"]["prediction_count"], 1)
+
     def test_matching_is_one_to_one_and_uses_the_declared_tolerance(self):
         score = benchmark.boundary_score([2, 4, 8], [1, 3, 9.01])
         self.assertEqual(score["matches"], [[2, 1], [4, 3]])
@@ -75,7 +87,8 @@ class AnnotationGateTests(unittest.TestCase):
             directory.mkdir()
             (directory / 'input.mp4').write_bytes(identity.encode())
             (directory / 'captions.vtt').write_text('WEBVTT\n')
-            cases.append({"case_id": identity, "sample_start_seconds": 100, "sample_end_seconds": 280})
+            cases.append({"case_id": identity, "title": "Synthetic source", "page_url": "https://example.org/source",
+                          "sample_start_seconds": 100, "sample_end_seconds": 280})
             labels[identity] = {"reviewed": True, "input_sha256": benchmark.file_digest(directory / 'input.mp4'),
                                 "review_start": 0, "review_end": 180, "slide_changes": [12], "ocr": []}
         return {"cases": cases}, {"schema_version": 1, "annotation_protocol": "source frames only", "cases": labels}
@@ -154,12 +167,39 @@ class AnnotationGateTests(unittest.TestCase):
                 (root / case['case_id'] / 'captions.vtt').unlink()
             benchmark.validate_inputs(corpus, labels, root)
 
+    def test_frozen_style_source_fields_are_validated_before_any_campaign_token(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            corpus, labels = self.prepare(root)
+            corpus['cases'][0]['source_page'] = corpus['cases'][0].pop('page_url')
+            corpus['cases'][1]['source_url'] = corpus['cases'][1].pop('page_url')
+            for case in corpus['cases']:
+                case.update(captions_available=False, language='zh', ocr_languages=['zh-Hant', 'en-US'],
+                            tesseract_languages='chi_tra+eng')
+            benchmark.validate_inputs(corpus, labels, root)
+            self.assertEqual(benchmark.case_source_url(corpus['cases'][0]), 'https://example.org/source')
+            self.assertEqual(benchmark.case_source_url(corpus['cases'][1]), 'https://example.org/source')
+            corpus['cases'][1].pop('title')
+            corpus_file, labels_file = root / 'corpus.json', root / 'labels.json'
+            corpus_file.write_text(json.dumps(corpus)); labels_file.write_text(json.dumps(labels))
+            args = argparse.Namespace(corpus=corpus_file, labels=labels_file, workdir=root,
+                                      output=root / 'report.json', once_token=root / 'campaign.json',
+                                      asr_provider='mlx', ocr_provider='vision', mode='run')
+            with patch('clipmind.sdk.ClipMind.analyze') as analyze:
+                with self.assertRaisesRegex(ValueError, 'source title'):
+                    benchmark.benchmark(args)
+                analyze.assert_not_called()
+            self.assertFalse(args.output.exists())
+            self.assertFalse(args.once_token.exists())
+
     def test_existing_output_or_consumed_campaign_blocks_before_sdk_and_retains_failure(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             corpus, labels = self.prepare(root)
             for case in corpus['cases']:
                 case.update(title='Source talk', page_url='https://example.org/talk')
+            corpus['cases'][0]['source_page'] = corpus['cases'][0].pop('page_url')
+            corpus['cases'][1]['source_url'] = corpus['cases'][1].pop('page_url')
             corpus_file, labels_file = root / 'corpus.json', root / 'labels.json'
             corpus_file.write_text(json.dumps(corpus))
             labels_file.write_text(json.dumps(labels))
@@ -172,6 +212,8 @@ class AnnotationGateTests(unittest.TestCase):
                  patch('clipmind.sdk.ClipMind.analyze', new_callable=AsyncMock, side_effect=RuntimeError('model failed')) as analyze:
                 result = benchmark.benchmark(args)
                 self.assertEqual(result['status'], 'has_failures')
+                self.assertEqual([row['source_url'] for row in result['cases']],
+                                 ['https://example.org/talk', 'https://example.org/talk'])
                 self.assertEqual(result['planned_primary_change_count'], 2)
                 self.assertEqual(sum(row['canonical_boundary_score']['reference_count'] for row in result['cases']), 2)
                 self.assertEqual(sum(row['canonical_boundary_score']['matched'] for row in result['cases']), 0)
@@ -218,22 +260,37 @@ class AnnotationGateTests(unittest.TestCase):
             root = Path(temporary)
             corpus, labels = self.prepare(root)
             for case in corpus['cases']:
-                case.update(title='Source talk', page_url='https://example.org/talk')
+                case.update(title='Source talk', page_url='https://example.org/talk', captions_available=False)
+                labels['cases'][case['case_id']]['ocr'] = [
+                    {"timestamp": 10, "roi": [0, 0, 1, 1], "text": "code12", "kind": "code"}]
             corpus_file, labels_file = root / 'corpus.json', root / 'labels.json'
             corpus_file.write_text(json.dumps(corpus))
             labels_file.write_text(json.dumps(labels))
             args = argparse.Namespace(corpus=corpus_file, labels=labels_file, workdir=root,
                                       output=root / 'interrupted.json', once_token=root / 'once.json',
                                       asr_provider='mlx', ocr_provider='vision', mode='run')
-            with patch.object(benchmark, 'edit_score', return_value={}), \
-                 patch.object(benchmark, 'tool_versions', return_value={}), \
+            async def interrupt_after_reserved_report(*unused_args, **unused_kwargs):
+                initial = json.loads(args.output.read_text())
+                self.assertEqual([row['status'] for row in initial['cases']], ['not_attempted', 'not_attempted'])
+                self.assertEqual(sum(row['canonical_boundary_score']['reference_count'] for row in initial['cases']), 2)
+                self.assertEqual(sum(row['information_boundary_score']['reference_count'] for row in initial['cases']), 2)
+                self.assertEqual(sum(row['code_roi_ocr_reference_units'] for row in initial['cases']), 12)
+                self.assertEqual(sum(row['code_roi_ocr_errors'] for row in initial['cases']), 12)
+                raise benchmark.asyncio.CancelledError
+
+            with patch.object(benchmark, 'tool_versions', return_value={}), \
                  patch('clipmind.sdk.ClipMind.analyze', new_callable=AsyncMock,
-                       side_effect=benchmark.asyncio.CancelledError) as analyze:
+                       side_effect=interrupt_after_reserved_report) as analyze:
                 with self.assertRaises(benchmark.asyncio.CancelledError):
                     benchmark.benchmark(args)
                 self.assertEqual(analyze.await_count, 1)
-            self.assertEqual(json.loads(args.output.read_text())['status'], 'interrupted')
-            self.assertEqual(len(json.loads(args.output.read_text())['cases']), 1)
+            saved = json.loads(args.output.read_text())
+            self.assertEqual(saved['status'], 'interrupted')
+            self.assertEqual([row['status'] for row in saved['cases']], ['interrupted', 'not_attempted'])
+            self.assertEqual(sum(row['canonical_boundary_score']['reference_count'] for row in saved['cases']), 2)
+            self.assertEqual(sum(row['canonical_boundary_score']['matched'] for row in saved['cases']), 0)
+            self.assertEqual(sum(row['code_roi_ocr_reference_units'] for row in saved['cases']), 12)
+            self.assertEqual(sum(row['code_roi_ocr_errors'] for row in saved['cases']), 12)
             self.assertEqual(json.loads(args.once_token.read_text())['status'], 'attempt_started')
 
     def test_wrong_candidate_fingerprint_stops_before_source_or_sdk_calls(self):

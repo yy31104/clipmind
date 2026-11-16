@@ -29,7 +29,7 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 from scripts.screen_evaluation import (PROTOCOL, boundary_inventory, reserve_record,
                                        resolve_pack_path, safe_report, tesseract_metadata,
-                                       OCRDiagnosticProxy)
+                                       OCRDiagnosticProxy, case_source_url)
 
 
 def file_digest(path: Path) -> str:
@@ -111,10 +111,26 @@ def validate_inputs(corpus: dict, labels: dict, workdir: Path) -> None:
         raise ValueError("corpus needs at least one case")
     seen = set()
     for case in corpus["cases"]:
-        identity = case["case_id"]
-        if not re.fullmatch(r"[A-Za-z0-9_-]+", identity) or identity in seen:
+        if not isinstance(case, dict):
+            raise ValueError("each source case must be an object")
+        identity = case.get("case_id")
+        if not isinstance(identity, str) or not re.fullmatch(r"[A-Za-z0-9_-]+", identity) or identity in seen:
             raise ValueError(f"invalid or duplicate case_id: {identity}")
         seen.add(identity)
+        if not isinstance(case.get("title"), str) or not case["title"].strip():
+            raise ValueError(f"{identity}: a source title is required")
+        if not re.match(r"^https?://[^/\s]+", case_source_url(case)):
+            raise ValueError(f"{identity}: a public source URL is required")
+        if (not valid_seconds(case.get("sample_start_seconds"), 0, float("inf")) or
+                not valid_seconds(case.get("sample_end_seconds"), 0, float("inf")) or
+                case["sample_end_seconds"] <= case["sample_start_seconds"]):
+            raise ValueError(f"{identity}: invalid source interval")
+        if "ocr_languages" in case and (not isinstance(case["ocr_languages"], list) or not case["ocr_languages"]
+                or any(not isinstance(value, str) or not value.strip() for value in case["ocr_languages"])):
+            raise ValueError(f"{identity}: invalid OCR language list")
+        if "tesseract_languages" in case and (not isinstance(case["tesseract_languages"], str)
+                or not case["tesseract_languages"].strip()):
+            raise ValueError(f"{identity}: invalid Tesseract language list")
         label = labels.get("cases", {}).get(identity, {})
         if not isinstance(label, dict) or label.get("reviewed") is not True:
             raise ValueError(f"{identity}: source annotations are pending")
@@ -153,7 +169,11 @@ def validate_inputs(corpus: dict, labels: dict, workdir: Path) -> None:
                 raise ValueError(f"{identity}: OCR timestamp/normalized ROI is invalid")
             if not isinstance(reference.get("text"), str) or not reference["text"].strip():
                 raise ValueError(f"{identity}: OCR reference text must not be empty")
+        if not isinstance(label.get("build_groups", []), list):
+            raise ValueError(f"{identity}: build groups must be a list")
         for group in label.get("build_groups", []):
+            if not isinstance(group, dict) or not isinstance(group.get("id"), str) or not group["id"].strip():
+                raise ValueError(f"{identity}: source build groups need an id")
             points = [group.get(key) for key in ("start", "complete_start", "reference_timestamp", "complete_end")]
             if (not all(valid_seconds(point, 0, duration) for point in points) or
                     not points[0] <= points[1] <= points[2] < points[3]):
@@ -381,7 +401,11 @@ def score_pack(pack, case: dict, label: dict, captions: Path) -> dict:
     boundaries = boundary_score(label["slide_changes"], changes)
     inventory = boundary_inventory(label["slide_changes"], pack.visual_timeline,
                                    start=label["review_start"], end=label["review_end"])
-    information = boundary_inventory(label["slide_changes"], pack.visual_timeline,
+    # OCR errors live in the OCR records, not necessarily in the timeline.
+    # A failed observation cannot justify excluding a predicted boundary.
+    observed_states = [state | {"ocr_warning": records.get(state.get("id"), {}).get("error")}
+                       for state in pack.visual_timeline]
+    information = boundary_inventory(label["slide_changes"], observed_states,
                                      start=label["review_start"], end=label["review_end"],
                                      information_only=True)
     information_score = information["score"]
@@ -447,6 +471,9 @@ def benchmark(args) -> dict:
     corpus = json.loads(args.corpus.read_text(encoding="utf-8"))
     labels = json.loads(args.labels.read_text(encoding="utf-8"))
     validate_inputs(corpus, labels, args.workdir)
+    once_token = getattr(args, "once_token", None)
+    if once_token is not None and once_token.resolve() == args.output.resolve():
+        raise ValueError("--once-token and --output must be different paths")
     edit_score("dependency check", "dependency check", speech=True)
     config = Settings(cookie_sources=("-",), cookie_file=None, asr_language=getattr(args, "asr_language", None),
                       asr_provider=args.asr_provider, ocr_provider=args.ocr_provider,
@@ -504,10 +531,22 @@ def benchmark(args) -> dict:
         previous.get("extraction_provenance") or {key: previous.get(key) for key in provenance_keys}
         if args.mode == "score" else {key: report[key] for key in provenance_keys}
     )
-    # Claim an output before any SDK call. A crash or failed attempt leaves a
-    # record; a retry needs a new name instead of erasing the first outcome.
+    # Save every frozen denominator before the first SDK call. An interruption
+    # leaves unattempted cases scored as empty predictions, never omitted.
+    for case in corpus["cases"]:
+        identity = case["case_id"]
+        captions = args.workdir / identity / "captions.vtt"
+        preparation = args.workdir / identity / "metadata.json"
+        row = {"case_id": identity, "title": case["title"], "source_url": case_source_url(case),
+               "input_sha256": labels["cases"][identity]["input_sha256"],
+               "captions_sha256": file_digest(captions) if captions.is_file() else None,
+               "source_interval": [case["sample_start_seconds"], case["sample_end_seconds"]],
+               "preparation_sha256": file_digest(preparation) if preparation.is_file() else None,
+               "status": "not_attempted"}
+        row.update(failed_case_scores(case, labels["cases"][identity], captions))
+        report["cases"].append(row)
+    # Claim an output before any SDK call. Failed attempts need a new name.
     reserve_record(args.output, safe_report(report, args.workdir))
-    once_token = getattr(args, "once_token", None)
     if once_token is not None and args.mode == "run":
         try:
             reserve_record(once_token, {"metric_protocol": PROTOCOL,
@@ -521,16 +560,10 @@ def benchmark(args) -> dict:
             report.update(status="blocked", error="evaluation campaign token already exists or cannot be created")
             atomic_json(args.output, safe_report(report, args.workdir))
             raise
-    for case in corpus["cases"]:
+    for case_index, case in enumerate(corpus["cases"]):
         identity = case["case_id"]
         started = time.perf_counter()
-        row = {"case_id": identity, "title": case["title"], "source_url": case["page_url"],
-               "input_sha256": labels["cases"][identity]["input_sha256"],
-               "captions_sha256": file_digest(args.workdir / identity / "captions.vtt")
-                   if (args.workdir / identity / "captions.vtt").is_file() else None,
-               "source_interval": [case["sample_start_seconds"], case["sample_end_seconds"]]}
-        preparation = args.workdir / identity / "metadata.json"
-        row["preparation_sha256"] = file_digest(preparation) if preparation.is_file() else None
+        row = report["cases"][case_index]
         library = args.workdir / identity / "library"
         diagnostic_proxy = None
         try:
@@ -567,11 +600,11 @@ def benchmark(args) -> dict:
             row.update(failed_case_scores(case, labels["cases"][identity], args.workdir / identity / "captions.vtt"))
             row.update(status="failed", error=f"{type(exc).__name__}: {exc}", error_code=getattr(exc, "code", None))
         except BaseException as exc:
+            row.update(failed_case_scores(case, labels["cases"][identity], args.workdir / identity / "captions.vtt"))
             row.update(status="interrupted", error=f"{type(exc).__name__}: extraction interrupted",
                        wall_seconds=round(time.perf_counter() - started, 3))
             if diagnostic_proxy is not None:
                 row["real_ocr_diagnostics"] = diagnostic_proxy.snapshot()
-            report["cases"].append(row)
             report["status"] = "interrupted"
             atomic_json(args.output, safe_report(report, args.workdir))
             raise
@@ -587,8 +620,7 @@ def benchmark(args) -> dict:
             row["actual_asr_runtime"] = loaded_asr_runtime(config)
         if row["cleanup_leftovers"]:
             row["status"] = "failed"
-        report["cases"].append(row)
-        if len(report["cases"]) == report["planned_case_count"]:
+        if case_index == report["planned_case_count"] - 1:
             report["status"] = "measured" if all(r["status"] == "measured" for r in report["cases"]) else "has_failures"
         atomic_json(args.output, safe_report(report, args.workdir))
         print(f"{identity}: {row['status']}", flush=True)
