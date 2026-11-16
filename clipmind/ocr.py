@@ -13,6 +13,9 @@ from __future__ import annotations
 
 import threading
 import shutil
+import atexit
+import multiprocessing
+import time
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -30,6 +33,12 @@ except Exception as exc:  # noqa: BLE001 - macOS-only dependency
 _probe_lock = threading.Lock()
 _probe_result: tuple[bool, str | None] | None = None
 _vision_lock = threading.Lock()
+_worker_lock = threading.Lock()
+_worker_process = _worker_connection = _worker_idle_timer = None
+_worker_requests = 0
+_VISION_REQUEST_TIMEOUT = 10.0
+_VISION_MAX_REQUESTS = 32
+_VISION_IDLE_SECONDS = 30.0
 
 
 class OCRError(RuntimeError):
@@ -134,6 +143,104 @@ def read_text(
     ).lines
 
 
+def _vision_worker_loop(connection) -> None:
+    """Spawn imports Vision on the worker's main thread, without forking MLX."""
+    try:
+        while True:
+            message = connection.recv()
+            if message is None:
+                return
+            image, languages = message
+            try:
+                result = recognize(Path(image), languages=languages)
+                connection.send(("ok", result))
+            except Exception as exc:
+                connection.send(("error", f"{type(exc).__name__}: {exc}"))
+    except (EOFError, BrokenPipeError):
+        pass
+    finally:
+        connection.close()
+
+
+def _stop_vision_worker() -> None:
+    """Called with the parent lock held; reap only this module's own child."""
+    global _worker_process, _worker_connection, _worker_idle_timer, _worker_requests
+    if _worker_idle_timer is not None:
+        _worker_idle_timer.cancel()
+        _worker_idle_timer = None
+    if _worker_connection is not None:
+        _worker_connection.close()
+        _worker_connection = None
+    if _worker_process is not None:
+        process, _worker_process = _worker_process, None
+        if process.is_alive():
+            process.terminate()
+        process.join(timeout=1)
+        if process.is_alive():
+            process.kill()
+            process.join(timeout=1)
+        process.close()
+    _worker_requests = 0
+
+
+def _close_vision_worker() -> None:
+    with _worker_lock:
+        _stop_vision_worker()
+
+
+def _expire_vision_worker(process, requests: int) -> None:
+    with _worker_lock:
+        if _worker_process is process and _worker_requests == requests:
+            _stop_vision_worker()
+
+
+def _recognize_in_worker(image: Path, *, languages: tuple[str, ...]) -> OCRResult:
+    global _worker_process, _worker_connection, _worker_requests, _worker_idle_timer
+    with _worker_lock:
+        started = time.monotonic()
+        if _worker_idle_timer is not None:
+            _worker_idle_timer.cancel()
+            _worker_idle_timer = None
+        if (_worker_process is None or not _worker_process.is_alive() or
+                _worker_requests >= _VISION_MAX_REQUESTS):
+            _stop_vision_worker()
+            context = multiprocessing.get_context("spawn")
+            _worker_connection, child = context.Pipe()
+            _worker_process = context.Process(target=_vision_worker_loop,
+                                              args=(child,), daemon=True)
+            try:
+                _worker_process.start()
+            except Exception as exc:
+                child.close()
+                _worker_connection.close()
+                _worker_process = _worker_connection = None
+                raise OCRError(f"Vision worker could not start: {exc}") from exc
+            child.close()
+        try:
+            _worker_connection.send((str(image.resolve()), languages))
+            if not _worker_connection.poll(max(0, _VISION_REQUEST_TIMEOUT -
+                                                (time.monotonic() - started))):
+                raise OCRError("Vision recognition exceeded its 10-second deadline")
+            status, value = _worker_connection.recv()
+        except (EOFError, BrokenPipeError, OSError, OCRError) as exc:
+            _stop_vision_worker()
+            if isinstance(exc, OCRError):
+                raise
+            raise OCRError("Vision worker exited before returning a result") from exc
+        _worker_requests += 1
+        process = _worker_process
+        _worker_idle_timer = threading.Timer(_VISION_IDLE_SECONDS, _expire_vision_worker,
+                                             args=(process, _worker_requests))
+        _worker_idle_timer.daemon = True
+        _worker_idle_timer.start()
+        if status != "ok":
+            raise OCRError(value)
+        return value
+
+
+atexit.register(_close_vision_worker)
+
+
 @dataclass(frozen=True)
 class VisionTextRecognizer:
     config: Settings
@@ -143,10 +250,10 @@ class VisionTextRecognizer:
         return available()
 
     def read_text(self, image: Path) -> list[str]:
-        return read_text(image, languages=self.config.ocr_languages)
+        return self.recognize(image).lines
 
     def recognize(self, image: Path) -> OCRResult:
-        return recognize(image, languages=self.config.ocr_languages)
+        return _recognize_in_worker(image, languages=self.config.ocr_languages)
 
 
 def tesseract_available() -> bool:
