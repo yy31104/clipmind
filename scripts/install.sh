@@ -22,6 +22,6 @@ if [ "$(uname -s)" != "Darwin" ] && ! command -v tesseract >/dev/null 2>&1; then
   exit 1
 fi
 
-uv tool install --force "$source_path"
+uv tool install --python 3.12 --force "$source_path"
 echo "ClipMind installed. Run: clipmind doctor"
 echo "Then launch the app with: clipmind-app"

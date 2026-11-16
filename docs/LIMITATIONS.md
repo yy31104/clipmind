@@ -65,7 +65,8 @@ things.
   Docker and portable providers work without that path but performance varies by
   CPU/GPU/runtime configuration.
 - **No automatic eviction.** Temporary media is cleaned, but final Evidence
-  Packs remain until the user removes them outside ClipMind.
+  Packs and model weights remain. UI removal moves packs into `.trash` and
+  does not release that disk space.
 
 ## Product and library behavior
 
@@ -73,8 +74,9 @@ things.
   to loopback by default. It is not a hosted multi-tenant service.
 - **No per-job cancellation yet.** A running job can be interrupted by stopping
   the app; restart marks it `interrupted` and never silently resumes it.
-- **No built-in delete flow yet.** Evidence Packs can be removed from the local
-  filesystem, but the UI intentionally does not offer a destructive action.
+- **Removal is recoverable.** Inbox/Library support selection and removal of
+  terminal jobs. Running and queued jobs cannot be removed. Removed pack files
+  remain in `.trash`; restoration and permanent emptying are manual.
 - **Large-library pagination is not implemented.** The derived SQLite index
   keeps search bounded, but listing a very large library still scans complete
   pack directories.
@@ -88,10 +90,10 @@ things.
 
 ## Packaging
 
-- **Source install is the documented release path today.** Packaging code can
-  build wheels, a Docker image, and a macOS app/DMG, but the repository does not
-  claim an already published PyPI package, signed/notarized DMG, Homebrew cask,
-  or platform installer.
+- **Distribution uses GitHub and GHCR.** v1.3.0 provides versioned GitHub
+  installation, wheel/sdist checksums and a Linux Docker image. The PyPI name
+  is occupied by another project. There is no signed/notarized DMG, Homebrew
+  cask or signed Windows installer.
 - **Windows and Linux depend on system tools.** FFmpeg and Tesseract must be
   installed and visible on `PATH`; desired Tesseract language data must also be
   present.
@@ -103,4 +105,7 @@ code/UI, scrolling, talking-head captions, inserted documents, and progressive
 slides, plus a generated silent-slide fixture. It measures pipeline behavior,
 not universal quality. More languages, platforms, multi-speaker conversations,
 whiteboards, very long sources, vertical live streams, and low-quality archival
-footage remain important corpus gaps.
+footage remain important corpus gaps. The [v1.3.0 real-talk run](REAL_TALK_BENCHMARK.md)
+adds ten English 180-second windows and a separate complete talk demo. Its
+source annotations are AI-assisted and await independent human review; the
+publisher captions are ASR-generated rather than human ground truth.

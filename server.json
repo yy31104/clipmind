@@ -1,0 +1,50 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.yy31104/clipmind",
+  "title": "ClipMind",
+  "description": "Search local video transcripts, screen text and timestamped frames.",
+  "version": "1.3.0",
+  "repository": {
+    "url": "https://github.com/yy31104/clipmind",
+    "source": "github"
+  },
+  "websiteUrl": "https://github.com/yy31104/clipmind",
+  "packages": [
+    {
+      "registryType": "oci",
+      "identifier": "ghcr.io/yy31104/clipmind:v1.3.0",
+      "runtimeHint": "docker",
+      "transport": {
+        "type": "stdio"
+      },
+      "runtimeArguments": [
+        {
+          "type": "positional",
+          "value": "-i"
+        },
+        {
+          "type": "positional",
+          "value": "--rm"
+        },
+        {
+          "type": "named",
+          "name": "--entrypoint",
+          "value": "clipmind-mcp"
+        },
+        {
+          "type": "named",
+          "name": "--mount",
+          "value": "type=volume,src=clipmind-data,dst=/data",
+          "description": "Keep evidence packs in a Docker-managed volume."
+        }
+      ],
+      "environmentVariables": [
+        {
+          "name": "CLIPMIND_OUT",
+          "value": "/data",
+          "description": "Evidence library inside the persistent volume."
+        }
+      ]
+    }
+  ]
+}

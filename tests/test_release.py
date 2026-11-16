@@ -15,10 +15,10 @@ ROOT = Path(__file__).resolve().parents[1]
 
 class ReleaseArtifactTests(unittest.TestCase):
     def test_release_tag_must_match_the_package_version(self) -> None:
-        build_release_assets.validate_release_tag("v1.2.1", "1.2.1")
+        build_release_assets.validate_release_tag("v1.3.0", "1.3.0")
 
         with self.assertRaisesRegex(ValueError, "does not match package version"):
-            build_release_assets.validate_release_tag("v1.2.0", "1.2.1")
+            build_release_assets.validate_release_tag("v1.2.0", "1.3.0")
 
     def test_runtime_versions_match_the_package_version(self) -> None:
         # Package metadata is absent from frozen desktop builds, so the runtime

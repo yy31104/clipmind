@@ -1,5 +1,10 @@
 # Benchmarks and reproducibility
 
+The v1.3.0 [ten real-talk quality table](REAL_TALK_BENCHMARK.md) adds frozen
+source annotations, code/text ROI errors and published-caption agreement.
+The [full real-talk demo](REAL_TALK_DEMO.md) separately covers URL acquisition,
+the browser search flow and actual MCP agent calls.
+
 Three commands cover the release checks:
 
 ```bash

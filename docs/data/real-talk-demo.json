@@ -1,0 +1,135 @@
+{
+  "source": {
+    "case_id": "39c3-1317",
+    "title": "Xous: A Pure-Rust Rethink of the Embedded Operating System",
+    "authors": [
+      "bunnie",
+      "Sean \"xobs\" Cross"
+    ],
+    "page_url": "https://media.ccc.de/v/39c3-xous-a-pure-rust-rethink-of-the-embedded-operating-system",
+    "license": "CC-BY-4.0",
+    "license_url": "http://creativecommons.org/licenses/by/4.0",
+    "duration_seconds": 2364
+  },
+  "scope": "complete original talk, not the three-minute benchmark excerpt",
+  "pack": {
+    "pack_id": "90939b84cd6c",
+    "title": "Xous: A Pure-Rust Rethink of the Embedded Operating System",
+    "platform": "web",
+    "source_id": "16223",
+    "source_url": "https://media.ccc.de/v/39c3-xous-a-pure-rust-rethink-of-the-embedded-operating-system",
+    "duration": 2364.0,
+    "schema": {
+      "name": "clipmind-evidence-pack",
+      "version": "1.3.0"
+    },
+    "counts": {
+      "candidate_frames": 4729,
+      "canonical_visual_states": 387,
+      "ocr_records": 387,
+      "preview_visual_states": 10,
+      "progressive_build_groups": 76,
+      "scenes": 80,
+      "scroll_groups": 32,
+      "transcript_segments": 749
+    },
+    "completeness": {
+      "ocr": "complete",
+      "speaker_diarization": "unavailable",
+      "transcript": "complete",
+      "visual_states": "complete",
+      "word_timing": "complete"
+    }
+  },
+  "manifest": {
+    "artifacts": [
+      "source.json",
+      "job.json",
+      "transcript.jsonl",
+      "transcript.md",
+      "ocr.jsonl",
+      "visual_timeline.jsonl",
+      "evidence.md",
+      "visual_states/all/",
+      "visual_states/preview/"
+    ],
+    "completeness": {
+      "ocr": "complete",
+      "speaker_diarization": "unavailable",
+      "transcript": "complete",
+      "visual_states": "complete",
+      "word_timing": "complete"
+    },
+    "configuration": {
+      "asr_guards": {
+        "hallucination_silence_threshold": 2.0,
+        "vad_filter": true
+      },
+      "change_detection_width": 640,
+      "dedupe_algorithm": "single-dhash-v1",
+      "dedupe_threshold": 6,
+      "evidence_width": 1280,
+      "preflight": {
+        "candidate_frame_count": 4729,
+        "duration_seconds": 2364.0,
+        "estimated_canonical_states": 387,
+        "estimated_ocr_seconds": 58.0,
+        "estimated_pack_mb": 31.0,
+        "exceeded": [],
+        "forced": true,
+        "limits": {
+          "canonical_states": 1000,
+          "ocr_seconds": 180.0,
+          "pack_mb": 150.0
+        },
+        "policy": "complete_or_refuse",
+        "within_budget": true
+      },
+      "preview_algorithm": "independent-visual-content-v1",
+      "sample_fps": 2.0
+    },
+    "counts": {
+      "candidate_frames": 4729,
+      "canonical_visual_states": 387,
+      "ocr_records": 387,
+      "preview_visual_states": 10,
+      "progressive_build_groups": 76,
+      "scenes": 80,
+      "scroll_groups": 32,
+      "transcript_segments": 749
+    },
+    "diagnostics": {
+      "asr_error": null,
+      "dedupe_failure_count": 0,
+      "diarization_error": null,
+      "ocr_error": null,
+      "ocr_failure_count": 0
+    },
+    "schema": {
+      "name": "clipmind-evidence-pack",
+      "version": "1.3.0"
+    },
+    "source": {
+      "id": "16223",
+      "platform": "web"
+    },
+    "status": "complete",
+    "timings": {
+      "acquisition_seconds": 223.067,
+      "asr_seconds": 101.307,
+      "ocr_seconds": 50.127,
+      "preview_seconds": 2.439,
+      "sampling_seconds": 40.74
+    }
+  },
+  "elapsed_seconds": 368.048,
+  "acquisition_leftovers": [],
+  "passed": true,
+  "date": "2026-11-16",
+  "providers": {
+    "asr": "mlx-whisper / whisper-large-v3-turbo",
+    "language": "en",
+    "ocr": "Apple Vision",
+    "host": "Apple M4 Pro,24 GB"
+  }
+}

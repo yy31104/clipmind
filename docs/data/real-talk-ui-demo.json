@@ -1,0 +1,9 @@
+{
+  "url": "http://127.0.0.1:8439",
+  "query": "a string that is moved",
+  "hit": "12:01\nSo in the first function there, A is a string that is moved when you make this function call,\nSpeech",
+  "timestamp": "721.76",
+  "evidence_dialog": "Close\n11:54\nView in transcript\nOn-screen text\n\nThe Three Ownership Types: Function Calls\nPOWER CYCLES\narg'may be accessed but not modified\nfn _borrow\uff08b\uff1a &String\uff09\uff5b\u2022\u30fb\uff5d\n3903\nPOWER CYCLES\n\nNearby speech\n11:51\nAnd from these rules, you actually get this motif that gets repeated in Rust,\n11:57\nwhere you have things that are either move, borrow, or mutable borrow.\n12:01\nSo in the first function there, A is a string that is moved when you make this function call,\n12:06\nwhich means it's no longer available in the source function.\n12:09\nB there is borrowed, which means that we now know that no other part of this program during",
+  "page_errors": [],
+  "capture": "actual local UI; no mocked responses"
+}

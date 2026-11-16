@@ -1,0 +1,422 @@
+{
+  "schema_version": 1,
+  "frozen_at": "2026-11-16T13:31:28.487950+00:00",
+  "annotation_protocol": "AI-assisted source-only visual review of every one-second contact sheet, refined using original frames. No production predictions were inspected before freezing. Labels describe first source-visible persistent informational pages/builds, excluding speaker motion, camera layout changes and animation interpolation. Boundary uncertainty +/-1 second; one-to-one matches. Human verification pending; these labels are fallible, not human ground truth. Code ROI text was independently transcribed from source frames, not OCR. No-slide or continuously animated windows are explicitly not applicable.",
+  "cases": {
+    "39c3-2042": {
+      "reviewed": true,
+      "input_sha256": "6ee5fb351fe2f140b7e5bebb5c38671b5770d337b4e1e56a1809b0b7c5c6195a",
+      "review_start": 0,
+      "review_end": 180,
+      "slide_changes": [],
+      "ocr": [],
+      "source_contact_sheets_reviewed": [
+        "contact-01.jpg",
+        "contact-02.jpg",
+        "contact-03.jpg"
+      ],
+      "slide_metric_applicable": false,
+      "notes": "All 180 seconds reviewed: craft/demo montage, generated snowflake animation, rotating hanging ornaments, and flipping notebooks. No conventional stable slide deck or code in this fixed window. Ordinary animated/video scene changes are not slide-boundary ground truth; slide precision/recall is not applicable. The presenter/layout cut at 50s does not change instructional content.",
+      "source_content_changes_for_context_only": [
+        2,
+        13,
+        18,
+        26,
+        29,
+        58,
+        74,
+        144,
+        166
+      ],
+      "code_ocr_applicable": false
+    },
+    "39c3-1611": {
+      "reviewed": true,
+      "input_sha256": "075c9c8012fe35400d414dab1833db15e9258a7bfe9320a24f957b8ed9ed399a",
+      "review_start": 0,
+      "review_end": 180,
+      "slide_changes": [
+        30,
+        42,
+        50,
+        59,
+        70,
+        74,
+        94,
+        100,
+        112,
+        143,
+        157,
+        167
+      ],
+      "ocr": [],
+      "source_contact_sheets_reviewed": [
+        "contact-01.jpg",
+        "contact-02.jpg",
+        "contact-03.jpg"
+      ],
+      "slide_metric_applicable": true,
+      "notes": "Full 180-second source review: USB Type-C title, incremental USB history bullets, revised USB naming text, connector diagram, wrong/wrong/correct USB orientation image, then USB-C pin diagram. Bullet additions count as informational builds. Presenter-only camera intervals and subsequent layout/zoom changes are excluded. At ~70s the deck returns with a newly visible fourth bullet; its exact hidden off-camera update is unknowable, so the labeled time is first visible return, not an invented earlier transition. Boundary timestamps checked against direct full-size source frames and rounded to one-second resolution. No source code appears in this fixed window.",
+      "boundary_descriptions": {
+        "30": "USB Type-C title first visible in wide stage shot",
+        "42": "1996 USB1.0 history bullet",
+        "50": "1998 USB1.1 bullet",
+        "59": "2000 USB2.0 bullet",
+        "70": "Deck returns with 2008 USB3.0 bullet after speaker-only cut",
+        "74": "2013 USB3.1 bullet",
+        "94": "2017 USB3.2 bullet",
+        "100": "Revised D+/- and USB5/10/20Gbps naming",
+        "112": "2019 USB4 bullet",
+        "143": "USB connector-type diagram",
+        "157": "USB orientation wrong/wrong/correct diagram",
+        "167": "USB-C pin diagram"
+      },
+      "code_ocr_applicable": false
+    },
+    "39c3-2154": {
+      "reviewed": true,
+      "input_sha256": "fc7192e34cd776f5095ade504f018e92ea0bf40b76ee3e83e4647b791fea69f3",
+      "review_start": 0,
+      "review_end": 180,
+      "slide_changes": [],
+      "ocr": [
+        {
+          "timestamp": 60,
+          "roi": [
+            0.37,
+            0.02,
+            0.26,
+            0.055
+          ],
+          "text": "CSS: FONT-OPTICAL-SIZING: AUTO;",
+          "kind": "code",
+          "notes": "Single CSS declaration label; display is uppercase and includes printed CSS: prefix. Not evidence of multi-line code-block OCR accuracy."
+        }
+      ],
+      "source_contact_sheets_reviewed": [
+        "contact-01.jpg",
+        "contact-02.jpg",
+        "contact-03.jpg"
+      ],
+      "slide_metric_applicable": false,
+      "notes": "Full source window reviewed: Optical Size title, glyph design-space examples, browser font-resizing demonstration, width/weight diagram, and continuously animated TYPO/LABS and EDITABLE TEXT. Most changes are font morphing or resizing rather than discrete stable slides; whole-window slide precision/recall is not applicable. Main semantic segment changes are recorded separately for context, never mixed into slide scoring. The sole code ROI is a CSS declaration displayed as a slide label, not a multi-line source-code block. Reference text transcribed directly from a 1280x720 source frame at 60s.",
+      "source_content_changes_for_context_only": [
+        29,
+        55,
+        67,
+        125,
+        147
+      ],
+      "code_ocr_applicable": true
+    },
+    "39c3-2188": {
+      "reviewed": true,
+      "input_sha256": "62e4f80bd51ee3dc5ba77cb8f9d11c7d023f18936ec453deca211a5aa57d9437",
+      "review_start": 0,
+      "review_end": 180,
+      "slide_changes": [],
+      "ocr": [],
+      "source_contact_sheets_reviewed": [
+        "contact-01.jpg",
+        "contact-02.jpg",
+        "contact-03.jpg"
+      ],
+      "slide_metric_applicable": false,
+      "notes": "Every contact-sheet cell reviewed: entire 180-second sample is a presenter shot with a sign-language interpreter inset. One camera framing change around 69-81s is excluded; no instructional slide or code is visible. Slide-boundary and code-OCR metrics are not applicable, not perfect zero-error scores.",
+      "code_ocr_applicable": false
+    },
+    "39c3-2274": {
+      "slide_changes": [
+        16,
+        59,
+        80,
+        101,
+        139
+      ],
+      "boundary_notes": [
+        "How are Risc-v instructions encoded",
+        "Our instructions (first instruction listing)",
+        "Extending Ghidra",
+        "Now things are improving (disassembly and decompiled example)",
+        "Our instructions (second listing)"
+      ],
+      "ocr": [
+        {
+          "timestamp": 112,
+          "roi": [
+            0.025,
+            0.53,
+            0.5,
+            0.055
+          ],
+          "text": "67 active_tasks[eVar1].field1_0x8 = 0;\n68 active_tasks[eVar1].field48_0x54 = uVar2;",
+          "kind": "code"
+        }
+      ],
+      "review_notes": "Read all three one-second contact sheets. Inspected source frame 112 at 1280x720 for the decompiled-code ROI. Full-slide/PIP layout changes around 107 and 131 are excluded because informational content is unchanged.",
+      "reviewed": true,
+      "input_sha256": "1ce923120997691c7ebc27e162d095e2051c0fad34f02d22394454092e65ec4a",
+      "review_start": 0,
+      "review_end": 180,
+      "inspected_contact_sheets": [
+        "contact-01.jpg",
+        "contact-02.jpg",
+        "contact-03.jpg"
+      ]
+    },
+    "39c3-1317": {
+      "slide_changes": [
+        9,
+        28,
+        59,
+        66,
+        77,
+        83,
+        120,
+        130,
+        147,
+        151
+      ],
+      "boundary_notes": [
+        "Creating a Server: while/receive_message build",
+        "Sending a Message",
+        "scalar_message call revealed",
+        "lend_message call revealed",
+        "Xous Message Types initial table",
+        "Send/Scalar table row revealed",
+        "Lend/LendMut table rows revealed",
+        "BlockingScalar entries revealed",
+        "Xous Implementation section",
+        "Ticktimer page"
+      ],
+      "ocr": [
+        {
+          "timestamp": 4,
+          "roi": [
+            0.06,
+            0.395,
+            0.79,
+            0.075
+          ],
+          "text": "let srv = create_server(b\"0123456789abcdef\");",
+          "kind": "code"
+        },
+        {
+          "timestamp": 68,
+          "roi": [
+            0.05,
+            0.32,
+            0.61,
+            0.19
+          ],
+          "text": "let connection = connect(b\"0123456789abcdef\");\nscalar_message(connection, 1, 2, 3, 4, 5);\nlend_message(connection, 1, &slice, 4, 5);",
+          "kind": "code"
+        }
+      ],
+      "review_notes": "Read all three one-second contact sheets. Inspected source frames 4 and 68 for code ROIs and 119,120,129,130,143,144 for incremental table reveals. Excluded camera-layout change at 14 and subsequent highlighting without new information. Frame 144 repeats the already complete table and is not a boundary.",
+      "reviewed": true,
+      "input_sha256": "257cbae3d65b7de306ab6f1e247dd2c95ae81520abfadda2ccde507cd0b7c959",
+      "review_start": 0,
+      "review_end": 180,
+      "inspected_contact_sheets": [
+        "contact-01.jpg",
+        "contact-02.jpg",
+        "contact-03.jpg"
+      ]
+    },
+    "39c3-1989": {
+      "slide_changes": [
+        19,
+        97,
+        119,
+        139
+      ],
+      "boundary_notes": [
+        "Proof-language code page to solver diagram",
+        "Question-mark solver outcome added",
+        "Hints input added to solver diagram",
+        "Project Everest quotation page"
+      ],
+      "ocr": [
+        {
+          "timestamp": 5,
+          "roi": [
+            0.425,
+            0.1,
+            0.39,
+            0.125
+          ],
+          "text": "method Maximum(values: seq<int>) returns (max: int)\nrequires values != []\nensures max in values\nensures forall i | 0 <= i < |values| :: values[i] <= max",
+          "kind": "code"
+        }
+      ],
+      "review_notes": "Read all three one-second contact sheets. Inspected source frame 5 at 1280x720 for the four-line Dafny contract ROI. Excluded later full-slide/PIP camera changes that leave the quotation unchanged.",
+      "reviewed": true,
+      "input_sha256": "631a6d1aca378d0a3374f1ab94d1874666f602715582125fbeb4d2655232144e",
+      "review_start": 0,
+      "review_end": 180,
+      "inspected_contact_sheets": [
+        "contact-01.jpg",
+        "contact-02.jpg",
+        "contact-03.jpg"
+      ]
+    },
+    "39c3-1979": {
+      "reviewed": true,
+      "input_sha256": "7dc914cb4bb2ecb78069ba614f3d42a688f9ebee6ea3d19106267118efc9d024",
+      "review_start": 0,
+      "review_end": 180,
+      "slide_changes": [
+        40,
+        124,
+        147
+      ],
+      "change_notes": {
+        "40": "Texture font I switches to Texture font II glyph/filtering comparison.",
+        "124": "New Texture font II recommendations and subpixel text comparison.",
+        "147": "Subpixel Zoo grid replaces the text-rendering recommendations."
+      },
+      "ocr": [
+        {
+          "timestamp": 125,
+          "roi": [
+            0.234375,
+            0.177778,
+            0.515625,
+            0.116667
+          ],
+          "text": "Use horizontal RGB sub-pixel anti-aliasing for LCD flat panels.\nUse vertical hinting only and completely discard the horizontal one.\nUse accurate glyph advance values from unhinted glyph.\nUse accurate, high resolution values from the kerning table.",
+          "kind": "slide_text",
+          "note": "Four recommendation lines; Roman numeral bullets are outside the ROI."
+        }
+      ],
+      "notes": "No code slide in this sample. The first and second sheets mostly retain the same glyph-comparison slide; speaker movement does not create additional labels."
+    },
+    "39c3-2372": {
+      "reviewed": true,
+      "input_sha256": "01ae56db455b3207d60989a6691d09e0ed33acd4e1c1347c4b39719136de1113",
+      "review_start": 0,
+      "review_end": 180,
+      "slide_changes": [
+        16,
+        69,
+        94,
+        112,
+        149,
+        160,
+        164,
+        165,
+        171,
+        173
+      ],
+      "change_notes": {
+        "16": "Hybrid detector slide replaces the large apparatus photograph with server-rack/data-processing imagery.",
+        "69": "Two instrument/detector installation photographs replace the hybrid-detector overview.",
+        "94": "Scientific animation begins, showing beam and detector geometry.",
+        "112": "Persistent exploded hybrid-detector schematic with sensor, filter and electronics labels.",
+        "149": "Persistent individual-pixel cross-section with filter, sensor and X-ray-photon labels.",
+        "160": "Charge generation/collection is added within the pixel cross-section.",
+        "164": "Bump-bond and metal-contact callouts are added below the cross-section.",
+        "165": "Read-out-chip/ASIC base is highlighted in red with its new label.",
+        "171": "Pixel structure changes to the beam-above-sensor perspective.",
+        "173": "Persistent scattered-photon paths and corresponding label are added."
+      },
+      "ocr": [
+        {
+          "timestamp": 130,
+          "roi": [
+            0.3125,
+            0.216667,
+            0.25,
+            0.041667
+          ],
+          "text": "Electric connection solder bumps",
+          "kind": "diagram_label"
+        },
+        {
+          "timestamp": 130,
+          "roi": [
+            0.628906,
+            0.631944,
+            0.101563,
+            0.065278
+          ],
+          "text": "Single pixel\nread-out cell",
+          "kind": "diagram_label"
+        }
+      ],
+      "notes": "No code slide in this sample. This is an animation-heavy scientific sample: labels count persistent semantic scenes/builds, not every moving particle or perspective interpolation. Broadcast switches between full slide and speaker/PIP layouts at roughly 45, 99 and 124 seconds are excluded."
+    },
+    "39c3-1508": {
+      "reviewed": true,
+      "input_sha256": "f514284d9f182834d5f9281e10a16dfa428f09f74d1be7c774622aee30d6ae06",
+      "review_start": 0,
+      "review_end": 180,
+      "slide_changes": [
+        8,
+        13,
+        19,
+        27,
+        52,
+        62,
+        68,
+        99,
+        102,
+        103,
+        115,
+        124,
+        134,
+        143,
+        166,
+        175
+      ],
+      "change_notes": {
+        "8": "Persistent red emphasis is added to mutable/advance code on the right.",
+        "13": "Persistent solved-state emphasis is added on the right.",
+        "19": "Heading changes to How bad could it possibly be?",
+        "27": "Left code example changes to do_another with per-character checks.",
+        "52": "Execution-count/time annotation is first visible on return from speaker-only view.",
+        "62": "Problem 1: State is hard yellow page.",
+        "68": "Returns to the previous code/cost page.",
+        "99": "Most software is highly stateful page is first visible after speaker-only coverage.",
+        "102": "Client/Internet/server diagram is added.",
+        "103": "Computer photograph is added.",
+        "115": "Phone/device photograph is added.",
+        "124": "Dragonfly graphic is added.",
+        "134": "MongoDB logo is added.",
+        "143": "Intentionally blank slide with its explanatory text.",
+        "166": "What's in a mutation? maze slide is first visible in a small source inset.",
+        "175": "Left movement label appears beside the mutation example."
+      },
+      "ocr": [
+        {
+          "timestamp": 3,
+          "roi": [
+            0.035156,
+            0.284722,
+            0.253906,
+            0.256944
+          ],
+          "text": "fn do_thing(x: &str) -> bool {\n  for c in x.chars() {\n    if !c.is_ascii() {\n      return false;\n    }\n  }\n  true\n}",
+          "kind": "code",
+          "note": "Foreground white Rust code; the intentionally dark AFL console background is not part of the reference."
+        },
+        {
+          "timestamp": 32,
+          "roi": [
+            0.035156,
+            0.188889,
+            0.273438,
+            0.5
+          ],
+          "text": "fn do_another(x: &str) -> bool {\n  let mut v = 0;\n  if x[0..1] == “a” {\n    v += 1;\n  }\n  if x[1..2] == “b” {\n    v += 1;\n  }\n  if x[2..3] == “c” {\n    v += 1;\n  }\n  if x[3..4] == “d” {\n    v += 1;\n  }\n  v == 4\n}",
+          "kind": "code",
+          "note": "Smart quotation marks follow the visible slide; foreground white code only, excluding the dark console background."
+        }
+      ],
+      "notes": "Slides are not visible during source speaker-only intervals around44–51,78–98 and158–165. Labels52,99 and166 therefore mean the first source-visible informational state, not an inferred time when a hidden slide changed. Camera-only changes are excluded."
+    }
+  },
+  "initial_label_file_sha256": "497176660573fab2952a5eadea08f773b33e0c2be1bbc50102c3c165a24db9cf",
+  "timestamp_note": "Original label-file filesystem mtime; corrected a manually typed timestamp. No boundaries, ROI, reference text or applicability decision changed after initial extraction."
+}

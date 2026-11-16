@@ -9,11 +9,18 @@ ClipMind turns YouTube and Douyin links or local media into timestamped transcri
 
 Personal project. Built with AI assistance.
 
-[Run locally](#run-locally) · [Docs](#docs)
+[Run locally](#run-locally) · [Real-video results](docs/REAL_TALK_BENCHMARK.md) · [Agent demo](docs/REAL_TALK_DEMO.md#a-real-agent-used-the-mcp-tools) · [Docs](#docs)
 
-![ClipMind extracting a generated four-slide sample](docs/images/demo.gif)
+![Search a real Xous talk and jump to the corresponding code slide](docs/images/real-talk-search.gif)
 
-The demo runs the same extraction pipeline as a local video, using a silent four-slide sample. [Still image](docs/images/demo.png).
+Search **“a string that is moved”** → speech at **12:01** → its ownership slide.
+This recording uses a complete public 39-minute talk, not a generated fixture.
+An agent also answered a question using the saved transcript, timeline and images
+through MCP. [Source, attribution, captured calls and reproduction](docs/REAL_TALK_DEMO.md).
+
+The [real-video table](docs/REAL_TALK_BENCHMARK.md) covers ten fixed three-minute
+excerpts. It reports missed visual changes and code OCR errors as well as
+successful extraction. `complete` means the pipeline finished, not perfect recall.
 
 ## How it works
 
@@ -38,23 +45,45 @@ The full frame set is retained separately from the smaller reading preview. The 
 
 ## Run locally
 
-Requires Python 3.12, [uv](https://docs.astral.sh/uv/), FFmpeg, and Git. Linux also needs Tesseract; Node.js is used for the JavaScript syntax check. Platform setup is in [Installation](docs/INSTALL.md).
+With Docker installed, one command starts the app with FFmpeg, Tesseract and
+portable speech recognition included:
+
+```bash
+docker run --rm -p 127.0.0.1:8420:8420 -v clipmind-data:/data ghcr.io/yy31104/clipmind:v1.3.0
+```
+
+Open [127.0.0.1:8420](http://127.0.0.1:8420), paste a link or upload a local
+video, then search its saved evidence in Library. No ClipMind account or paid
+API key is required. Speech models download on first use. Docker uses the CPU;
+its image does not include Chrome for Douyin's browser fallback.
+
+For native Apple Silicon acceleration, or an existing Python setup, install
+[uv](https://docs.astral.sh/uv/), Git and FFmpeg first (Linux/Windows also need
+Tesseract), then run:
+
+```bash
+uv tool install --python 3.12 git+https://github.com/yy31104/clipmind.git@v1.3.0
+```
+
+Start with `clipmind doctor`, then `clipmind serve`. For English speech, set
+`CLIPMIND_ASR_LANGUAGE=en` before starting; the default is Chinese.
+For the Docker command, pass `-e CLIPMIND_ASR_LANGUAGE=en` before the image name.
+The PyPI package called `clipmind` belongs to another project; use the GitHub
+command above. [Platform setup, updates and Docker persistence](docs/INSTALL.md).
+
+Temporary source media is cleaned after processing; saved screenshots,
+transcripts and model weights remain. Removing packs in the UI moves them to
+`.trash`, which still occupies disk space. The Docker named volume persists
+across restarts. Review [privacy](docs/PRIVACY.md) before using browser cookies.
+
+## Develop and reproduce
 
 ```bash
 git clone https://github.com/yy31104/clipmind.git
 cd clipmind
 uv sync --frozen --python 3.12
-uv run --frozen clipmind doctor
+uv pip install -r requirements-test.txt -r scripts/requirements-eval.txt
 ```
-
-Extract the generated local sample and start the web interface:
-
-```bash
-uv run --frozen clipmind demo
-uv run --frozen clipmind serve
-```
-
-Open [127.0.0.1:8420](http://127.0.0.1:8420), then choose Library to inspect the pack. Speech models are downloaded on first use; the silent demo needs no speech model.
 
 Offline checks take about a minute locally:
 
@@ -77,12 +106,16 @@ Evidence Pack files are the source of truth. The search index can be rebuilt, an
 
 - Source sites can reject downloads, change their responses, or remove media. Browser cookies are optional and grant access to the configured cookie store; see [privacy](docs/PRIVACY.md).
 - OCR, speech recognition, and preview selection can miss information. The full frame set is uncapped, so long videos can require substantial time and disk space.
+- New social platforms from the old draft candidates are not shipped. See the [source verification matrix](docs/PLATFORMS.md); generic URL acceptance does not guarantee extraction.
 - The web server has no authentication and binds to loopback by default. Keep it local; share exported packs only after reviewing their contents.
 
 ## Docs
 
 - [Installation and platform setup](docs/INSTALL.md)
 - [CLI, SDK, REST, and MCP usage](docs/USAGE.md)
+- [Real talk demo and MCP question answering](docs/REAL_TALK_DEMO.md)
+- [Ten-source quality measurements](docs/REAL_TALK_BENCHMARK.md)
+- [v1.3.0 release notes](docs/releases/v1.3.0.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Evidence Pack format](docs/EVIDENCE_PACK.md)
 - [Privacy](docs/PRIVACY.md)
