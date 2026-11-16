@@ -1,9 +1,16 @@
 # Changelog
 
+## v1.4.0
+
+- Retain settled progressive builds with actual screenshot times and distinguish supported speaker motion from information changes.
+- Improve code contrast, small-text recognition and reading order; bound native OCR worker health, cancellation and shutdown.
+- Detect speech language automatically, prefer English first in multilingual Tesseract defaults, and show an analysis-time range.
+- Publish development ablations, a frozen full-talk holdout, CPU Docker measurements, default-tool comparisons and editable annotation review packs.
+
+
 ## v1.3.0
 
-Prepared on 2026-11-16. Changes since `v1.2.0`; publication and downloadable
-artifacts are recorded on the [GitHub release](https://github.com/yy31104/clipmind/releases/tag/v1.3.0).
+Changes since `v1.2.0`. Downloads are on the [GitHub release](https://github.com/yy31104/clipmind/releases/tag/v1.3.0).
 See the [release notes](docs/releases/v1.3.0.md) for evidence and limitations.
 
 ### Added

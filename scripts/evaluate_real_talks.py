@@ -491,8 +491,8 @@ def benchmark(args) -> dict:
     if args.mode == "score":
         for case in corpus["cases"]:
             identity = case["case_id"]
-            expected = previous_cases.get(identity, {}).get("captions_sha256")
-            if expected is not None and expected != file_digest(args.workdir / identity / "captions.vtt"):
+            expected_caption = previous_cases.get(identity, {}).get("captions_sha256")
+            if expected_caption is not None and expected_caption != file_digest(args.workdir / identity / "captions.vtt"):
                 raise ValueError(f"{identity}: rescore requires unchanged publisher captions")
     report = {"schema_version": 2, "metric_protocol": PROTOCOL, "mode": args.mode, "clipmind_version": __version__,
               "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),

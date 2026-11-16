@@ -25,7 +25,7 @@ that code or users' packs.
 A future platform proposal needs a small independent PR and current evidence:
 the requested identity (including parts), correct media and full pack, useful
 failure explanations, original-file preservation, cancellation and restart
-cleanup. Login-only experiments without an authorized real end-to-end run do
+cleanup. Login-only experiments without a real end-to-end run do
 not satisfy that gate. Pure articles, protected streams and inaccessible media
 must not silently become a cover image, recommendation or another video.
 

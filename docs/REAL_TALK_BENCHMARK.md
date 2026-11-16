@@ -1,4 +1,6 @@
-# Ten real talks: measured results and gaps
+# v1.3.0 development benchmark
+
+See [v1.4.0 screen quality](SCREEN_QUALITY.md) for newer results. These historical measurements remain unchanged.
 
 Run: **2026-11-16**, M4 Pro / 24 GB, macOS, Python 3.12, local MLX Whisper
 large-v3-turbo (English) and Apple Vision. All ten excerpts finished with complete
@@ -71,9 +73,8 @@ the actual duration and preserves source/caption SHA256 values.
 All 30 one-second contact sheets were inspected independently of production
 outputs; ambiguous points and code references were checked on source frames.
 The [frozen labels](data/real-talk-labels.json) contain source hashes, boundaries,
-normalized OCR ROIs and exclusions. **This was AI-assisted source-frame review;
-independent human verification remains pending.** It is fallible and must not
-be described as a human-verified gold dataset. A camera-obscured slide change
+normalized OCR ROIs and exclusions. **AI-assisted annotations; human review
+pending.** These labels can contain mistakes. A camera-obscured slide change
 is labeled when first visible, without guessing its hidden time.
 
 Publisher VTT files are hosted by CCC and identify **transcribee** generation.

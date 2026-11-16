@@ -1,0 +1,4235 @@
+{
+  "schema_version": 1,
+  "metric_protocol": "screen-evidence-v1",
+  "annotation_status": "AI-assisted annotations; human review pending",
+  "baseline_report_sha256": "5fb9e4c4069262e9aa874d1d9ff4c581369f6c021d38fd30d793be044f43b68c",
+  "labels_sha256": "a32597d8a4746526b5ec39e888e5a777bb25962c76c36c68325df97793e99904",
+  "status": "attributed",
+  "cases": [
+    {
+      "case_id": "39c3-1611",
+      "status": "inventoried",
+      "input_sha256": "075c9c8012fe35400d414dab1833db15e9258a7bfe9320a24f957b8ed9ed399a",
+      "protocol": "screen-evidence-v1",
+      "score": {
+        "reference_count": 12,
+        "prediction_count": 53,
+        "matched": 9,
+        "matches": [
+          [
+            30.0,
+            29.0
+          ],
+          [
+            42.0,
+            42.0
+          ],
+          [
+            70.0,
+            69.0
+          ],
+          [
+            74.0,
+            74.0
+          ],
+          [
+            94.0,
+            93.0
+          ],
+          [
+            100.0,
+            99.0
+          ],
+          [
+            112.0,
+            112.0
+          ],
+          [
+            143.0,
+            142.5
+          ],
+          [
+            157.0,
+            156.5
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 0.75,
+        "precision": 0.16981132075471697
+      },
+      "references": [
+        {
+          "id": "reference-0001",
+          "timestamp": 30.0
+        },
+        {
+          "id": "reference-0002",
+          "timestamp": 42.0
+        },
+        {
+          "id": "reference-0003",
+          "timestamp": 50.0
+        },
+        {
+          "id": "reference-0004",
+          "timestamp": 59.0
+        },
+        {
+          "id": "reference-0005",
+          "timestamp": 70.0
+        },
+        {
+          "id": "reference-0006",
+          "timestamp": 74.0
+        },
+        {
+          "id": "reference-0007",
+          "timestamp": 94.0
+        },
+        {
+          "id": "reference-0008",
+          "timestamp": 100.0
+        },
+        {
+          "id": "reference-0009",
+          "timestamp": 112.0
+        },
+        {
+          "id": "reference-0010",
+          "timestamp": 143.0
+        },
+        {
+          "id": "reference-0011",
+          "timestamp": 157.0
+        },
+        {
+          "id": "reference-0012",
+          "timestamp": 167.0
+        }
+      ],
+      "predictions": [
+        {
+          "id": "prediction-0002",
+          "timestamp": 18.5,
+          "visual_state_id": "visual-00002",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0003",
+          "timestamp": 21.5,
+          "visual_state_id": "visual-00003",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0004",
+          "timestamp": 22.0,
+          "visual_state_id": "visual-00004",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0005",
+          "timestamp": 24.0,
+          "visual_state_id": "visual-00005",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0006",
+          "timestamp": 25.0,
+          "visual_state_id": "visual-00006",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0007",
+          "timestamp": 25.5,
+          "visual_state_id": "visual-00007",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0008",
+          "timestamp": 26.0,
+          "visual_state_id": "visual-00008",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0009",
+          "timestamp": 26.5,
+          "visual_state_id": "visual-00009",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0010",
+          "timestamp": 27.0,
+          "visual_state_id": "visual-00010",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0011",
+          "timestamp": 27.5,
+          "visual_state_id": "visual-00011",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0012",
+          "timestamp": 28.0,
+          "visual_state_id": "visual-00012",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0013",
+          "timestamp": 28.5,
+          "visual_state_id": "visual-00013",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0014",
+          "timestamp": 29.0,
+          "visual_state_id": "visual-00014",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0015",
+          "timestamp": 29.5,
+          "visual_state_id": "visual-00015",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0016",
+          "timestamp": 33.5,
+          "visual_state_id": "visual-00016",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0017",
+          "timestamp": 40.5,
+          "visual_state_id": "visual-00017",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0018",
+          "timestamp": 42.0,
+          "visual_state_id": "visual-00018",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0019",
+          "timestamp": 60.5,
+          "visual_state_id": "visual-00019",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0020",
+          "timestamp": 62.0,
+          "visual_state_id": "visual-00020",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0021",
+          "timestamp": 64.5,
+          "visual_state_id": "visual-00021",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0022",
+          "timestamp": 66.0,
+          "visual_state_id": "visual-00022",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0023",
+          "timestamp": 67.0,
+          "visual_state_id": "visual-00023",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0024",
+          "timestamp": 69.0,
+          "visual_state_id": "visual-00024",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0025",
+          "timestamp": 69.5,
+          "visual_state_id": "visual-00025",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0026",
+          "timestamp": 70.5,
+          "visual_state_id": "visual-00026",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0027",
+          "timestamp": 74.0,
+          "visual_state_id": "visual-00027",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0028",
+          "timestamp": 76.5,
+          "visual_state_id": "visual-00028",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0029",
+          "timestamp": 79.5,
+          "visual_state_id": "visual-00029",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0030",
+          "timestamp": 82.0,
+          "visual_state_id": "visual-00030",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0031",
+          "timestamp": 89.0,
+          "visual_state_id": "visual-00031",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0032",
+          "timestamp": 91.0,
+          "visual_state_id": "visual-00032",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0033",
+          "timestamp": 93.0,
+          "visual_state_id": "visual-00033",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0034",
+          "timestamp": 96.0,
+          "visual_state_id": "visual-00034",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0035",
+          "timestamp": 99.0,
+          "visual_state_id": "visual-00035",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0036",
+          "timestamp": 101.5,
+          "visual_state_id": "visual-00036",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0037",
+          "timestamp": 105.0,
+          "visual_state_id": "visual-00037",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0038",
+          "timestamp": 109.0,
+          "visual_state_id": "visual-00038",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0039",
+          "timestamp": 112.0,
+          "visual_state_id": "visual-00039",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0040",
+          "timestamp": 114.5,
+          "visual_state_id": "visual-00040",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0041",
+          "timestamp": 116.5,
+          "visual_state_id": "visual-00041",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0042",
+          "timestamp": 129.5,
+          "visual_state_id": "visual-00042",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0043",
+          "timestamp": 141.5,
+          "visual_state_id": "visual-00043",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0044",
+          "timestamp": 142.5,
+          "visual_state_id": "visual-00044",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0045",
+          "timestamp": 143.0,
+          "visual_state_id": "visual-00045",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0046",
+          "timestamp": 145.5,
+          "visual_state_id": "visual-00046",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0047",
+          "timestamp": 146.5,
+          "visual_state_id": "visual-00047",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0048",
+          "timestamp": 156.5,
+          "visual_state_id": "visual-00048",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0049",
+          "timestamp": 157.0,
+          "visual_state_id": "visual-00049",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0050",
+          "timestamp": 158.5,
+          "visual_state_id": "visual-00050",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0051",
+          "timestamp": 164.0,
+          "visual_state_id": "visual-00051",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0052",
+          "timestamp": 164.5,
+          "visual_state_id": "visual-00052",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0053",
+          "timestamp": 170.5,
+          "visual_state_id": "visual-00053",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0054",
+          "timestamp": 173.0,
+          "visual_state_id": "visual-00054",
+          "change_kind": null,
+          "included": true
+        }
+      ],
+      "matches": [
+        {
+          "reference_id": "reference-0001",
+          "prediction_id": "prediction-0014",
+          "reference_timestamp": 30.0,
+          "prediction_timestamp": 29.0
+        },
+        {
+          "reference_id": "reference-0002",
+          "prediction_id": "prediction-0018",
+          "reference_timestamp": 42.0,
+          "prediction_timestamp": 42.0
+        },
+        {
+          "reference_id": "reference-0005",
+          "prediction_id": "prediction-0024",
+          "reference_timestamp": 70.0,
+          "prediction_timestamp": 69.0
+        },
+        {
+          "reference_id": "reference-0006",
+          "prediction_id": "prediction-0027",
+          "reference_timestamp": 74.0,
+          "prediction_timestamp": 74.0
+        },
+        {
+          "reference_id": "reference-0007",
+          "prediction_id": "prediction-0033",
+          "reference_timestamp": 94.0,
+          "prediction_timestamp": 93.0
+        },
+        {
+          "reference_id": "reference-0008",
+          "prediction_id": "prediction-0035",
+          "reference_timestamp": 100.0,
+          "prediction_timestamp": 99.0
+        },
+        {
+          "reference_id": "reference-0009",
+          "prediction_id": "prediction-0039",
+          "reference_timestamp": 112.0,
+          "prediction_timestamp": 112.0
+        },
+        {
+          "reference_id": "reference-0010",
+          "prediction_id": "prediction-0044",
+          "reference_timestamp": 143.0,
+          "prediction_timestamp": 142.5
+        },
+        {
+          "reference_id": "reference-0011",
+          "prediction_id": "prediction-0048",
+          "reference_timestamp": 157.0,
+          "prediction_timestamp": 156.5
+        }
+      ],
+      "errors": [
+        {
+          "event_id": "39c3-1611-missed_change-reference-0003",
+          "event_kind": "missed_change",
+          "timestamp": 50.0,
+          "status": "reviewed",
+          "cause": "progressive_build",
+          "explanation": "A new USB-generation bullet appears while the slide background and most pixels remain unchanged.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-missed_change-reference-0003-before.jpg",
+            "39c3-1611/39c3-1611-missed_change-reference-0003-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "ee9752fe89a8f5e7601c09817e431b0cf95193e1460c92b1668359046729536d",
+            "b9daee4355026017135114ab84c8a99cb7d2c1ec7617d9fd7ab17937bc811494"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-missed_change-reference-0004",
+          "event_kind": "missed_change",
+          "timestamp": 59.0,
+          "status": "reviewed",
+          "cause": "progressive_build",
+          "explanation": "A new USB-generation bullet appears while the slide background and most pixels remain unchanged.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-missed_change-reference-0004-before.jpg",
+            "39c3-1611/39c3-1611-missed_change-reference-0004-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "7762dab983185cbd8d4d3b0476b89750b5029c6896dc4d483a4fbdc64627fc7c",
+            "d84e93de3f4cb20486fa5a3a452921997ed3efada327cd69dd511f8310dde64d"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-missed_change-reference-0012",
+          "event_kind": "missed_change",
+          "timestamp": 167.0,
+          "status": "reviewed",
+          "cause": "small_text",
+          "explanation": "The wide room shot changes from the connector illustration to a pinout diagram; the screen occupies a small part of the image.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-missed_change-reference-0012-before.jpg",
+            "39c3-1611/39c3-1611-missed_change-reference-0012-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "e725947964e399fe138d32512f9b2260df77f2c3bcbd3c22efe9f8e87748748e",
+            "ddf231b7e9ea7c5c929041c30b35ba8151c14d391c6abab7325ea73f48f20c9d"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0002",
+          "event_kind": "extra_boundary",
+          "timestamp": 18.5,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0002-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0002-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "8157b648d00b5339ed56479f40e2eb662dadd34a9fbb9df624e63990bd76591e",
+            "44eda918f391306493b183691986dc5cfe87c123a1ad5d55efac5ba72654809b"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0003",
+          "event_kind": "extra_boundary",
+          "timestamp": 21.5,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The camera switches between speaker, room, picture-in-picture or full-slide layouts; the same slide content remains visible across the cut.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0003-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0003-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "415c13b161724d5133788f5170d09b1e6761578cf49d8c07276db46ff7d19b8f",
+            "f700aa10b99ad0fcb10430d9bbf7eb4bdd1fdf83f5f9817b50bb37c730b7fbe0"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0004",
+          "event_kind": "extra_boundary",
+          "timestamp": 22.0,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The camera switches between speaker, room, picture-in-picture or full-slide layouts; the same slide content remains visible across the cut.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0004-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0004-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "043d1fd983bb012d18579d8c5d54541a5c8bc315065cd4c7d188398d34283813",
+            "6da39467c42d04bc58e39ce615b22e651a88f078a61f1be311fd3ab72857ffa3"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0005",
+          "event_kind": "extra_boundary",
+          "timestamp": 24.0,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0005-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0005-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "6da39467c42d04bc58e39ce615b22e651a88f078a61f1be311fd3ab72857ffa3",
+            "d37f98e16a4ca9683aaef0150b9c1fcbef9ecc910eaeee0fe1637fe8b6b792ee"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0006",
+          "event_kind": "extra_boundary",
+          "timestamp": 25.0,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0006-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0006-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "818c6383e6e304638fb00fa5a4a7ba4fe8d671201e928fcddd6e7c5a35ecba9a",
+            "35e6f708be9110d50565b91177e57145d274eae4d7698b5b9a90e285e01c1a7f"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0007",
+          "event_kind": "extra_boundary",
+          "timestamp": 25.5,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0007-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0007-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "8b1e0fcaa3f563c7e2a5b9b54844a09040eb0131760688af7da2108a99f915b8",
+            "06c822c5f7adc12bdd47b9d80794a266c50a7ee125efb121729a15130d1572e2"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0008",
+          "event_kind": "extra_boundary",
+          "timestamp": 26.0,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0008-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0008-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "d37f98e16a4ca9683aaef0150b9c1fcbef9ecc910eaeee0fe1637fe8b6b792ee",
+            "1e7154a6dfef887c4c7725f2a9146822e0bce5690a71b01d67b252252a04f29c"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0009",
+          "event_kind": "extra_boundary",
+          "timestamp": 26.5,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0009-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0009-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "184309c5d1cae0f2e54347f3f8b343fe6d2e4e57b079e034630da03d892ef9e9",
+            "c72f822e61e88648dd826e5bd473d8f49af7767dda47c5676c1ea51701e098bf"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0010",
+          "event_kind": "extra_boundary",
+          "timestamp": 27.0,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0010-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0010-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "35e6f708be9110d50565b91177e57145d274eae4d7698b5b9a90e285e01c1a7f",
+            "b89b2f3800113a34251e308903f0f804181eb20903dd055459a865056aa76fb0"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0011",
+          "event_kind": "extra_boundary",
+          "timestamp": 27.5,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0011-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0011-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "06c822c5f7adc12bdd47b9d80794a266c50a7ee125efb121729a15130d1572e2",
+            "160a4dfdff6a89ad6718f330abb9680a4ee6ae0d9349f3676289bce3cdd6c68e"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0012",
+          "event_kind": "extra_boundary",
+          "timestamp": 28.0,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0012-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0012-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "1e7154a6dfef887c4c7725f2a9146822e0bce5690a71b01d67b252252a04f29c",
+            "0dbdb924ffeb94e30378cc17ce9fd53617201f9aa3b44136200e6819c8a5cd30"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0013",
+          "event_kind": "extra_boundary",
+          "timestamp": 28.5,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The camera switches between speaker, room, picture-in-picture or full-slide layouts; the same slide content remains visible across the cut. A content update is close to the cut; separate retained predictions compete for the same labeled change.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0013-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0013-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "c72f822e61e88648dd826e5bd473d8f49af7767dda47c5676c1ea51701e098bf",
+            "917cbafd003c6a038b22ef0e8f7dd9a9ddaf3b497c5ef2073e35582b107ab446"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0015",
+          "event_kind": "extra_boundary",
+          "timestamp": 29.5,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The camera switches between speaker, room, picture-in-picture or full-slide layouts; the same slide content remains visible across the cut. A content update is close to the cut; separate retained predictions compete for the same labeled change.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0015-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0015-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "160a4dfdff6a89ad6718f330abb9680a4ee6ae0d9349f3676289bce3cdd6c68e",
+            "8b9f7ce52fa218c6106e7feec0d8549da57db354d7a6269bac0684115cb84800"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0016",
+          "event_kind": "extra_boundary",
+          "timestamp": 33.5,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The camera switches between speaker, room, picture-in-picture or full-slide layouts; the same slide content remains visible across the cut.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0016-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0016-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "2121fd0026b09c1f2f5ee19629f6c7369b15a3655d51ea0da487b3ef298df95f",
+            "c979017beb1ece783c1c3fc1736d4ff1bcec2474fbab61e3e3591a78c3685f6c"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0017",
+          "event_kind": "extra_boundary",
+          "timestamp": 40.5,
+          "status": "reviewed",
+          "cause": "transition",
+          "explanation": "The title disappears before the bullet list appears, retaining an empty transition state rather than a new persistent page.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0017-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0017-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "41b4c915d2ba8af5010fca3f2539910e5b827e4a59e19632eec11db8bdf3f4ca",
+            "d233216d4fec59b07858bf1993bf4101e319821aa04e0eecced66711481a80b2"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0019",
+          "event_kind": "extra_boundary",
+          "timestamp": 60.5,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0019-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0019-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "61cd58440a234fe165e02f4f6967f6a13ac852c4470d0c5d8c3f2b05854d2b4c",
+            "6770dd0ca029920afdfd0c808581204c9a8f4e6d3742f91cc2657e1aa6c40295"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0020",
+          "event_kind": "extra_boundary",
+          "timestamp": 62.0,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0020-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0020-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "bf1bb55043679cc719afc493893cf0859e7f0f028b2d6a1f8668c2c1289d61f9",
+            "8f29ab72a111d471377bd00bf86863a8ffac2d8206aabfe6efacc56e91695f46"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0021",
+          "event_kind": "extra_boundary",
+          "timestamp": 64.5,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0021-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0021-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "31744872287328c394a13817241c53e2712772a467314fc85f075d5aa61836ca",
+            "5f7804d269f16e861e8e65afb4a9806d0da270a7792fd0aeaaa0a271e1941ccc"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0022",
+          "event_kind": "extra_boundary",
+          "timestamp": 66.0,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The camera switches between speaker, room, picture-in-picture or full-slide layouts; the same slide content remains visible across the cut.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0022-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0022-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "a73a5e36b678252241d74b85e8b9af4fc6580e2909743d2b2708b1609051d34c",
+            "cd42b79aac374b2b6300e2bb9252ea6c46192ae61d2980e19153c0bda94b0209"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0023",
+          "event_kind": "extra_boundary",
+          "timestamp": 67.0,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0023-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0023-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "5675aa94b4a18be2d77ed58ac53407eb53d1e5d48a14303151c3e3d0b5aec25e",
+            "0f812d5144d60295528b26f0d332d0c4dba8f0b163ad1e30d07c90160dc98906"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0025",
+          "event_kind": "extra_boundary",
+          "timestamp": 69.5,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The camera switches between speaker, room, picture-in-picture or full-slide layouts; the same slide content remains visible across the cut. A content update is close to the cut; separate retained predictions compete for the same labeled change.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0025-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0025-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "6080f01495408196ecdfe706e6463986c865af3f6dea77d2eeaa25361e5108e6",
+            "58ed7f17db49e0af02ac94cc983a6e2c5f6f9a75c6f54144c634fba94fc778bb"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0026",
+          "event_kind": "extra_boundary",
+          "timestamp": 70.5,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0026-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0026-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "f5b5ad1a12d495ffb290f1ec89626bbfd2ab7a452e2999da5cb5b3209bbb8b3d",
+            "b925be3053116dc20e121b2cf07e6c5f663295fd00bdc32b0a5924d68cf7b0e4"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0028",
+          "event_kind": "extra_boundary",
+          "timestamp": 76.5,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0028-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0028-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "8e9c196186a76d9f9daeda4315b6be3eeac093c6687d20a35d24f00e608fb59c",
+            "34b04036e627fe577b2a082f7c4aa635237a298158fcdcf45e8bf008ae2f395a"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0029",
+          "event_kind": "extra_boundary",
+          "timestamp": 79.5,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0029-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0029-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "11f2b4c9993fcd959cb458bc8efc02fa591c9ec74a7eea8a25efb46e87d5f50d",
+            "f88f3cd819bbd4a180a3787a76be55eb3d10a8231d097cb766760525c84c63ea"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0030",
+          "event_kind": "extra_boundary",
+          "timestamp": 82.0,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0030-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0030-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "5ac5f4faa924e88c797677711bfa85684581215e9f4a9fb5e67fb2eb30954504",
+            "77b878fbdd67538fdb6a39d2999e597516868a8a20a9eabc8e8f7d98944b0eba"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0031",
+          "event_kind": "extra_boundary",
+          "timestamp": 89.0,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0031-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0031-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "cc6e5c91609edd8b9935c03a3629261a4a66305d4a152630fc51b18f844c3687",
+            "259a4e2dd3dfe8c8919ef2223d205651007dacdcfe57968f70386573eec1606a"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0032",
+          "event_kind": "extra_boundary",
+          "timestamp": 91.0,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0032-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0032-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "259a4e2dd3dfe8c8919ef2223d205651007dacdcfe57968f70386573eec1606a",
+            "a2cb5d3c0a107cc8b3a44b18fa70b7e3f433edb9e836f3d0616115230be6e8ce"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0034",
+          "event_kind": "extra_boundary",
+          "timestamp": 96.0,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0034-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0034-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "9594aac65363ba65c0181b9f6b73ed42a7ab1aa33f0e021dd07876bad127d0b4",
+            "09aef85d778c24bd127aab1b3c1a14955575b9bd730c734515babe95334336e7"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0036",
+          "event_kind": "extra_boundary",
+          "timestamp": 101.5,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0036-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0036-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "a3de5bedd4f3f89f3865839d031408a90ddd04b0e3881f3209431f57ac1c5c54",
+            "0f15a925ab5f7ecb68c12c80328e8d54b62b21daa3af25b9214528d039be394a"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0037",
+          "event_kind": "extra_boundary",
+          "timestamp": 105.0,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0037-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0037-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "284625d2d9f04c20eae86e168b19fa31d4cef8a7db572dad495b2e9cefbcfb2d",
+            "0fdfe9677431c7e1f48d62c6cc11c2c969e51546b5868b3fe13b047158f19192"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0038",
+          "event_kind": "extra_boundary",
+          "timestamp": 109.0,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0038-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0038-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "e363f2e0eaca4bf26d9bf1cd6c1090a0ae737381f8ad1c8548b153f187d88f36",
+            "68aadbf00c908b6086d3a207bab5260e1687e118176afb5ecebf9b6930002afa"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0040",
+          "event_kind": "extra_boundary",
+          "timestamp": 114.5,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0040-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0040-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "6027471160f6716823d7da5928704fd3acd43ee20c5fe373c8643f33a6784963",
+            "9967ac491b349b5cfa347affabf2c1554ba19f91a3712c8ed465ed070319099f"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0041",
+          "event_kind": "extra_boundary",
+          "timestamp": 116.5,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0041-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0041-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "9967ac491b349b5cfa347affabf2c1554ba19f91a3712c8ed465ed070319099f",
+            "d56fac97b19f17f6a3aac8203f23eac47ec08d0e975e310566647d99f29881de"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0042",
+          "event_kind": "extra_boundary",
+          "timestamp": 129.5,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0042-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0042-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "d168e08db4b27ff819f272acde345c5a048186252e657ac1687c61e217adcaea",
+            "f0a3e27d359b2188a64092510d5b5733ac8bec78dd11f272d38c78096d09ae88"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0043",
+          "event_kind": "extra_boundary",
+          "timestamp": 141.5,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The slide text is unchanged; only speaker posture, hand motion or camera framing changes.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0043-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0043-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "a774737a00393eff2e31350c929b6a72ef6df491e4d75b253fa02d918e581acd",
+            "e7b98c04eec90a8e575a1d915cfeeb6fc9efcb449ed2e2ea46a4ec7506db5970"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0045",
+          "event_kind": "extra_boundary",
+          "timestamp": 143.0,
+          "status": "reviewed",
+          "cause": "transition",
+          "explanation": "Multiple detections surround the same illustrated-page replacement; this extra prediction is not another independently labeled page.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0045-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0045-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "e258804f9a17a403d007da81b1bbc0328ae9fb4dae1004be149374ac884fad4f",
+            "e560245251979bf3cc2c5351d4c03502d9d6498c723aba082a66a6f30ff84142"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0046",
+          "event_kind": "extra_boundary",
+          "timestamp": 145.5,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The camera switches between speaker, room, picture-in-picture or full-slide layouts; the same slide content remains visible across the cut.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0046-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0046-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "4e8dc26a1e07c3d246826e87391621d1953a20e4e8f2a233c2e8fce9135432e0",
+            "6c19ab4564445def1a31ec91e5c0e0744897fe740ef705624318d7b4acb01f8e"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0047",
+          "event_kind": "extra_boundary",
+          "timestamp": 146.5,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The camera switches between speaker, room, picture-in-picture or full-slide layouts; the same slide content remains visible across the cut.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0047-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0047-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "5ab3ead5327883e3526f55c830728717c112cdf5e6ca8842e069fbd33a548195",
+            "54c348a05b1c6eceb02a369a2f2d8eca19a0ec977461c785bebf90200f7e7743"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0049",
+          "event_kind": "extra_boundary",
+          "timestamp": 157.0,
+          "status": "reviewed",
+          "cause": "transition",
+          "explanation": "Multiple detections surround the same illustrated-page replacement; this extra prediction is not another independently labeled page.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0049-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0049-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "70d34cc3ca2cba714e430cb3570ae51229489e53e2643411b230405751baa4e4",
+            "adc24d942cecf913cd686b255e7cc47da02fc87b4a5901049d79baa30ee3a46e"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0050",
+          "event_kind": "extra_boundary",
+          "timestamp": 158.5,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The camera switches between speaker, room, picture-in-picture or full-slide layouts; the same slide content remains visible across the cut.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0050-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0050-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "6c7dc297a4e0863f7d7bda49aa20f944f42631433a1caac89144d8039634fbc1",
+            "70293abdca8dac98193a23c4c737c70624dc809d47b409f1d4131b431858f83e"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0051",
+          "event_kind": "extra_boundary",
+          "timestamp": 164.0,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The camera switches between speaker, room, picture-in-picture or full-slide layouts; the same slide content remains visible across the cut.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0051-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0051-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "75f2c384911fd8767c2e45efdb1a39d2aeac472c8b6fe214e88fe9251d24ef1b",
+            "a942f4a9b7b8ea5638646d5cea5089a9d2df0baf14c45298e0e209d7d6f90e7b"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0052",
+          "event_kind": "extra_boundary",
+          "timestamp": 164.5,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The camera switches between speaker, room, picture-in-picture or full-slide layouts; the same slide content remains visible across the cut.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0052-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0052-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "47609ea34bd4eb160193bb2d6921518070082b144149fb03dbce8145f6c40061",
+            "037a2525c1ad10fe064daad0a51d0cba771ab8e99609272c343378dc334fb5e7"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0053",
+          "event_kind": "extra_boundary",
+          "timestamp": 170.5,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The camera switches between speaker, room, picture-in-picture or full-slide layouts; the same slide content remains visible across the cut.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0053-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0053-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "78fb8e5a34b69793aa5c87b1384bdd061a26cca416d2566b8170d824a7e04b92",
+            "29411ee3298396adb1c92f9bbb34e03a7d7d9aa9f6fd5ad6107fad10d76d3ada"
+          ]
+        },
+        {
+          "event_id": "39c3-1611-extra_boundary-prediction-0054",
+          "event_kind": "extra_boundary",
+          "timestamp": 173.0,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The camera switches between speaker, room, picture-in-picture or full-slide layouts; the same slide content remains visible across the cut.",
+          "source_frames": [
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0054-before.jpg",
+            "39c3-1611/39c3-1611-extra_boundary-prediction-0054-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "52aa4748f78cc709807a7eeded13bf7687094901229bbcb7554809221edb90be",
+            "a9a01b06109f727b03c0137bec3bdb74c18569947b9a4924d95fab99c3126964"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "39c3-2274",
+      "status": "inventoried",
+      "input_sha256": "1ce923120997691c7ebc27e162d095e2051c0fad34f02d22394454092e65ec4a",
+      "protocol": "screen-evidence-v1",
+      "score": {
+        "reference_count": 5,
+        "prediction_count": 11,
+        "matched": 4,
+        "matches": [
+          [
+            16.0,
+            15.5
+          ],
+          [
+            59.0,
+            58.5
+          ],
+          [
+            80.0,
+            80.5
+          ],
+          [
+            139.0,
+            138.5
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 0.8,
+        "precision": 0.36363636363636365
+      },
+      "references": [
+        {
+          "id": "reference-0001",
+          "timestamp": 16.0
+        },
+        {
+          "id": "reference-0002",
+          "timestamp": 59.0
+        },
+        {
+          "id": "reference-0003",
+          "timestamp": 80.0
+        },
+        {
+          "id": "reference-0004",
+          "timestamp": 101.0
+        },
+        {
+          "id": "reference-0005",
+          "timestamp": 139.0
+        }
+      ],
+      "predictions": [
+        {
+          "id": "prediction-0002",
+          "timestamp": 15.5,
+          "visual_state_id": "visual-00002",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0003",
+          "timestamp": 58.5,
+          "visual_state_id": "visual-00003",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0004",
+          "timestamp": 80.5,
+          "visual_state_id": "visual-00004",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0005",
+          "timestamp": 95.0,
+          "visual_state_id": "visual-00005",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0006",
+          "timestamp": 105.0,
+          "visual_state_id": "visual-00006",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0007",
+          "timestamp": 106.5,
+          "visual_state_id": "visual-00007",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0008",
+          "timestamp": 107.0,
+          "visual_state_id": "visual-00008",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0009",
+          "timestamp": 130.0,
+          "visual_state_id": "visual-00009",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0010",
+          "timestamp": 130.5,
+          "visual_state_id": "visual-00010",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0011",
+          "timestamp": 132.5,
+          "visual_state_id": "visual-00011",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0012",
+          "timestamp": 138.5,
+          "visual_state_id": "visual-00012",
+          "change_kind": null,
+          "included": true
+        }
+      ],
+      "matches": [
+        {
+          "reference_id": "reference-0001",
+          "prediction_id": "prediction-0002",
+          "reference_timestamp": 16.0,
+          "prediction_timestamp": 15.5
+        },
+        {
+          "reference_id": "reference-0002",
+          "prediction_id": "prediction-0003",
+          "reference_timestamp": 59.0,
+          "prediction_timestamp": 58.5
+        },
+        {
+          "reference_id": "reference-0003",
+          "prediction_id": "prediction-0004",
+          "reference_timestamp": 80.0,
+          "prediction_timestamp": 80.5
+        },
+        {
+          "reference_id": "reference-0005",
+          "prediction_id": "prediction-0012",
+          "reference_timestamp": 139.0,
+          "prediction_timestamp": 138.5
+        }
+      ],
+      "errors": [
+        {
+          "event_id": "39c3-2274-missed_change-reference-0004",
+          "event_kind": "missed_change",
+          "timestamp": 101.0,
+          "status": "reviewed",
+          "cause": "small_text",
+          "explanation": "The white Ghidra source listing changes to a disassembly/decompiled-code page, but there is no retained boundary within one second. Most of the page stays white and its code is small.",
+          "source_frames": [
+            "39c3-2274/39c3-2274-missed_change-reference-0004-before.jpg",
+            "39c3-2274/39c3-2274-missed_change-reference-0004-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "ca616934b8ffaef29516e1edfd0d606a5ce2c6beac4e6c064b4d0229804c1e8c",
+            "f3cac7dca9216ea7ec32d43d9d84539a7a4b93dfcb868f36a49da39600fd60da"
+          ]
+        },
+        {
+          "event_id": "39c3-2274-extra_boundary-prediction-0005",
+          "event_kind": "extra_boundary",
+          "timestamp": 95.0,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The same Extending Ghidra code listing changes scale/framing; its page and code content remain the same.",
+          "source_frames": [
+            "39c3-2274/39c3-2274-extra_boundary-prediction-0005-before.jpg",
+            "39c3-2274/39c3-2274-extra_boundary-prediction-0005-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "babe6194b7ca167b1b25f8a1d9883a627ba02cad5728731359a8367640d40eaa",
+            "8e931ad7bc92afb79a00e92cb2afd71a90f90b5dfbd25196751a21056f837da3"
+          ]
+        },
+        {
+          "event_id": "39c3-2274-extra_boundary-prediction-0006",
+          "event_kind": "extra_boundary",
+          "timestamp": 105.0,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The same disassembly/decompiled-code page changes scale before the full-slide layout switch.",
+          "source_frames": [
+            "39c3-2274/39c3-2274-extra_boundary-prediction-0006-before.jpg",
+            "39c3-2274/39c3-2274-extra_boundary-prediction-0006-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "89eb6d10c5c5639672753dfc4eb5762e81f7256b5251319d41d4965ec92dc5f7",
+            "5e8b5983f80fd9b9bf35588429e76bf1c989ff745763b3a08520bf9f1d9c307d"
+          ]
+        },
+        {
+          "event_id": "39c3-2274-extra_boundary-prediction-0007",
+          "event_kind": "extra_boundary",
+          "timestamp": 106.5,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The same Now things are improving page switches from speaker-inset to full-slide view.",
+          "source_frames": [
+            "39c3-2274/39c3-2274-extra_boundary-prediction-0007-before.jpg",
+            "39c3-2274/39c3-2274-extra_boundary-prediction-0007-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "bc71fc1f3bca571c179df03252245d2b474ad48939ed1327ad5d2b47129850d1",
+            "7a83e375b74e63d5a77739bea3ae90bd890de05fa47fd12f1d76ac2a6f5ced14"
+          ]
+        },
+        {
+          "event_id": "39c3-2274-extra_boundary-prediction-0008",
+          "event_kind": "extra_boundary",
+          "timestamp": 107.0,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "A second state is retained during the same speaker-inset to full-slide switch.",
+          "source_frames": [
+            "39c3-2274/39c3-2274-extra_boundary-prediction-0008-before.jpg",
+            "39c3-2274/39c3-2274-extra_boundary-prediction-0008-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "5e8b5983f80fd9b9bf35588429e76bf1c989ff745763b3a08520bf9f1d9c307d",
+            "ccaaa0070dd0618af461c3da5c23ed104190ee2daf24dc6520de638d0177357f"
+          ]
+        },
+        {
+          "event_id": "39c3-2274-extra_boundary-prediction-0009",
+          "event_kind": "extra_boundary",
+          "timestamp": 130.0,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The same disassembly/decompiled-code page switches from full-slide to speaker-inset view.",
+          "source_frames": [
+            "39c3-2274/39c3-2274-extra_boundary-prediction-0009-before.jpg",
+            "39c3-2274/39c3-2274-extra_boundary-prediction-0009-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "0f7a210276b2a4e550e116b1b15928f050a69345e768b76148ab55eddb54f390",
+            "add4b7d8835a9adcd7e83d10190fa1b1f5b5b6a739a2787c9010b978690de4a7"
+          ]
+        },
+        {
+          "event_id": "39c3-2274-extra_boundary-prediction-0010",
+          "event_kind": "extra_boundary",
+          "timestamp": 130.5,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "A second state is retained during the same full-slide to speaker-inset switch.",
+          "source_frames": [
+            "39c3-2274/39c3-2274-extra_boundary-prediction-0010-before.jpg",
+            "39c3-2274/39c3-2274-extra_boundary-prediction-0010-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "7813bcd12a6187f64757230cb1d4bdf789332732cf3a7c7f6bcba44420c00f95",
+            "1a8f40b71b323b3802eb5158037b3ac2f5b4045db6ccdc05edea378cda5baabf"
+          ]
+        },
+        {
+          "event_id": "39c3-2274-extra_boundary-prediction-0011",
+          "event_kind": "extra_boundary",
+          "timestamp": 132.5,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The code page remains unchanged while the presenter gestures.",
+          "source_frames": [
+            "39c3-2274/39c3-2274-extra_boundary-prediction-0011-before.jpg",
+            "39c3-2274/39c3-2274-extra_boundary-prediction-0011-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "1a8f40b71b323b3802eb5158037b3ac2f5b4045db6ccdc05edea378cda5baabf",
+            "e03891e986ffbf6ca9eb8b5edf10043ebc6ce88c6b69e9cf3023d958c0d4bc19"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "39c3-1317",
+      "status": "inventoried",
+      "input_sha256": "257cbae3d65b7de306ab6f1e247dd2c95ae81520abfadda2ccde507cd0b7c959",
+      "protocol": "screen-evidence-v1",
+      "score": {
+        "reference_count": 10,
+        "prediction_count": 14,
+        "matched": 6,
+        "matches": [
+          [
+            9.0,
+            9.0
+          ],
+          [
+            28.0,
+            28.0
+          ],
+          [
+            77.0,
+            77.0
+          ],
+          [
+            130.0,
+            130.0
+          ],
+          [
+            147.0,
+            147.0
+          ],
+          [
+            151.0,
+            150.5
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 0.6,
+        "precision": 0.42857142857142855
+      },
+      "references": [
+        {
+          "id": "reference-0001",
+          "timestamp": 9.0
+        },
+        {
+          "id": "reference-0002",
+          "timestamp": 28.0
+        },
+        {
+          "id": "reference-0003",
+          "timestamp": 59.0
+        },
+        {
+          "id": "reference-0004",
+          "timestamp": 66.0
+        },
+        {
+          "id": "reference-0005",
+          "timestamp": 77.0
+        },
+        {
+          "id": "reference-0006",
+          "timestamp": 83.0
+        },
+        {
+          "id": "reference-0007",
+          "timestamp": 120.0
+        },
+        {
+          "id": "reference-0008",
+          "timestamp": 130.0
+        },
+        {
+          "id": "reference-0009",
+          "timestamp": 147.0
+        },
+        {
+          "id": "reference-0010",
+          "timestamp": 151.0
+        }
+      ],
+      "predictions": [
+        {
+          "id": "prediction-0002",
+          "timestamp": 9.0,
+          "visual_state_id": "visual-00002",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0003",
+          "timestamp": 13.5,
+          "visual_state_id": "visual-00003",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0004",
+          "timestamp": 14.0,
+          "visual_state_id": "visual-00004",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0005",
+          "timestamp": 28.0,
+          "visual_state_id": "visual-00005",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0006",
+          "timestamp": 28.5,
+          "visual_state_id": "visual-00006",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0007",
+          "timestamp": 77.0,
+          "visual_state_id": "visual-00007",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0008",
+          "timestamp": 77.5,
+          "visual_state_id": "visual-00008",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0009",
+          "timestamp": 84.5,
+          "visual_state_id": "visual-00009",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0010",
+          "timestamp": 128.5,
+          "visual_state_id": "visual-00010",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0011",
+          "timestamp": 130.0,
+          "visual_state_id": "visual-00011",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0012",
+          "timestamp": 147.0,
+          "visual_state_id": "visual-00012",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0013",
+          "timestamp": 147.5,
+          "visual_state_id": "visual-00013",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0014",
+          "timestamp": 150.5,
+          "visual_state_id": "visual-00014",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0015",
+          "timestamp": 151.0,
+          "visual_state_id": "visual-00015",
+          "change_kind": null,
+          "included": true
+        }
+      ],
+      "matches": [
+        {
+          "reference_id": "reference-0001",
+          "prediction_id": "prediction-0002",
+          "reference_timestamp": 9.0,
+          "prediction_timestamp": 9.0
+        },
+        {
+          "reference_id": "reference-0002",
+          "prediction_id": "prediction-0005",
+          "reference_timestamp": 28.0,
+          "prediction_timestamp": 28.0
+        },
+        {
+          "reference_id": "reference-0005",
+          "prediction_id": "prediction-0007",
+          "reference_timestamp": 77.0,
+          "prediction_timestamp": 77.0
+        },
+        {
+          "reference_id": "reference-0008",
+          "prediction_id": "prediction-0011",
+          "reference_timestamp": 130.0,
+          "prediction_timestamp": 130.0
+        },
+        {
+          "reference_id": "reference-0009",
+          "prediction_id": "prediction-0012",
+          "reference_timestamp": 147.0,
+          "prediction_timestamp": 147.0
+        },
+        {
+          "reference_id": "reference-0010",
+          "prediction_id": "prediction-0014",
+          "reference_timestamp": 151.0,
+          "prediction_timestamp": 150.5
+        }
+      ],
+      "errors": [
+        {
+          "event_id": "39c3-1317-missed_change-reference-0003",
+          "event_kind": "missed_change",
+          "timestamp": 59.0,
+          "status": "reviewed",
+          "cause": "progressive_build",
+          "explanation": "The scalar_message code line is added below the connection declaration.",
+          "source_frames": [
+            "39c3-1317/39c3-1317-missed_change-reference-0003-before.jpg",
+            "39c3-1317/39c3-1317-missed_change-reference-0003-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "f132169e18ae850c0487f12cdc0ebc860c352fa6ca757e8a0a104adeb1b71626",
+            "f1cfbf4b78ac7bbf13793e09df93b8cee2640ac357a137394c6fd07d539d5780"
+          ]
+        },
+        {
+          "event_id": "39c3-1317-missed_change-reference-0004",
+          "event_kind": "missed_change",
+          "timestamp": 66.0,
+          "status": "reviewed",
+          "cause": "progressive_build",
+          "explanation": "The lend_message code line is added below the previous two code lines.",
+          "source_frames": [
+            "39c3-1317/39c3-1317-missed_change-reference-0004-before.jpg",
+            "39c3-1317/39c3-1317-missed_change-reference-0004-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "f3ffa2a362386115e426d0d7e21e75535709e3c179fbe00a3f1112ddef7a4d3c",
+            "48678847dcb2c4d8a8b14ed61da4e55842b585a7d0e3e572b6c117896bddb69b"
+          ]
+        },
+        {
+          "event_id": "39c3-1317-missed_change-reference-0006",
+          "event_kind": "missed_change",
+          "timestamp": 83.0,
+          "status": "reviewed",
+          "cause": "progressive_build",
+          "explanation": "The first table row gains Send and Scalar entries.",
+          "source_frames": [
+            "39c3-1317/39c3-1317-missed_change-reference-0006-before.jpg",
+            "39c3-1317/39c3-1317-missed_change-reference-0006-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "ffd44cd16b45136b51dab9bae6dff2454977ba1d7cdd691152c52e8976818980",
+            "4dcf7e1aa1a979f8de07a3946f5c27dde49f89100de3e8e7d6e56415f8fc8eb7"
+          ]
+        },
+        {
+          "event_id": "39c3-1317-missed_change-reference-0007",
+          "event_kind": "missed_change",
+          "timestamp": 120.0,
+          "status": "reviewed",
+          "cause": "progressive_build",
+          "explanation": "The table gains Lend and LendMut entries without replacing its layout.",
+          "source_frames": [
+            "39c3-1317/39c3-1317-missed_change-reference-0007-before.jpg",
+            "39c3-1317/39c3-1317-missed_change-reference-0007-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "96451907ea97a0907875c09e956ccc3f857035d740a54a740330d4defe24eee6",
+            "fa7d2d79e3ac93bd9db9c178cd7f27cb0f4e1c07110554aa550176609b85d975"
+          ]
+        },
+        {
+          "event_id": "39c3-1317-extra_boundary-prediction-0003",
+          "event_kind": "extra_boundary",
+          "timestamp": 13.5,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The same Creating a Server code is resized from full-slide view to a speaker inset layout.",
+          "source_frames": [
+            "39c3-1317/39c3-1317-extra_boundary-prediction-0003-before.jpg",
+            "39c3-1317/39c3-1317-extra_boundary-prediction-0003-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "4dedf6758fc232b920ae55622e2165e85467e451716bdf03d7ed2da005f115f2",
+            "3dba380d9c778f579e09f0308709bbad6ea69e84ce5068b70a25bbebf260b537"
+          ]
+        },
+        {
+          "event_id": "39c3-1317-extra_boundary-prediction-0004",
+          "event_kind": "extra_boundary",
+          "timestamp": 14.0,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "A second retained state occurs during the same full-slide to speaker-inset switch; the code is unchanged.",
+          "source_frames": [
+            "39c3-1317/39c3-1317-extra_boundary-prediction-0004-before.jpg",
+            "39c3-1317/39c3-1317-extra_boundary-prediction-0004-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "ea58214607e5be20597476d9eeaa002c7be6e6ccb9df9cb2a468de3d7792eab2",
+            "ea60e63448822f04117295ae1108c22ad7ab51109ddfb004a4418b407cc03a87"
+          ]
+        },
+        {
+          "event_id": "39c3-1317-extra_boundary-prediction-0006",
+          "event_kind": "extra_boundary",
+          "timestamp": 28.5,
+          "status": "reviewed",
+          "cause": "duplicate",
+          "explanation": "This is an additional detection of the Sending a Message transition already matched at 28 seconds.",
+          "source_frames": [
+            "39c3-1317/39c3-1317-extra_boundary-prediction-0006-before.jpg",
+            "39c3-1317/39c3-1317-extra_boundary-prediction-0006-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "d50f41f4696c3fec2db8597c7f612721954806756b9d75176f1c3f2fff816a4c",
+            "071cf6a0c1df779983556d1baca9584f9370b3f6331f080ec44f830de641edb0"
+          ]
+        },
+        {
+          "event_id": "39c3-1317-extra_boundary-prediction-0008",
+          "event_kind": "extra_boundary",
+          "timestamp": 77.5,
+          "status": "reviewed",
+          "cause": "duplicate",
+          "explanation": "This is an additional detection of the Xous Message Types transition already matched at 77 seconds.",
+          "source_frames": [
+            "39c3-1317/39c3-1317-extra_boundary-prediction-0008-before.jpg",
+            "39c3-1317/39c3-1317-extra_boundary-prediction-0008-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "1a330b2e36187b1fb8e7b6a52ff0cb043f467769d26c22398008008829c0c4cd",
+            "b5964fb3b17902bdb28006041d511518b1ee2bda2c96c4f77d10667ab9cef847"
+          ]
+        },
+        {
+          "event_id": "39c3-1317-extra_boundary-prediction-0009",
+          "event_kind": "extra_boundary",
+          "timestamp": 84.5,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The Send/Scalar table content is unchanged while the presenter moves.",
+          "source_frames": [
+            "39c3-1317/39c3-1317-extra_boundary-prediction-0009-before.jpg",
+            "39c3-1317/39c3-1317-extra_boundary-prediction-0009-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "91dd9e5389669de60a4f9afbfe4b10a1fb23e19c86cd03348837d835a4f9a8d8",
+            "eecdac94301c27362e4b73911155363a3cd8a07145a64948ffedcb7f259f14a7"
+          ]
+        },
+        {
+          "event_id": "39c3-1317-extra_boundary-prediction-0010",
+          "event_kind": "extra_boundary",
+          "timestamp": 128.5,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The Lend/LendMut table content is unchanged while the presenter moves.",
+          "source_frames": [
+            "39c3-1317/39c3-1317-extra_boundary-prediction-0010-before.jpg",
+            "39c3-1317/39c3-1317-extra_boundary-prediction-0010-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "4d5e319335997d8047c13cc053921b81113736e58dd37207ee980821958adea6",
+            "93d735a077cd250fdaccb61ec8215f5abcdb0eb834f7993709cd07ba3edff542"
+          ]
+        },
+        {
+          "event_id": "39c3-1317-extra_boundary-prediction-0013",
+          "event_kind": "extra_boundary",
+          "timestamp": 147.5,
+          "status": "reviewed",
+          "cause": "duplicate",
+          "explanation": "This is an additional detection of the Xous Implementation transition already matched at 147 seconds.",
+          "source_frames": [
+            "39c3-1317/39c3-1317-extra_boundary-prediction-0013-before.jpg",
+            "39c3-1317/39c3-1317-extra_boundary-prediction-0013-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "21af8a60133b9d4d5426ea8a5e9d6ff527f261a1e048015e7f3c0a47d424cc5e",
+            "ffba21a809faf4c95c953d27953c06a5de0c62abf320cdef0884bac8fd5a11ed"
+          ]
+        },
+        {
+          "event_id": "39c3-1317-extra_boundary-prediction-0015",
+          "event_kind": "extra_boundary",
+          "timestamp": 151.0,
+          "status": "reviewed",
+          "cause": "duplicate",
+          "explanation": "This is an additional detection of the Ticktimer transition already matched by the 150.5-second prediction.",
+          "source_frames": [
+            "39c3-1317/39c3-1317-extra_boundary-prediction-0015-before.jpg",
+            "39c3-1317/39c3-1317-extra_boundary-prediction-0015-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "7a9936ea0677bf68c974d5991e2bf7dbb04e18a96fe7f2a0fa3e96026d30aa41",
+            "c1d6282bae7ee8eec320678312400ed7c22b5b8ce253ca1d5834b9d88710e650"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "39c3-1989",
+      "status": "inventoried",
+      "input_sha256": "631a6d1aca378d0a3374f1ab94d1874666f602715582125fbeb4d2655232144e",
+      "protocol": "screen-evidence-v1",
+      "score": {
+        "reference_count": 4,
+        "prediction_count": 5,
+        "matched": 3,
+        "matches": [
+          [
+            19.0,
+            19.0
+          ],
+          [
+            119.0,
+            118.0
+          ],
+          [
+            139.0,
+            138.5
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 0.75,
+        "precision": 0.6
+      },
+      "references": [
+        {
+          "id": "reference-0001",
+          "timestamp": 19.0
+        },
+        {
+          "id": "reference-0002",
+          "timestamp": 97.0
+        },
+        {
+          "id": "reference-0003",
+          "timestamp": 119.0
+        },
+        {
+          "id": "reference-0004",
+          "timestamp": 139.0
+        }
+      ],
+      "predictions": [
+        {
+          "id": "prediction-0002",
+          "timestamp": 19.0,
+          "visual_state_id": "visual-00002",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0003",
+          "timestamp": 118.0,
+          "visual_state_id": "visual-00003",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0004",
+          "timestamp": 138.5,
+          "visual_state_id": "visual-00004",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0005",
+          "timestamp": 147.0,
+          "visual_state_id": "visual-00005",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0006",
+          "timestamp": 175.0,
+          "visual_state_id": "visual-00006",
+          "change_kind": null,
+          "included": true
+        }
+      ],
+      "matches": [
+        {
+          "reference_id": "reference-0001",
+          "prediction_id": "prediction-0002",
+          "reference_timestamp": 19.0,
+          "prediction_timestamp": 19.0
+        },
+        {
+          "reference_id": "reference-0003",
+          "prediction_id": "prediction-0003",
+          "reference_timestamp": 119.0,
+          "prediction_timestamp": 118.0
+        },
+        {
+          "reference_id": "reference-0004",
+          "prediction_id": "prediction-0004",
+          "reference_timestamp": 139.0,
+          "prediction_timestamp": 138.5
+        }
+      ],
+      "errors": [
+        {
+          "event_id": "39c3-1989-missed_change-reference-0002",
+          "event_kind": "missed_change",
+          "timestamp": 97.0,
+          "status": "reviewed",
+          "cause": "progressive_build",
+          "explanation": "A third yellow question-mark outcome is added below the existing solver outcomes.",
+          "source_frames": [
+            "39c3-1989/39c3-1989-missed_change-reference-0002-before.jpg",
+            "39c3-1989/39c3-1989-missed_change-reference-0002-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "017eefb61f3b2c26fa1efa0f1a59379ede708a3b0a9452cdcfcc1bb094dc67d7",
+            "3a2922dedeafeb9631041791872cd71ca8f8476290b981e58c4e8e870d683b6b"
+          ]
+        },
+        {
+          "event_id": "39c3-1989-extra_boundary-prediction-0005",
+          "event_kind": "extra_boundary",
+          "timestamp": 147.0,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The same Project Everest quotation switches from speaker-inset to full-slide view.",
+          "source_frames": [
+            "39c3-1989/39c3-1989-extra_boundary-prediction-0005-before.jpg",
+            "39c3-1989/39c3-1989-extra_boundary-prediction-0005-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "4c700e594ec93d00450be51331dfc2ac3508f91363dad13d1fd238a7e64a50ef",
+            "f4a5960f1c96a4505aad2bfb3b1ff3889010696d891a8d355d26ef21b03ef0fe"
+          ]
+        },
+        {
+          "event_id": "39c3-1989-extra_boundary-prediction-0006",
+          "event_kind": "extra_boundary",
+          "timestamp": 175.0,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The same Project Everest quotation switches from full-slide to speaker-inset view.",
+          "source_frames": [
+            "39c3-1989/39c3-1989-extra_boundary-prediction-0006-before.jpg",
+            "39c3-1989/39c3-1989-extra_boundary-prediction-0006-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "a7ca368a917a14fd10fd130b049d277d42bfa9fe1a6189e0066e064bbcd43148",
+            "2593ab58007014b6d0c61be4ddcaac0270f1e0d2e8543f7ffaa11aa118e58ca9"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "39c3-1979",
+      "status": "inventoried",
+      "input_sha256": "7dc914cb4bb2ecb78069ba614f3d42a688f9ebee6ea3d19106267118efc9d024",
+      "protocol": "screen-evidence-v1",
+      "score": {
+        "reference_count": 3,
+        "prediction_count": 4,
+        "matched": 3,
+        "matches": [
+          [
+            40.0,
+            40.0
+          ],
+          [
+            124.0,
+            124.5
+          ],
+          [
+            147.0,
+            147.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 1.0,
+        "precision": 0.75
+      },
+      "references": [
+        {
+          "id": "reference-0001",
+          "timestamp": 40.0
+        },
+        {
+          "id": "reference-0002",
+          "timestamp": 124.0
+        },
+        {
+          "id": "reference-0003",
+          "timestamp": 147.0
+        }
+      ],
+      "predictions": [
+        {
+          "id": "prediction-0002",
+          "timestamp": 40.0,
+          "visual_state_id": "visual-00002",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0003",
+          "timestamp": 124.5,
+          "visual_state_id": "visual-00003",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0004",
+          "timestamp": 147.0,
+          "visual_state_id": "visual-00004",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0005",
+          "timestamp": 147.5,
+          "visual_state_id": "visual-00005",
+          "change_kind": null,
+          "included": true
+        }
+      ],
+      "matches": [
+        {
+          "reference_id": "reference-0001",
+          "prediction_id": "prediction-0002",
+          "reference_timestamp": 40.0,
+          "prediction_timestamp": 40.0
+        },
+        {
+          "reference_id": "reference-0002",
+          "prediction_id": "prediction-0003",
+          "reference_timestamp": 124.0,
+          "prediction_timestamp": 124.5
+        },
+        {
+          "reference_id": "reference-0003",
+          "prediction_id": "prediction-0004",
+          "reference_timestamp": 147.0,
+          "prediction_timestamp": 147.0
+        }
+      ],
+      "errors": [
+        {
+          "event_id": "39c3-1979-extra_boundary-prediction-0005",
+          "event_kind": "extra_boundary",
+          "timestamp": 147.5,
+          "status": "reviewed",
+          "cause": "duplicate",
+          "explanation": "This is an additional detection of the Subpixel Zoo slide transition already matched at 147 seconds.",
+          "source_frames": [
+            "39c3-1979/39c3-1979-extra_boundary-prediction-0005-before.jpg",
+            "39c3-1979/39c3-1979-extra_boundary-prediction-0005-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "54d56472b39c7526c44d22274d5a300d90a18f2188dd81efbfe1d513bc021bed",
+            "ebfc96f0c1d4ddd3b62a5710bd4add0fd1b24c7609791dced3c0dc2893fbcf94"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "39c3-2372",
+      "status": "inventoried",
+      "input_sha256": "01ae56db455b3207d60989a6691d09e0ed33acd4e1c1347c4b39719136de1113",
+      "protocol": "screen-evidence-v1",
+      "score": {
+        "reference_count": 10,
+        "prediction_count": 38,
+        "matched": 6,
+        "matches": [
+          [
+            16.0,
+            16.0
+          ],
+          [
+            69.0,
+            69.5
+          ],
+          [
+            94.0,
+            93.5
+          ],
+          [
+            112.0,
+            111.0
+          ],
+          [
+            149.0,
+            148.0
+          ],
+          [
+            171.0,
+            170.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 0.6,
+        "precision": 0.15789473684210525
+      },
+      "references": [
+        {
+          "id": "reference-0001",
+          "timestamp": 16.0
+        },
+        {
+          "id": "reference-0002",
+          "timestamp": 69.0
+        },
+        {
+          "id": "reference-0003",
+          "timestamp": 94.0
+        },
+        {
+          "id": "reference-0004",
+          "timestamp": 112.0
+        },
+        {
+          "id": "reference-0005",
+          "timestamp": 149.0
+        },
+        {
+          "id": "reference-0006",
+          "timestamp": 160.0
+        },
+        {
+          "id": "reference-0007",
+          "timestamp": 164.0
+        },
+        {
+          "id": "reference-0008",
+          "timestamp": 165.0
+        },
+        {
+          "id": "reference-0009",
+          "timestamp": 171.0
+        },
+        {
+          "id": "reference-0010",
+          "timestamp": 173.0
+        }
+      ],
+      "predictions": [
+        {
+          "id": "prediction-0002",
+          "timestamp": 16.0,
+          "visual_state_id": "visual-00002",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0003",
+          "timestamp": 44.5,
+          "visual_state_id": "visual-00003",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0004",
+          "timestamp": 69.5,
+          "visual_state_id": "visual-00004",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0005",
+          "timestamp": 93.5,
+          "visual_state_id": "visual-00005",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0006",
+          "timestamp": 94.0,
+          "visual_state_id": "visual-00006",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0007",
+          "timestamp": 94.5,
+          "visual_state_id": "visual-00007",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0008",
+          "timestamp": 95.0,
+          "visual_state_id": "visual-00008",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0009",
+          "timestamp": 95.5,
+          "visual_state_id": "visual-00009",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0010",
+          "timestamp": 96.0,
+          "visual_state_id": "visual-00010",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0011",
+          "timestamp": 97.0,
+          "visual_state_id": "visual-00011",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0012",
+          "timestamp": 99.0,
+          "visual_state_id": "visual-00012",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0013",
+          "timestamp": 99.5,
+          "visual_state_id": "visual-00013",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0014",
+          "timestamp": 101.0,
+          "visual_state_id": "visual-00014",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0015",
+          "timestamp": 101.5,
+          "visual_state_id": "visual-00015",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0016",
+          "timestamp": 102.0,
+          "visual_state_id": "visual-00016",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0017",
+          "timestamp": 104.5,
+          "visual_state_id": "visual-00017",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0018",
+          "timestamp": 105.0,
+          "visual_state_id": "visual-00018",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0019",
+          "timestamp": 106.5,
+          "visual_state_id": "visual-00019",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0020",
+          "timestamp": 107.0,
+          "visual_state_id": "visual-00020",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0021",
+          "timestamp": 109.0,
+          "visual_state_id": "visual-00021",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0022",
+          "timestamp": 110.0,
+          "visual_state_id": "visual-00022",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0023",
+          "timestamp": 111.0,
+          "visual_state_id": "visual-00023",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0024",
+          "timestamp": 111.5,
+          "visual_state_id": "visual-00024",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0025",
+          "timestamp": 112.0,
+          "visual_state_id": "visual-00025",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0026",
+          "timestamp": 113.0,
+          "visual_state_id": "visual-00026",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0027",
+          "timestamp": 123.5,
+          "visual_state_id": "visual-00027",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0028",
+          "timestamp": 124.0,
+          "visual_state_id": "visual-00028",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0029",
+          "timestamp": 146.5,
+          "visual_state_id": "visual-00029",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0030",
+          "timestamp": 147.5,
+          "visual_state_id": "visual-00030",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0031",
+          "timestamp": 148.0,
+          "visual_state_id": "visual-00031",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0032",
+          "timestamp": 148.5,
+          "visual_state_id": "visual-00032",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0033",
+          "timestamp": 149.5,
+          "visual_state_id": "visual-00033",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0034",
+          "timestamp": 157.5,
+          "visual_state_id": "visual-00034",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0035",
+          "timestamp": 158.0,
+          "visual_state_id": "visual-00035",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0036",
+          "timestamp": 168.0,
+          "visual_state_id": "visual-00036",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0037",
+          "timestamp": 168.5,
+          "visual_state_id": "visual-00037",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0038",
+          "timestamp": 170.0,
+          "visual_state_id": "visual-00038",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0039",
+          "timestamp": 170.5,
+          "visual_state_id": "visual-00039",
+          "change_kind": null,
+          "included": true
+        }
+      ],
+      "matches": [
+        {
+          "reference_id": "reference-0001",
+          "prediction_id": "prediction-0002",
+          "reference_timestamp": 16.0,
+          "prediction_timestamp": 16.0
+        },
+        {
+          "reference_id": "reference-0002",
+          "prediction_id": "prediction-0004",
+          "reference_timestamp": 69.0,
+          "prediction_timestamp": 69.5
+        },
+        {
+          "reference_id": "reference-0003",
+          "prediction_id": "prediction-0005",
+          "reference_timestamp": 94.0,
+          "prediction_timestamp": 93.5
+        },
+        {
+          "reference_id": "reference-0004",
+          "prediction_id": "prediction-0023",
+          "reference_timestamp": 112.0,
+          "prediction_timestamp": 111.0
+        },
+        {
+          "reference_id": "reference-0005",
+          "prediction_id": "prediction-0031",
+          "reference_timestamp": 149.0,
+          "prediction_timestamp": 148.0
+        },
+        {
+          "reference_id": "reference-0009",
+          "prediction_id": "prediction-0038",
+          "reference_timestamp": 171.0,
+          "prediction_timestamp": 170.0
+        }
+      ],
+      "errors": [
+        {
+          "event_id": "39c3-2372-missed_change-reference-0006",
+          "event_kind": "missed_change",
+          "timestamp": 160.0,
+          "status": "reviewed",
+          "cause": "progressive_build",
+          "explanation": "Charge symbols are added inside the sensor diagram, too localized to change the global hash enough.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-missed_change-reference-0006-before.jpg",
+            "39c3-2372/39c3-2372-missed_change-reference-0006-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "95c7c2c9caa99c9ffa19dcbd46ead7f7d3127ebef7da922b6fbc3e9af03690a0",
+            "dff3d78af54c391138029e27e5c364a6e5e723aac4a64fed2bbb223d71d94ab8"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-missed_change-reference-0007",
+          "event_kind": "missed_change",
+          "timestamp": 164.0,
+          "status": "reviewed",
+          "cause": "progressive_build",
+          "explanation": "Contact and bump-bond labels are added to the diagram while most of the frame stays unchanged.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-missed_change-reference-0007-before.jpg",
+            "39c3-2372/39c3-2372-missed_change-reference-0007-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "2f3273f0d649680d1418cc10ace7c957fe9a0585ad4023235da93042668dc4e5",
+            "d5568041dc7ddadb8996a4736eb2aea5c94843a8cbd52f52d6b3d779a12135a7"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-missed_change-reference-0008",
+          "event_kind": "missed_change",
+          "timestamp": 165.0,
+          "status": "reviewed",
+          "cause": "progressive_build",
+          "explanation": "The read-out chip is highlighted and labeled in the next diagram build.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-missed_change-reference-0008-before.jpg",
+            "39c3-2372/39c3-2372-missed_change-reference-0008-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "628886b5c629b83f0766847eed7d72df490e906bfcfc56119c18c6c6f7570c52",
+            "e8a665017feca4d9e8d6ada6190de9c07723da27a44d2d32022b7e5438979336"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-missed_change-reference-0010",
+          "event_kind": "missed_change",
+          "timestamp": 173.0,
+          "status": "reviewed",
+          "cause": "progressive_build",
+          "explanation": "Scattered-photon paths and their label are added to the existing diagram.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-missed_change-reference-0010-before.jpg",
+            "39c3-2372/39c3-2372-missed_change-reference-0010-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "2ef2b417bdfc0fd59f812774690f1695952e83911b83159e719fc6e3e6a92490",
+            "870c722b3b5365d677428bb20f978d44ab2fef8b2906f844ebd773985e98f0ae"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0003",
+          "event_kind": "extra_boundary",
+          "timestamp": 44.5,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The same diagram switches between picture-in-picture and full-slide layouts, without a new information page.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0003-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0003-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "46ffe0a0e6b221f612ce7f7892bbda67750b6e3b1070b14ea6e4236c23824c38",
+            "5dce4b82d8f5b25e6416e175c9bb6b464031a5ec468df376240ebf62647a9607"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0006",
+          "event_kind": "extra_boundary",
+          "timestamp": 94.0,
+          "status": "reviewed",
+          "cause": "transition",
+          "explanation": "A crossfade, zoom or clearing phase around a single diagram replacement creates an extra state; the labeled page change is counted separately.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0006-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0006-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "765740a52f39ae732046ffcd038f4c26d34f79318bbc89a046978ac9cde05892",
+            "64ca426a867d911666207b26d4447ef2acae53a156851e3f33b046b90948f82d"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0007",
+          "event_kind": "extra_boundary",
+          "timestamp": 94.5,
+          "status": "reviewed",
+          "cause": "transition",
+          "explanation": "A crossfade, zoom or clearing phase around a single diagram replacement creates an extra state; the labeled page change is counted separately.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0007-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0007-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "4d8630f6bd3a117abcf1cbd51f01c68a3cfc8b9bce37d3eb863f35580ccbabfa",
+            "d320f36b41177550098b50d763fb203e8600cd81cbe82abab9c540cd2bce9075"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0008",
+          "event_kind": "extra_boundary",
+          "timestamp": 95.0,
+          "status": "reviewed",
+          "cause": "animation",
+          "explanation": "An ongoing sensor illustration pans, zooms or animates its components; interpolation frames are retained as separate boundaries.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0008-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0008-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "1c2354a8ced32c38c0c579b4aa686f3a9c1e03e73702622df98f99aa2417b0d9",
+            "738f80eac22226f3dd10c23e7b416efe6a184f80cb0b1f41c5cd8a099e72d69c"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0009",
+          "event_kind": "extra_boundary",
+          "timestamp": 95.5,
+          "status": "reviewed",
+          "cause": "animation",
+          "explanation": "An ongoing sensor illustration pans, zooms or animates its components; interpolation frames are retained as separate boundaries.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0009-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0009-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "3dda38a47ca2fd11419de59a8862b831d77c18414002c2fff8134f54d5516fd6",
+            "c1f82d4ded1c246bfa14c52bc22afc5ea6768f1e3818c1143adc447ef60f8c05"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0010",
+          "event_kind": "extra_boundary",
+          "timestamp": 96.0,
+          "status": "reviewed",
+          "cause": "animation",
+          "explanation": "An ongoing sensor illustration pans, zooms or animates its components; interpolation frames are retained as separate boundaries.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0010-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0010-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "64ca426a867d911666207b26d4447ef2acae53a156851e3f33b046b90948f82d",
+            "57631cad377f493a5d1844bec69cb9060d903201b21fe109609d3528b4b0f219"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0011",
+          "event_kind": "extra_boundary",
+          "timestamp": 97.0,
+          "status": "reviewed",
+          "cause": "animation",
+          "explanation": "An ongoing sensor illustration pans, zooms or animates its components; interpolation frames are retained as separate boundaries.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0011-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0011-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "738f80eac22226f3dd10c23e7b416efe6a184f80cb0b1f41c5cd8a099e72d69c",
+            "2f9bfb9f10a809699a538e84f060e6911c4262b6924ee1b263223cea62b86c48"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0012",
+          "event_kind": "extra_boundary",
+          "timestamp": 99.0,
+          "status": "reviewed",
+          "cause": "animation",
+          "explanation": "An ongoing sensor illustration pans, zooms or animates its components; interpolation frames are retained as separate boundaries.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0012-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0012-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "2f9bfb9f10a809699a538e84f060e6911c4262b6924ee1b263223cea62b86c48",
+            "b1b549f4fa8630cc05f9be59b87f2fda630a0711130677d871438554aa84737d"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0013",
+          "event_kind": "extra_boundary",
+          "timestamp": 99.5,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The same diagram switches between picture-in-picture and full-slide layouts, without a new information page.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0013-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0013-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "8e8633e53764a323650d6c327cd5ed6e9dfdf058fda553eb47fe6227229cbd2f",
+            "8b07b081e4c52202be936153a37019bba170bca5abd817c0f20542ce9056ffc3"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0014",
+          "event_kind": "extra_boundary",
+          "timestamp": 101.0,
+          "status": "reviewed",
+          "cause": "animation",
+          "explanation": "An ongoing sensor illustration pans, zooms or animates its components; interpolation frames are retained as separate boundaries.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0014-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0014-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "b1b549f4fa8630cc05f9be59b87f2fda630a0711130677d871438554aa84737d",
+            "0f8b18a48f782a7208b8816d78464d84ea0c5322f5fe9230c0fa35f9c5bd3687"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0015",
+          "event_kind": "extra_boundary",
+          "timestamp": 101.5,
+          "status": "reviewed",
+          "cause": "animation",
+          "explanation": "An ongoing sensor illustration pans, zooms or animates its components; interpolation frames are retained as separate boundaries.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0015-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0015-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "8b07b081e4c52202be936153a37019bba170bca5abd817c0f20542ce9056ffc3",
+            "02f32b536b09c46bdb32a52ba77e1482db95c201c53f9632c8be384488dce05a"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0016",
+          "event_kind": "extra_boundary",
+          "timestamp": 102.0,
+          "status": "reviewed",
+          "cause": "animation",
+          "explanation": "An ongoing sensor illustration pans, zooms or animates its components; interpolation frames are retained as separate boundaries.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0016-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0016-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "99032b577b3abd89a20fcd4eef2699e25c9c47cf44dc80b54de41ff977d79e6d",
+            "047451e25abf00b8c2c21cb746ad29128cc64b5c44b84365491dba47adcb0a7b"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0017",
+          "event_kind": "extra_boundary",
+          "timestamp": 104.5,
+          "status": "reviewed",
+          "cause": "animation",
+          "explanation": "An ongoing sensor illustration pans, zooms or animates its components; interpolation frames are retained as separate boundaries.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0017-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0017-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "a0037014d99ea42112e235834aa9b87c0def6817097a9fbbeb45c93f269f782c",
+            "a93188a63404ecda736fb633eaf908a3865414450899fbd272b002bfeee5843a"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0018",
+          "event_kind": "extra_boundary",
+          "timestamp": 105.0,
+          "status": "reviewed",
+          "cause": "animation",
+          "explanation": "An ongoing sensor illustration pans, zooms or animates its components; interpolation frames are retained as separate boundaries.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0018-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0018-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "a7ca9101443f6c434be71828386ba57f9125aef2386f226176bc3f3b6ca50bd2",
+            "a52a8815333faf87256938fd35ca565d7058fc03301ddd8eb4e1b3a1808e7641"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0019",
+          "event_kind": "extra_boundary",
+          "timestamp": 106.5,
+          "status": "reviewed",
+          "cause": "animation",
+          "explanation": "An ongoing sensor illustration pans, zooms or animates its components; interpolation frames are retained as separate boundaries.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0019-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0019-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "a93188a63404ecda736fb633eaf908a3865414450899fbd272b002bfeee5843a",
+            "eb46abb5ec49a18d9c20968dc67679cf61d390962eb7edfcbc31c92ec7172fa8"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0020",
+          "event_kind": "extra_boundary",
+          "timestamp": 107.0,
+          "status": "reviewed",
+          "cause": "animation",
+          "explanation": "An ongoing sensor illustration pans, zooms or animates its components; interpolation frames are retained as separate boundaries.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0020-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0020-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "a52a8815333faf87256938fd35ca565d7058fc03301ddd8eb4e1b3a1808e7641",
+            "8fcd31251d2a15036dd1baae3a20017891eb5355d7cee5cf2566746acaaf6631"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0021",
+          "event_kind": "extra_boundary",
+          "timestamp": 109.0,
+          "status": "reviewed",
+          "cause": "animation",
+          "explanation": "An ongoing sensor illustration pans, zooms or animates its components; interpolation frames are retained as separate boundaries.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0021-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0021-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "8fcd31251d2a15036dd1baae3a20017891eb5355d7cee5cf2566746acaaf6631",
+            "944a3501606663eb34ce1479063021c073e18628ef8045ae72edec32508c9d40"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0022",
+          "event_kind": "extra_boundary",
+          "timestamp": 110.0,
+          "status": "reviewed",
+          "cause": "animation",
+          "explanation": "An ongoing sensor illustration pans, zooms or animates its components; interpolation frames are retained as separate boundaries.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0022-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0022-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "eddb4a1926643f6466ec6e30b064f72310fec0457a1ae2469cc1a664d508b1e0",
+            "f6aae316b5e317c8331dd7d9908742a3e639fa28c03e364d2ea129ea24c47e0d"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0024",
+          "event_kind": "extra_boundary",
+          "timestamp": 111.5,
+          "status": "reviewed",
+          "cause": "animation",
+          "explanation": "An ongoing sensor illustration pans, zooms or animates its components; interpolation frames are retained as separate boundaries.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0024-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0024-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "f37dcb90bc226a8f02f3b06d8c4911126f4bdf99851dcfa525ddb556c01d88ab",
+            "d5503b4e8aef7728e310f8f662f8c803a43b24184fc909b6704510538b70863a"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0025",
+          "event_kind": "extra_boundary",
+          "timestamp": 112.0,
+          "status": "reviewed",
+          "cause": "animation",
+          "explanation": "An ongoing sensor illustration pans, zooms or animates its components; interpolation frames are retained as separate boundaries.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0025-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0025-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "f6aae316b5e317c8331dd7d9908742a3e639fa28c03e364d2ea129ea24c47e0d",
+            "026c491dba55ca1de017bed5703f3a91a8eae2592fadce6c33c2b3361f1152d6"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0026",
+          "event_kind": "extra_boundary",
+          "timestamp": 113.0,
+          "status": "reviewed",
+          "cause": "animation",
+          "explanation": "An ongoing sensor illustration pans, zooms or animates its components; interpolation frames are retained as separate boundaries.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0026-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0026-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "50457f326f3f31aee86d15ab876aceb56f18fece2945a29e01d3fa33e44208c2",
+            "b1815b83de441733d84501445d2e53e6dc6fab69df8a28410dde193c2fbfb917"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0027",
+          "event_kind": "extra_boundary",
+          "timestamp": 123.5,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The same diagram switches between picture-in-picture and full-slide layouts, without a new information page.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0027-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0027-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "dd4a702bfb8ddc153bd1f89212ebd7237f94658bc9e92552f7ac698fc7f8683f",
+            "4d925d6217165eb4c67c2e6e602c22fa0e3c9b4252c4928248ce0b0c465e68c0"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0028",
+          "event_kind": "extra_boundary",
+          "timestamp": 124.0,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The same diagram switches between picture-in-picture and full-slide layouts, without a new information page.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0028-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0028-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "ee37ba33c655625893a396a52c0929da94536a4ee10756abde3f2782cd80fc66",
+            "450c23d8cceeeead25a1132c66bfbf1f42d7a9c6f15e75a7d464efcde6f8c3b0"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0029",
+          "event_kind": "extra_boundary",
+          "timestamp": 146.5,
+          "status": "reviewed",
+          "cause": "transition",
+          "explanation": "A crossfade, zoom or clearing phase around a single diagram replacement creates an extra state; the labeled page change is counted separately.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0029-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0029-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "00ab9404887231772458062167c86e9055a637f3785e3fbf54f419af530e15aa",
+            "9087434387bb56b7a0fd72be40b11d2c51145de9b71768602665aa5ef5eeaed1"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0030",
+          "event_kind": "extra_boundary",
+          "timestamp": 147.5,
+          "status": "reviewed",
+          "cause": "transition",
+          "explanation": "A crossfade, zoom or clearing phase around a single diagram replacement creates an extra state; the labeled page change is counted separately.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0030-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0030-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "991d3290a5d061444f8233b3c6eb6385d3c0348b8f603fc0e3b25ff8b003d0a3",
+            "3caafa7cb6564bf884a3a33c5c68a2aeff29d655ffb075a8e8c63d6ac65d0857"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0032",
+          "event_kind": "extra_boundary",
+          "timestamp": 148.5,
+          "status": "reviewed",
+          "cause": "transition",
+          "explanation": "A crossfade, zoom or clearing phase around a single diagram replacement creates an extra state; the labeled page change is counted separately.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0032-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0032-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "9087434387bb56b7a0fd72be40b11d2c51145de9b71768602665aa5ef5eeaed1",
+            "7cbbd14545c2a61a30e2f6393fcbd56e21cd18ec8f9743728a41e2b851eeaf45"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0033",
+          "event_kind": "extra_boundary",
+          "timestamp": 149.5,
+          "status": "reviewed",
+          "cause": "transition",
+          "explanation": "A crossfade, zoom or clearing phase around a single diagram replacement creates an extra state; the labeled page change is counted separately.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0033-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0033-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "3caafa7cb6564bf884a3a33c5c68a2aeff29d655ffb075a8e8c63d6ac65d0857",
+            "01bbb0dd42e11ac66e89d3a5fecf40c8ae093c4a0d04cad63e1b58e8884aaba0"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0034",
+          "event_kind": "extra_boundary",
+          "timestamp": 157.5,
+          "status": "reviewed",
+          "cause": "animation",
+          "explanation": "An ongoing sensor illustration pans, zooms or animates its components; interpolation frames are retained as separate boundaries.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0034-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0034-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "75ecc438286c337553b68af12e7ca5a5ff97c350d1dd6a201dfb23d6ca3fbfdf",
+            "8e164565531f06de19ec356a1f1f1e888fd2f3519541d34819b86a1ebceffb36"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0035",
+          "event_kind": "extra_boundary",
+          "timestamp": 158.0,
+          "status": "reviewed",
+          "cause": "animation",
+          "explanation": "An ongoing sensor illustration pans, zooms or animates its components; interpolation frames are retained as separate boundaries.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0035-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0035-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "9206737777c9d7a0d25afa61a315ab39be2c966c4af0282244188c7a553702d8",
+            "95c7c2c9caa99c9ffa19dcbd46ead7f7d3127ebef7da922b6fbc3e9af03690a0"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0036",
+          "event_kind": "extra_boundary",
+          "timestamp": 168.0,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The same diagram switches between picture-in-picture and full-slide layouts, without a new information page.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0036-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0036-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "147a05a586f3db5269cddcf3bb0149534d2726fba81dd6b13d7aec007661840d",
+            "bac9601ec6d8e91a09753ca1ac512405b9ed3dd64e2c70bce15fe4382b557a89"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0037",
+          "event_kind": "extra_boundary",
+          "timestamp": 168.5,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The same diagram switches between picture-in-picture and full-slide layouts, without a new information page.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0037-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0037-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "9b2a1bdd56db6a632a61c5210e6926de225e3d902a15f3bdde2a6bef14ad2a60",
+            "b6d46fd52c262b42777fee635c58ce6871d744a9cbc0436616770c0e89b036c2"
+          ]
+        },
+        {
+          "event_id": "39c3-2372-extra_boundary-prediction-0039",
+          "event_kind": "extra_boundary",
+          "timestamp": 170.5,
+          "status": "reviewed",
+          "cause": "transition",
+          "explanation": "A crossfade, zoom or clearing phase around a single diagram replacement creates an extra state; the labeled page change is counted separately.",
+          "source_frames": [
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0039-before.jpg",
+            "39c3-2372/39c3-2372-extra_boundary-prediction-0039-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "b6d46fd52c262b42777fee635c58ce6871d744a9cbc0436616770c0e89b036c2",
+            "b43b364ff0e51d756aca208b180265df8f8b3123dcb887f17cd2611c1a76cb7b"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "39c3-1508",
+      "status": "inventoried",
+      "input_sha256": "f514284d9f182834d5f9281e10a16dfa428f09f74d1be7c774622aee30d6ae06",
+      "protocol": "screen-evidence-v1",
+      "score": {
+        "reference_count": 16,
+        "prediction_count": 34,
+        "matched": 13,
+        "matches": [
+          [
+            13.0,
+            13.0
+          ],
+          [
+            19.0,
+            19.5
+          ],
+          [
+            27.0,
+            27.0
+          ],
+          [
+            52.0,
+            51.5
+          ],
+          [
+            62.0,
+            62.0
+          ],
+          [
+            68.0,
+            68.0
+          ],
+          [
+            99.0,
+            99.0
+          ],
+          [
+            102.0,
+            102.0
+          ],
+          [
+            115.0,
+            115.0
+          ],
+          [
+            124.0,
+            124.0
+          ],
+          [
+            134.0,
+            134.0
+          ],
+          [
+            143.0,
+            143.5
+          ],
+          [
+            166.0,
+            166.5
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 0.8125,
+        "precision": 0.38235294117647056
+      },
+      "references": [
+        {
+          "id": "reference-0001",
+          "timestamp": 8.0
+        },
+        {
+          "id": "reference-0002",
+          "timestamp": 13.0
+        },
+        {
+          "id": "reference-0003",
+          "timestamp": 19.0
+        },
+        {
+          "id": "reference-0004",
+          "timestamp": 27.0
+        },
+        {
+          "id": "reference-0005",
+          "timestamp": 52.0
+        },
+        {
+          "id": "reference-0006",
+          "timestamp": 62.0
+        },
+        {
+          "id": "reference-0007",
+          "timestamp": 68.0
+        },
+        {
+          "id": "reference-0008",
+          "timestamp": 99.0
+        },
+        {
+          "id": "reference-0009",
+          "timestamp": 102.0
+        },
+        {
+          "id": "reference-0010",
+          "timestamp": 103.0
+        },
+        {
+          "id": "reference-0011",
+          "timestamp": 115.0
+        },
+        {
+          "id": "reference-0012",
+          "timestamp": 124.0
+        },
+        {
+          "id": "reference-0013",
+          "timestamp": 134.0
+        },
+        {
+          "id": "reference-0014",
+          "timestamp": 143.0
+        },
+        {
+          "id": "reference-0015",
+          "timestamp": 166.0
+        },
+        {
+          "id": "reference-0016",
+          "timestamp": 175.0
+        }
+      ],
+      "predictions": [
+        {
+          "id": "prediction-0002",
+          "timestamp": 13.0,
+          "visual_state_id": "visual-00002",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0003",
+          "timestamp": 19.5,
+          "visual_state_id": "visual-00003",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0004",
+          "timestamp": 27.0,
+          "visual_state_id": "visual-00004",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0005",
+          "timestamp": 28.0,
+          "visual_state_id": "visual-00005",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0006",
+          "timestamp": 30.0,
+          "visual_state_id": "visual-00006",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0007",
+          "timestamp": 43.0,
+          "visual_state_id": "visual-00007",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0008",
+          "timestamp": 43.5,
+          "visual_state_id": "visual-00008",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0009",
+          "timestamp": 44.0,
+          "visual_state_id": "visual-00009",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0010",
+          "timestamp": 45.5,
+          "visual_state_id": "visual-00010",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0011",
+          "timestamp": 49.5,
+          "visual_state_id": "visual-00011",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0012",
+          "timestamp": 51.5,
+          "visual_state_id": "visual-00012",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0013",
+          "timestamp": 52.0,
+          "visual_state_id": "visual-00013",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0014",
+          "timestamp": 62.0,
+          "visual_state_id": "visual-00014",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0015",
+          "timestamp": 68.0,
+          "visual_state_id": "visual-00015",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0016",
+          "timestamp": 78.0,
+          "visual_state_id": "visual-00016",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0017",
+          "timestamp": 81.5,
+          "visual_state_id": "visual-00017",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0018",
+          "timestamp": 82.5,
+          "visual_state_id": "visual-00018",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0019",
+          "timestamp": 83.0,
+          "visual_state_id": "visual-00019",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0020",
+          "timestamp": 85.0,
+          "visual_state_id": "visual-00020",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0021",
+          "timestamp": 86.0,
+          "visual_state_id": "visual-00021",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0022",
+          "timestamp": 96.0,
+          "visual_state_id": "visual-00022",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0023",
+          "timestamp": 96.5,
+          "visual_state_id": "visual-00023",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0024",
+          "timestamp": 99.0,
+          "visual_state_id": "visual-00024",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0025",
+          "timestamp": 102.0,
+          "visual_state_id": "visual-00025",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0026",
+          "timestamp": 108.5,
+          "visual_state_id": "visual-00026",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0027",
+          "timestamp": 109.0,
+          "visual_state_id": "visual-00027",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0028",
+          "timestamp": 115.0,
+          "visual_state_id": "visual-00028",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0029",
+          "timestamp": 124.0,
+          "visual_state_id": "visual-00029",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0030",
+          "timestamp": 134.0,
+          "visual_state_id": "visual-00030",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0031",
+          "timestamp": 143.5,
+          "visual_state_id": "visual-00031",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0032",
+          "timestamp": 157.5,
+          "visual_state_id": "visual-00032",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0033",
+          "timestamp": 158.0,
+          "visual_state_id": "visual-00033",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0034",
+          "timestamp": 166.5,
+          "visual_state_id": "visual-00034",
+          "change_kind": null,
+          "included": true
+        },
+        {
+          "id": "prediction-0035",
+          "timestamp": 167.0,
+          "visual_state_id": "visual-00035",
+          "change_kind": null,
+          "included": true
+        }
+      ],
+      "matches": [
+        {
+          "reference_id": "reference-0002",
+          "prediction_id": "prediction-0002",
+          "reference_timestamp": 13.0,
+          "prediction_timestamp": 13.0
+        },
+        {
+          "reference_id": "reference-0003",
+          "prediction_id": "prediction-0003",
+          "reference_timestamp": 19.0,
+          "prediction_timestamp": 19.5
+        },
+        {
+          "reference_id": "reference-0004",
+          "prediction_id": "prediction-0004",
+          "reference_timestamp": 27.0,
+          "prediction_timestamp": 27.0
+        },
+        {
+          "reference_id": "reference-0005",
+          "prediction_id": "prediction-0012",
+          "reference_timestamp": 52.0,
+          "prediction_timestamp": 51.5
+        },
+        {
+          "reference_id": "reference-0006",
+          "prediction_id": "prediction-0014",
+          "reference_timestamp": 62.0,
+          "prediction_timestamp": 62.0
+        },
+        {
+          "reference_id": "reference-0007",
+          "prediction_id": "prediction-0015",
+          "reference_timestamp": 68.0,
+          "prediction_timestamp": 68.0
+        },
+        {
+          "reference_id": "reference-0008",
+          "prediction_id": "prediction-0024",
+          "reference_timestamp": 99.0,
+          "prediction_timestamp": 99.0
+        },
+        {
+          "reference_id": "reference-0009",
+          "prediction_id": "prediction-0025",
+          "reference_timestamp": 102.0,
+          "prediction_timestamp": 102.0
+        },
+        {
+          "reference_id": "reference-0011",
+          "prediction_id": "prediction-0028",
+          "reference_timestamp": 115.0,
+          "prediction_timestamp": 115.0
+        },
+        {
+          "reference_id": "reference-0012",
+          "prediction_id": "prediction-0029",
+          "reference_timestamp": 124.0,
+          "prediction_timestamp": 124.0
+        },
+        {
+          "reference_id": "reference-0013",
+          "prediction_id": "prediction-0030",
+          "reference_timestamp": 134.0,
+          "prediction_timestamp": 134.0
+        },
+        {
+          "reference_id": "reference-0014",
+          "prediction_id": "prediction-0031",
+          "reference_timestamp": 143.0,
+          "prediction_timestamp": 143.5
+        },
+        {
+          "reference_id": "reference-0015",
+          "prediction_id": "prediction-0034",
+          "reference_timestamp": 166.0,
+          "prediction_timestamp": 166.5
+        }
+      ],
+      "errors": [
+        {
+          "event_id": "39c3-1508-missed_change-reference-0001",
+          "event_kind": "missed_change",
+          "timestamp": 8.0,
+          "status": "reviewed",
+          "cause": "progressive_build",
+          "explanation": "Red persistent emphasis is added around mut and state.advance in the right-hand code; foreground code and background terminal text otherwise stay unchanged.",
+          "source_frames": [
+            "39c3-1508/39c3-1508-missed_change-reference-0001-before.jpg",
+            "39c3-1508/39c3-1508-missed_change-reference-0001-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "7d7ea09a81a8dbae4097d4f67f66b4feb3a7bad4890814bbdaf44a6803683b78",
+            "5525b8623223e062507b438a573334420e40cb21aef612ff9e5b104df204467e"
+          ]
+        },
+        {
+          "event_id": "39c3-1508-missed_change-reference-0010",
+          "event_kind": "missed_change",
+          "timestamp": 103.0,
+          "status": "reviewed",
+          "cause": "progressive_build",
+          "explanation": "A computer photograph is added below the client/server diagram during a rapid two-step build.",
+          "source_frames": [
+            "39c3-1508/39c3-1508-missed_change-reference-0010-before.jpg",
+            "39c3-1508/39c3-1508-missed_change-reference-0010-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "a43cdcd789777f278b95e0d2d0fe96a9f93cb770f0a3c6c3d1c2e6ff1dd9b104",
+            "930f3e010d936c914f0294a1be8fada47aea378bc1fffdbbad681c69ae594f10"
+          ]
+        },
+        {
+          "event_id": "39c3-1508-missed_change-reference-0016",
+          "event_kind": "missed_change",
+          "timestamp": 175.0,
+          "status": "reviewed",
+          "cause": "progressive_build",
+          "explanation": "The small Left movement label is added beside the maze. Source inspection places first visibility near 177 seconds, not the frozen 175-second label; the baseline has no corresponding later boundary either. The label and its uncertainty remain unchanged for scoring.",
+          "source_frames": [
+            "39c3-1508/39c3-1508-missed_change-reference-0016-before.jpg",
+            "39c3-1508/39c3-1508-missed_change-reference-0016-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "secondary_causes": [
+            "small_text",
+            "background_text",
+            "timing"
+          ],
+          "source_context": "39c3-1508/context-175.jpg",
+          "source_frame_sha256": [
+            "4e24eda88322f230b39fe600e64d98432bc193e0cfee313022e3289bd9cd3597",
+            "b2154982e86d0aea539d93aa4fe78e7de19821935e9d366941fe70be384032b0"
+          ]
+        },
+        {
+          "event_id": "39c3-1508-extra_boundary-prediction-0005",
+          "event_kind": "extra_boundary",
+          "timestamp": 28.0,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The code and its emphasis are unchanged; the presenter changes hand position.",
+          "source_frames": [
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0005-before.jpg",
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0005-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "b6c3903f95e3ef8ca6a1416d0b9c897aea4eeb582104cd78e9999429b9e70b72",
+            "15da2607a31a714bb8a1597fa514aeaab631b68b47630cc8042c9046b8e7a705"
+          ]
+        },
+        {
+          "event_id": "39c3-1508-extra_boundary-prediction-0006",
+          "event_kind": "extra_boundary",
+          "timestamp": 30.0,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The code and its emphasis are unchanged; the presenter changes posture and gestures.",
+          "source_frames": [
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0006-before.jpg",
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0006-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "15da2607a31a714bb8a1597fa514aeaab631b68b47630cc8042c9046b8e7a705",
+            "0dcf75d6e31ab8af1a5a5279672982d0b81ecc07e82dc2d0334b1511ce4ff0f1"
+          ]
+        },
+        {
+          "event_id": "39c3-1508-extra_boundary-prediction-0007",
+          "event_kind": "extra_boundary",
+          "timestamp": 43.0,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The source switches from the code slide with speaker inset to a speaker-only view.",
+          "source_frames": [
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0007-before.jpg",
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0007-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "6392eb9769ce17ec24b817ca42642b4f1814e29aeb87a7950264dbcc5da4bfa6",
+            "da0f7f37582cc1c8f6faaad8c6b502a0518e1d229c63c95b8c9681d2fe3bfbd9"
+          ]
+        },
+        {
+          "event_id": "39c3-1508-extra_boundary-prediction-0008",
+          "event_kind": "extra_boundary",
+          "timestamp": 43.5,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "An additional state is retained during the same switch from code slide to speaker-only view.",
+          "source_frames": [
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0008-before.jpg",
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0008-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "62666d1bb0321797b1865a3d10be80c94cfa97387c49c446df0e8bbedeeba093",
+            "b317483f41b3829aa6dbb420917d925882df935abff05bf92b348c340a2014f8"
+          ]
+        },
+        {
+          "event_id": "39c3-1508-extra_boundary-prediction-0009",
+          "event_kind": "extra_boundary",
+          "timestamp": 44.0,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "An additional state is retained during the same switch from code slide to speaker-only view.",
+          "source_frames": [
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0009-before.jpg",
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0009-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "699514a521e24ca46f9493da861c66f0f15619ce2f862c3c47c5aa1d9a006c46",
+            "a088871726a230693233aad73b1e404b3a4fdee438ba3c349f9984cbb9e728c8"
+          ]
+        },
+        {
+          "event_id": "39c3-1508-extra_boundary-prediction-0010",
+          "event_kind": "extra_boundary",
+          "timestamp": 45.5,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "Only the presenter is visible and their pose changes; no new slide content is shown.",
+          "source_frames": [
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0010-before.jpg",
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0010-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "b317483f41b3829aa6dbb420917d925882df935abff05bf92b348c340a2014f8",
+            "81716735768ebc406273bd2101c3f772473fcf853569cdd2cab7af01e4be0efc"
+          ]
+        },
+        {
+          "event_id": "39c3-1508-extra_boundary-prediction-0011",
+          "event_kind": "extra_boundary",
+          "timestamp": 49.5,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "Only the presenter is visible and their pose changes; no new slide content is shown.",
+          "source_frames": [
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0011-before.jpg",
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0011-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "3bb510be5c429196657f2ebd5e1f5ed0f4d3f10b9f5a73c855da601ed829279e",
+            "27547d147348d0095990ef9922a10bd500e2c005d2f24fc881e3ac06cfb00536"
+          ]
+        },
+        {
+          "event_id": "39c3-1508-extra_boundary-prediction-0013",
+          "event_kind": "extra_boundary",
+          "timestamp": 52.0,
+          "status": "reviewed",
+          "cause": "duplicate",
+          "explanation": "This is an additional detection of the return to the updated execution-count slide, already matched by the 51.5-second prediction.",
+          "source_frames": [
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0013-before.jpg",
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0013-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "1036b59429dd571fbabbb055cb719dbd2cb96bd7215d81ecd7a8e3cce808ef09",
+            "edce2f968f651ad046faa4e109b11076aeb1a469bc5e205218494a5634deb05e"
+          ]
+        },
+        {
+          "event_id": "39c3-1508-extra_boundary-prediction-0016",
+          "event_kind": "extra_boundary",
+          "timestamp": 78.0,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The source switches from the unchanged code/cost slide to a speaker-only view.",
+          "source_frames": [
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0016-before.jpg",
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0016-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "5e93509f33878cbe09106b20ed29bbd5505d2ef4fec54f7b1fd3978f270958f2",
+            "64ccb4f646c57b85e8d24e73d77238d01530cc9e81d3aa5f5850499543613c76"
+          ]
+        },
+        {
+          "event_id": "39c3-1508-extra_boundary-prediction-0017",
+          "event_kind": "extra_boundary",
+          "timestamp": 81.5,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The speaker-only view contains changing hand gestures, with no new instructional screen.",
+          "source_frames": [
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0017-before.jpg",
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0017-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "9577fce08448df2978f367d28d8199df93c65c7a5b695a853ff9adda42e00e64",
+            "a27aa737f3208396334935f84d36c0b3333b608fa62be66d1d65098468933d34"
+          ]
+        },
+        {
+          "event_id": "39c3-1508-extra_boundary-prediction-0018",
+          "event_kind": "extra_boundary",
+          "timestamp": 82.5,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The speaker-only view contains changing hand gestures, with no new instructional screen.",
+          "source_frames": [
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0018-before.jpg",
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0018-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "7e9cd6469ecfd28a792520027c7c5e931f06b760fe18d250d50472523214656e",
+            "01315b51f8d117cfc10f16c6d73f23ea01a759c84583fb63734b9fa4015bcf93"
+          ]
+        },
+        {
+          "event_id": "39c3-1508-extra_boundary-prediction-0019",
+          "event_kind": "extra_boundary",
+          "timestamp": 83.0,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The speaker-only view contains changing hand gestures, with no new instructional screen.",
+          "source_frames": [
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0019-before.jpg",
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0019-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "27ba2a5e53dfb70b56a444c77dfdf087e083eb4bba1b9aad4cff5085a33519b8",
+            "ee6b6483b1df16fd6a04d873df6c612149e5dee64c80b75b9f14ca06f4d7ecd0"
+          ]
+        },
+        {
+          "event_id": "39c3-1508-extra_boundary-prediction-0020",
+          "event_kind": "extra_boundary",
+          "timestamp": 85.0,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The speaker-only view contains changing posture, with no new instructional screen.",
+          "source_frames": [
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0020-before.jpg",
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0020-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "ee6b6483b1df16fd6a04d873df6c612149e5dee64c80b75b9f14ca06f4d7ecd0",
+            "e231a0d26ab541824f9758604c197ce13375b2e8de842cff531bc88461a1c193"
+          ]
+        },
+        {
+          "event_id": "39c3-1508-extra_boundary-prediction-0021",
+          "event_kind": "extra_boundary",
+          "timestamp": 86.0,
+          "status": "reviewed",
+          "cause": "speaker",
+          "explanation": "The speaker-only view contains changing posture, with no new instructional screen.",
+          "source_frames": [
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0021-before.jpg",
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0021-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "608b2a6399c914f073bdb1c71a89aef080f266fec8e13fadca924ee037890a2b",
+            "9b28862cafbc5adb2af8de719da6a8c4ddafac9e31a8517b4e4c65e5611384a5"
+          ]
+        },
+        {
+          "event_id": "39c3-1508-extra_boundary-prediction-0022",
+          "event_kind": "extra_boundary",
+          "timestamp": 96.0,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The speaker-only view changes into a composite view showing the same presenter twice, before the slide returns.",
+          "source_frames": [
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0022-before.jpg",
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0022-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "f7b7e123e58f33f5834605c120c90dff619d7432c411f4decaecab385ecaf2de",
+            "c8a0738ae0358f3921823ce05803073f778df78622aa0d67c2506fd3a6d0cda5"
+          ]
+        },
+        {
+          "event_id": "39c3-1508-extra_boundary-prediction-0023",
+          "event_kind": "extra_boundary",
+          "timestamp": 96.5,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "An additional state is retained during the same speaker-only to composite-presenter switch.",
+          "source_frames": [
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0023-before.jpg",
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0023-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "1cf4f0fe443e1ba746ddf7120318bed49834edf32ad09411ead114d97f44c131",
+            "f969e838aa9e3aedf616a3e021585c52bbe54f3af226d03f23edf5d0fbf2c0ab"
+          ]
+        },
+        {
+          "event_id": "39c3-1508-extra_boundary-prediction-0026",
+          "event_kind": "extra_boundary",
+          "timestamp": 108.5,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The same client/server and computer images change from full-slide to speaker-inset view.",
+          "source_frames": [
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0026-before.jpg",
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0026-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "ceff59e6901f97ca3892bb803cbe40ad99b6bfc67f91d85b7e14d540d95ff9a0",
+            "3a8623dc5fbc9b2d2ccfd1c5f532ce81b3122c493b1e97a3842f43c0f092d52d"
+          ]
+        },
+        {
+          "event_id": "39c3-1508-extra_boundary-prediction-0027",
+          "event_kind": "extra_boundary",
+          "timestamp": 109.0,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "An additional state is retained during the same full-slide to speaker-inset switch.",
+          "source_frames": [
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0027-before.jpg",
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0027-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "21730aa4d6841d7a8a8081236ed08e86fddef97ff61948ed06a88d2b10162d9a",
+            "254fc3bb366b308253a16751f70414ac47c3ce3881c945cbe2978d2526e9686d"
+          ]
+        },
+        {
+          "event_id": "39c3-1508-extra_boundary-prediction-0032",
+          "event_kind": "extra_boundary",
+          "timestamp": 157.5,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "The intentionally blank slide with explanatory text switches to a speaker-only view.",
+          "source_frames": [
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0032-before.jpg",
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0032-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "be8c6c9689160430b45238aa98801f968bfdd78db28afeccb8f8def1e7bba33b",
+            "cd7ec6af30f1468fbf17ce7ee591832a35842acb6dc90a6c700d02beb355ead5"
+          ]
+        },
+        {
+          "event_id": "39c3-1508-extra_boundary-prediction-0033",
+          "event_kind": "extra_boundary",
+          "timestamp": 158.0,
+          "status": "reviewed",
+          "cause": "layout",
+          "explanation": "An additional state is retained during the same blank-slide to speaker-only switch.",
+          "source_frames": [
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0033-before.jpg",
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0033-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "aab23f6b16ae052bf22a18ec08962d35e2077edce062d12a645b23eb5398ac3e",
+            "4c7aca8487e30d108ad555f0a7eea7319f8228aa7a0a3a777b051650478b8903"
+          ]
+        },
+        {
+          "event_id": "39c3-1508-extra_boundary-prediction-0035",
+          "event_kind": "extra_boundary",
+          "timestamp": 167.0,
+          "status": "reviewed",
+          "cause": "duplicate",
+          "explanation": "This is an additional detection of the first visible maze slide already matched by the 166.5-second prediction.",
+          "source_frames": [
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0035-before.jpg",
+            "39c3-1508/39c3-1508-extra_boundary-prediction-0035-after.jpg"
+          ],
+          "reviewer": "AI-assisted source-frame review",
+          "source_frame_sha256": [
+            "2afda076f4944e468b4a03c7ccf2d8bd38adb6115a9db49757c49c2c2b77bd95",
+            "0102273d0aeba0b83fc31da14254092e8aff7b89880da8554311f55902901807"
+          ]
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "event_count": 131,
+    "reviewed": 131,
+    "causes": {
+      "animation": 19,
+      "duplicate": 7,
+      "layout": 40,
+      "progressive_build": 14,
+      "small_text": 2,
+      "speaker": 39,
+      "transition": 10
+    },
+    "by_event_kind": {
+      "missed_change": {
+        "progressive_build": 14,
+        "small_text": 2
+      },
+      "extra_boundary": {
+        "speaker": 39,
+        "layout": 40,
+        "transition": 10,
+        "duplicate": 7,
+        "animation": 19
+      }
+    }
+  },
+  "source_evidence_asset": "v1.4.0-development-boundary-review.zip",
+  "notes": [
+    "Every missed change and extra boundary in the applicable development windows has a source-frame pair and an AI-assisted cause attribution. The owner has not completed the human review.",
+    "Existing development labels and v1.3 result files remain unchanged. The Fuzzer 175-second label has a source timing caveat documented in its event."
+  ]
+}

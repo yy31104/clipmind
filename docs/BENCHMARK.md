@@ -101,7 +101,7 @@ every PR and uploads its JSON, alongside the separate hermetic unit suite.
 The [recorded real decode](data/noisy-slides-whisper-eval.json) uses the default
 `large-v3-turbo` weights (snapshot `0a363e9161cbc7ed1431c9597a8ceaf0c4f78fcf`)
 on Linux arm64 CPU, CTranslate2 4.8.2, `int8_float32`. The English fixture is
-explicitly decoded as English, not the application's default Chinese language.
+explicitly decoded as English. The v1.3.0 application default was Chinese; v1.4.0 detects speech language automatically.
 Every row calls the production `FasterWhisperProvider.transcribe()` and consumes
 its segments; it does not reimplement the model call in the evaluator.
 

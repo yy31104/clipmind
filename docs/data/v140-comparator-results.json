@@ -1,0 +1,2744 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-11-16T21:41:50.049390+00:00",
+  "dataset": "v1.3.0 development set only; never holdout",
+  "label_sha256": "a32597d8a4746526b5ec39e888e5a777bb25962c76c36c68325df97793e99904",
+  "annotations": "AI-assisted source annotations; human review pending",
+  "protocol": "Unchanged default algorithms, same input bytes, sorted one-to-one +/-1s boundary matching for scene-start outputs; no OCR ROI metric where spatial output absent; no tuned thresholds. MCP sample timestamps are diagnostics only. Whole-clip caption WER uses all transcript output and fully-contained source cues, so it is not the word-timed narrower v1.3 4.22% metric.",
+  "tools": [
+    {
+      "tool": "slidegeist",
+      "runs": [
+        {
+          "case_id": "39c3-1317",
+          "returncode": 0,
+          "wall_seconds": 9.999,
+          "input_sha256": "257cbae3d65b7de306ab6f1e247dd2c95ae81520abfadda2ccde507cd0b7c959",
+          "warnings": [
+            "OCR disabled by tool: native Tesseract missing. Empty-context AI description stage makes no local model request."
+          ],
+          "slide_ranges": [
+            [
+              0.0,
+              77.0
+            ],
+            [
+              77.0,
+              180.0
+            ]
+          ],
+          "frame_count": 2,
+          "timestamp_kind": "whole_second_scene_starts",
+          "roi_cer": {
+            "status": "unavailable",
+            "reason": "native Tesseract absent in first host attempt; prerequisite-complete run is retained separately"
+          },
+          "boundaries": {
+            "reference_count": 10,
+            "prediction_count": 1,
+            "matched": 1,
+            "matches": [
+              [
+                77,
+                77.0
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.1,
+            "precision": 1.0
+          }
+        },
+        {
+          "case_id": "39c3-1508",
+          "returncode": 0,
+          "wall_seconds": 8.234,
+          "input_sha256": "f514284d9f182834d5f9281e10a16dfa428f09f74d1be7c774622aee30d6ae06",
+          "warnings": [
+            "OCR disabled by tool: native Tesseract missing. Empty-context AI description stage makes no local model request."
+          ],
+          "slide_ranges": [
+            [
+              0.0,
+              43.0
+            ],
+            [
+              43.0,
+              61.0
+            ],
+            [
+              61.0,
+              68.0
+            ],
+            [
+              68.0,
+              78.0
+            ],
+            [
+              78.0,
+              99.0
+            ],
+            [
+              99.0,
+              102.0
+            ],
+            [
+              102.0,
+              114.0
+            ],
+            [
+              114.0,
+              124.0
+            ],
+            [
+              124.0,
+              133.0
+            ],
+            [
+              133.0,
+              143.0
+            ],
+            [
+              143.0,
+              166.0
+            ],
+            [
+              166.0,
+              180.0
+            ]
+          ],
+          "frame_count": 12,
+          "timestamp_kind": "whole_second_scene_starts",
+          "roi_cer": {
+            "status": "unavailable",
+            "reason": "native Tesseract absent in first host attempt; prerequisite-complete run is retained separately"
+          },
+          "boundaries": {
+            "reference_count": 16,
+            "prediction_count": 11,
+            "matched": 9,
+            "matches": [
+              [
+                62,
+                61.0
+              ],
+              [
+                68,
+                68.0
+              ],
+              [
+                99,
+                99.0
+              ],
+              [
+                102,
+                102.0
+              ],
+              [
+                115,
+                114.0
+              ],
+              [
+                124,
+                124.0
+              ],
+              [
+                134,
+                133.0
+              ],
+              [
+                143,
+                143.0
+              ],
+              [
+                166,
+                166.0
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.5625,
+            "precision": 0.8181818181818182
+          }
+        },
+        {
+          "case_id": "39c3-1611",
+          "returncode": 0,
+          "wall_seconds": 6.791,
+          "input_sha256": "075c9c8012fe35400d414dab1833db15e9258a7bfe9320a24f957b8ed9ed399a",
+          "warnings": [
+            "OCR disabled by tool: native Tesseract missing. Empty-context AI description stage makes no local model request."
+          ],
+          "slide_ranges": [
+            [
+              0.0,
+              21.0
+            ],
+            [
+              21.0,
+              29.0
+            ],
+            [
+              29.0,
+              33.0
+            ],
+            [
+              33.0,
+              65.0
+            ],
+            [
+              65.0,
+              69.0
+            ],
+            [
+              69.0,
+              99.0
+            ],
+            [
+              99.0,
+              142.0
+            ],
+            [
+              142.0,
+              146.0
+            ],
+            [
+              146.0,
+              156.0
+            ],
+            [
+              156.0,
+              164.0
+            ],
+            [
+              164.0,
+              170.0
+            ],
+            [
+              170.0,
+              173.0
+            ],
+            [
+              173.0,
+              180.0
+            ]
+          ],
+          "frame_count": 13,
+          "timestamp_kind": "whole_second_scene_starts",
+          "roi_cer": {
+            "status": "unavailable",
+            "reason": "native Tesseract absent in first host attempt; prerequisite-complete run is retained separately"
+          },
+          "boundaries": {
+            "reference_count": 12,
+            "prediction_count": 12,
+            "matched": 5,
+            "matches": [
+              [
+                30,
+                29.0
+              ],
+              [
+                70,
+                69.0
+              ],
+              [
+                100,
+                99.0
+              ],
+              [
+                143,
+                142.0
+              ],
+              [
+                157,
+                156.0
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.4166666666666667,
+            "precision": 0.4166666666666667
+          }
+        },
+        {
+          "case_id": "39c3-1979",
+          "returncode": 0,
+          "wall_seconds": 5.719,
+          "input_sha256": "7dc914cb4bb2ecb78069ba614f3d42a688f9ebee6ea3d19106267118efc9d024",
+          "warnings": [
+            "OCR disabled by tool: native Tesseract missing. Empty-context AI description stage makes no local model request."
+          ],
+          "slide_ranges": [
+            [
+              0.0,
+              147.0
+            ],
+            [
+              147.0,
+              180.0
+            ]
+          ],
+          "frame_count": 2,
+          "timestamp_kind": "whole_second_scene_starts",
+          "roi_cer": {
+            "status": "unavailable",
+            "reason": "native Tesseract absent in first host attempt; prerequisite-complete run is retained separately"
+          },
+          "boundaries": {
+            "reference_count": 3,
+            "prediction_count": 1,
+            "matched": 1,
+            "matches": [
+              [
+                147,
+                147.0
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.3333333333333333,
+            "precision": 1.0
+          }
+        },
+        {
+          "case_id": "39c3-1989",
+          "returncode": 0,
+          "wall_seconds": 6.496,
+          "input_sha256": "631a6d1aca378d0a3374f1ab94d1874666f602715582125fbeb4d2655232144e",
+          "warnings": [
+            "OCR disabled by tool: native Tesseract missing. Empty-context AI description stage makes no local model request."
+          ],
+          "slide_ranges": [
+            [
+              0.0,
+              19.0
+            ],
+            [
+              19.0,
+              147.0
+            ],
+            [
+              147.0,
+              175.0
+            ],
+            [
+              175.0,
+              180.0
+            ]
+          ],
+          "frame_count": 4,
+          "timestamp_kind": "whole_second_scene_starts",
+          "roi_cer": {
+            "status": "unavailable",
+            "reason": "native Tesseract absent in first host attempt; prerequisite-complete run is retained separately"
+          },
+          "boundaries": {
+            "reference_count": 4,
+            "prediction_count": 3,
+            "matched": 1,
+            "matches": [
+              [
+                19,
+                19.0
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.25,
+            "precision": 0.3333333333333333
+          }
+        },
+        {
+          "case_id": "39c3-2042",
+          "returncode": 0,
+          "wall_seconds": 9.843,
+          "input_sha256": "6ee5fb351fe2f140b7e5bebb5c38671b5770d337b4e1e56a1809b0b7c5c6195a",
+          "warnings": [
+            "OCR disabled by tool: native Tesseract missing. Empty-context AI description stage makes no local model request."
+          ],
+          "slide_ranges": [
+            [
+              0.0,
+              5.0
+            ],
+            [
+              5.0,
+              8.0
+            ],
+            [
+              8.0,
+              12.0
+            ],
+            [
+              12.0,
+              16.0
+            ],
+            [
+              16.0,
+              25.0
+            ],
+            [
+              25.0,
+              29.0
+            ],
+            [
+              29.0,
+              31.0
+            ],
+            [
+              31.0,
+              36.0
+            ],
+            [
+              36.0,
+              38.0
+            ],
+            [
+              38.0,
+              41.0
+            ],
+            [
+              41.0,
+              43.0
+            ],
+            [
+              43.0,
+              46.0
+            ],
+            [
+              46.0,
+              55.0
+            ],
+            [
+              55.0,
+              57.0
+            ],
+            [
+              57.0,
+              74.0
+            ],
+            [
+              74.0,
+              79.0
+            ],
+            [
+              79.0,
+              85.0
+            ],
+            [
+              85.0,
+              92.0
+            ],
+            [
+              92.0,
+              95.0
+            ],
+            [
+              95.0,
+              99.0
+            ],
+            [
+              99.0,
+              107.0
+            ],
+            [
+              107.0,
+              112.0
+            ],
+            [
+              112.0,
+              117.0
+            ],
+            [
+              117.0,
+              120.0
+            ],
+            [
+              120.0,
+              123.0
+            ],
+            [
+              123.0,
+              125.0
+            ],
+            [
+              125.0,
+              137.0
+            ],
+            [
+              137.0,
+              143.0
+            ],
+            [
+              143.0,
+              157.0
+            ],
+            [
+              157.0,
+              165.0
+            ],
+            [
+              165.0,
+              180.0
+            ]
+          ],
+          "frame_count": 31,
+          "timestamp_kind": "whole_second_scene_starts",
+          "roi_cer": {
+            "status": "unavailable",
+            "reason": "native Tesseract absent in first host attempt; prerequisite-complete run is retained separately"
+          },
+          "boundaries": {
+            "status": "not_applicable",
+            "reason": "no conventional stable informational slide boundaries in labeled dev window"
+          }
+        },
+        {
+          "case_id": "39c3-2154",
+          "returncode": 0,
+          "wall_seconds": 8.382,
+          "input_sha256": "fc7192e34cd776f5095ade504f018e92ea0bf40b76ee3e83e4647b791fea69f3",
+          "warnings": [
+            "OCR disabled by tool: native Tesseract missing. Empty-context AI description stage makes no local model request."
+          ],
+          "slide_ranges": [
+            [
+              0.0,
+              66.0
+            ],
+            [
+              66.0,
+              72.0
+            ],
+            [
+              72.0,
+              74.0
+            ],
+            [
+              74.0,
+              82.0
+            ],
+            [
+              82.0,
+              84.0
+            ],
+            [
+              84.0,
+              86.0
+            ],
+            [
+              86.0,
+              97.0
+            ],
+            [
+              97.0,
+              100.0
+            ],
+            [
+              100.0,
+              106.0
+            ],
+            [
+              106.0,
+              108.0
+            ],
+            [
+              108.0,
+              110.0
+            ],
+            [
+              110.0,
+              146.0
+            ],
+            [
+              146.0,
+              156.0
+            ],
+            [
+              156.0,
+              161.0
+            ],
+            [
+              161.0,
+              168.0
+            ],
+            [
+              168.0,
+              170.0
+            ],
+            [
+              170.0,
+              172.0
+            ],
+            [
+              172.0,
+              175.0
+            ],
+            [
+              175.0,
+              178.0
+            ],
+            [
+              178.0,
+              180.0
+            ]
+          ],
+          "frame_count": 20,
+          "timestamp_kind": "whole_second_scene_starts",
+          "roi_cer": {
+            "status": "unavailable",
+            "reason": "native Tesseract absent in first host attempt; prerequisite-complete run is retained separately"
+          },
+          "boundaries": {
+            "status": "not_applicable",
+            "reason": "no conventional stable informational slide boundaries in labeled dev window"
+          }
+        },
+        {
+          "case_id": "39c3-2188",
+          "returncode": 0,
+          "wall_seconds": 2.938,
+          "input_sha256": "62e4f80bd51ee3dc5ba77cb8f9d11c7d023f18936ec453deca211a5aa57d9437",
+          "warnings": [
+            "OCR disabled by tool: native Tesseract missing. Empty-context AI description stage makes no local model request."
+          ],
+          "slide_ranges": [
+            [
+              0.0,
+              69.0
+            ],
+            [
+              69.0,
+              81.0
+            ],
+            [
+              81.0,
+              180.0
+            ]
+          ],
+          "frame_count": 3,
+          "timestamp_kind": "whole_second_scene_starts",
+          "roi_cer": {
+            "status": "unavailable",
+            "reason": "native Tesseract absent in first host attempt; prerequisite-complete run is retained separately"
+          },
+          "boundaries": {
+            "status": "not_applicable",
+            "reason": "no conventional stable informational slide boundaries in labeled dev window"
+          }
+        },
+        {
+          "case_id": "39c3-2274",
+          "returncode": 0,
+          "wall_seconds": 7.203,
+          "input_sha256": "1ce923120997691c7ebc27e162d095e2051c0fad34f02d22394454092e65ec4a",
+          "warnings": [
+            "OCR disabled by tool: native Tesseract missing. Empty-context AI description stage makes no local model request."
+          ],
+          "slide_ranges": [
+            [
+              0.0,
+              15.0
+            ],
+            [
+              15.0,
+              58.0
+            ],
+            [
+              58.0,
+              80.0
+            ],
+            [
+              80.0,
+              94.0
+            ],
+            [
+              94.0,
+              130.0
+            ],
+            [
+              130.0,
+              180.0
+            ]
+          ],
+          "frame_count": 6,
+          "timestamp_kind": "whole_second_scene_starts",
+          "roi_cer": {
+            "status": "unavailable",
+            "reason": "native Tesseract absent in first host attempt; prerequisite-complete run is retained separately"
+          },
+          "boundaries": {
+            "reference_count": 5,
+            "prediction_count": 5,
+            "matched": 3,
+            "matches": [
+              [
+                16,
+                15.0
+              ],
+              [
+                59,
+                58.0
+              ],
+              [
+                80,
+                80.0
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.6,
+            "precision": 0.6
+          }
+        },
+        {
+          "case_id": "39c3-2372",
+          "returncode": 0,
+          "wall_seconds": 7.635,
+          "input_sha256": "01ae56db455b3207d60989a6691d09e0ed33acd4e1c1347c4b39719136de1113",
+          "warnings": [
+            "OCR disabled by tool: native Tesseract missing. Empty-context AI description stage makes no local model request."
+          ],
+          "slide_ranges": [
+            [
+              0.0,
+              44.0
+            ],
+            [
+              44.0,
+              69.0
+            ],
+            [
+              69.0,
+              94.0
+            ],
+            [
+              94.0,
+              101.0
+            ],
+            [
+              101.0,
+              104.0
+            ],
+            [
+              104.0,
+              108.0
+            ],
+            [
+              108.0,
+              112.0
+            ],
+            [
+              112.0,
+              123.0
+            ],
+            [
+              123.0,
+              143.0
+            ],
+            [
+              143.0,
+              147.0
+            ],
+            [
+              147.0,
+              157.0
+            ],
+            [
+              157.0,
+              169.0
+            ],
+            [
+              169.0,
+              180.0
+            ]
+          ],
+          "frame_count": 13,
+          "timestamp_kind": "whole_second_scene_starts",
+          "roi_cer": {
+            "status": "unavailable",
+            "reason": "native Tesseract absent in first host attempt; prerequisite-complete run is retained separately"
+          },
+          "boundaries": {
+            "reference_count": 10,
+            "prediction_count": 12,
+            "matched": 3,
+            "matches": [
+              [
+                69,
+                69.0
+              ],
+              [
+                94,
+                94.0
+              ],
+              [
+                112,
+                112.0
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.3,
+            "precision": 0.25
+          }
+        }
+      ],
+      "aggregate_boundaries": {
+        "reference_count": 60,
+        "prediction_count": 45,
+        "matched": 23,
+        "recall": 0.38333333333333336,
+        "precision": 0.5111111111111111
+      },
+      "total_wall_seconds": 73.24
+    },
+    {
+      "tool": "slidegeist-with-tesseract",
+      "runs": [
+        {
+          "case_id": "39c3-1317",
+          "returncode": 0,
+          "wall_seconds": 9.282,
+          "input_sha256": "257cbae3d65b7de306ab6f1e247dd2c95ae81520abfadda2ccde507cd0b7c959",
+          "warnings": [
+            "Native OCR is present. AI descriptions are empty; the published slides-mode description loop has no text context and does not call a model service."
+          ],
+          "slide_ranges": [
+            [
+              0.0,
+              77.0
+            ],
+            [
+              77.0,
+              180.0
+            ]
+          ],
+          "frame_count": 2,
+          "timestamp_kind": "whole_second_scene_starts",
+          "roi_cer": {
+            "status": "not_comparable",
+            "reason": "native Tesseract5.5.4 ran, but default export contains whole-frame OCR text without spatial boxes"
+          },
+          "ocr_slide_sections": 2,
+          "boundaries": {
+            "reference_count": 10,
+            "prediction_count": 1,
+            "matched": 1,
+            "matches": [
+              [
+                77,
+                77.0
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.1,
+            "precision": 1.0
+          }
+        },
+        {
+          "case_id": "39c3-1508",
+          "returncode": 0,
+          "wall_seconds": 22.543,
+          "input_sha256": "f514284d9f182834d5f9281e10a16dfa428f09f74d1be7c774622aee30d6ae06",
+          "warnings": [
+            "Native OCR is present. AI descriptions are empty; the published slides-mode description loop has no text context and does not call a model service."
+          ],
+          "slide_ranges": [
+            [
+              0.0,
+              43.0
+            ],
+            [
+              43.0,
+              61.0
+            ],
+            [
+              61.0,
+              68.0
+            ],
+            [
+              68.0,
+              78.0
+            ],
+            [
+              78.0,
+              99.0
+            ],
+            [
+              99.0,
+              102.0
+            ],
+            [
+              102.0,
+              114.0
+            ],
+            [
+              114.0,
+              124.0
+            ],
+            [
+              124.0,
+              133.0
+            ],
+            [
+              133.0,
+              143.0
+            ],
+            [
+              143.0,
+              166.0
+            ],
+            [
+              166.0,
+              180.0
+            ]
+          ],
+          "frame_count": 12,
+          "timestamp_kind": "whole_second_scene_starts",
+          "roi_cer": {
+            "status": "not_comparable",
+            "reason": "native Tesseract5.5.4 ran, but default export contains whole-frame OCR text without spatial boxes"
+          },
+          "ocr_slide_sections": 10,
+          "boundaries": {
+            "reference_count": 16,
+            "prediction_count": 11,
+            "matched": 9,
+            "matches": [
+              [
+                62,
+                61.0
+              ],
+              [
+                68,
+                68.0
+              ],
+              [
+                99,
+                99.0
+              ],
+              [
+                102,
+                102.0
+              ],
+              [
+                115,
+                114.0
+              ],
+              [
+                124,
+                124.0
+              ],
+              [
+                134,
+                133.0
+              ],
+              [
+                143,
+                143.0
+              ],
+              [
+                166,
+                166.0
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.5625,
+            "precision": 0.8181818181818182
+          }
+        },
+        {
+          "case_id": "39c3-1611",
+          "returncode": 0,
+          "wall_seconds": 22.538,
+          "input_sha256": "075c9c8012fe35400d414dab1833db15e9258a7bfe9320a24f957b8ed9ed399a",
+          "warnings": [
+            "Native OCR is present. AI descriptions are empty; the published slides-mode description loop has no text context and does not call a model service."
+          ],
+          "slide_ranges": [
+            [
+              0.0,
+              21.0
+            ],
+            [
+              21.0,
+              29.0
+            ],
+            [
+              29.0,
+              33.0
+            ],
+            [
+              33.0,
+              65.0
+            ],
+            [
+              65.0,
+              69.0
+            ],
+            [
+              69.0,
+              99.0
+            ],
+            [
+              99.0,
+              142.0
+            ],
+            [
+              142.0,
+              146.0
+            ],
+            [
+              146.0,
+              156.0
+            ],
+            [
+              156.0,
+              164.0
+            ],
+            [
+              164.0,
+              170.0
+            ],
+            [
+              170.0,
+              173.0
+            ],
+            [
+              173.0,
+              180.0
+            ]
+          ],
+          "frame_count": 13,
+          "timestamp_kind": "whole_second_scene_starts",
+          "roi_cer": {
+            "status": "not_comparable",
+            "reason": "native Tesseract5.5.4 ran, but default export contains whole-frame OCR text without spatial boxes"
+          },
+          "ocr_slide_sections": 11,
+          "boundaries": {
+            "reference_count": 12,
+            "prediction_count": 12,
+            "matched": 5,
+            "matches": [
+              [
+                30,
+                29.0
+              ],
+              [
+                70,
+                69.0
+              ],
+              [
+                100,
+                99.0
+              ],
+              [
+                143,
+                142.0
+              ],
+              [
+                157,
+                156.0
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.4166666666666667,
+            "precision": 0.4166666666666667
+          }
+        },
+        {
+          "case_id": "39c3-1979",
+          "returncode": 0,
+          "wall_seconds": 7.635,
+          "input_sha256": "7dc914cb4bb2ecb78069ba614f3d42a688f9ebee6ea3d19106267118efc9d024",
+          "warnings": [
+            "Native OCR is present. AI descriptions are empty; the published slides-mode description loop has no text context and does not call a model service."
+          ],
+          "slide_ranges": [
+            [
+              0.0,
+              147.0
+            ],
+            [
+              147.0,
+              180.0
+            ]
+          ],
+          "frame_count": 2,
+          "timestamp_kind": "whole_second_scene_starts",
+          "roi_cer": {
+            "status": "not_comparable",
+            "reason": "native Tesseract5.5.4 ran, but default export contains whole-frame OCR text without spatial boxes"
+          },
+          "ocr_slide_sections": 1,
+          "boundaries": {
+            "reference_count": 3,
+            "prediction_count": 1,
+            "matched": 1,
+            "matches": [
+              [
+                147,
+                147.0
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.3333333333333333,
+            "precision": 1.0
+          }
+        },
+        {
+          "case_id": "39c3-1989",
+          "returncode": 0,
+          "wall_seconds": 11.018,
+          "input_sha256": "631a6d1aca378d0a3374f1ab94d1874666f602715582125fbeb4d2655232144e",
+          "warnings": [
+            "Native OCR is present. AI descriptions are empty; the published slides-mode description loop has no text context and does not call a model service."
+          ],
+          "slide_ranges": [
+            [
+              0.0,
+              19.0
+            ],
+            [
+              19.0,
+              147.0
+            ],
+            [
+              147.0,
+              175.0
+            ],
+            [
+              175.0,
+              180.0
+            ]
+          ],
+          "frame_count": 4,
+          "timestamp_kind": "whole_second_scene_starts",
+          "roi_cer": {
+            "status": "not_comparable",
+            "reason": "native Tesseract5.5.4 ran, but default export contains whole-frame OCR text without spatial boxes"
+          },
+          "ocr_slide_sections": 4,
+          "boundaries": {
+            "reference_count": 4,
+            "prediction_count": 3,
+            "matched": 1,
+            "matches": [
+              [
+                19,
+                19.0
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.25,
+            "precision": 0.3333333333333333
+          }
+        },
+        {
+          "case_id": "39c3-2042",
+          "returncode": 0,
+          "wall_seconds": 23.868,
+          "input_sha256": "6ee5fb351fe2f140b7e5bebb5c38671b5770d337b4e1e56a1809b0b7c5c6195a",
+          "warnings": [
+            "Native OCR is present. AI descriptions are empty; the published slides-mode description loop has no text context and does not call a model service."
+          ],
+          "slide_ranges": [
+            [
+              0.0,
+              5.0
+            ],
+            [
+              5.0,
+              8.0
+            ],
+            [
+              8.0,
+              12.0
+            ],
+            [
+              12.0,
+              16.0
+            ],
+            [
+              16.0,
+              25.0
+            ],
+            [
+              25.0,
+              29.0
+            ],
+            [
+              29.0,
+              31.0
+            ],
+            [
+              31.0,
+              36.0
+            ],
+            [
+              36.0,
+              38.0
+            ],
+            [
+              38.0,
+              41.0
+            ],
+            [
+              41.0,
+              43.0
+            ],
+            [
+              43.0,
+              46.0
+            ],
+            [
+              46.0,
+              55.0
+            ],
+            [
+              55.0,
+              57.0
+            ],
+            [
+              57.0,
+              74.0
+            ],
+            [
+              74.0,
+              79.0
+            ],
+            [
+              79.0,
+              85.0
+            ],
+            [
+              85.0,
+              92.0
+            ],
+            [
+              92.0,
+              95.0
+            ],
+            [
+              95.0,
+              99.0
+            ],
+            [
+              99.0,
+              107.0
+            ],
+            [
+              107.0,
+              112.0
+            ],
+            [
+              112.0,
+              117.0
+            ],
+            [
+              117.0,
+              120.0
+            ],
+            [
+              120.0,
+              123.0
+            ],
+            [
+              123.0,
+              125.0
+            ],
+            [
+              125.0,
+              137.0
+            ],
+            [
+              137.0,
+              143.0
+            ],
+            [
+              143.0,
+              157.0
+            ],
+            [
+              157.0,
+              165.0
+            ],
+            [
+              165.0,
+              180.0
+            ]
+          ],
+          "frame_count": 31,
+          "timestamp_kind": "whole_second_scene_starts",
+          "roi_cer": {
+            "status": "not_comparable",
+            "reason": "native Tesseract5.5.4 ran, but default export contains whole-frame OCR text without spatial boxes"
+          },
+          "ocr_slide_sections": 20,
+          "boundaries": {
+            "status": "not_applicable",
+            "reason": "no conventional stable informational slide boundaries in labeled dev window"
+          }
+        },
+        {
+          "case_id": "39c3-2154",
+          "returncode": 0,
+          "wall_seconds": 31.869,
+          "input_sha256": "fc7192e34cd776f5095ade504f018e92ea0bf40b76ee3e83e4647b791fea69f3",
+          "warnings": [
+            "Native OCR is present. AI descriptions are empty; the published slides-mode description loop has no text context and does not call a model service."
+          ],
+          "slide_ranges": [
+            [
+              0.0,
+              66.0
+            ],
+            [
+              66.0,
+              72.0
+            ],
+            [
+              72.0,
+              74.0
+            ],
+            [
+              74.0,
+              82.0
+            ],
+            [
+              82.0,
+              84.0
+            ],
+            [
+              84.0,
+              86.0
+            ],
+            [
+              86.0,
+              97.0
+            ],
+            [
+              97.0,
+              100.0
+            ],
+            [
+              100.0,
+              106.0
+            ],
+            [
+              106.0,
+              108.0
+            ],
+            [
+              108.0,
+              110.0
+            ],
+            [
+              110.0,
+              146.0
+            ],
+            [
+              146.0,
+              156.0
+            ],
+            [
+              156.0,
+              161.0
+            ],
+            [
+              161.0,
+              168.0
+            ],
+            [
+              168.0,
+              170.0
+            ],
+            [
+              170.0,
+              172.0
+            ],
+            [
+              172.0,
+              175.0
+            ],
+            [
+              175.0,
+              178.0
+            ],
+            [
+              178.0,
+              180.0
+            ]
+          ],
+          "frame_count": 20,
+          "timestamp_kind": "whole_second_scene_starts",
+          "roi_cer": {
+            "status": "not_comparable",
+            "reason": "native Tesseract5.5.4 ran, but default export contains whole-frame OCR text without spatial boxes"
+          },
+          "ocr_slide_sections": 15,
+          "boundaries": {
+            "status": "not_applicable",
+            "reason": "no conventional stable informational slide boundaries in labeled dev window"
+          }
+        },
+        {
+          "case_id": "39c3-2188",
+          "returncode": 0,
+          "wall_seconds": 3.251,
+          "input_sha256": "62e4f80bd51ee3dc5ba77cb8f9d11c7d023f18936ec453deca211a5aa57d9437",
+          "warnings": [
+            "Native OCR is present. AI descriptions are empty; the published slides-mode description loop has no text context and does not call a model service."
+          ],
+          "slide_ranges": [
+            [
+              0.0,
+              69.0
+            ],
+            [
+              69.0,
+              81.0
+            ],
+            [
+              81.0,
+              180.0
+            ]
+          ],
+          "frame_count": 3,
+          "timestamp_kind": "whole_second_scene_starts",
+          "roi_cer": {
+            "status": "not_comparable",
+            "reason": "native Tesseract5.5.4 ran, but default export contains whole-frame OCR text without spatial boxes"
+          },
+          "ocr_slide_sections": 0,
+          "boundaries": {
+            "status": "not_applicable",
+            "reason": "no conventional stable informational slide boundaries in labeled dev window"
+          }
+        },
+        {
+          "case_id": "39c3-2274",
+          "returncode": 0,
+          "wall_seconds": 25.247,
+          "input_sha256": "1ce923120997691c7ebc27e162d095e2051c0fad34f02d22394454092e65ec4a",
+          "warnings": [
+            "Native OCR is present. AI descriptions are empty; the published slides-mode description loop has no text context and does not call a model service."
+          ],
+          "slide_ranges": [
+            [
+              0.0,
+              15.0
+            ],
+            [
+              15.0,
+              58.0
+            ],
+            [
+              58.0,
+              80.0
+            ],
+            [
+              80.0,
+              94.0
+            ],
+            [
+              94.0,
+              130.0
+            ],
+            [
+              130.0,
+              180.0
+            ]
+          ],
+          "frame_count": 6,
+          "timestamp_kind": "whole_second_scene_starts",
+          "roi_cer": {
+            "status": "not_comparable",
+            "reason": "native Tesseract5.5.4 ran, but default export contains whole-frame OCR text without spatial boxes"
+          },
+          "ocr_slide_sections": 6,
+          "boundaries": {
+            "reference_count": 5,
+            "prediction_count": 5,
+            "matched": 3,
+            "matches": [
+              [
+                16,
+                15.0
+              ],
+              [
+                59,
+                58.0
+              ],
+              [
+                80,
+                80.0
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.6,
+            "precision": 0.6
+          }
+        },
+        {
+          "case_id": "39c3-2372",
+          "returncode": 0,
+          "wall_seconds": 17.598,
+          "input_sha256": "01ae56db455b3207d60989a6691d09e0ed33acd4e1c1347c4b39719136de1113",
+          "warnings": [
+            "Native OCR is present. AI descriptions are empty; the published slides-mode description loop has no text context and does not call a model service."
+          ],
+          "slide_ranges": [
+            [
+              0.0,
+              44.0
+            ],
+            [
+              44.0,
+              69.0
+            ],
+            [
+              69.0,
+              94.0
+            ],
+            [
+              94.0,
+              101.0
+            ],
+            [
+              101.0,
+              104.0
+            ],
+            [
+              104.0,
+              108.0
+            ],
+            [
+              108.0,
+              112.0
+            ],
+            [
+              112.0,
+              123.0
+            ],
+            [
+              123.0,
+              143.0
+            ],
+            [
+              143.0,
+              147.0
+            ],
+            [
+              147.0,
+              157.0
+            ],
+            [
+              157.0,
+              169.0
+            ],
+            [
+              169.0,
+              180.0
+            ]
+          ],
+          "frame_count": 13,
+          "timestamp_kind": "whole_second_scene_starts",
+          "roi_cer": {
+            "status": "not_comparable",
+            "reason": "native Tesseract5.5.4 ran, but default export contains whole-frame OCR text without spatial boxes"
+          },
+          "ocr_slide_sections": 12,
+          "boundaries": {
+            "reference_count": 10,
+            "prediction_count": 12,
+            "matched": 3,
+            "matches": [
+              [
+                69,
+                69.0
+              ],
+              [
+                94,
+                94.0
+              ],
+              [
+                112,
+                112.0
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.3,
+            "precision": 0.25
+          }
+        }
+      ],
+      "aggregate_boundaries": {
+        "reference_count": 60,
+        "prediction_count": 45,
+        "matched": 23,
+        "recall": 0.38333333333333336,
+        "precision": 0.5111111111111111
+      },
+      "total_wall_seconds": 174.849
+    },
+    {
+      "tool": "slides-extractor",
+      "runs": [
+        {
+          "case_id": "39c3-1317",
+          "returncode": 0,
+          "wall_seconds": 2.564,
+          "input_sha256": "257cbae3d65b7de306ab6f1e247dd2c95ae81520abfadda2ccde507cd0b7c959",
+          "warnings": [],
+          "slides": [
+            {
+              "scene_start": 13.6,
+              "capture_time": 27.08,
+              "notes_entry": "ppt/notesSlides/notesSlide1.xml"
+            },
+            {
+              "scene_start": 28.08,
+              "capture_time": 76.0,
+              "notes_entry": "ppt/notesSlides/notesSlide2.xml"
+            },
+            {
+              "scene_start": 77.6,
+              "capture_time": 146.0,
+              "notes_entry": "ppt/notesSlides/notesSlide3.xml"
+            },
+            {
+              "scene_start": 147.0,
+              "capture_time": 149.8,
+              "notes_entry": "ppt/notesSlides/notesSlide4.xml"
+            },
+            {
+              "scene_start": 150.8,
+              "capture_time": 179.0,
+              "notes_entry": "ppt/notesSlides/notesSlide5.xml"
+            }
+          ],
+          "frame_count": 5,
+          "timestamp_kind": "scene_starts",
+          "roi_cer": {
+            "status": "not_applicable",
+            "reason": "slide-only tool; no OCR feature"
+          },
+          "boundaries": {
+            "reference_count": 10,
+            "prediction_count": 5,
+            "matched": 4,
+            "matches": [
+              [
+                28,
+                28.08
+              ],
+              [
+                77,
+                77.6
+              ],
+              [
+                147,
+                147.0
+              ],
+              [
+                151,
+                150.8
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.4,
+            "precision": 0.8
+          }
+        },
+        {
+          "case_id": "39c3-1508",
+          "returncode": 0,
+          "wall_seconds": 2.341,
+          "input_sha256": "f514284d9f182834d5f9281e10a16dfa428f09f74d1be7c774622aee30d6ae06",
+          "warnings": [],
+          "slides": [
+            {
+              "scene_start": 124.32,
+              "capture_time": 132.96,
+              "notes_entry": "ppt/notesSlides/notesSlide1.xml"
+            },
+            {
+              "scene_start": 133.96,
+              "capture_time": 142.4,
+              "notes_entry": "ppt/notesSlides/notesSlide2.xml"
+            },
+            {
+              "scene_start": 143.4,
+              "capture_time": 156.44,
+              "notes_entry": "ppt/notesSlides/notesSlide3.xml"
+            },
+            {
+              "scene_start": 158.04,
+              "capture_time": 165.28,
+              "notes_entry": "ppt/notesSlides/notesSlide4.xml"
+            },
+            {
+              "scene_start": 166.88,
+              "capture_time": 179.0,
+              "notes_entry": "ppt/notesSlides/notesSlide5.xml"
+            }
+          ],
+          "frame_count": 5,
+          "timestamp_kind": "scene_starts",
+          "roi_cer": {
+            "status": "not_applicable",
+            "reason": "slide-only tool; no OCR feature"
+          },
+          "boundaries": {
+            "reference_count": 16,
+            "prediction_count": 5,
+            "matched": 4,
+            "matches": [
+              [
+                124,
+                124.32
+              ],
+              [
+                134,
+                133.96
+              ],
+              [
+                143,
+                143.4
+              ],
+              [
+                166,
+                166.88
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.25,
+            "precision": 0.8
+          }
+        },
+        {
+          "case_id": "39c3-1611",
+          "returncode": 0,
+          "wall_seconds": 1.923,
+          "input_sha256": "075c9c8012fe35400d414dab1833db15e9258a7bfe9320a24f957b8ed9ed399a",
+          "warnings": [],
+          "slides": [
+            {
+              "scene_start": 78.6,
+              "capture_time": 98.88,
+              "notes_entry": "ppt/notesSlides/notesSlide1.xml"
+            },
+            {
+              "scene_start": 100.48,
+              "capture_time": 141.6,
+              "notes_entry": "ppt/notesSlides/notesSlide2.xml"
+            },
+            {
+              "scene_start": 143.2,
+              "capture_time": 145.2,
+              "notes_entry": "ppt/notesSlides/notesSlide3.xml"
+            },
+            {
+              "scene_start": 146.2,
+              "capture_time": 155.84,
+              "notes_entry": "ppt/notesSlides/notesSlide4.xml"
+            },
+            {
+              "scene_start": 158.44,
+              "capture_time": 163.64,
+              "notes_entry": "ppt/notesSlides/notesSlide5.xml"
+            },
+            {
+              "scene_start": 164.64,
+              "capture_time": 169.48,
+              "notes_entry": "ppt/notesSlides/notesSlide6.xml"
+            },
+            {
+              "scene_start": 173.28,
+              "capture_time": 179.0,
+              "notes_entry": "ppt/notesSlides/notesSlide7.xml"
+            }
+          ],
+          "frame_count": 7,
+          "timestamp_kind": "scene_starts",
+          "roi_cer": {
+            "status": "not_applicable",
+            "reason": "slide-only tool; no OCR feature"
+          },
+          "boundaries": {
+            "reference_count": 12,
+            "prediction_count": 7,
+            "matched": 2,
+            "matches": [
+              [
+                100,
+                100.48
+              ],
+              [
+                143,
+                143.2
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.16666666666666666,
+            "precision": 0.2857142857142857
+          }
+        },
+        {
+          "case_id": "39c3-1979",
+          "returncode": 0,
+          "wall_seconds": 1.787,
+          "input_sha256": "7dc914cb4bb2ecb78069ba614f3d42a688f9ebee6ea3d19106267118efc9d024",
+          "warnings": [],
+          "slides": [
+            {
+              "scene_start": 39.68,
+              "capture_time": 146.0,
+              "notes_entry": "ppt/notesSlides/notesSlide1.xml"
+            },
+            {
+              "scene_start": 147.6,
+              "capture_time": 179.0,
+              "notes_entry": "ppt/notesSlides/notesSlide2.xml"
+            }
+          ],
+          "frame_count": 2,
+          "timestamp_kind": "scene_starts",
+          "roi_cer": {
+            "status": "not_applicable",
+            "reason": "slide-only tool; no OCR feature"
+          },
+          "boundaries": {
+            "reference_count": 3,
+            "prediction_count": 2,
+            "matched": 2,
+            "matches": [
+              [
+                40,
+                39.68
+              ],
+              [
+                147,
+                147.6
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.6666666666666666,
+            "precision": 1.0
+          }
+        },
+        {
+          "case_id": "39c3-1989",
+          "returncode": 0,
+          "wall_seconds": 1.851,
+          "input_sha256": "631a6d1aca378d0a3374f1ab94d1874666f602715582125fbeb4d2655232144e",
+          "warnings": [],
+          "slides": [
+            {
+              "scene_start": 19.24,
+              "capture_time": 137.8,
+              "notes_entry": "ppt/notesSlides/notesSlide1.xml"
+            },
+            {
+              "scene_start": 138.8,
+              "capture_time": 146.4,
+              "notes_entry": "ppt/notesSlides/notesSlide2.xml"
+            },
+            {
+              "scene_start": 147.4,
+              "capture_time": 174.08,
+              "notes_entry": "ppt/notesSlides/notesSlide3.xml"
+            },
+            {
+              "scene_start": 175.08,
+              "capture_time": 179.0,
+              "notes_entry": "ppt/notesSlides/notesSlide4.xml"
+            }
+          ],
+          "frame_count": 4,
+          "timestamp_kind": "scene_starts",
+          "roi_cer": {
+            "status": "not_applicable",
+            "reason": "slide-only tool; no OCR feature"
+          },
+          "boundaries": {
+            "reference_count": 4,
+            "prediction_count": 4,
+            "matched": 2,
+            "matches": [
+              [
+                19,
+                19.24
+              ],
+              [
+                139,
+                138.8
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.5,
+            "precision": 0.5
+          }
+        },
+        {
+          "case_id": "39c3-2042",
+          "returncode": 0,
+          "wall_seconds": 2.101,
+          "input_sha256": "6ee5fb351fe2f140b7e5bebb5c38671b5770d337b4e1e56a1809b0b7c5c6195a",
+          "warnings": [],
+          "slides": [],
+          "frame_count": 0,
+          "timestamp_kind": "scene_starts",
+          "roi_cer": {
+            "status": "not_applicable",
+            "reason": "slide-only tool; no OCR feature"
+          },
+          "boundaries": {
+            "status": "not_applicable",
+            "reason": "no conventional stable informational slide boundaries in labeled dev window"
+          }
+        },
+        {
+          "case_id": "39c3-2154",
+          "returncode": 0,
+          "wall_seconds": 2.317,
+          "input_sha256": "fc7192e34cd776f5095ade504f018e92ea0bf40b76ee3e83e4647b791fea69f3",
+          "warnings": [],
+          "slides": [
+            {
+              "scene_start": 11.8,
+              "capture_time": 27.28,
+              "notes_entry": "ppt/notesSlides/notesSlide1.xml"
+            },
+            {
+              "scene_start": 28.28,
+              "capture_time": 56.96,
+              "notes_entry": "ppt/notesSlides/notesSlide2.xml"
+            },
+            {
+              "scene_start": 57.96,
+              "capture_time": 65.76,
+              "notes_entry": "ppt/notesSlides/notesSlide3.xml"
+            }
+          ],
+          "frame_count": 3,
+          "timestamp_kind": "scene_starts",
+          "roi_cer": {
+            "status": "not_applicable",
+            "reason": "slide-only tool; no OCR feature"
+          },
+          "boundaries": {
+            "status": "not_applicable",
+            "reason": "no conventional stable informational slide boundaries in labeled dev window"
+          }
+        },
+        {
+          "case_id": "39c3-2188",
+          "returncode": 0,
+          "wall_seconds": 2.121,
+          "input_sha256": "62e4f80bd51ee3dc5ba77cb8f9d11c7d023f18936ec453deca211a5aa57d9437",
+          "warnings": [],
+          "slides": [],
+          "frame_count": 0,
+          "timestamp_kind": "scene_starts",
+          "roi_cer": {
+            "status": "not_applicable",
+            "reason": "slide-only tool; no OCR feature"
+          },
+          "boundaries": {
+            "status": "not_applicable",
+            "reason": "no conventional stable informational slide boundaries in labeled dev window"
+          }
+        },
+        {
+          "case_id": "39c3-2274",
+          "returncode": 0,
+          "wall_seconds": 1.907,
+          "input_sha256": "1ce923120997691c7ebc27e162d095e2051c0fad34f02d22394454092e65ec4a",
+          "warnings": [],
+          "slides": [
+            {
+              "scene_start": 15.84,
+              "capture_time": 57.76,
+              "notes_entry": "ppt/notesSlides/notesSlide1.xml"
+            },
+            {
+              "scene_start": 58.76,
+              "capture_time": 79.4,
+              "notes_entry": "ppt/notesSlides/notesSlide2.xml"
+            },
+            {
+              "scene_start": 80.4,
+              "capture_time": 93.24,
+              "notes_entry": "ppt/notesSlides/notesSlide3.xml"
+            },
+            {
+              "scene_start": 94.24,
+              "capture_time": 100.48,
+              "notes_entry": "ppt/notesSlides/notesSlide4.xml"
+            },
+            {
+              "scene_start": 101.48,
+              "capture_time": 104.08,
+              "notes_entry": "ppt/notesSlides/notesSlide5.xml"
+            },
+            {
+              "scene_start": 106.88,
+              "capture_time": 129.36,
+              "notes_entry": "ppt/notesSlides/notesSlide6.xml"
+            },
+            {
+              "scene_start": 130.36,
+              "capture_time": 137.6,
+              "notes_entry": "ppt/notesSlides/notesSlide7.xml"
+            },
+            {
+              "scene_start": 138.6,
+              "capture_time": 179.0,
+              "notes_entry": "ppt/notesSlides/notesSlide8.xml"
+            }
+          ],
+          "frame_count": 8,
+          "timestamp_kind": "scene_starts",
+          "roi_cer": {
+            "status": "not_applicable",
+            "reason": "slide-only tool; no OCR feature"
+          },
+          "boundaries": {
+            "reference_count": 5,
+            "prediction_count": 8,
+            "matched": 5,
+            "matches": [
+              [
+                16,
+                15.84
+              ],
+              [
+                59,
+                58.76
+              ],
+              [
+                80,
+                80.4
+              ],
+              [
+                101,
+                101.48
+              ],
+              [
+                139,
+                138.6
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 1.0,
+            "precision": 0.625
+          }
+        },
+        {
+          "case_id": "39c3-2372",
+          "returncode": 0,
+          "wall_seconds": 2.315,
+          "input_sha256": "01ae56db455b3207d60989a6691d09e0ed33acd4e1c1347c4b39719136de1113",
+          "warnings": [],
+          "slides": [
+            {
+              "scene_start": 16.04,
+              "capture_time": 43.32,
+              "notes_entry": "ppt/notesSlides/notesSlide1.xml"
+            },
+            {
+              "scene_start": 44.92,
+              "capture_time": 68.4,
+              "notes_entry": "ppt/notesSlides/notesSlide2.xml"
+            },
+            {
+              "scene_start": 69.4,
+              "capture_time": 92.44,
+              "notes_entry": "ppt/notesSlides/notesSlide3.xml"
+            }
+          ],
+          "frame_count": 3,
+          "timestamp_kind": "scene_starts",
+          "roi_cer": {
+            "status": "not_applicable",
+            "reason": "slide-only tool; no OCR feature"
+          },
+          "boundaries": {
+            "reference_count": 10,
+            "prediction_count": 3,
+            "matched": 2,
+            "matches": [
+              [
+                16,
+                16.04
+              ],
+              [
+                69,
+                69.4
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.2,
+            "precision": 0.6666666666666666
+          }
+        }
+      ],
+      "aggregate_boundaries": {
+        "reference_count": 60,
+        "prediction_count": 34,
+        "matched": 21,
+        "recall": 0.35,
+        "precision": 0.6176470588235294
+      },
+      "total_wall_seconds": 21.227
+    },
+    {
+      "tool": "mcp-video-analyzer",
+      "runs": [
+        {
+          "case_id": "39c3-1317",
+          "returncode": 0,
+          "wall_seconds": 58.795,
+          "input_sha256": "257cbae3d65b7de306ab6f1e247dd2c95ae81520abfadda2ccde507cd0b7c959",
+          "warnings": [
+            "No scene cuts detected; used uniform temporal sampling (better for static clips and on-screen text OCR).",
+            "Transcript generated via Whisper fallback (no native transcript available)."
+          ],
+          "frame_count": 30,
+          "ocr_entry_count": 30,
+          "transcript_entry_count": 71,
+          "timestamp_kind": "uniform_samples",
+          "frame_times": [
+            0.0,
+            6.0,
+            12.0,
+            18.0,
+            24.0,
+            30.0,
+            36.0,
+            42.0,
+            48.0,
+            54.0,
+            60.0,
+            66.0,
+            72.0,
+            78.0,
+            84.0,
+            90.0,
+            96.0,
+            102.0,
+            108.0,
+            114.0,
+            120.0,
+            126.0,
+            132.0,
+            138.0,
+            144.0,
+            150.0,
+            156.0,
+            162.0,
+            168.0,
+            174.0
+          ],
+          "roi_cer": {
+            "status": "not_comparable",
+            "reason": "default OCR export has whole-frame text without bounding boxes; ROI selection cannot be reproduced without changing the tool"
+          },
+          "full_clip_caption_wer_diagnostic": {
+            "status": "measured",
+            "value": 0.06692160611854685,
+            "reference_units": 523,
+            "errors": 35,
+            "substitutions": 7,
+            "deletions": 5,
+            "insertions": 23,
+            "reference": "if that server happens to already be created you would get an error but ultimately you create the server this way and then you just pass that to receive message so conceptually this is what it looks like its actually very close to the way the real implementation goes the actual implementation of the message is slightly different but ultimately you create the server and then you constantly receive messages on that and you act on those messages as the server as the client its very similar its the opposite where you connect to the server by passing the address there if the server doesnt exist this will actually block until the server is created and this means that when youre starting up a new system you dont have to worry so much about concurrency because it will wait until the server is available so for example the printf function the printf function is provided by a server this connect wont succeed until the server is actually started and then once you have that connection you just call scalar message or lend or whatever on that and thats how you actually send a message to this other server lend messages means you can pass references to memory to slices as long as they are page aligned and pages in length and from this you actually get the different message types that we support theres the move borrow and mutable borrow again for move you can either send memory which detaches it from your process and actually moves it wholesale into the other process and that means you never can see that memory again because it has now been moved into the process memory space of the server for just numbers you can send scalars and the interesting bit about this is that these two in red are actually non blocking because youve moved the memory to another process why would you have to wait for it to respond theres not going to be a response so as soon as you send memory or send a scalar value your program just continues executing in contrast for borrow if youre borrowing memory to the other process if youre lending it then that is a lend message and if the memory that youre lending is mutable its a lend mutt and for scalar there really is no difference between a borrow and a mutable borrow so both of these use blocking scalars which return five scalar values back so that is the basic messaging architecture but of course messaging architecture does not an operating system make so lets go over the actual implementation a bit and im going to start with the tick timer because any time you start a new operating system one of the first things that you work on is the timing system how do you get the quantum going how do you switch between processes so the tick timer takes ownership of the hardware timer on the particular bit of hardware this might be the sys tick on an arm platform if we had one but this is a special hardware timer",
+            "hypothesis": "value in there as the argument and youd get your server out if that servers happens to already be created you would get an error but ultimately you create the server this way and then you just pass that to receive message so conceptually this is what it looks like its actually very close to the way the real implementation goes the actual implementation the message is slightly different but ultimately you create the server and then you constantly receive messages on that and you act on those messages as the server as the client its very similar its the opposite where you connect to the server by passing the address there if the server doesnt exist this will actually block until the server is created and this means that when youre starting up a new system you dont have to worry so much about concurrency because it will wait until the server is available so for example the printline printf function the printf functions provided by a server it wont this connect wont succeed until the server is actually started and then once you have that connection you just call scalar message or lend or whatever on that and thats how you actually send a message to this other server lend messages means you can pass references to memory to slices as long as they are page aligned and pages in length and from this you actually get the different message types that weve support theres the move borrow and mutable borrow again for move you can either send a memory which detaches it from your process and actually moves it wholesale into the other process and that means you never can see that memory again because it has now been moved into the process memory space of the server for just numbers you can send scalars and the interesting bit about this is that these two in red are actually nonblocking because youve moved the memory to another process why would you have to wait for it to respond theres not going to be a response so as soon as you send memory or send a scalar value your program just continues executing in contrast for borrow if youre borrowing memory to the other process if youre lending it then that is a lend message and if the memory that youre lending is mutable its a lend mutant and for scalar there really is no difference between a borrow and a mutable borrow so both of these use blocking scalars which return five scalar values back so that is the basic messaging architecture but of course messaging architecture does not an operating system make so lets go over the actual implementation a bit and im going to start with the tick timer because anytime you start a new operating system one of the first things that you work on is the timing system how do you get the quantum going how do you switch between processes so the tick timer takes ownership of the hardware timer on the particular bit of hardware this might be the cystic on an arm platform if we had one but this is a special hardware timer that existed on the precursor betrusted board"
+          },
+          "candidate_timestamp_diagnostic": {
+            "reference_count": 10,
+            "prediction_count": 29,
+            "matched": 6,
+            "matches": [
+              [
+                59,
+                60.0
+              ],
+              [
+                66,
+                66.0
+              ],
+              [
+                77,
+                78.0
+              ],
+              [
+                83,
+                84.0
+              ],
+              [
+                120,
+                120.0
+              ],
+              [
+                151,
+                150.0
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.6,
+            "precision": 0.20689655172413793
+          }
+        },
+        {
+          "case_id": "39c3-1508",
+          "returncode": 0,
+          "wall_seconds": 18.361,
+          "input_sha256": "f514284d9f182834d5f9281e10a16dfa428f09f74d1be7c774622aee30d6ae06",
+          "warnings": [
+            "Removed 1 black/blank frame(s) — video may be DRM-protected",
+            "Transcript generated via Whisper fallback (no native transcript available)."
+          ],
+          "frame_count": 5,
+          "ocr_entry_count": 4,
+          "transcript_entry_count": 51,
+          "timestamp_kind": "selected_scene_keyframes",
+          "frame_times": [
+            61.0,
+            68.0,
+            78.0,
+            102.0,
+            143.0
+          ],
+          "roi_cer": {
+            "status": "not_comparable",
+            "reason": "default OCR export has whole-frame text without bounding boxes; ROI selection cannot be reproduced without changing the tool"
+          },
+          "full_clip_caption_wer_diagnostic": {
+            "status": "measured",
+            "value": 0.10411622276029056,
+            "reference_units": 413,
+            "errors": 43,
+            "substitutions": 9,
+            "deletions": 26,
+            "insertions": 8,
+            "reference": "structurally it looks pretty similar oh but theres a couple of pesky mutations happening it looks like were not just checking each character anymore now were actually doing something with those characters right so how bad could it possibly be i mean surely this kind of state accumulation couldnt be too much of a problem well heres a comparable problem that i ran with lib afl for a bit um any takes on how long it takes the fuzzer to figure out how to get v equal to 4 yeah it takes about 250 000 to 34 million executions of lib afl with havoc to actually find v equals 4 right this is not a hard program right state is actually surprisingly really hard to solve so the thing is right think about it in terms of the sokoban puzzles again right we have one function which describes all sokoban puzzles right this one function describes all sokoban puzzles and what that means for us right is that if we use a fuzzer which is code coverage guided right every single puzzle has the same guidance which is insane that does not work so most software is actually highly stateful you might be familiar with typical uses of this we have client servers we have interactive programs like guis and stuff but like that may be what most user facing software is but this also applies to other kinds of software i mean think about a cpu right a cpu really is just a sokoban puzzle with more steps right you know like think about compilers right the inherent complexity and the enormous amount of state that we build when were actually building programs right think about databases right interactions in databases that have to be sequential in order to actually find different behavior in these programs and you know i really think this is important to stress right because we talked about how partitioning earlier really should be giving us a better indicator of how well weve tested something but partitioning in the ways that we do classically really just does not model state very well at all and we just dont have a general way to do it so yeah thats just an unfortunate reality of what were doing so lets think about another problem right what happens when we actually mutate an input right i might say that a mutation here is to apply a move right i moved left",
+            "hypothesis": "are test with the ascii characters yes structurally it looks pretty similar oh but theres a couple of pesky mutations happening it looks like were not just checking each character anymore now were actually doing something with those characters right so how bad could it possibly be i mean surely this kind of state accumulation couldnt be too much of a problem well heres a comparable problem that i ran with libeafel for a bit any takes on how long it takes the fuzzer to figure out how to get v equal to 4 yeah it takes about 250000 to 34 million executions of libeafel with havoc to actually find v equals 4 this is not a hard program state is actually surprisingly really hard to solve so the thing is think about it in terms of the socalled puzzles again we have one function which describes all socalled puzzles this one function describes all socalled puzzles puzzles and what that means for us is that if we use a fuzzer which is code coverage guided every single puzzle has the same guidance which is insane that does not work so most software is actually highly stateful you might be familiar with typical uses of this we have client servers we have interactive programs like goese and stuff but that may be what most userfacing software is but this also applies to other kinds of software i mean think about a cpu a cpu really is just a socalled puzzle with more steps think about compilers the inherent complexity and the enormous amount of state that we build when were actually building programs think about databases interactions in databases that have to be sequential in order to actually find different behavior in these programs and i really think this is important to stress right because we talked about how partitioning earlier really should be giving us a better indicator of how well weve tested something but partitioning in the ways that we do classically really just does not model state very well at all and we just dont have a general way to do it so thats just an unfortunate reality of what were doing so lets think about another problem right what happens when we actually mutate an input i might say that a mutation here is to apply a move i moved left"
+          },
+          "candidate_timestamp_diagnostic": {
+            "reference_count": 16,
+            "prediction_count": 5,
+            "matched": 4,
+            "matches": [
+              [
+                62,
+                61.0
+              ],
+              [
+                68,
+                68.0
+              ],
+              [
+                102,
+                102.0
+              ],
+              [
+                143,
+                143.0
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.25,
+            "precision": 0.8
+          }
+        },
+        {
+          "case_id": "39c3-1611",
+          "returncode": 0,
+          "wall_seconds": 23.766,
+          "input_sha256": "075c9c8012fe35400d414dab1833db15e9258a7bfe9320a24f957b8ed9ed399a",
+          "warnings": [
+            "Transcript generated via Whisper fallback (no native transcript available)."
+          ],
+          "frame_count": 13,
+          "ocr_entry_count": 7,
+          "transcript_entry_count": 69,
+          "timestamp_kind": "selected_scene_keyframes",
+          "frame_times": [
+            21.0,
+            29.0,
+            33.0,
+            65.0,
+            69.0,
+            146.0,
+            156.0,
+            156.0,
+            156.0,
+            158.0,
+            164.0,
+            170.0,
+            173.0
+          ],
+          "roi_cer": {
+            "status": "not_comparable",
+            "reason": "default OCR export has whole-frame text without bounding boxes; ROI selection cannot be reproduced without changing the tool"
+          },
+          "full_clip_caption_wer_diagnostic": {
+            "status": "measured",
+            "value": 0.0989010989010989,
+            "reference_units": 546,
+            "errors": 54,
+            "substitutions": 31,
+            "deletions": 3,
+            "insertions": 20,
+            "reference": "some audio stuff not all of it parts of the gpu especially the user space and were in much better shape now we still have two fairly big kernel drivers the display controller and the gpu that are only downstream but we will continue to work on pushing these upstream and yeah thats our current focus just upstreaming all these things before we build new features and now that ive talked about how the reverse engineering tooling and all that works lets im going to walk through how i used all of this to reverse engineer the usb ports and what makes them so special and why they are so complicated yeah why its so complicated to support them on these machines now usb is fairly old in 1996 the first version dropped 15mbits they called it low speed two years later they realized this is actually quite nice of a bus so we could need more bandwidth lets do full speed well eventually this was also too slow and after full obviously comes high speed with usb 2 so this is 480mbits per second again today this is still slow so were going to do super speed with five gigabit per second because this naming was not confusing enough were going to do super speed plus with 10 gigabits per second now at this point even the usb implementers from realize that maybe the naming gets a little bit confusing because if you tell a random person oh yeah i have a usb full speed device you would expect its very fast well its actually very very slow and so what they finally did was that they when they introduced the 20 gigabit version they just called it usb 20 gigabit per second and they changed all the names i mean not all of them they kept low full and high but all the others they just changed the marketing names to essentially just how fast the usb was actually is to make this a bit easier and then in 2019 we got usb 4 which does up to 40 gigabit per second and usb 4 is a little bit special because its not just another iteration of usb with more speed this is actually thunderbolt open source version because the specification is fully available its very very long and usb 4 then also supports stuff like pcie tunneling and displayport tunneling and so on but the point im trying to make here this is a very complex piece of hardware with lots of moving parts that we all have to get supported and while improving the bandwidth they also need new connectors at some point so originally probably all of them are with usb a and b and theres mini and micro and then the usb 3 variants and so on so lots of these connectors you probably know how it goes you always need three tries to get these things working and at least in theory with usbc this is no longer the case so this is the new connector which has a lot of pins its symmetric so at least in theory you can just rotate it and everything will work fine and this can also carry a lot of different signals",
+            "hypothesis": "usb3 some audio stuff not all of it parts of the gpu especially the user space and would i much better shape now we still have a two fairly big kernel drivers the display control and the gpu they are only downstream but we will continue to work on pushing these upstream and yeah thats our current focus just absolutely all these things before we build new features and now that ive talked about how the rules engineering tooling and all that works lets im going to talk through how i used all of this to reverse engineer the usb parts and what makes them so special and why they are so complicated yeah why its so complicated to support them on these machines now usb is fairly old in 1996 the first version dropped 15 mb they call it a low speed two years later they realized this is actually quite nice of a bus so we could need more bandwidth lets do full speed well eventually this was also too slow and after full obviously comes high speed with usb 2 so this is 480 mb per second again today this is still slow so were going to do super speed with 5 gigabit per second because this naming was not confusing enough were going to do super speed plus with a 10 gigabit per second now at this point even the usb implementals form realized that maybe the naming gets a little bit of confusing because if you tell a random person oh yeah i have a usb full speed device it would expect this very fast was actually very very slow and so what they finally did was that when they introduced the 20 gigabit version they just called it usb 20 gigabit per second and they changed all the names i mean not all of them they kept low full on high but all the others they just changed the marketing names to essentially just how fast the usb was actually is to make this a bit easier and then in 2019 we got usb 4 which was up to 40 gigabit per second and used before it was a little bit special because its not just another iteration of usb with more speed this is actually thunderbolt open source version because the specification is fully available its very very long and usb 4 then also supports stuff like pcie tunneling and display 4 tunneling and so on but the point im trying to make here this is a very complex piece of hardware with lots of moving parts that we all have to get supported and while improving the bandwidth they also need new connectors at some point so originally it probably all of them over the usb a and b and theres mini and micro and then the usb 3 variants and so on there are lots of these connectors you probably know how it goes you always need three tries to get these things working and at least in theory with usb c this is not another case so this is the new connector which has a lot of pins its symmetric so at least in theory you can just rotate it and everything work will work fine and this can also carry a lot of different signals and all the modern mix have just"
+          },
+          "candidate_timestamp_diagnostic": {
+            "reference_count": 12,
+            "prediction_count": 13,
+            "matched": 3,
+            "matches": [
+              [
+                30,
+                29.0
+              ],
+              [
+                70,
+                69.0
+              ],
+              [
+                157,
+                156.0
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.25,
+            "precision": 0.23076923076923078
+          }
+        },
+        {
+          "case_id": "39c3-1979",
+          "returncode": 0,
+          "wall_seconds": 103.348,
+          "input_sha256": "7dc914cb4bb2ecb78069ba614f3d42a688f9ebee6ea3d19106267118efc9d024",
+          "warnings": [
+            "No scene cuts detected; used uniform temporal sampling (better for static clips and on-screen text OCR).",
+            "Transcript generated via Whisper fallback (no native transcript available)."
+          ],
+          "frame_count": 30,
+          "ocr_entry_count": 30,
+          "transcript_entry_count": 31,
+          "timestamp_kind": "uniform_samples",
+          "frame_times": [
+            0.0,
+            6.0,
+            12.0,
+            18.0,
+            24.0,
+            30.0,
+            36.0,
+            42.0,
+            48.0,
+            54.0,
+            60.0,
+            66.0,
+            72.0,
+            78.0,
+            84.0,
+            90.0,
+            96.0,
+            102.0,
+            108.0,
+            114.0,
+            120.0,
+            126.0,
+            132.0,
+            138.0,
+            144.0,
+            150.0,
+            156.0,
+            162.0,
+            168.0,
+            174.0
+          ],
+          "roi_cer": {
+            "status": "not_comparable",
+            "reason": "default OCR export has whole-frame text without bounding boxes; ROI selection cannot be reproduced without changing the tool"
+          },
+          "full_clip_caption_wer_diagnostic": {
+            "status": "measured",
+            "value": 0.1718377088305489,
+            "reference_units": 419,
+            "errors": 72,
+            "substitutions": 23,
+            "deletions": 7,
+            "insertions": 42,
+            "reference": "in terms of gpu you only need to render two triangles with your texture and you can rotate it you can scale it to some point and then you can pack a lot of glyphs inside a texture so this is one example and you can fit quite a lot of glyphs into a single texture and then you can use it in game or even in browser if you want of course the quality is lets say okay because if you have a big magnification of your texture then you will start to see a lot of artifacts so its okay for games maybe its not so much okay for lets say document if you use this technique to render a pdf on screen maybe its not the best one way to improve the rendering is to enforce what i call vertical h inting so explain that h inting so here on the left can you see okay no you cannot see my so when you have no h inting you have your shape okay as bezier curve and behind you have all the pixels that will be on and off depending if they are inside or outside the shape and on the border this is where you put some anti aliasing for native h inting so the designer of the typeface for this specific size say oh you have to modify the path just to fit the grid and its a bit nicer but you have also auto hinting so you try to compute everything automatically but its not as nice as for the native h inting and the last one is vertical h inting you only enforce inting in the vertical direction and you keep it free on the horizontal direction and when you do that then you can have very precise rendering because you can position your text with tenths of pixel position so you dont have to align your text on the pixel grid you can put it everywhere of course it only works with horizontal text but it provides you quite a good quality and then you have another problem which is called well subpixel zoo so theres a nice site that shows you all the different displays so depending if youre on a computer on a mobile or some weird mobile or some weird screen this is what is really a pixel so what ive explained with anti aliasing most of the time we use lcd so this is the second one",
+            "hypothesis": "and from this simple id of texture mapping it was really a nice id because in terms of gpu you only need to render two triangles with your texture and you can rotate it you can scale it to some point and then you can pack a lot of glyphs inside a texture so this is one example and you can fit quite a lot of glyphs into a single texture and then you can use it in a game or even in a browser if you want of course the quality is lets say okay because if you have a big magnification of your texture then you will start to see a lot of artifacts so its okay for games maybe its not so much okay for all lets say documentary if you use a technique to render a pdf on screen maybe its not the best one way to improve the rendering is to enforce what i call vertical entity so explain that in thing so here on the left you can use okay now you can not see my curve so when you have no inting you have your shape okay as basic curve and behind you have all the pixels that will be on and off depending is your inside or outside the shape and on the border this is where you put some on the aliasing for native inting so you are the designer of the typeface for this specific size say oh you have to modify the pass just to fit the grid and its a bit nicer but you have also auto inting so you try to compute everything automatically but its not as nice as for the native inting and the last one is vertical inting you only enforce inting for the in the vertical direction and you keep it free on the horizontal direction and when you do that then you can have very precise rendering because you can position your text with a tense of pixel position so you dont have to align your text on the pixel grid you can put it everywhere of course it only works with horizontal text but its a it provides you quite a good quality and then you have another problem which is called well super pixel zoom so there is a nice side that shows you all the different display so depending if youre on a computer or a mobile or some weird mobile or some weird screen this is what is really a pixel so what im explaining with anti aliasing most of the time we use lcd so this is the second one and you take advantage of the fact that really a pixel"
+          },
+          "candidate_timestamp_diagnostic": {
+            "reference_count": 3,
+            "prediction_count": 29,
+            "matched": 0,
+            "matches": [],
+            "tolerance_seconds": 1.0,
+            "recall": 0.0,
+            "precision": 0.0
+          }
+        },
+        {
+          "case_id": "39c3-1989",
+          "returncode": 0,
+          "wall_seconds": 19.748,
+          "input_sha256": "631a6d1aca378d0a3374f1ab94d1874666f602715582125fbeb4d2655232144e",
+          "warnings": [
+            "Transcript generated via Whisper fallback (no native transcript available)."
+          ],
+          "frame_count": 3,
+          "ocr_entry_count": 3,
+          "transcript_entry_count": 53,
+          "timestamp_kind": "selected_scene_keyframes",
+          "frame_times": [
+            19.0,
+            147.0,
+            175.0
+          ],
+          "roi_cer": {
+            "status": "not_comparable",
+            "reason": "default OCR export has whole-frame text without bounding boxes; ROI selection cannot be reproduced without changing the tool"
+          },
+          "full_clip_caption_wer_diagnostic": {
+            "status": "measured",
+            "value": 0.0830188679245283,
+            "reference_units": 530,
+            "errors": 44,
+            "substitutions": 17,
+            "deletions": 4,
+            "insertions": 23,
+            "reference": "it always returns the correct value according to this specification so this is really really powerful for cryptographic code where we have this giant input space and we want to say something thats logically always true no matter what the input is this is just a little graphic about what the approximate workflow looks like when youre working with one of these satr smt solvers you write some code you write a specification a tool translates that into an equation or a formula that the solver can understand you forward that on to the solver and then it tries to solve the equations it actually tries to solve two it tries to solve one saying that your specification holds and one saying that your specification does not hold and depending on which one of those it solves it either tells you yes your codes correct or it tells you no and most tools can actually translate the no into a counterexample so theyll tell you not only your specification doesnt hold but theyll tell you your specification doesnt hold when x is zero and y is one so maybe take a closer look at that case this is really useful but some of you who have taken theoretical computer science classes might be looking at this and saying what on earth is in that solver because sat boolean satisfiability is a classic example of an np complete problem theres no efficient algorithm that can reliably say yes or no to this question so whats happening there well the answer is solvers are pretty smart they have some good heuristics for how to solve equations but theres a third case here which is the solver times out with the smt solvers youre always working with a timeout and if it times out you really dont know which case youre in maybe your code is wrong and it just couldnt find a counterexample in time maybe your code is right but the reasons why its right are a little bit complicated and the solver just didnt find the solution so in that case you would go back and you would add some hints so you kind of try to nudge the solver in a certain direction in the proof you maybe give it some facts that you think might be helpful and then you try to kind of help it along and see if it doesnt time out this time so in practice it looks a little bit more like a back and forth so this is a quote from project everest from a retrospective its a very large undertaking it was this 10 year effort to formalize tls and fstar so i defer to them about using smt solvers at scale and to paraphrase what they say here they say that the big advantage of this kind of heavy automation is the scale where they had a lot of proofs and they were able to crunch through them using these heavily automated tools with solvers but the trade off for that was that they had opacity in the proofs it wasnt always clear how the solver was coming to a solution",
+            "hypothesis": "a few seconds yeah it is always correct it always returns the correct value according to this specification so this is really really powerful for cryptographic code where we have this giant input space and we want to say something thats logically always true no matter what the input is this is just a little graphic about what the approximate workflow looks like when youre working with one of these set or st solvers you write some code you write a specification a tool translates that into an equation or a formula that the solver can understand you forward that onto the solver and then it tries to solve the equations it actually tries to solve two it tries to solve one saying that your specification holds and one saying that your specification does not hold and depending on which one of those it solves it either tells you yes your codes correct or it tells you no and most tools can actually translate the no into a counter example so theyll tell you not only your specification doesnt hold but theyll tell you your specification doesnt hold when x is 0 and y is 1 so maybe take a closer look at that case this is really useful but some of you who have taken theoretical computer science classes might be looking at this and saying what on earth is in that solver because sat boolean satisfiability is a classic example of an npcomplete problem theres no efficient algorithm that can reliably say yes or no to this question so whats happening there well the answer is solvers are pretty smart they have some good heroistics for how to solve equations but theres a third case here which is the solver times out with the st solvers youre always working with the time out and if it times out you really dont know which case youre in maybe your code is wrong and it just couldnt find a counter example in time maybe your code is right but the reasons why its right are a little bit complicated and the solver just didnt find the solution so in that case you would go back and you would add some hints so you kind of try to nudge the solver in a certain direction in the proof you maybe give it some facts that you think might be helpful and then you try to kind of help it along and see if it doesnt time out this time so in practice it looks a little bit more like a back and forth so this is a quote from project everest from a retrospective its a very large undertaking it was the 10year effort to formalize tls and fstar so i defer to them about using st solvers at scale and to paraphrase what they say here they say that the big advantage of this kind of heavy automation is the scale where they had a lot of proofs and they were able to crunch through them using these heavily automated tools with solvers but the tradeoff for that was that they had a capacity in the proofs it wasnt always clear how the solver was coming to a solution and what they called proof instability meaning that when they"
+          },
+          "candidate_timestamp_diagnostic": {
+            "reference_count": 4,
+            "prediction_count": 3,
+            "matched": 1,
+            "matches": [
+              [
+                19,
+                19.0
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.25,
+            "precision": 0.3333333333333333
+          }
+        },
+        {
+          "case_id": "39c3-2042",
+          "returncode": 0,
+          "wall_seconds": 24.16,
+          "input_sha256": "6ee5fb351fe2f140b7e5bebb5c38671b5770d337b4e1e56a1809b0b7c5c6195a",
+          "warnings": [
+            "Removed 2 near-duplicate frame(s) (30 → 28)",
+            "Transcript generated via Whisper fallback (no native transcript available)."
+          ],
+          "frame_count": 28,
+          "ocr_entry_count": 14,
+          "transcript_entry_count": 64,
+          "timestamp_kind": "selected_scene_keyframes",
+          "frame_times": [
+            1.0,
+            5.0,
+            8.0,
+            12.0,
+            17.0,
+            25.0,
+            29.0,
+            29.0,
+            29.0,
+            30.0,
+            30.0,
+            31.0,
+            31.0,
+            41.0,
+            41.0,
+            42.0,
+            42.0,
+            43.0,
+            43.0,
+            43.0,
+            45.0,
+            46.0,
+            58.0,
+            74.0,
+            75.0,
+            95.0,
+            107.0,
+            125.0
+          ],
+          "roi_cer": {
+            "status": "not_comparable",
+            "reason": "default OCR export has whole-frame text without bounding boxes; ROI selection cannot be reproduced without changing the tool"
+          },
+          "full_clip_caption_wer_diagnostic": {
+            "status": "measured",
+            "value": 0.11553784860557768,
+            "reference_units": 502,
+            "errors": 58,
+            "substitutions": 31,
+            "deletions": 2,
+            "insertions": 25,
+            "reference": "this is now sort of going full circle so what i did here is i recorded little video snippets and im holding an empty paper in my hand im taking a still of this video let it run through my generative algorithm and then render the animation back with blender into the video this is why it looks so funky but this is really nice because thats the thing that you can do with vector graphics in more or less one click because its just line information and animating this line is two lines of code maybe onto different machines and different projects now so its wintertime and i think one of the nicest and coolest generative systems that nature has for us and nature has a lot of cool generative systems is of course snowflake like every child knows every snowflake just exists once so i thought oh man maybe building my own generative snowflake system would be a fun thing to do so i made fr0zensystem its like a really neat generator and i just threw it on the laser cutter because laser cutters are also very nice to watch sadly not as portable as a pen plotter but also very nice to watch and you can still work with paper as a medium what i really enjoy i also really enjoy watching them and i made little interesting decoration pieces out of that what i really want to emphasize on my projects is that i really want them to be shareable in some sort of way so as youve seen the fr0zensystem project for example is just a website that you can call yourself and generate your own svgs to use for 3d printing laser cutting whatever you want to do to make your own winter decorations i think this is really important to have shareable art pieces this is a really important point for me what i did here is then also play a bit with the medium which is another mantra that im taking with me is always exploring the mediums that i have in hand currently and what i did here is cut out the main pieces as youve seen but also cut out an extra shape this is tracing paper so slightly translucent paper and then you can also start engraving this paper so youre not fully cutting through but just slightly etching the top of the paper and then you can still see these traces that looks really nice i would say a different laser cutting project that i did similar also with paper is this one this is you could say a fork or an alternation of the bugs and beetle project as youve seen before and this one were 200 badges for an event for a bug bounty program so i think the topic was a very nice fit and it was a pretty hefty assembling process so it was about 200 badges and each badge consisted of two sides two papers",
+            "hypothesis": "this is now sort of going full circle so what i did here is i recorded little video snippets and im holding an empty paper in my hand im taking a still off this video let it run through my generative algorithm and then render the animation back with blender into the video this is why it looks so funky but this is really nice because thats the thing that you can do the vector graphics in more or less one click because its just line information and animating this line is too lines of code maybe on two different machines and different projects now so its wintertime and i think one of the nicest and coolest generative systems that nature has for us and nature has a lot of cool generative systems its of course snowflake like every child knows every snowflake just exists one so i thought oh man maybe building my own generative snowflake system would be a fun thing to do so i made frozen system its like a really neat generator and i just threw it on the laser cutter because laser cutters are also very nice watched said you know its portable as a pen ploder but also very nice to watch and you can still work with paper as a medium what i really enjoy and yeah i also really enjoy watching them and that made like little interesting decoration pieces out of it and what i really want to emphasize on my projects is that i really want them to be shareable in some sort of way so as youve seen frozen system project for example its just the website that you can call yourself and generate your own svg is to use for the printing laser cutting whatever you want to do to make your own winter decorations and yeah i think this is really important to have shareable art pieces this is a really important point for me and yeah what i did here is then also play a bit of the medium which is another mantra that im taking with me is always exploring the mediums that i have in hand currently and what i did here is cut out the main pieces if youve seen but also cut out an extra shape this tracing paper is a slightly translucent paper and then you can also start engraving this paper so youre not fully cutting through but just slightly etching the top of the paper and then you can still see these traces and that looks really nice i would say a different laser cutting project that i did similar also with paper is this one this is like you could say a fork or an alternation of the beatles box and beatles project as youve seen before and this one were 200 batches for an event for a backpound program so i think the topic was a very nice fit and yeah it was a pretty hefty assembling process so it was about 200 batches and each batch consists of two sides two papers that had to be generated laser cut a sample"
+          },
+          "boundaries": {
+            "status": "not_applicable",
+            "reason": "no conventional stable informational slide boundaries in labeled dev window"
+          }
+        },
+        {
+          "case_id": "39c3-2154",
+          "returncode": 0,
+          "wall_seconds": 19.935,
+          "input_sha256": "fc7192e34cd776f5095ade504f018e92ea0bf40b76ee3e83e4647b791fea69f3",
+          "warnings": [
+            "Removed 3 near-duplicate frame(s) (19 → 16)",
+            "Transcript generated via Whisper fallback (no native transcript available)."
+          ],
+          "frame_count": 16,
+          "ocr_entry_count": 13,
+          "transcript_entry_count": 43,
+          "timestamp_kind": "selected_scene_keyframes",
+          "frame_times": [
+            66.0,
+            83.0,
+            83.0,
+            84.0,
+            84.0,
+            84.0,
+            85.0,
+            97.0,
+            108.0,
+            108.0,
+            109.0,
+            109.0,
+            110.0,
+            110.0,
+            146.0,
+            163.0
+          ],
+          "roi_cer": {
+            "status": "not_comparable",
+            "reason": "default OCR export has whole-frame text without bounding boxes; ROI selection cannot be reproduced without changing the tool"
+          },
+          "full_clip_caption_wer_diagnostic": {
+            "status": "measured",
+            "value": 0.06801007556675064,
+            "reference_units": 397,
+            "errors": 27,
+            "substitutions": 15,
+            "deletions": 3,
+            "insertions": 9,
+            "reference": "it should be interpolating now right so this is like the optical sizes came from metal type setting and now it interpolates because weve got variable fonts but just because it came from metal type setting and from serif text typefaces doesnt mean that we cant use it for something completely different so what do we have here a one dimensional design space but thats not the point and also these arent point compatible the outline structure is completely different so how is it supposed to interpolate well it doesnt turns out we can also have breakpoints along one axis where the design and the outline structure changes and for this example i added stroke weight changes along the optical size axis in short opsz and breakpoints you might be wondering why i used opsz for that the answer is simple opsz is active by default in most browsers so if you use a font size relative to your view width and you scale the browser window the font changes as well these changes could be subtle they could be used for something like it was intended for like small subtle text adjustments but it could also be used for display type for making the design more detailed adding more lines to the design or reducing the amount of lines when its getting smaller and the cool thing is it works in the browser out of the box you dont need to write any code for that so you just need a font with an opsz axis for it to work the next design space shows the setup of the typolabs font that was used as a key element of a visual identity for a font technology conference the design space is rather traditional the width probably not its also like really condensed and what might also be interesting is the release date of this why because this was probably the first identity to use a variable font when we worked on the identity there was no browser support for variable fonts and the major design apps also did not support variable fonts yet so we had an svg animation on the website and instead of having a fallback we had a fall forward because chrome and safari already had developer versions and beta versions that were supporting variable fonts so as soon as the next version",
+            "hypothesis": "that should be interpolating now right so this is like the optical sizes came from metal types setting and now it interpolates because weve got variable fonts but just because it came from metal types setting and from a set of text type phases doesnt mean that we cant use it for something completely different so what do we have here a onedimensional design space but thats not the point and also these are in point compatible the outline structure is completely different so how is it supposed to interpolate well it doesnt turns out we can also have breakpoints along one axis where the design and the outline structure changes and for this example i added stroke way changes along the optical size axis and short opsz and breakpoints you might be wondering why i used opsz for that the answer is simple opsz is active by default in most browsers so if you use a font size relative to your view with and you scale the browser window the font changes as well these changes could be subtle they could be used for something like it was intended for like small subtle text adjustments but it could also be used for display type for making the design more detail adding more lines to the design or reducing the amount of lines when its getting smaller and the cool thing is it works in the browser out of the box you need to write any code for that so you just need a font with an opsz axis for it to work the next design space shows the setup of the typo labs font that was used as a key element of a visual identity for font technology conference the design space is rather traditional the width probably not is also like really condensed and what might also be interesting is the release date of this why because this was probably the first identity to use a variable font when we worked on the identity there was no browser support for variable fonts and the major design apps also did not support variable fonts yet so we had an spg animation on the website and instead of having a fallback we had a fall forward because chrome and safari already had developer versions and beta versions they were supporting variable fonts so as soon as the next version of chrome and safari"
+          },
+          "boundaries": {
+            "status": "not_applicable",
+            "reason": "no conventional stable informational slide boundaries in labeled dev window"
+          }
+        },
+        {
+          "case_id": "39c3-2188",
+          "returncode": 0,
+          "wall_seconds": 12.136,
+          "input_sha256": "62e4f80bd51ee3dc5ba77cb8f9d11c7d023f18936ec453deca211a5aa57d9437",
+          "warnings": [
+            "Transcript generated via Whisper fallback (no native transcript available)."
+          ],
+          "frame_count": 2,
+          "ocr_entry_count": 0,
+          "transcript_entry_count": 21,
+          "timestamp_kind": "selected_scene_keyframes",
+          "frame_times": [
+            69.0,
+            81.0
+          ],
+          "roi_cer": {
+            "status": "not_comparable",
+            "reason": "default OCR export has whole-frame text without bounding boxes; ROI selection cannot be reproduced without changing the tool"
+          },
+          "full_clip_caption_wer_diagnostic": {
+            "status": "measured",
+            "value": 0.1876750700280112,
+            "reference_units": 357,
+            "errors": 67,
+            "substitutions": 29,
+            "deletions": 27,
+            "insertions": 11,
+            "reference": "they made its not they are very very upfront with it to yeah in manual state yeah just scan this key to pair the manufacturer training videos show it also the maintenance application shows it so its yeah its i think its they know about this and said its okay the beautiful part of this is the crypto is actually okay its aes 128 cbc they use ecb too which is a bit weird but its another topic they just use standard libraries so at least they did not build their own crypto there but i think um the crypto team and the key distribution team should maybe met someday because they are just yeah theyre doing it and they are shipping out devices like this all the time and these devices are quite popular i already saw on this congress i think two or three different beside of mine so yeah dont scan peoples qr codes on apps please uh because you may cause harm good so i already said bluetooth is not deactivated you cannot deactivate the bluetooth never it you have to unsolder the bluetooth module from the um from the drive itself one could patch it i did not try but its it seems like it could be patched so uh yeah there might be hope but uh yeah avoiding your warranty is always fun so the paywall is theater and the security also theater that got me even more interested into everything and uh people who know me know that i love reverse engineering and wireless protocols encryption security quirks and funny stuff so i thought hey this can be fun and when i spent several hundred hours having fun with this and uh i did some basics like uh decompiling the android app from the app store with jadx and this is some really really convenient way to get into stuff um if people dont know it it decompiles the java classes and there was one method called is speed enabled um in in the part it was referenced by the part by the billing stuff so maybe the speed feature",
+            "hypothesis": "the design choice they made its not very very up front with it to yeah in manual state you just scan this key to pair the manufacturer training videos show it also the maintenance application shows it so its yeah i think its very know about this and said its okay the beautiful part of this is the crypto is actually okay its as 128cvc various ecv2 which is a bit weird but its another topic they just use standard libraries so at least they did not build their own cryptoware but i think the crypto team and we keep the service team maybe met someday because we are just we are doing it and we are shipping out devices like this all the time and we use devices are quite popular i already saw on this congress i think two or three different side of mine so yeah dont scan peoples qr codes on apps please because you may cause im good so i already said bluetooth is not the active you cannot deactivate the bluetooth you have to unsolder the bluetooth module from the drivers cell one could patch it i did not try but it seems like it could be patched so yeah there might be hope but yeah avoiding a warranty is always fun so the paywall is theater the security also the theater that got me even more interested into everything and people who know we know that i love reverse engineering and wireless protocols encryption security quirks and funny stuff so i thought hey this can be fun and when i spent surrounded hours having fun with this and i did some basics like decompiling the android app from the app store with jdx and this is some really really convenient way to get into stuff if people dont know it the compiles via java classes and there was one method called speed enabled in the part it was referenced by the part where the billing stuff so maybe the speed feature is not wet"
+          },
+          "boundaries": {
+            "status": "not_applicable",
+            "reason": "no conventional stable informational slide boundaries in labeled dev window"
+          }
+        },
+        {
+          "case_id": "39c3-2274",
+          "returncode": 0,
+          "wall_seconds": 53.086,
+          "input_sha256": "1ce923120997691c7ebc27e162d095e2051c0fad34f02d22394454092e65ec4a",
+          "warnings": [
+            "No scene cuts detected; used uniform temporal sampling (better for static clips and on-screen text OCR).",
+            "Transcript generated via Whisper fallback (no native transcript available)."
+          ],
+          "frame_count": 30,
+          "ocr_entry_count": 30,
+          "transcript_entry_count": 22,
+          "timestamp_kind": "uniform_samples",
+          "frame_times": [
+            0.0,
+            6.0,
+            12.0,
+            18.0,
+            24.0,
+            30.0,
+            36.0,
+            42.0,
+            48.0,
+            54.0,
+            60.0,
+            66.0,
+            72.0,
+            78.0,
+            84.0,
+            90.0,
+            96.0,
+            102.0,
+            108.0,
+            114.0,
+            120.0,
+            126.0,
+            132.0,
+            138.0,
+            144.0,
+            150.0,
+            156.0,
+            162.0,
+            168.0,
+            174.0
+          ],
+          "roi_cer": {
+            "status": "not_comparable",
+            "reason": "default OCR export has whole-frame text without bounding boxes; ROI selection cannot be reproduced without changing the tool"
+          },
+          "full_clip_caption_wer_diagnostic": {
+            "status": "measured",
+            "value": 0.16298342541436464,
+            "reference_units": 362,
+            "errors": 59,
+            "substitutions": 25,
+            "deletions": 11,
+            "insertions": 23,
+            "reference": "that ghidra was not able to disassemble properly and try to see some structure in there so the bit patterns i looked for the risc v instruction set how is this usually encoded theres the specification its on github the risc v opcodes repository and its relatively readable because it just gives you ranges of bits and the meaning so these values like imm20 thats specified as somewhere the well i didnt write it down here its probably the last 20 bits of the d word im not quite sure because i didnt write that down i dont remember the exact details but then i tried to match that with the unknown opcodes that i found and im thinking this must be immediate this must be a register and some other part of the things must be then a function code or so so what i did i created some dummy instructions this is what the specification language from ghidorah looks like and i called these instructions google 0 google 1 and google 2 and google 3 because i had no clue what they were and i just put these bit patterns in there and then you get some the code completely disassembles and you get your google 0 as an unknown function basically in your decompilation so then next i tried to figure out whats going in and out because you see there its using something from the csr read function before it and then the result is doing something and then i had about 50 functions or so where i could look at that at some point i took this nugget os the scheduler because i did have source code for that and i tried to match it up because i did notice where the scheduler was and then i figured out ah this must be a bit scan because it was trying to match active processes in a slot of bits so these instructions they are actually quite simple theres nothing magic about these instructions this is what i found after several days of just staring at the disassembly and figuring out what what these unknown instructions must do",
+            "hypothesis": "so what i did i was looking at the deal all the birds that gidra was not able to this is them all properly and try to see some structure in there so the bit patterns i looked for the risk5 instruction set how is it usually encoded specification is on getup the risk5 opcoach repository and its relatively readable because it just gets a few ranges of bits and a meaning so these failures like imm20 thats specified as somewhere i didnt write it down here its probably in the last 20 bits of the divert im not quite sure because i didnt write that down i dont remember the exact details but then i tried to match that with the unknown opcoach that i found im thinking this must be immediate this must be a register and some other part of the things must be then a function code or so so what i did i created some dummy instructions this is what the specification language from gidra looks like and i call these instructions google 0 google 1 and google 2 and google 3 because i had no clue what they were and i just put this bit patterns in there and then you get some the code completely disassembles and you get your google 0 as an unknown function basically in your decomposition so then next i try to figure out whats going in and out because you see that its using something from the sees our read function before it and then the result is doing something and then i had about 50 functions or so where i could look at that at some point i took this nugget os the scheduler because i did have source code for that and i tried to match it up because i did notice where the scheduler was and then i figured out this must be a bit scared because it was trying to match active processes in a slot of bits so these instructions are actually quite simple there are nothing magic about these instructions this is what i found after several days of just staring at this assembly and figuring out what these unknown instructions must do so the world"
+          },
+          "candidate_timestamp_diagnostic": {
+            "reference_count": 5,
+            "prediction_count": 29,
+            "matched": 3,
+            "matches": [
+              [
+                59,
+                60.0
+              ],
+              [
+                101,
+                102.0
+              ],
+              [
+                139,
+                138.0
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.6,
+            "precision": 0.10344827586206896
+          }
+        },
+        {
+          "case_id": "39c3-2372",
+          "returncode": 0,
+          "wall_seconds": 24.611,
+          "input_sha256": "01ae56db455b3207d60989a6691d09e0ed33acd4e1c1347c4b39719136de1113",
+          "warnings": [
+            "Transcript generated via Whisper fallback (no native transcript available)."
+          ],
+          "frame_count": 16,
+          "ocr_entry_count": 6,
+          "transcript_entry_count": 50,
+          "timestamp_kind": "selected_scene_keyframes",
+          "frame_times": [
+            44.0,
+            69.0,
+            94.0,
+            95.0,
+            95.0,
+            101.0,
+            104.0,
+            104.0,
+            108.0,
+            143.0,
+            147.0,
+            147.0,
+            157.0,
+            169.0,
+            170.0,
+            170.0
+          ],
+          "roi_cer": {
+            "status": "not_comparable",
+            "reason": "default OCR export has whole-frame text without bounding boxes; ROI selection cannot be reproduced without changing the tool"
+          },
+          "full_clip_caption_wer_diagnostic": {
+            "status": "measured",
+            "value": 0.07839388145315487,
+            "reference_units": 523,
+            "errors": 41,
+            "substitutions": 17,
+            "deletions": 2,
+            "insertions": 22,
+            "reference": "some of the devices are operated in ultrahigh vacuum so they must be vacuum compatible we need cooling power dissipation is of the order of a few hundred watts and data management is a big point we produce 16 gigabytes per second with such a camera and if we accumulate data over a year in 2024 we have taken 33 petabytes of raw data with such a device in total during the last year since 2017 we have accumulated of the order of 140 petabytes in our data archives the core and the heart of such a device is the sensor which is shown here on the left and an asic applicationspecific integrated circuit so that bit does all the fancy work in processing the signal etc and each of the pixels has such an electronics so we have one million readout channels with such a camera which is quite a lot which means at the end if you operate such a camera we have to understand 150 million parameters to have it under control and to create good pictures thats the same device on the left as it installed at our instruments one at mid the block the part in the middle the block thats the camera and around all the cabling and infrastructure on the right side you can see a camera which is operated in air its the same size provides the same speed just a different environment and a bit different technology so lets have a bit of closer look in the camera this is the droplet with the sample with the tux that come from the top the x rays are from the right and from time to time we hit the drop and we produce scattered light and this light produces an image on the sensor which is shown here and if we zoom into the sensor and look from the side we can see how the sensor is structured we have a piece of silicon monolithic which is the sensor chip which is rather thick 700 microns on top we have a filter that blocks obstacle lights and then the bottom of the sensor chip we have the pixel structure and the interesting part here is that underneath the pixel structure we have a second chip or a second wafer which carries the asics so each individual pixel has its own readout electronics and the connection between the two is done with these bumps with the solder bumps electric connection between the two layers if we zoom in into one pixel we can have a look how this works its the same structure the sensor the filter from the top then metallic connections to the bump and at the bottom the asic and if a photon enters the sensor from the top it produces electrons and these electrons move down and are then moved across the metal contact to the bumps and then to the asic where the signal is processed now if you talk about such a detector system it has a thick sensor and this has some consequences on the imaging quality and that",
+            "hypothesis": "we need analog and digital electronics to process the signal some of the devices are operated in ultra high vacuum so they must be vacuum compatible we need cooling power dissipation is of the order of a few hundred watts and data management is a big point we produce 60 gigabytes per second with such a camera and if you simulate a data over a year in 2024 we have taken 33 petabytes of raw data with such a device in total during the last year since 2017 we have accumulated of the order of 140 petabytes in our data archives the core and the heart of such a device is the sensor which is shown here on the left and an asic application specific integrated circuit so that bit does all the fancy work in processing the signal et cetera and each of the pixels has such an electronics so we have one million readout channels with such a camera which is quite a lot which means at the end if you operate such a camera we have to understand 150 million parameters to have it under control and to create good pictures thats the same device on the left as it installed at our instruments one at mit the book the part in the middle the block thats the camera and around all the cabling and infrastructure on the right side you can see a camera which is operated in air its the same size the width the same speed just the different environment and a bit different technology so lets have a bit of closer look in the camera this is the droplet with the sample with the tocks that come from the top of the xrays from the right and from time to time we hit the drop and we produce scattered light and this light produces an image on the sensor which is shown here and if we zoom into the sensor and look from the side we can see how the sensor is structured we have a piece of silicon monolithic which is the sensor chip which is around a 6 700 microns on top we have a filter with blocks obstacle lights and then the bottom of the sensor chip we have the pixel structure and the interesting part here is that underneath the pixel structure we have a second chip or a second wafer which carries the asics so each individual pixel has its own readout electronics and the connection between the two is done with these bumps with the solder bumps electric connection between the two layers if we zoom in into one pixel we can have a look how this works its the same structure the sensor the filter from the top then metallic connections to the bump and at the bottom the asics and if a photon enters the sensor from the top it produces electrons and these electrons move down and are then moved across the metal contact to the bumps and then to the asic where the signal is processed now if you talk about such a detector system it has a thick sensor and that has some consequences on the imaging quality and that is the point where simulation"
+          },
+          "candidate_timestamp_diagnostic": {
+            "reference_count": 10,
+            "prediction_count": 16,
+            "matched": 3,
+            "matches": [
+              [
+                69,
+                69.0
+              ],
+              [
+                94,
+                94.0
+              ],
+              [
+                171,
+                170.0
+              ]
+            ],
+            "tolerance_seconds": 1.0,
+            "recall": 0.3,
+            "precision": 0.1875
+          }
+        }
+      ],
+      "aggregate_boundaries": {
+        "status": "not_comparable",
+        "reason": "keyframes can be uniform samples, not boundary predictions; inspect per-case candidate timestamps separately"
+      },
+      "total_wall_seconds": 357.946
+    }
+  ]
+}
