@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "corpus_id": "screen-holdout-v140",
+  "media_license": "CC-BY-SA-4.0",
+  "attribution_file": "docs/data/LICENSE-SCREEN-HOLDOUT.txt",
+  "assets": [
+    {
+      "filename": "clipmind-v1.4.0-holdout-inputs.zip",
+      "bytes": 154864450,
+      "sha256": "fe20ddb66ce0f0b8e0dda8990b24ffbafe027d32ad908c8a87cc32a2ae635058"
+    },
+    {
+      "filename": "clipmind-v1.4.0-holdout-license.txt",
+      "bytes": 1754,
+      "sha256": "9a313e126ee06c38ad5d424ba2c42b44e999e0a625b14e59bbefcdf0604a5078"
+    }
+  ]
+}

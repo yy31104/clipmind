@@ -1,0 +1,35 @@
+Screen holdout source attribution and license
+
+The source-derived annotations and quoted code in v140-holdout-labels.json,
+the holdout video inputs, and derived review frames are available under the
+Creative Commons Attribution-ShareAlike 4.0 International license:
+https://creativecommons.org/licenses/by-sa/4.0/
+
+This license applies to those source-derived materials, not the ClipMind
+utility code. scripts/prepare_screen_holdout.py and other ClipMind code retain
+the repository's MIT license. The source licenses do not imply endorsement.
+
+Sources
+
+1. Python cancer spatial-cluster map visualization
+   Mok; Wikidata Taiwan; COSCUP 2020. CC BY-SA 4.0.
+   https://commons.wikimedia.org/wiki/File:OSMxWikidata_COSCUP_2020_04.webm
+
+2. OMG, building a shell in ten minutes
+   Stefanie Schirmer; Jusc(wmde); EnthusiastiCon. CC BY-SA 4.0.
+   https://commons.wikimedia.org/wiki/File:EnthusiastiCon_-_Stefanie_Schirmer_%E2%80%9COMG_building_a_shell_in_10_minutes%E2%80%9D.webm
+
+3. Wiki-Pie: a policy invocation and enactment English Wikipedia dataset
+   Sohyeon Hwang and Nathan TeBlunthuis; Groceryheist; Wiki Workshop 2026.
+   CC BY-SA 4.0.
+   https://commons.wikimedia.org/wiki/File:Wikimania_presentation,_Wiki_Pie_Wikipedia_Policy_and_Invocation_Dataset.webm
+   The source title slide identifies Wiki Workshop 2026; the Commons filename
+   uses Wikimania.
+
+Changes to the source material: full published recordings transcoded to
+1280x720 letterboxed H.264 CRF20 with AAC audio at 128 kbit/s; no temporal crop.
+Review images are timestamped source frames and region crops. Annotations
+contain selected content-change times, source descriptions, normalized code
+regions, and source-transcribed text.
+
+Annotations are AI-assisted; human review is pending.

@@ -37,10 +37,9 @@ PYTHON_DOTENV_DISABLED=1 uv run --frozen python scripts/demo_real_talk.py --work
 CLIPMIND_OUT=/tmp/clipmind-real-demo/packs uv run --frozen clipmind serve
 ```
 
-The explicit full-talk flag authorizes this complete local workload; it does
-not disable transport controls. First use downloads model weights. The output
-directory must be outside the checkout. For English sources set
-`CLIPMIND_ASR_LANGUAGE=en`; the normal default remains Chinese.
+The full-talk flag processes the complete recording. Transport limits still
+apply. First use downloads model weights. Keep the output directory outside
+the checkout. The v1.3.0 run explicitly selected English.
 To record the UI using a separate temporary Chrome context:
 
 ```bash
@@ -56,8 +55,7 @@ Codex CLI, authenticated with an existing ChatGPT subscription, made **11 actual
 MCP tool calls**: lexical searches, bounded visual-timeline reads, and two frame
 reads. No browser search, new extraction, shell access or API-key billing was
 used to answer. The client allowlisted only `search_evidence`,
-`get_visual_timeline` and `get_frame`; those reads were explicitly approved in
-its temporary configuration. It first tried a query with no results, refined
+`get_visual_timeline` and `get_frame`. It first tried a query with no results, refined
 the query, and then inspected the saved evidence.
 
 [Captured calls and final answer](data/real-talk-mcp-demo.json) contains the real

@@ -1,0 +1,321 @@
+{
+  "schema_version": 1,
+  "status": "development_complete_holdout_not_run",
+  "annotation_provenance": "AI-assisted annotations; human review pending.",
+  "development_runs": [
+    {
+      "run": "mac-baseline",
+      "label": "Mac baseline",
+      "source_report": "baseline-mac-results.json",
+      "source_report_sha256": "5fb9e4c4069262e9aa874d1d9ff4c581369f6c021d38fd30d793be044f43b68c",
+      "status": "measured",
+      "case_count": 10,
+      "measured_case_count": 10,
+      "canonical_control": {
+        "matched": 44,
+        "reference_count": 60,
+        "prediction_count": 159,
+        "recall": 0.7333333333333333,
+        "precision": 0.27672955974842767
+      },
+      "information_boundaries": {
+        "matched": 44,
+        "reference_count": 60,
+        "prediction_count": 159,
+        "recall": 0.7333333333333333,
+        "precision": 0.27672955974842767
+      },
+      "information_note": "all missing/untyped kinds included; no semantic filtering in these control runs",
+      "code_cer": 0.39291736930860033,
+      "code_errors": 233,
+      "code_reference_characters": 593,
+      "caption_wer": 0.04221347331583552,
+      "caption_errors": 193,
+      "caption_reference_words": 4572,
+      "sum_case_wall_seconds": 118.897,
+      "ocr_frame_exception_types": {},
+      "failures": [],
+      "labels_sha256": "a32597d8a4746526b5ec39e888e5a777bb25962c76c36c68325df97793e99904",
+      "runtime_sha256": "b28b3712a67322b6f4fecb809ddd5c305fb1150ea2fe29e79be4d648f513e9e4",
+      "media_sha256": "ca0b7a8c4fe7d86c5eb9ce72ca44a89d46017932143f4e0f48b6d0d81fc7a49f"
+    },
+    {
+      "run": "docker-baseline",
+      "label": "Docker baseline",
+      "source_report": "baseline-docker-results.json",
+      "source_report_sha256": "fd072ab10a76daec3e1cf39124a54bb626e048094c84d583c31bae108088e99e",
+      "status": "measured",
+      "case_count": 10,
+      "measured_case_count": 10,
+      "canonical_control": {
+        "matched": 44,
+        "reference_count": 60,
+        "prediction_count": 160,
+        "recall": 0.7333333333333333,
+        "precision": 0.275
+      },
+      "information_boundaries": {
+        "matched": 44,
+        "reference_count": 60,
+        "prediction_count": 160,
+        "recall": 0.7333333333333333,
+        "precision": 0.275
+      },
+      "information_note": "all missing/untyped kinds included; no semantic filtering in these control runs",
+      "code_cer": 0.5430016863406408,
+      "code_errors": 322,
+      "code_reference_characters": 593,
+      "caption_wer": 0.04068241469816273,
+      "caption_errors": 186,
+      "caption_reference_words": 4572,
+      "sum_case_wall_seconds": 317.933,
+      "ocr_frame_exception_types": {},
+      "failures": [],
+      "labels_sha256": "a32597d8a4746526b5ec39e888e5a777bb25962c76c36c68325df97793e99904",
+      "runtime_sha256": "b28b3712a67322b6f4fecb809ddd5c305fb1150ea2fe29e79be4d648f513e9e4",
+      "media_sha256": "ca0b7a8c4fe7d86c5eb9ce72ca44a89d46017932143f4e0f48b6d0d81fc7a49f"
+    },
+    {
+      "run": "mac-v3",
+      "label": "Mac v3 retention",
+      "source_report": "retention-mac-results.json",
+      "source_report_sha256": "6b97f5f04ab4d8187336871a701df35b88abffecf46eb8649946868db4c9d06e",
+      "status": "measured",
+      "case_count": 10,
+      "measured_case_count": 10,
+      "canonical_control": {
+        "matched": 59,
+        "reference_count": 60,
+        "prediction_count": 1087,
+        "recall": 0.9833333333333333,
+        "precision": 0.05427782888684453
+      },
+      "information_boundaries": {
+        "matched": 59,
+        "reference_count": 60,
+        "prediction_count": 1087,
+        "recall": 0.9833333333333333,
+        "precision": 0.05427782888684453
+      },
+      "information_note": "all missing/untyped kinds included; no semantic filtering in these control runs",
+      "code_cer": 0.28499156829679595,
+      "code_errors": 169,
+      "code_reference_characters": 593,
+      "caption_wer": 0.04221347331583552,
+      "caption_errors": 193,
+      "caption_reference_words": 4572,
+      "sum_case_wall_seconds": 187.95,
+      "ocr_frame_exception_types": {},
+      "failures": [],
+      "labels_sha256": "a32597d8a4746526b5ec39e888e5a777bb25962c76c36c68325df97793e99904",
+      "runtime_sha256": "03b018aad0b783a455912c86eff2de5c7b9c1227d30be97f00aeaa0489ad381f",
+      "media_sha256": "f941267a438bfac4da1be43dfcc510042324de3e93de4ee3ccf212d57f9df213"
+    },
+    {
+      "run": "docker-v3",
+      "label": "Docker v3 retention",
+      "source_report": "retention-only-docker-results.json",
+      "source_report_sha256": "ab58855a8b5304196a6f67e5ca3a3fc18d979df1be295bc085b9d4a580492b4e",
+      "status": "measured",
+      "case_count": 10,
+      "measured_case_count": 10,
+      "canonical_control": {
+        "matched": 59,
+        "reference_count": 60,
+        "prediction_count": 1096,
+        "recall": 0.9833333333333333,
+        "precision": 0.053832116788321165
+      },
+      "information_boundaries": {
+        "matched": 59,
+        "reference_count": 60,
+        "prediction_count": 1096,
+        "recall": 0.9833333333333333,
+        "precision": 0.053832116788321165
+      },
+      "information_note": "all missing/untyped kinds included; no semantic filtering in these control runs",
+      "code_cer": 0.43676222596964587,
+      "code_errors": 259,
+      "code_reference_characters": 593,
+      "caption_wer": 0.04068241469816273,
+      "caption_errors": 186,
+      "caption_reference_words": 4572,
+      "sum_case_wall_seconds": 439.617,
+      "ocr_frame_exception_types": {},
+      "failures": [],
+      "labels_sha256": "a32597d8a4746526b5ec39e888e5a777bb25962c76c36c68325df97793e99904",
+      "runtime_sha256": "87da8b4b0ccf8f8f1badcf642702f1faf6b49834191082aabdd1a39320ca40f1",
+      "media_sha256": "f941267a438bfac4da1be43dfcc510042324de3e93de4ee3ccf212d57f9df213"
+    },
+    {
+      "run": "mac-v4",
+      "label": "Mac settled representative",
+      "source_report": "settled-mac-results.json",
+      "source_report_sha256": "8a4ac8e1a6ad75ca5b0d1a0f4e35ad63f281fd43efb6480e40332a20929dc8a1",
+      "status": "has_failures",
+      "case_count": 10,
+      "measured_case_count": 8,
+      "canonical_control": {
+        "matched": 59,
+        "reference_count": 60,
+        "prediction_count": 1087,
+        "recall": 0.9833333333333333,
+        "precision": 0.05427782888684453
+      },
+      "information_boundaries": {
+        "matched": 59,
+        "reference_count": 60,
+        "prediction_count": 1087,
+        "recall": 0.9833333333333333,
+        "precision": 0.05427782888684453
+      },
+      "information_note": "all missing/untyped kinds included; no semantic filtering in these control runs",
+      "code_cer": 0.28330522765598654,
+      "code_errors": 168,
+      "code_reference_characters": 593,
+      "caption_wer": 0.04221347331583552,
+      "caption_errors": 193,
+      "caption_reference_words": 4572,
+      "sum_case_wall_seconds": 179.6,
+      "ocr_frame_exception_types": {
+        "OCRError": 2
+      },
+      "failures": [
+        {
+          "case_id": "39c3-1611",
+          "status": "incomplete",
+          "ocr_frame_failures": 1
+        },
+        {
+          "case_id": "39c3-1317",
+          "status": "incomplete",
+          "ocr_frame_failures": 1
+        }
+      ],
+      "labels_sha256": "a32597d8a4746526b5ec39e888e5a777bb25962c76c36c68325df97793e99904",
+      "runtime_sha256": "607797bd26892e14cc32936b7a908a1b2ec9c1c276fada9e7518dde8415fbb51",
+      "media_sha256": "a356769debf5cacd483603f9bf03cf786fe26efb9e0a77f7c27c5da5b1f26f9a"
+    },
+    {
+      "run": "docker-v4",
+      "label": "Docker settled representative",
+      "source_report": "retention-late-docker-results.json",
+      "source_report_sha256": "863278a1bda8a3c532b247230d8a50e092e550b088902fb58844e960f21e44d4",
+      "status": "measured",
+      "case_count": 10,
+      "measured_case_count": 10,
+      "canonical_control": {
+        "matched": 59,
+        "reference_count": 60,
+        "prediction_count": 1096,
+        "recall": 0.9833333333333333,
+        "precision": 0.053832116788321165
+      },
+      "information_boundaries": {
+        "matched": 59,
+        "reference_count": 60,
+        "prediction_count": 1096,
+        "recall": 0.9833333333333333,
+        "precision": 0.053832116788321165
+      },
+      "information_note": "all missing/untyped kinds included; no semantic filtering in these control runs",
+      "code_cer": 0.43676222596964587,
+      "code_errors": 259,
+      "code_reference_characters": 593,
+      "caption_wer": 0.04068241469816273,
+      "caption_errors": 186,
+      "caption_reference_words": 4572,
+      "sum_case_wall_seconds": 391.332,
+      "ocr_frame_exception_types": {},
+      "failures": [],
+      "labels_sha256": "a32597d8a4746526b5ec39e888e5a777bb25962c76c36c68325df97793e99904",
+      "runtime_sha256": "daeacc94440faf8c2dabc4101c92a4f0234c3d3dba9faaf5ee2641efe3b940de",
+      "media_sha256": "a356769debf5cacd483603f9bf03cf786fe26efb9e0a77f7c27c5da5b1f26f9a"
+    },
+    {
+      "run": "mac-final",
+      "label": "Mac integrated development136",
+      "source_report": "final-dev-mac-results.json",
+      "source_report_sha256": "2b58838cfbe8b8cf1a14d1dfc73ab82cc94d1bb4859d24b2601a030bcb7aefe9",
+      "status": "measured",
+      "case_count": 10,
+      "measured_case_count": 10,
+      "canonical_control": {
+        "matched": 59,
+        "reference_count": 60,
+        "prediction_count": 371,
+        "recall": 0.9833333333333333,
+        "precision": 0.15902964959568733
+      },
+      "information_boundaries": {
+        "matched": 59,
+        "reference_count": 60,
+        "prediction_count": 227,
+        "recall": 0.9833333333333333,
+        "precision": 0.2599118942731278
+      },
+      "information_note": "explicit speaker, layout and animation types excluded; extraction warnings remain included conservatively",
+      "code_cer": 0.06239460370994941,
+      "code_errors": 37,
+      "code_reference_characters": 593,
+      "caption_wer": 0.04221347331583552,
+      "caption_errors": 193,
+      "caption_reference_words": 4572,
+      "sum_case_wall_seconds": 126.5,
+      "ocr_real_calls": 629,
+      "ocr_real_failures": 0,
+      "failures": [],
+      "cleanup_leftover_count": 0,
+      "labels_sha256": "a32597d8a4746526b5ec39e888e5a777bb25962c76c36c68325df97793e99904",
+      "runtime_sha256": "0b0708ffcc75521b005e0335c530e895c12d040e7b3cab1b0f7ad17e4cc4be79",
+      "media_sha256": "b2be0fd6c0050ba373d766aef91a564d2f0ecbbb491d38c37b49ea1cd4f00dff"
+    },
+    {
+      "run": "docker-final",
+      "label": "Docker integrated development136",
+      "source_report": "final-dev-docker-results.json",
+      "source_report_sha256": "415c83eb5a57a4bc0435e028ab4cc1dfb85cf07af2383c41efd99ac5485cee90",
+      "status": "measured",
+      "case_count": 10,
+      "measured_case_count": 10,
+      "canonical_control": {
+        "matched": 59,
+        "reference_count": 60,
+        "prediction_count": 368,
+        "recall": 0.9833333333333333,
+        "precision": 0.16032608695652173
+      },
+      "information_boundaries": {
+        "matched": 59,
+        "reference_count": 60,
+        "prediction_count": 224,
+        "recall": 0.9833333333333333,
+        "precision": 0.26339285714285715
+      },
+      "information_note": "explicit speaker, layout and animation types excluded; extraction warnings remain included conservatively",
+      "code_cer": 0.23608768971332209,
+      "code_errors": 140,
+      "code_reference_characters": 593,
+      "caption_wer": 0.04068241469816273,
+      "caption_errors": 186,
+      "caption_reference_words": 4572,
+      "sum_case_wall_seconds": 409.299,
+      "ocr_real_calls": 626,
+      "ocr_real_failures": 0,
+      "failures": [],
+      "cleanup_leftover_count": 0,
+      "labels_sha256": "a32597d8a4746526b5ec39e888e5a777bb25962c76c36c68325df97793e99904",
+      "runtime_sha256": "0b0708ffcc75521b005e0335c530e895c12d040e7b3cab1b0f7ad17e4cc4be79",
+      "media_sha256": "b2be0fd6c0050ba373d766aef91a564d2f0ecbbb491d38c37b49ea1cd4f00dff"
+    }
+  ],
+  "final_candidate": {
+    "status": "pending"
+  },
+  "holdout_mac": {
+    "status": "pending_not_run"
+  },
+  "holdout_docker": {
+    "status": "pending_not_run"
+  }
+}

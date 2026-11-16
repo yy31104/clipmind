@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "metric": "capture_timestamp_interval_consistency",
+  "source_report_sha256": "863278a1bda8a3c532b247230d8a50e092e550b088902fb58844e960f21e44d4",
+  "case_count": 10,
+  "cases": [
+    {
+      "case_id": "39c3-2042",
+      "timeline_sha256": "20ecfadc748301969b6c5312a9591237fe212367cd4f49c6f350b9cc3c4100bb",
+      "state_count": 258,
+      "known_capture_count": 258,
+      "later_representative_count": 36,
+      "maximum_lag_seconds": 1.56,
+      "violations": []
+    },
+    {
+      "case_id": "39c3-1611",
+      "timeline_sha256": "d135c9f36775c83d9cb1235fbc35d71a386212b669b484a41699b32a71c40773",
+      "state_count": 209,
+      "known_capture_count": 209,
+      "later_representative_count": 53,
+      "maximum_lag_seconds": 1.56,
+      "violations": []
+    },
+    {
+      "case_id": "39c3-2154",
+      "timeline_sha256": "a4ed3c565ed7a2d3a3ba1df1a140fb48a23e8f60b00a85e0f267d88fabc48c9b",
+      "state_count": 208,
+      "known_capture_count": 208,
+      "later_representative_count": 55,
+      "maximum_lag_seconds": 1.56,
+      "violations": []
+    },
+    {
+      "case_id": "39c3-2188",
+      "timeline_sha256": "cb3e4f1e56a10b0657b4f25d9c72f500f898de019b0875a3208007237a74337d",
+      "state_count": 151,
+      "known_capture_count": 151,
+      "later_representative_count": 73,
+      "maximum_lag_seconds": 1.56,
+      "violations": []
+    },
+    {
+      "case_id": "39c3-2274",
+      "timeline_sha256": "9d87004adf4cddbc2a9ec4980f0efefb02a0ab8f963c5f6905533dc6f630bc47",
+      "state_count": 124,
+      "known_capture_count": 124,
+      "later_representative_count": 67,
+      "maximum_lag_seconds": 1.56,
+      "violations": []
+    },
+    {
+      "case_id": "39c3-1317",
+      "timeline_sha256": "cbf95344ebcb070a825ba07f276c465b3ac2e7fea59b6eef1f8b03277b308beb",
+      "state_count": 127,
+      "known_capture_count": 127,
+      "later_representative_count": 67,
+      "maximum_lag_seconds": 1.56,
+      "violations": []
+    },
+    {
+      "case_id": "39c3-1989",
+      "timeline_sha256": "0a17454eea4a6df8a05b559c9c606c47c05a15640bb9818aef1b6a4c5b75bc84",
+      "state_count": 171,
+      "known_capture_count": 171,
+      "later_representative_count": 59,
+      "maximum_lag_seconds": 1.56,
+      "violations": []
+    },
+    {
+      "case_id": "39c3-1979",
+      "timeline_sha256": "367d649290599c38c8fa601b180533b24e2c17769c0b83f0fb74f37e9f7533b4",
+      "state_count": 172,
+      "known_capture_count": 172,
+      "later_representative_count": 63,
+      "maximum_lag_seconds": 1.56,
+      "violations": []
+    },
+    {
+      "case_id": "39c3-2372",
+      "timeline_sha256": "523442825da1a14bedd891cedc27e357dc4fab61712ad25a7445a23fedc78c27",
+      "state_count": 99,
+      "known_capture_count": 99,
+      "later_representative_count": 31,
+      "maximum_lag_seconds": 1.56,
+      "violations": []
+    },
+    {
+      "case_id": "39c3-1508",
+      "timeline_sha256": "3c050e7c16381f14b5538a18d2e48ee6508a772687ddd7c2e85e255196e055db",
+      "state_count": 201,
+      "known_capture_count": 201,
+      "later_representative_count": 71,
+      "maximum_lag_seconds": 1.56,
+      "violations": []
+    }
+  ],
+  "state_count": 1720,
+  "later_representative_count": 575,
+  "violation_count": 0,
+  "maximum_lag_seconds": 1.56
+}

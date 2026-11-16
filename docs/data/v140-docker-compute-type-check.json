@@ -1,0 +1,19 @@
+{
+  "device": "cpu",
+  "supported_compute_types": [
+    "float32",
+    "int8",
+    "int8_float32"
+  ],
+  "model": "large-v3-turbo",
+  "input": "none; model loading only",
+  "auto_resolved_compute_type": "int8_float32",
+  "int8_resolved_compute_type": "int8_float32",
+  "schema_version": 1,
+  "image": "ghcr.io/yy31104/clipmind@sha256:5bf19e53e0fb9d3959c6b4a32438a07159a6ec8dc4e3d69c8388b87aea91bc87",
+  "platform": "linux/arm64",
+  "cpu_limit": 6,
+  "memory_limit_gib": 4,
+  "media_inference": false,
+  "model_cache": "warm; offline"
+}

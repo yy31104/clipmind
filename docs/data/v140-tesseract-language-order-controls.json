@@ -1,0 +1,29 @@
+{
+  "english_fixture_passed": true,
+  "recognized_english_fixture": "ALPHA PLAN BETA SYSTEM GAMMA DATA DELTA REVIEW",
+  "tesseract_version": "tesseract 5.3.0",
+  "comparisons": [
+    {
+      "case_id": "simplified-light",
+      "reference_units": 44,
+      "old_errors": 0,
+      "new_errors": 0,
+      "chinese_reference_units": 20,
+      "old_chinese_errors": 0,
+      "new_chinese_errors": 0,
+      "chinese_not_worse": true,
+      "mixed_text_not_worse": true
+    },
+    {
+      "case_id": "traditional-dark",
+      "reference_units": 54,
+      "old_errors": 1,
+      "new_errors": 1,
+      "chinese_reference_units": 18,
+      "old_chinese_errors": 0,
+      "new_chinese_errors": 0,
+      "chinese_not_worse": true,
+      "mixed_text_not_worse": true
+    }
+  ]
+}

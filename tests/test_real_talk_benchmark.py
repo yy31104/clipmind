@@ -338,6 +338,53 @@ class CaptionParsingTests(unittest.TestCase):
 
 @unittest.skipUnless(importlib.util.find_spec('jiwer'), 'Install scripts/requirements-eval.txt for WER/CER tests')
 class RealMetricTests(unittest.TestCase):
+    def test_installed_runtime_rescore_keeps_candidate_metadata_separate_from_caption_digest(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = root / 'talk/input.mp4'
+            source.parent.mkdir()
+            source.write_bytes(b'synthetic source')
+            captions = source.parent / 'captions.vtt'
+            captions.write_text('WEBVTT\n')
+            corpus = {"cases": [{"case_id": "talk", "title": "Talk", "source_page": "https://example.org/talk",
+                                  "sample_start_seconds": 0, "sample_end_seconds": 20}]}
+            labels = {"schema_version": 1, "annotation_protocol": "source frames", "cases": {"talk": {
+                "reviewed": True, "input_sha256": benchmark.file_digest(source), "review_start": 0,
+                "review_end": 20, "slide_changes": [], "ocr": []}}}
+            corpus_path, labels_path = root / 'corpus.json', root / 'labels.json'
+            corpus_path.write_text(json.dumps(corpus)); labels_path.write_text(json.dumps(labels))
+            pack = make_complete_pack(source.parent / 'library')
+            manifest = json.loads((pack / 'manifest.json').read_text())
+            manifest['source'] = {"platform": "local", "id": benchmark.file_digest(source)}
+            (pack / 'manifest.json').write_text(json.dumps(manifest))
+            previous_path = root / 'previous.json'
+            previous_path.write_text(json.dumps({"labels_sha256": benchmark.file_digest(labels_path),
+                "corpus_sha256": benchmark.file_digest(corpus_path), "cases": [{"case_id": "talk",
+                "captions_sha256": benchmark.file_digest(captions), "pack_path": str(pack), "wall_seconds": 42}]}))
+            driver = root / 'driver'
+            (driver / 'scripts').mkdir(parents=True)
+            (driver / 'scripts/screen_evaluation.py').write_text('# synthetic driver metadata\n')
+            expected = {"sha256": "fixture-runtime", "files": {}, "code_revision": "candidate-revision",
+                        "working_tree_dirty": False}
+            expected_path = root / 'runtime.json'; expected_path.write_text(json.dumps(expected))
+            args = argparse.Namespace(corpus=corpus_path, labels=labels_path, workdir=root,
+                output=root / 'rescore.json', previous=previous_path, mode='score', installed_runtime=True,
+                expected_runtime_fingerprint=expected_path, asr_provider='mlx', ocr_provider='vision')
+            with patch.object(benchmark, 'REPO', driver), \
+                 patch.object(benchmark.sys, 'path', list(benchmark.sys.path)), \
+                 patch.object(benchmark, 'verify_installed_runtime', return_value={"sha256": "fixture-runtime", "files": {}}) as verify, \
+                 patch.object(benchmark, 'tool_versions', return_value={}), \
+                 patch('clipmind.sdk.ClipMind.analyze') as analyze:
+                result = benchmark.benchmark(args)
+            verify.assert_called_once()
+            analyze.assert_not_called()
+            self.assertEqual(result['code_revision'], 'candidate-revision')
+            self.assertFalse(result['working_tree_dirty'])
+            self.assertEqual(result['runtime_import'], 'verified_installed_package')
+            self.assertEqual(result['cases'][0]['captions_sha256'], benchmark.file_digest(captions))
+            self.assertEqual(result['cases'][0]['wall_seconds'], 42)
+            self.assertEqual(result['status'], 'measured')
+
     def test_missing_or_failed_ocr_keeps_deleted_reference_units_in_code_cer(self):
         from clipmind.evidence import EvidencePackError
         label = {"review_start": 0, "review_end": 20, "slide_changes": [10],

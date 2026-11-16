@@ -11,7 +11,7 @@ After installing [uv](https://docs.astral.sh/uv/) and the system dependencies
 listed below, run this in Terminal or PowerShell:
 
 ```bash
-uv tool install --python 3.12 git+https://github.com/yy31104/clipmind.git@v1.3.0
+uv tool install --python 3.12 git+https://github.com/yy31104/clipmind.git@v1.4.0
 ```
 
 This installs the CLI, web app and MCP server in an isolated tool environment.
@@ -20,8 +20,8 @@ Then run `clipmind doctor` and `clipmind serve`; open
 run `uv tool update-shell` and open a new terminal. Git must be installed for
 the GitHub source command. No clone or virtual-environment activation is needed.
 
-For English speech, set `CLIPMIND_ASR_LANGUAGE=en` before starting the app;
-Chinese is the default. In PowerShell use
+Speech language is detected automatically. To force a language, set
+`CLIPMIND_ASR_LANGUAGE=en` before starting the app. In PowerShell use
 `$env:CLIPMIND_ASR_LANGUAGE="en"`, then `clipmind serve`. With Docker, pass
 `-e CLIPMIND_ASR_LANGUAGE=en` before the image name.
 
@@ -119,12 +119,18 @@ The `auto` defaults are usually correct:
 ```dotenv
 CLIPMIND_ASR_PROVIDER=auto        # auto | mlx | faster-whisper
 CLIPMIND_OCR_PROVIDER=auto        # auto | vision | tesseract
-CLIPMIND_ASR_LANGUAGE=zh          # empty means provider auto-detection
-CLIPMIND_TESSERACT_LANGUAGES=chi_sim+chi_tra+eng
+CLIPMIND_ASR_LANGUAGE=auto        # default: detect; en/zh/etc. force a language
+CLIPMIND_TESSERACT_LANGUAGES=eng+chi_sim+chi_tra
 ```
 
 First use can download a large ASR model. Select a different compatible model
 with `CLIPMIND_ASR_MODEL` or `CLIPMIND_FASTER_WHISPER_MODEL`.
+
+Before transcription and OCR, the CLI and task card show a broad analysis-time
+range based on the selected providers, source duration and retained frame count.
+Portable ASR estimates assume CPU. This is a planning estimate, not a countdown;
+acquisition, model downloads and competing workloads can add time. The estimate
+is saved with the job and Evidence Pack.
 
 Two guards against Whisper inventing speech during silence or music are on by
 default and recorded under `configuration.asr_guards` in each manifest:
@@ -141,7 +147,7 @@ off if quiet speech over loud music is being dropped.
 Optional local speaker diarization is deliberately separate:
 
 ```bash
-uv tool install --force --python 3.12 'clipmind[diarization] @ git+https://github.com/yy31104/clipmind.git@v1.3.0'
+uv tool install --force --python 3.12 'clipmind[diarization] @ git+https://github.com/yy31104/clipmind.git@v1.4.0'
 ```
 
 ```dotenv
@@ -182,7 +188,7 @@ frozen lock; speech model weights download only when first needed.
 Run the versioned image with one command (Terminal or PowerShell):
 
 ```bash
-docker run --rm -p 127.0.0.1:8420:8420 -v clipmind-data:/data ghcr.io/yy31104/clipmind:v1.3.0
+docker run --rm -p 127.0.0.1:8420:8420 -v clipmind-data:/data ghcr.io/yy31104/clipmind:v1.4.0
 ```
 
 Open [127.0.0.1:8420](http://127.0.0.1:8420). The first speech extraction can
@@ -199,7 +205,7 @@ The container uses CPU inference by default; it does not use Apple Silicon's GPU
 To build the same image from a checkout:
 
 ```bash
-docker build --build-arg VERSION=1.3.0 -t clipmind .
+docker build --build-arg VERSION=1.4.0 -t clipmind .
 docker run --rm \
   -p 127.0.0.1:8420:8420 \
   -v "$PWD/clipmind-data:/data" \
@@ -225,8 +231,8 @@ in a clean environment and run `clipmind doctor` before distributing it.
 
 ## Publish Python release assets
 
-Publishing a GitHub Release is the explicit authorization boundary. The
-`release assets` workflow checks out that release's tag, requires the tag to
+Publishing a GitHub Release starts the `release assets` workflow. It checks
+out that release's tag, requires the tag to
 match the version in `pyproject.toml`, and builds one wheel and one source
 distribution. It installs the wheel with its dependencies in a clean virtual
 environment outside the checkout, verifies the CLI and packaged web assets,

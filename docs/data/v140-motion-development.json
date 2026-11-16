@@ -1,0 +1,918 @@
+{
+  "schema_version": 1,
+  "scope": "Original ten development clips; no holdout inputs, labels, images, or results accessed by this investigation.",
+  "labels_sha256": "a32597d8a4746526b5ec39e888e5a777bb25962c76c36c68325df97793e99904",
+  "label_limit": "Fixed source-only development annotations awaiting human verification; not human ground truth.",
+  "targets": {
+    "recall": 0.85,
+    "precision": 0.5
+  },
+  "selected_algorithm": "dhash-stationary-strokes-settle-v5",
+  "boundary_algorithm": "supported-pane-layout-v2",
+  "sampling": {
+    "fps": 2.0,
+    "width": 640,
+    "selector": "First original frame in each floor(local_PTS*fps) time bucket.",
+    "actual_source_pts_preserved": true,
+    "samples_per_case": 360,
+    "promotion_width": 1280,
+    "promotion": "Source decoded with identical bucket selection, selected by retained sample index, and verified against original sample PTS; no image upsampling."
+  },
+  "final_integrated_summary": {
+    "case_count": 10,
+    "canonical_frame_count_all10": 629,
+    "membership_and_timestamps_unchanged": true,
+    "raw": {
+      "reference_count": 60,
+      "prediction_count": 371,
+      "matched": 59,
+      "recall": 0.9833333333333333,
+      "precision": 0.15902964959568733
+    },
+    "typed": {
+      "reference_count": 60,
+      "prediction_count": 228,
+      "matched": 59,
+      "recall": 0.9833333333333333,
+      "precision": 0.25877192982456143
+    }
+  },
+  "evaluation_limits": [
+    "Cached measured local face/PIP evidence was replayed through the integrated classifier on identical source images, sample indexes, and capture times.",
+    "No OCR or ASR inference was rerun for the corrected-clock selections. Empty text/layout prevents additional camera-layout exclusions; this is not a full OCR pipeline score.",
+    "The original ten development clips informed implementation; these scores are not held-out performance.",
+    "All ten frozen source ROIs retained visible content on visual comparison; no OCR accuracy score is inferred."
+  ],
+  "runtime_sha256": {
+    "clipmind/media.py": "b2be0fd6c0050ba373d766aef91a564d2f0ecbbb491d38c37b49ea1cd4f00dff",
+    "clipmind/screen_motion.py": "dd1c809341bdbccc51d27072ef2ef13a7df12ec1e099557adafd6f340d68310d",
+    "clipmind/screen_faces.py": "40c3dff372a6a88e2dec1874cbe20b2f6774f009d74861f29b19466320c32d6f",
+    "clipmind/visual_states.py": "54ee5153123eec1099585cedb2acf70fbed9aa13ff7095ab2e779a17c45f5190"
+  },
+  "tests": {
+    "command": ".venv/bin/python -m unittest tests.test_screen_motion tests.test_screen_capture tests.test_screen_capture_review tests.test_persistent_strokes",
+    "passed": 34,
+    "failures": 0,
+    "errors": 0,
+    "new_pipeline_tests": 3
+  },
+  "artifact": {
+    "archive": "v140-motion-development-evidence.zip",
+    "sha256": "f287bb7033836e2dc86f45d6c01d03e5ddb004b8d06383eb1f4c374a9a0f0c1e",
+    "bytes": 410620501,
+    "payload_members_verified": 12646,
+    "all_payload_checksums_valid": true,
+    "personal_path_scan_passed": true,
+    "original_source_videos_included": false,
+    "holdout_accessed": false
+  },
+  "attempts": {
+    "original_baseline_control": {
+      "canonical": {
+        "reference_count": 60,
+        "prediction_count": 159,
+        "matched": 44,
+        "recall": 0.7333333333333333,
+        "precision": 0.27672955974842767
+      },
+      "typed": {
+        "reference_count": 60,
+        "prediction_count": 145,
+        "matched": 43,
+        "recall": 0.7166666666666667,
+        "precision": 0.296551724137931
+      }
+    },
+    "original_retention_helper": {
+      "canonical": {
+        "reference_count": 60,
+        "prediction_count": 1087,
+        "matched": 59,
+        "recall": 0.9833333333333333,
+        "precision": 0.05427782888684453
+      },
+      "typed": {
+        "reference_count": 60,
+        "prediction_count": 365,
+        "matched": 59,
+        "recall": 0.9833333333333333,
+        "precision": 0.16164383561643836
+      }
+    },
+    "old_347_sample_paired": {
+      "status": "Superseded sampling; original results and premature full-recall-only rejection preserved.",
+      "control": {
+        "reference_count": 60,
+        "prediction_count": 1087,
+        "matched": 59,
+        "canonical_frame_count_all10": 1717,
+        "case_count": 10,
+        "failure_count": 0,
+        "recall": 0.9833333333333333,
+        "precision": 0.05427782888684453
+      },
+      "variant": {
+        "reference_count": 60,
+        "prediction_count": 362,
+        "matched": 58,
+        "canonical_frame_count_all10": 614,
+        "case_count": 10,
+        "failure_count": 0,
+        "recall": 0.9666666666666667,
+        "precision": 0.16022099447513813
+      }
+    },
+    "corrected_clock_promotion_setup": {
+      "status": "Failed before scoring; all ten failed records and360-frame sample sets preserved.",
+      "cause": "Unbalanced FFmpeg index expression exceeded parser recursion; no sampling or algorithm failure."
+    },
+    "corrected_clock_recovered": {
+      "status": "Measured on exact same saved360-frame samples using an equivalent balanced index expression; no algorithm parameters changed.",
+      "control": {
+        "case_count": 10,
+        "failure_count": 0,
+        "canonical_frame_count_all10": 1738,
+        "raw": {
+          "reference_count": 60,
+          "prediction_count": 1121,
+          "matched": 60,
+          "recall": 1.0,
+          "precision": 0.05352363960749331
+        },
+        "typed": {
+          "reference_count": 60,
+          "prediction_count": 351,
+          "matched": 59,
+          "recall": 0.9833333333333333,
+          "precision": 0.16809116809116809
+        }
+      },
+      "variant": {
+        "case_count": 10,
+        "failure_count": 0,
+        "canonical_frame_count_all10": 629,
+        "raw": {
+          "reference_count": 60,
+          "prediction_count": 371,
+          "matched": 59,
+          "recall": 0.9833333333333333,
+          "precision": 0.15902964959568733
+        },
+        "typed": {
+          "reference_count": 60,
+          "prediction_count": 228,
+          "matched": 59,
+          "recall": 0.9833333333333333,
+          "precision": 0.25877192982456143
+        }
+      }
+    }
+  },
+  "residual_risks": [
+    "The 50% precision target is not met.",
+    "Xous branded badge shading changes remain uncertain; no timecode or arbitrary localized overlay exclusion was added.",
+    "Full camera views and unexplained image-only changes remain uncertain.",
+    "A global 80% stationarity ratio can be dominated by a large moving actor and suppress a smaller stable new code stroke at the optional local-detail gate; the global hash may independently retain it."
+  ],
+  "cases": [
+    {
+      "case_id": "39c3-2042",
+      "input_sha256": "6ee5fb351fe2f140b7e5bebb5c38671b5770d337b4e1e56a1809b0b7c5c6195a",
+      "sample_count": 360,
+      "slide_metric_applicable": false,
+      "canonical_frame_count": 111,
+      "kind_counts": {
+        "content": 1,
+        "uncertain": 109,
+        "speaker": 1
+      },
+      "membership_and_timestamps_unchanged": true
+    },
+    {
+      "case_id": "39c3-1611",
+      "input_sha256": "075c9c8012fe35400d414dab1833db15e9258a7bfe9320a24f957b8ed9ed399a",
+      "sample_count": 360,
+      "slide_metric_applicable": true,
+      "canonical_frame_count": 81,
+      "kind_counts": {
+        "content": 1,
+        "speaker": 39,
+        "uncertain": 41
+      },
+      "membership_and_timestamps_unchanged": true,
+      "raw_score": {
+        "reference_count": 12,
+        "prediction_count": 80,
+        "matched": 12,
+        "matches": [
+          [
+            30.0,
+            29.0
+          ],
+          [
+            42.0,
+            41.0
+          ],
+          [
+            50.0,
+            49.52
+          ],
+          [
+            59.0,
+            58.0
+          ],
+          [
+            70.0,
+            69.0
+          ],
+          [
+            74.0,
+            74.0
+          ],
+          [
+            94.0,
+            93.52
+          ],
+          [
+            100.0,
+            99.0
+          ],
+          [
+            112.0,
+            111.0
+          ],
+          [
+            143.0,
+            143.0
+          ],
+          [
+            157.0,
+            157.0
+          ],
+          [
+            167.0,
+            167.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 1.0,
+        "precision": 0.15
+      },
+      "typed_score": {
+        "reference_count": 12,
+        "prediction_count": 41,
+        "matched": 12,
+        "matches": [
+          [
+            30.0,
+            29.0
+          ],
+          [
+            42.0,
+            41.0
+          ],
+          [
+            50.0,
+            49.52
+          ],
+          [
+            59.0,
+            59.0
+          ],
+          [
+            70.0,
+            69.0
+          ],
+          [
+            74.0,
+            74.0
+          ],
+          [
+            94.0,
+            93.52
+          ],
+          [
+            100.0,
+            100.0
+          ],
+          [
+            112.0,
+            111.52
+          ],
+          [
+            143.0,
+            143.0
+          ],
+          [
+            157.0,
+            157.0
+          ],
+          [
+            167.0,
+            167.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 1.0,
+        "precision": 0.2926829268292683
+      }
+    },
+    {
+      "case_id": "39c3-2154",
+      "input_sha256": "fc7192e34cd776f5095ade504f018e92ea0bf40b76ee3e83e4647b791fea69f3",
+      "sample_count": 360,
+      "slide_metric_applicable": false,
+      "canonical_frame_count": 116,
+      "kind_counts": {
+        "content": 1,
+        "uncertain": 100,
+        "speaker": 15
+      },
+      "membership_and_timestamps_unchanged": true
+    },
+    {
+      "case_id": "39c3-2188",
+      "input_sha256": "62e4f80bd51ee3dc5ba77cb8f9d11c7d023f18936ec453deca211a5aa57d9437",
+      "sample_count": 360,
+      "slide_metric_applicable": false,
+      "canonical_frame_count": 24,
+      "kind_counts": {
+        "content": 1,
+        "uncertain": 23
+      },
+      "membership_and_timestamps_unchanged": true
+    },
+    {
+      "case_id": "39c3-2274",
+      "input_sha256": "1ce923120997691c7ebc27e162d095e2051c0fad34f02d22394454092e65ec4a",
+      "sample_count": 360,
+      "slide_metric_applicable": true,
+      "canonical_frame_count": 45,
+      "kind_counts": {
+        "content": 1,
+        "uncertain": 12,
+        "speaker": 32
+      },
+      "membership_and_timestamps_unchanged": true,
+      "raw_score": {
+        "reference_count": 5,
+        "prediction_count": 44,
+        "matched": 5,
+        "matches": [
+          [
+            16.0,
+            15.0
+          ],
+          [
+            59.0,
+            59.0
+          ],
+          [
+            80.0,
+            79.52
+          ],
+          [
+            101.0,
+            101.0
+          ],
+          [
+            139.0,
+            138.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 1.0,
+        "precision": 0.11363636363636363
+      },
+      "typed_score": {
+        "reference_count": 5,
+        "prediction_count": 12,
+        "matched": 5,
+        "matches": [
+          [
+            16.0,
+            16.0
+          ],
+          [
+            59.0,
+            59.0
+          ],
+          [
+            80.0,
+            80.52
+          ],
+          [
+            101.0,
+            101.52
+          ],
+          [
+            139.0,
+            139.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 1.0,
+        "precision": 0.4166666666666667
+      }
+    },
+    {
+      "case_id": "39c3-1317",
+      "input_sha256": "257cbae3d65b7de306ab6f1e247dd2c95ae81520abfadda2ccde507cd0b7c959",
+      "sample_count": 360,
+      "slide_metric_applicable": true,
+      "canonical_frame_count": 48,
+      "kind_counts": {
+        "content": 1,
+        "uncertain": 47
+      },
+      "membership_and_timestamps_unchanged": true,
+      "raw_score": {
+        "reference_count": 10,
+        "prediction_count": 47,
+        "matched": 10,
+        "matches": [
+          [
+            9.0,
+            9.0
+          ],
+          [
+            28.0,
+            27.52
+          ],
+          [
+            59.0,
+            59.52
+          ],
+          [
+            66.0,
+            65.52
+          ],
+          [
+            77.0,
+            76.52
+          ],
+          [
+            83.0,
+            83.52
+          ],
+          [
+            120.0,
+            119.52
+          ],
+          [
+            130.0,
+            130.0
+          ],
+          [
+            147.0,
+            147.0
+          ],
+          [
+            151.0,
+            151.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 1.0,
+        "precision": 0.2127659574468085
+      },
+      "typed_score": {
+        "reference_count": 10,
+        "prediction_count": 47,
+        "matched": 10,
+        "matches": [
+          [
+            9.0,
+            9.0
+          ],
+          [
+            28.0,
+            27.52
+          ],
+          [
+            59.0,
+            59.52
+          ],
+          [
+            66.0,
+            65.52
+          ],
+          [
+            77.0,
+            76.52
+          ],
+          [
+            83.0,
+            83.52
+          ],
+          [
+            120.0,
+            119.52
+          ],
+          [
+            130.0,
+            130.0
+          ],
+          [
+            147.0,
+            147.0
+          ],
+          [
+            151.0,
+            151.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 1.0,
+        "precision": 0.2127659574468085
+      }
+    },
+    {
+      "case_id": "39c3-1989",
+      "input_sha256": "631a6d1aca378d0a3374f1ab94d1874666f602715582125fbeb4d2655232144e",
+      "sample_count": 360,
+      "slide_metric_applicable": true,
+      "canonical_frame_count": 46,
+      "kind_counts": {
+        "content": 1,
+        "speaker": 39,
+        "uncertain": 6
+      },
+      "membership_and_timestamps_unchanged": true,
+      "raw_score": {
+        "reference_count": 4,
+        "prediction_count": 45,
+        "matched": 4,
+        "matches": [
+          [
+            19.0,
+            19.0
+          ],
+          [
+            97.0,
+            96.52
+          ],
+          [
+            119.0,
+            118.0
+          ],
+          [
+            139.0,
+            138.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 1.0,
+        "precision": 0.08888888888888889
+      },
+      "typed_score": {
+        "reference_count": 4,
+        "prediction_count": 6,
+        "matched": 4,
+        "matches": [
+          [
+            19.0,
+            19.52
+          ],
+          [
+            97.0,
+            97.52
+          ],
+          [
+            119.0,
+            119.52
+          ],
+          [
+            139.0,
+            139.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 1.0,
+        "precision": 0.6666666666666666
+      }
+    },
+    {
+      "case_id": "39c3-1979",
+      "input_sha256": "7dc914cb4bb2ecb78069ba614f3d42a688f9ebee6ea3d19106267118efc9d024",
+      "sample_count": 360,
+      "slide_metric_applicable": true,
+      "canonical_frame_count": 33,
+      "kind_counts": {
+        "content": 1,
+        "speaker": 24,
+        "uncertain": 8
+      },
+      "membership_and_timestamps_unchanged": true,
+      "raw_score": {
+        "reference_count": 3,
+        "prediction_count": 32,
+        "matched": 3,
+        "matches": [
+          [
+            40.0,
+            39.0
+          ],
+          [
+            124.0,
+            123.0
+          ],
+          [
+            147.0,
+            147.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 1.0,
+        "precision": 0.09375
+      },
+      "typed_score": {
+        "reference_count": 3,
+        "prediction_count": 8,
+        "matched": 3,
+        "matches": [
+          [
+            40.0,
+            39.0
+          ],
+          [
+            124.0,
+            123.0
+          ],
+          [
+            147.0,
+            147.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 1.0,
+        "precision": 0.375
+      }
+    },
+    {
+      "case_id": "39c3-2372",
+      "input_sha256": "01ae56db455b3207d60989a6691d09e0ed33acd4e1c1347c4b39719136de1113",
+      "sample_count": 360,
+      "slide_metric_applicable": true,
+      "canonical_frame_count": 72,
+      "kind_counts": {
+        "content": 1,
+        "uncertain": 71
+      },
+      "membership_and_timestamps_unchanged": true,
+      "raw_score": {
+        "reference_count": 10,
+        "prediction_count": 71,
+        "matched": 10,
+        "matches": [
+          [
+            16.0,
+            16.52
+          ],
+          [
+            69.0,
+            68.52
+          ],
+          [
+            94.0,
+            93.52
+          ],
+          [
+            112.0,
+            111.0
+          ],
+          [
+            149.0,
+            148.0
+          ],
+          [
+            160.0,
+            160.0
+          ],
+          [
+            164.0,
+            163.0
+          ],
+          [
+            165.0,
+            164.0
+          ],
+          [
+            171.0,
+            170.0
+          ],
+          [
+            173.0,
+            173.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 1.0,
+        "precision": 0.14084507042253522
+      },
+      "typed_score": {
+        "reference_count": 10,
+        "prediction_count": 71,
+        "matched": 10,
+        "matches": [
+          [
+            16.0,
+            16.52
+          ],
+          [
+            69.0,
+            68.52
+          ],
+          [
+            94.0,
+            93.52
+          ],
+          [
+            112.0,
+            111.0
+          ],
+          [
+            149.0,
+            148.0
+          ],
+          [
+            160.0,
+            160.0
+          ],
+          [
+            164.0,
+            163.0
+          ],
+          [
+            165.0,
+            164.0
+          ],
+          [
+            171.0,
+            170.0
+          ],
+          [
+            173.0,
+            173.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 1.0,
+        "precision": 0.14084507042253522
+      }
+    },
+    {
+      "case_id": "39c3-1508",
+      "input_sha256": "f514284d9f182834d5f9281e10a16dfa428f09f74d1be7c774622aee30d6ae06",
+      "sample_count": 360,
+      "slide_metric_applicable": true,
+      "canonical_frame_count": 53,
+      "kind_counts": {
+        "content": 1,
+        "uncertain": 43,
+        "speaker": 9
+      },
+      "membership_and_timestamps_unchanged": true,
+      "raw_score": {
+        "reference_count": 16,
+        "prediction_count": 52,
+        "matched": 15,
+        "matches": [
+          [
+            13.0,
+            13.0
+          ],
+          [
+            19.0,
+            19.52
+          ],
+          [
+            27.0,
+            27.0
+          ],
+          [
+            52.0,
+            51.52
+          ],
+          [
+            62.0,
+            62.0
+          ],
+          [
+            68.0,
+            68.0
+          ],
+          [
+            99.0,
+            99.0
+          ],
+          [
+            102.0,
+            102.52
+          ],
+          [
+            103.0,
+            103.0
+          ],
+          [
+            115.0,
+            115.0
+          ],
+          [
+            124.0,
+            123.52
+          ],
+          [
+            134.0,
+            134.0
+          ],
+          [
+            143.0,
+            143.52
+          ],
+          [
+            166.0,
+            166.52
+          ],
+          [
+            175.0,
+            174.52
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 0.9375,
+        "precision": 0.28846153846153844
+      },
+      "typed_score": {
+        "reference_count": 16,
+        "prediction_count": 43,
+        "matched": 15,
+        "matches": [
+          [
+            13.0,
+            13.0
+          ],
+          [
+            19.0,
+            19.52
+          ],
+          [
+            27.0,
+            27.0
+          ],
+          [
+            52.0,
+            51.52
+          ],
+          [
+            62.0,
+            62.0
+          ],
+          [
+            68.0,
+            68.0
+          ],
+          [
+            99.0,
+            99.0
+          ],
+          [
+            102.0,
+            102.52
+          ],
+          [
+            103.0,
+            103.0
+          ],
+          [
+            115.0,
+            115.0
+          ],
+          [
+            124.0,
+            124.52
+          ],
+          [
+            134.0,
+            134.0
+          ],
+          [
+            143.0,
+            143.52
+          ],
+          [
+            166.0,
+            166.52
+          ],
+          [
+            175.0,
+            174.52
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 0.9375,
+        "precision": 0.3488372093023256
+      }
+    }
+  ]
+}

@@ -49,7 +49,7 @@ With Docker installed, one command starts the app with FFmpeg, Tesseract and
 portable speech recognition included:
 
 ```bash
-docker run --rm -p 127.0.0.1:8420:8420 -v clipmind-data:/data ghcr.io/yy31104/clipmind:v1.3.0
+docker run --rm -p 127.0.0.1:8420:8420 -v clipmind-data:/data ghcr.io/yy31104/clipmind:v1.4.0
 ```
 
 Open [127.0.0.1:8420](http://127.0.0.1:8420), paste a link or upload a local
@@ -62,12 +62,11 @@ For native Apple Silicon acceleration, or an existing Python setup, install
 Tesseract), then run:
 
 ```bash
-uv tool install --python 3.12 git+https://github.com/yy31104/clipmind.git@v1.3.0
+uv tool install --python 3.12 git+https://github.com/yy31104/clipmind.git@v1.4.0
 ```
 
-Start with `clipmind doctor`, then `clipmind serve`. For English speech, set
-`CLIPMIND_ASR_LANGUAGE=en` before starting; the default is Chinese.
-For the Docker command, pass `-e CLIPMIND_ASR_LANGUAGE=en` before the image name.
+Start with `clipmind doctor`, then `clipmind serve`. Speech language is detected
+automatically. Set `CLIPMIND_ASR_LANGUAGE=en` (or another language code) to override it.
 The PyPI package called `clipmind` belongs to another project; use the GitHub
 command above. [Platform setup, updates and Docker persistence](docs/INSTALL.md).
 
@@ -115,7 +114,7 @@ Evidence Pack files are the source of truth. The search index can be rebuilt, an
 - [CLI, SDK, REST, and MCP usage](docs/USAGE.md)
 - [Real talk demo and MCP question answering](docs/REAL_TALK_DEMO.md)
 - [Ten-source quality measurements](docs/REAL_TALK_BENCHMARK.md)
-- [v1.3.0 release notes](docs/releases/v1.3.0.md)
+- [v1.4.0 release notes](docs/releases/v1.4.0.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Evidence Pack format](docs/EVIDENCE_PACK.md)
 - [Privacy](docs/PRIVACY.md)

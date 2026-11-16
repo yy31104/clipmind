@@ -83,7 +83,7 @@ validated to remain inside the selected complete pack.
 ### `clipmind.export_pack`
 
 Writes a deterministic canonical ZIP to the optional destination and returns
-its local path. The destination is an external write authorized by the caller.
+its local path. The caller chooses the destination for this external write.
 
 ## Resources
 

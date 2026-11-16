@@ -1,0 +1,393 @@
+{
+  "schema_version": 1,
+  "status": "completed",
+  "media": "unchanged generated four-slide English fixture",
+  "planned": [
+    {
+      "image": "baseline",
+      "languages": "chi_sim+chi_tra+eng"
+    },
+    {
+      "image": "baseline",
+      "languages": "eng"
+    },
+    {
+      "image": "candidate",
+      "languages": "chi_sim+chi_tra+eng"
+    },
+    {
+      "image": "candidate",
+      "languages": "eng"
+    }
+  ],
+  "runs": [
+    {
+      "image_id": "baseline",
+      "image": "ghcr.io/yy31104/clipmind@sha256:5bf19e53e0fb9d3959c6b4a32438a07159a6ec8dc4e3d69c8388b87aea91bc87",
+      "languages": "chi_sim+chi_tra+eng",
+      "exit_code": 0,
+      "wall_seconds": 2.37,
+      "report": {
+        "acquisition_leftovers": [],
+        "checks": {
+          "all_four_slides_recognized": true,
+          "evidence_pack_complete": true,
+          "ocr_complete": true,
+          "temporary_acquisition_media_cleaned": true,
+          "transcript_explicitly_unavailable": true,
+          "visual_evidence_present": true
+        },
+        "completeness": {
+          "ocr": "complete",
+          "speaker_diarization": "unavailable",
+          "transcript": "unavailable",
+          "visual_states": "complete",
+          "word_timing": "unavailable"
+        },
+        "counts": {
+          "candidate_frames": 12,
+          "canonical_visual_states": 4,
+          "ocr_records": 4,
+          "preview_visual_states": 0,
+          "progressive_build_groups": 0,
+          "scenes": 4,
+          "scroll_groups": 0,
+          "transcript_segments": 0
+        },
+        "diagnostics": {
+          "asr_error": "no audio track",
+          "dedupe_failure_count": 0,
+          "diarization_error": null,
+          "ocr_error": null,
+          "ocr_failure_count": 0
+        },
+        "environment": {
+          "font": [
+            "DejaVu Sans",
+            "Book"
+          ],
+          "machine": "aarch64",
+          "ocr_engine": "tesseract",
+          "ocr_languages": "chi_sim+chi_tra+eng",
+          "python": "3.12.16",
+          "system": "Linux",
+          "tesseract_version": "tesseract 5.3.0"
+        },
+        "fixture": "generated-silent-four-slide-video",
+        "passed": true,
+        "recognized_text": "ALPHA PLAN BETA SYSTEM GAMMA DATA DELTA REVIEW",
+        "result_title": "clipmind-demo",
+        "timings": {
+          "acquisition_seconds": 0.06,
+          "asr_seconds": 0.0,
+          "ocr_seconds": 0.5,
+          "preview_seconds": 0.023,
+          "sampling_seconds": 0.225
+        }
+      },
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--name",
+        "clipmind-v140-silent-baseline-default",
+        "--cpus=6",
+        "--memory=4g",
+        "--network=none",
+        "-v",
+        "<WORKDIR>/candidate/scripts/evaluate_silent_slides.py:/evaluation/scripts/evaluate_silent_slides.py:ro",
+        "-v",
+        "<WORKDIR>/runs/silent-baseline-default:/data",
+        "-e",
+        "CLIPMIND_OCR_PROVIDER=tesseract",
+        "-e",
+        "CLIPMIND_TESSERACT_LANGUAGES=chi_sim+chi_tra+eng",
+        "-e",
+        "PYTHON_DOTENV_DISABLED=1",
+        "-e",
+        "HF_HUB_OFFLINE=1",
+        "ghcr.io/yy31104/clipmind@sha256:5bf19e53e0fb9d3959c6b4a32438a07159a6ec8dc4e3d69c8388b87aea91bc87",
+        "python",
+        "/evaluation/scripts/evaluate_silent_slides.py",
+        "--output",
+        "/data/report.json"
+      ]
+    },
+    {
+      "image_id": "baseline",
+      "image": "ghcr.io/yy31104/clipmind@sha256:5bf19e53e0fb9d3959c6b4a32438a07159a6ec8dc4e3d69c8388b87aea91bc87",
+      "languages": "eng",
+      "exit_code": 0,
+      "wall_seconds": 1.593,
+      "report": {
+        "acquisition_leftovers": [],
+        "checks": {
+          "all_four_slides_recognized": true,
+          "evidence_pack_complete": true,
+          "ocr_complete": true,
+          "temporary_acquisition_media_cleaned": true,
+          "transcript_explicitly_unavailable": true,
+          "visual_evidence_present": true
+        },
+        "completeness": {
+          "ocr": "complete",
+          "speaker_diarization": "unavailable",
+          "transcript": "unavailable",
+          "visual_states": "complete",
+          "word_timing": "unavailable"
+        },
+        "counts": {
+          "candidate_frames": 12,
+          "canonical_visual_states": 4,
+          "ocr_records": 4,
+          "preview_visual_states": 0,
+          "progressive_build_groups": 0,
+          "scenes": 4,
+          "scroll_groups": 0,
+          "transcript_segments": 0
+        },
+        "diagnostics": {
+          "asr_error": "no audio track",
+          "dedupe_failure_count": 0,
+          "diarization_error": null,
+          "ocr_error": null,
+          "ocr_failure_count": 0
+        },
+        "environment": {
+          "font": [
+            "DejaVu Sans",
+            "Book"
+          ],
+          "machine": "aarch64",
+          "ocr_engine": "tesseract",
+          "ocr_languages": "eng",
+          "python": "3.12.16",
+          "system": "Linux",
+          "tesseract_version": "tesseract 5.3.0"
+        },
+        "fixture": "generated-silent-four-slide-video",
+        "passed": true,
+        "recognized_text": "ALPHA PLAN BETA SYSTEM GAMMA DATA DELTA REVIEW",
+        "result_title": "clipmind-demo",
+        "timings": {
+          "acquisition_seconds": 0.052,
+          "asr_seconds": 0.0,
+          "ocr_seconds": 0.187,
+          "preview_seconds": 0.02,
+          "sampling_seconds": 0.225
+        }
+      },
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--name",
+        "clipmind-v140-silent-baseline-english",
+        "--cpus=6",
+        "--memory=4g",
+        "--network=none",
+        "-v",
+        "<WORKDIR>/candidate/scripts/evaluate_silent_slides.py:/evaluation/scripts/evaluate_silent_slides.py:ro",
+        "-v",
+        "<WORKDIR>/runs/silent-baseline-english:/data",
+        "-e",
+        "CLIPMIND_OCR_PROVIDER=tesseract",
+        "-e",
+        "CLIPMIND_TESSERACT_LANGUAGES=eng",
+        "-e",
+        "PYTHON_DOTENV_DISABLED=1",
+        "-e",
+        "HF_HUB_OFFLINE=1",
+        "ghcr.io/yy31104/clipmind@sha256:5bf19e53e0fb9d3959c6b4a32438a07159a6ec8dc4e3d69c8388b87aea91bc87",
+        "python",
+        "/evaluation/scripts/evaluate_silent_slides.py",
+        "--output",
+        "/data/report.json"
+      ]
+    },
+    {
+      "image_id": "candidate",
+      "image": "sha256:6124dcc81be039c191b4b526877ccdaf32838b7a4cf9e924ce98aae36345c1cd",
+      "languages": "chi_sim+chi_tra+eng",
+      "exit_code": 1,
+      "wall_seconds": 2.512,
+      "report": {
+        "acquisition_leftovers": [],
+        "checks": {
+          "all_four_slides_recognized": false,
+          "evidence_pack_complete": true,
+          "ocr_complete": true,
+          "temporary_acquisition_media_cleaned": true,
+          "transcript_explicitly_unavailable": true,
+          "visual_evidence_present": true
+        },
+        "completeness": {
+          "ocr": "complete",
+          "speaker_diarization": "unavailable",
+          "transcript": "unavailable",
+          "visual_states": "complete",
+          "word_timing": "unavailable"
+        },
+        "counts": {
+          "candidate_frames": 13,
+          "canonical_visual_states": 4,
+          "ocr_records": 4,
+          "preview_visual_states": 0,
+          "progressive_build_groups": 0,
+          "scenes": 4,
+          "scroll_groups": 0,
+          "transcript_segments": 0
+        },
+        "diagnostics": {
+          "asr_error": "no audio track",
+          "dedupe_failure_count": 0,
+          "diarization_error": null,
+          "ocr_error": null,
+          "ocr_failure_count": 0
+        },
+        "environment": {
+          "font": [
+            "DejaVu Sans",
+            "Book"
+          ],
+          "machine": "aarch64",
+          "ocr_engine": "tesseract",
+          "ocr_languages": "chi_sim+chi_tra+eng",
+          "python": "3.12.16",
+          "system": "Linux",
+          "tesseract_version": "tesseract 5.3.0"
+        },
+        "fixture": "generated-silent-four-slide-video",
+        "passed": false,
+        "recognized_text": "ALPHA PLAN BETA SYSTEM CAMMA DATA DELTA REVIEW",
+        "result_title": "clipmind-demo",
+        "timings": {
+          "acquisition_seconds": 0.047,
+          "asr_seconds": 0.0,
+          "ocr_seconds": 0.88,
+          "preview_seconds": 0.224,
+          "sampling_seconds": 0.248
+        }
+      },
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--name",
+        "clipmind-v140-silent-candidate-default",
+        "--cpus=6",
+        "--memory=4g",
+        "--network=none",
+        "-v",
+        "<WORKDIR>/candidate/scripts/evaluate_silent_slides.py:/evaluation/scripts/evaluate_silent_slides.py:ro",
+        "-v",
+        "<WORKDIR>/runs/silent-candidate-default:/data",
+        "-e",
+        "CLIPMIND_OCR_PROVIDER=tesseract",
+        "-e",
+        "CLIPMIND_TESSERACT_LANGUAGES=chi_sim+chi_tra+eng",
+        "-e",
+        "PYTHON_DOTENV_DISABLED=1",
+        "-e",
+        "HF_HUB_OFFLINE=1",
+        "sha256:6124dcc81be039c191b4b526877ccdaf32838b7a4cf9e924ce98aae36345c1cd",
+        "python",
+        "/evaluation/scripts/evaluate_silent_slides.py",
+        "--output",
+        "/data/report.json"
+      ]
+    },
+    {
+      "image_id": "candidate",
+      "image": "sha256:6124dcc81be039c191b4b526877ccdaf32838b7a4cf9e924ce98aae36345c1cd",
+      "languages": "eng",
+      "exit_code": 0,
+      "wall_seconds": 2.089,
+      "report": {
+        "acquisition_leftovers": [],
+        "checks": {
+          "all_four_slides_recognized": true,
+          "evidence_pack_complete": true,
+          "ocr_complete": true,
+          "temporary_acquisition_media_cleaned": true,
+          "transcript_explicitly_unavailable": true,
+          "visual_evidence_present": true
+        },
+        "completeness": {
+          "ocr": "complete",
+          "speaker_diarization": "unavailable",
+          "transcript": "unavailable",
+          "visual_states": "complete",
+          "word_timing": "unavailable"
+        },
+        "counts": {
+          "candidate_frames": 13,
+          "canonical_visual_states": 4,
+          "ocr_records": 4,
+          "preview_visual_states": 0,
+          "progressive_build_groups": 0,
+          "scenes": 4,
+          "scroll_groups": 0,
+          "transcript_segments": 0
+        },
+        "diagnostics": {
+          "asr_error": "no audio track",
+          "dedupe_failure_count": 0,
+          "diarization_error": null,
+          "ocr_error": null,
+          "ocr_failure_count": 0
+        },
+        "environment": {
+          "font": [
+            "DejaVu Sans",
+            "Book"
+          ],
+          "machine": "aarch64",
+          "ocr_engine": "tesseract",
+          "ocr_languages": "eng",
+          "python": "3.12.16",
+          "system": "Linux",
+          "tesseract_version": "tesseract 5.3.0"
+        },
+        "fixture": "generated-silent-four-slide-video",
+        "passed": true,
+        "recognized_text": "ALPHA PLAN BETA SYSTEM GAMMA DATA DELTA REVIEW",
+        "result_title": "clipmind-demo",
+        "timings": {
+          "acquisition_seconds": 0.046,
+          "asr_seconds": 0.0,
+          "ocr_seconds": 0.57,
+          "preview_seconds": 0.192,
+          "sampling_seconds": 0.238
+        }
+      },
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "--name",
+        "clipmind-v140-silent-candidate-english",
+        "--cpus=6",
+        "--memory=4g",
+        "--network=none",
+        "-v",
+        "<WORKDIR>/candidate/scripts/evaluate_silent_slides.py:/evaluation/scripts/evaluate_silent_slides.py:ro",
+        "-v",
+        "<WORKDIR>/runs/silent-candidate-english:/data",
+        "-e",
+        "CLIPMIND_OCR_PROVIDER=tesseract",
+        "-e",
+        "CLIPMIND_TESSERACT_LANGUAGES=eng",
+        "-e",
+        "PYTHON_DOTENV_DISABLED=1",
+        "-e",
+        "HF_HUB_OFFLINE=1",
+        "sha256:6124dcc81be039c191b4b526877ccdaf32838b7a4cf9e924ce98aae36345c1cd",
+        "python",
+        "/evaluation/scripts/evaluate_silent_slides.py",
+        "--output",
+        "/data/report.json"
+      ]
+    }
+  ]
+}

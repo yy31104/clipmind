@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "status": "measured",
+  "image": "ghcr.io/yy31104/clipmind@sha256:5bf19e53e0fb9d3959c6b4a32438a07159a6ec8dc4e3d69c8388b87aea91bc87",
+  "platform": "linux/arm64",
+  "collector_sha256": "c4d0228957ff993a48828b41a27b78266cdbb6a5d11a9f8ea67b3d514f41c0bd",
+  "media_inference": false,
+  "collected_at": "2026-11-16T22:46:15Z",
+  "exit_code": 0,
+  "tesseract": {
+    "status": "measured",
+    "version": "tesseract 5.3.0",
+    "version_details": [
+      "tesseract 5.3.0",
+      " leptonica-1.82.0",
+      "  libgif 5.2.1 : libjpeg 6b (libjpeg-turbo 2.1.2) : libpng 1.6.39 : libtiff 4.5.0 : zlib 1.2.13 : libwebp 1.2.4 : libopenjp2 2.5.0",
+      " Found NEON",
+      " Found OpenMP 201511",
+      " Found libarchive 3.6.2 zlib/1.2.13 liblzma/5.4.1 bz2lib/1.0.8 liblz4/1.9.4 libzstd/1.5.4",
+      " Found libcurl/7.88.1 OpenSSL/3.0.22 zlib/1.2.13 brotli/1.0.9 zstd/1.5.4 libidn2/2.3.3 libpsl/0.21.2 (+libidn2/2.3.3) libssh2/1.10.0 nghttp2/1.52.0 librtmp/2.3 OpenLDAP/2.5.13"
+    ],
+    "available_languages": [
+      "chi_sim",
+      "chi_tra",
+      "eng",
+      "osd"
+    ],
+    "traineddata_sha256": {
+      "chi_sim": "a5fcb6f0db1e1d6d8522f39db4e848f05984669172e584e8d76b6b3141e1f730",
+      "chi_tra": "529c5b5797d64b126065cd55f2bb4c7fd7b15790798091b1ff259941a829330b",
+      "eng": "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2",
+      "osd": "9cf5d576fcc47564f11265841e5ca839001e7e6f38ff7f7aacf46d15a96b00ff"
+    },
+    "traineddata_errors": {},
+    "traineddata_status": "measured"
+  }
+}

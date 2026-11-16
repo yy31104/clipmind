@@ -1,0 +1,58 @@
+{
+  "acquisition_leftovers": [],
+  "checks": {
+    "all_four_slides_recognized": true,
+    "evidence_pack_complete": true,
+    "ocr_complete": true,
+    "temporary_acquisition_media_cleaned": true,
+    "transcript_explicitly_unavailable": true,
+    "visual_evidence_present": true
+  },
+  "completeness": {
+    "ocr": "complete",
+    "speaker_diarization": "unavailable",
+    "transcript": "unavailable",
+    "visual_states": "complete",
+    "word_timing": "unavailable"
+  },
+  "counts": {
+    "candidate_frames": 13,
+    "canonical_visual_states": 4,
+    "ocr_records": 4,
+    "preview_visual_states": 0,
+    "progressive_build_groups": 0,
+    "scenes": 4,
+    "scroll_groups": 0,
+    "transcript_segments": 0
+  },
+  "diagnostics": {
+    "asr_error": "no audio track",
+    "dedupe_failure_count": 0,
+    "diarization_error": null,
+    "ocr_error": null,
+    "ocr_failure_count": 0
+  },
+  "environment": {
+    "font": [
+      "DejaVu Sans",
+      "Book"
+    ],
+    "machine": "x86_64",
+    "ocr_engine": "tesseract",
+    "ocr_languages": "eng+chi_sim+chi_tra",
+    "python": "3.12.16",
+    "system": "Linux",
+    "tesseract_version": "tesseract 5.3.4"
+  },
+  "fixture": "generated-silent-four-slide-video",
+  "passed": true,
+  "recognized_text": "ALPHA PLAN BETA SYSTEM GAMMA DATA DELTA REVIEW",
+  "result_title": "clipmind-demo",
+  "timings": {
+    "acquisition_seconds": 0.042,
+    "asr_seconds": 0.0,
+    "ocr_seconds": 8.166,
+    "preview_seconds": 0.261,
+    "sampling_seconds": 0.331
+  }
+}
