@@ -1,0 +1,665 @@
+{
+  "schema_version": 1,
+  "frozen_at": "2026-11-16T21:24:11.286697+00:00",
+  "annotation_protocol": "AI-assisted exhaustive source-only review of every one-second contact-sheet cell across all three full recordings, with full-size source frames and code crops. Human review pending. Each persistent incremental content build counts as a primary change. Speaker/camera/layout-only changes are negatives; returning after a different content page counts again. Secondary build groups never reduce the primary denominator. One-second uncertainty; one-to-one matching. Code references transcribed from source frames without OCR. Unreadable source code is disclosed rather than guessed. v1.5 development copy: six source-verified corrections listed in changelog; all other labels identical.",
+  "cases": {
+    "wikimania-wikipie": {
+      "reviewed": true,
+      "input_sha256": "f6debc728ad29a377ed9580e824294839d40952bad8318c5613d5ad5e6b2818e",
+      "review_start": 0,
+      "review_end": 420.032,
+      "slide_metric_applicable": true,
+      "slide_changes": [
+        24,
+        45,
+        92,
+        102,
+        125.24,
+        142.33,
+        149.75,
+        162,
+        204,
+        254,
+        295,
+        318,
+        333,
+        344.97,
+        375,
+        383,
+        394.1,
+        410,
+        414,
+        415,
+        416
+      ],
+      "boundary_descriptions": {
+        "24": "Policy and measurement page; first paragraph",
+        "45": "Prior-work paragraph added",
+        "92": "Dataset aim paragraph added",
+        "102": "Invocation and enactment page",
+        "125.24": "Invocation definition added",
+        "142.33": "Enactment definition added",
+        "149.75": "Example of enacting policy without invoking it added",
+        "162": "Iterative content-analysis workflow",
+        "204": "Example WP:V invocation protocol",
+        "254": "Example WP:NPOV enactment protocol",
+        "295": "Inter-coder agreement table",
+        "318": "Explanation paragraph added below agreement table",
+        "333": "Preliminary WP:V findings",
+        "344.97": "Random-sample findings paragraph added",
+        "375": "Next steps; first two bullets",
+        "383": "Protocol-review and community-feedback bullets added",
+        "394.1": "Full-dataset and benchmark bullet added",
+        "410": "Thank-you and dataset link",
+        "414": "References I",
+        "415": "References II",
+        "416": "Return to thank-you after references"
+      },
+      "ocr": [],
+      "source_contact_sheets_reviewed": [
+        "contact-001.jpg",
+        "contact-002.jpg",
+        "contact-003.jpg",
+        "contact-004.jpg",
+        "contact-005.jpg",
+        "contact-006.jpg",
+        "contact-007.jpg"
+      ],
+      "notes": "Reviewed all 420 seconds. Research text builds, workflow diagrams, agreement table and findings. No source code is shown. Presenter inset and cursor movement do not count. References I and II are brief but persistent new information pages.",
+      "negative_events": [
+        {
+          "start": 0,
+          "end": 1,
+          "kind": "opening_black",
+          "description": "Initial black frame before the title; title is initial context."
+        },
+        {
+          "start": 1,
+          "end": 420,
+          "kind": "speaker_inset_and_cursor",
+          "description": "Presenter inset motion and cursor movement do not change the slide content."
+        }
+      ],
+      "build_groups": [
+        {
+          "start": 24,
+          "build_changes": [
+            24,
+            45,
+            92
+          ],
+          "id": "policy",
+          "reference_timestamp": 100,
+          "complete_start": 92,
+          "complete_end": 102
+        },
+        {
+          "start": 102,
+          "build_changes": [
+            102,
+            125.24,
+            142.33,
+            149.75
+          ],
+          "id": "definitions",
+          "reference_timestamp": 160,
+          "complete_start": 149.75,
+          "complete_end": 162
+        },
+        {
+          "start": 295,
+          "build_changes": [
+            295,
+            318
+          ],
+          "id": "agreement",
+          "reference_timestamp": 330,
+          "complete_start": 318,
+          "complete_end": 333
+        },
+        {
+          "start": 333,
+          "build_changes": [
+            333,
+            344.97
+          ],
+          "id": "findings",
+          "reference_timestamp": 370,
+          "complete_start": 344.97,
+          "complete_end": 375
+        },
+        {
+          "start": 375,
+          "build_changes": [
+            375,
+            383,
+            394.1
+          ],
+          "id": "next_steps",
+          "reference_timestamp": 408,
+          "complete_start": 394.1,
+          "complete_end": 410
+        }
+      ],
+      "code_ocr_applicable": false
+    },
+    "coscup2020-python": {
+      "reviewed": true,
+      "input_sha256": "f048f03dc1d874079ab0e659b4020f3c36de4d4503fb3dffe4723398ff864c25",
+      "review_start": 0,
+      "review_end": 960.26175,
+      "slide_metric_applicable": true,
+      "slide_changes": [
+        42,
+        67,
+        184,
+        222,
+        236,
+        257,
+        282,
+        301,
+        324,
+        351,
+        387,
+        402,
+        427,
+        439,
+        449,
+        489,
+        522,
+        580,
+        600,
+        667,
+        708,
+        733,
+        870,
+        901,
+        902
+      ],
+      "boundary_descriptions": {
+        "42": "Title visible in presentation editor",
+        "67": "Speaker introduction with photographs and contact details",
+        "184": "Method overview with staged data-processing diagram",
+        "222": "Dataset columns and keyed table",
+        "236": "Additional merge/table example",
+        "257": "Cancer statistics and disease context",
+        "282": "Research questions and bullet list",
+        "301": "Selected cancer-data table",
+        "324": "Data-key matching example",
+        "351": "Geopandas table and geometry column",
+        "387": "Coordinate-reference-system conversion notebook and EPSG list",
+        "402": "Map conversion workflow",
+        "427": "Taiwan map with spatial-analysis context",
+        "439": "SpatialPandas table",
+        "449": "Map and conclusion/question page",
+        "489": "Spatial randomness checkerboards",
+        "522": "Neighbour relationships and grid diagram",
+        "580": "Global Moran measure with formula and spatial patterns",
+        "600": "Moran scatter-plot explanation",
+        "667": "Local measures: LISA definitions and patterns",
+        "708": "Result map with scatter plot",
+        "733": "Second result map replaces scatter plot",
+        "870": "Closing speaker/contact slide",
+        "901": "Title page briefly visible in presentation editor",
+        "902": "Return to closing page in presentation editor"
+      },
+      "ocr": [],
+      "source_contact_sheets_reviewed": [
+        "contact-001.jpg",
+        "contact-002.jpg",
+        "contact-003.jpg",
+        "contact-004.jpg",
+        "contact-005.jpg",
+        "contact-006.jpg",
+        "contact-007.jpg",
+        "contact-008.jpg",
+        "contact-009.jpg",
+        "contact-010.jpg",
+        "contact-011.jpg",
+        "contact-012.jpg",
+        "contact-013.jpg",
+        "contact-014.jpg",
+        "contact-015.jpg",
+        "contact-016.jpg"
+      ],
+      "notes": "Reviewed the complete 960.262-second recording. Mandarin publisher language is confirmed by the COSCUP 2020 agenda and official video description. Wide room camera, small projected Traditional Chinese slides and maps; audience movement, projector startup and editor framing are difficult negatives. A notebook code block at 387 seconds is visibly present but washed out and too small for reliable source transcription, so no code CER reference is fabricated for this talk.",
+      "negative_events": [
+        {
+          "start": 0,
+          "end": 42,
+          "kind": "room_setup",
+          "description": "Audience movement, desktop icons and projector startup before the title."
+        },
+        {
+          "start": 48,
+          "end": 49,
+          "kind": "presentation_setup",
+          "description": "Brief wallpaper/layout switch before returning to the unchanged title."
+        },
+        {
+          "start": 17,
+          "end": 24,
+          "kind": "audience_occlusion",
+          "description": "Audience passes the camera without new projected content."
+        },
+        {
+          "start": 110,
+          "end": 124,
+          "kind": "audience_occlusion",
+          "description": "People pass in front of an unchanged introduction slide."
+        },
+        {
+          "start": 733,
+          "end": 870,
+          "kind": "speaker_motion",
+          "description": "Speaker points at unchanged result maps."
+        },
+        {
+          "start": 933,
+          "end": 960.26175,
+          "kind": "closing_room_setup",
+          "description": "Desktop and room activity after the closing slide."
+        }
+      ],
+      "build_groups": [],
+      "code_ocr_applicable": false,
+      "untranscribable_code_regions": [
+        {
+          "timestamp": 390,
+          "roi": [
+            0.245,
+            0.405,
+            0.35,
+            0.075
+          ],
+          "reason": "Projected notebook input is visibly code, but coordinate-system digits and comments are washed out. A reliable complete reference cannot be read from this source."
+        }
+      ]
+    },
+    "enthusiasticon-shell": {
+      "reviewed": true,
+      "input_sha256": "47781f495823dd355a5aba279aa17b28417c567f885dd7ff977f92f5f456d651",
+      "review_start": 0,
+      "review_end": 1020.019206,
+      "slide_metric_applicable": true,
+      "slide_changes": [
+        7,
+        15,
+        26,
+        86,
+        164,
+        166,
+        190,
+        228,
+        249,
+        381,
+        398,
+        451,
+        466,
+        472,
+        498,
+        600,
+        725,
+        737,
+        772,
+        848,
+        878,
+        891,
+        894,
+        896,
+        916,
+        928,
+        938,
+        942,
+        945,
+        947,
+        975,
+        983
+      ],
+      "boundary_descriptions": {
+        "7": "Talk title card",
+        "15": "Presented title with speaker affiliation",
+        "26": "What is a shell?",
+        "86": "Show prompt and read input C listing",
+        "164": "Call parse C listing, briefly visible",
+        "166": "Return to prompt/read-input code",
+        "190": "Return to call-parse listing after the prompt listing",
+        "228": "Command struct C definition",
+        "249": "Parse line into struct complete C listing",
+        "381": "System calls section title",
+        "398": "Run programs C listing",
+        "451": "Fork and children C listing",
+        "466": "Return to run-programs listing after fork listing",
+        "472": "Return to system-calls section title",
+        "498": "Return to run-programs listing after section title",
+        "600": "Return to fork-and-children listing",
+        "725": "Fork plus execvp and shell.c title",
+        "737": "Updated evaluate-for-real C listing",
+        "772": "Fork plus execvp shell implementation",
+        "848": "Done: full-program overview",
+        "878": "Terminal demonstration window with commands and generated sentences",
+        "891": "Completed cd .. command and parent-directory prompt",
+        "894": "Completed cd shell command and shell-directory prompt",
+        "896": "ls output listing source files",
+        "916": "Compiled shell starts and displays its prompt",
+        "928": "Background slow command output and child-process ID",
+        "938": "Shell ls command and directory listing output",
+        "942": "Shell pwd command and current-directory output",
+        "945": "Shell cd command output",
+        "947": "Second pwd command and current-directory output",
+        "975": "lolcat bye command and closing ASCII-art output",
+        "983": "Production credits and license"
+      },
+      "ocr": [
+        {
+          "timestamp": 100,
+          "roi": [
+            0.301563,
+            0.15,
+            0.34375,
+            0.168056
+          ],
+          "text": "#include <stdio.h>  // printf\n#include <string.h> // strlen\n#include <stdlib.h> // exit\n#include <unistd.h> // syscalls\nint MAXLINE = 1024;\nchar prompt[] = \"lnsh> \"; // command line prompt",
+          "kind": "code",
+          "notes": "Header and constants; colored C on black."
+        },
+        {
+          "timestamp": 100,
+          "roi": [
+            0.301563,
+            0.679167,
+            0.335938,
+            0.173611
+          ],
+          "text": "// remove trailing newline\ncmdline[strlen(cmdline)-1] = '\\0';\n// evaluate command line\neval(cmdline);\n}\n}",
+          "kind": "code",
+          "notes": "Lower code block; line order and closing braces retained."
+        },
+        {
+          "timestamp": 205,
+          "roi": [
+            0.310156,
+            0.241667,
+            0.521094,
+            0.523611
+          ],
+          "text": "void eval(char *cmdline) {\nint bg;\nstruct command cmd;\nprintf(\"Evaluating '%s'\\n\", cmdline);\n// parse cmdline into cmd structure\nbg = parse(cmdline, &cmd);\nprintf(\"Found command %s\\n\", cmd.argv[0]);\n// -1 means parse error\nif (bg == -1) return;\n}",
+          "kind": "code",
+          "notes": "Complete evaluation function; indentation is normalized by metric."
+        },
+        {
+          "timestamp": 245,
+          "roi": [
+            0.301563,
+            0.3125,
+            0.570312,
+            0.081944
+          ],
+          "text": "// maxargs in struct can't be variable, use define\n#define MAXARGS 128",
+          "kind": "code",
+          "notes": "Definition above struct."
+        },
+        {
+          "timestamp": 245,
+          "roi": [
+            0.301563,
+            0.425,
+            0.636719,
+            0.226389
+          ],
+          "text": "struct command {\nint argc; // number of args\nchar *argv[MAXARGS]; // arguments list\nenum builtin_t { // is argv[0] a builtin command?\nNONE, QUIT, JOBS, BG, FG } builtin;\n};",
+          "kind": "code",
+          "notes": "Struct with aligned comments; source cursor is below the text block."
+        },
+        {
+          "timestamp": 270,
+          "roi": [
+            0.301563,
+            0.15,
+            0.349219,
+            0.108333
+          ],
+          "text": "int parse(const char *cmdline, struct command *cmd) {\nstatic char array[MAXLINE]; // local copy of command line\nconst char delims[10] = \" \\t\\r\\n\"; // argument delimiters\nchar *line = array; // ptr that traverses command line\nchar *token; // ptr to the end of the current arg\nchar *endline; // ptr to the end of the cmdline string\nint is_bg; // background job?",
+          "kind": "code",
+          "notes": "Small source text, comments extend to the right; all included text is visibly transcribed."
+        },
+        {
+          "timestamp": 270,
+          "roi": [
+            0.301563,
+            0.652778,
+            0.332031,
+            0.202778
+          ],
+          "text": "// argument list must end with a NULL pointer\ncmd->argv[cmd->argc] = NULL;\nif (cmd->argc == 0) // ignore blank line\nreturn 1;\ncmd->builtin = parseBuiltin(cmd);\n// should job run in background?\nif ((is_bg = (*cmd->argv[cmd->argc-1] == '&')) != 0)\ncmd->argv[--cmd->argc] = NULL;\nreturn is_bg;\n}",
+          "kind": "code",
+          "notes": "Small lower parser block."
+        },
+        {
+          "timestamp": 450,
+          "roi": [
+            0.301563,
+            0.222222,
+            0.520312,
+            0.261111
+          ],
+          "text": "#include <stdlib.h>\n#include <stdio.h>\n#include <unistd.h>\nint main (int argc, char const *argv[]) {\nprintf(\"Hi there\\n\");",
+          "kind": "code",
+          "notes": "Code on black rectangular spans over a gray slide background."
+        },
+        {
+          "timestamp": 450,
+          "roi": [
+            0.301563,
+            0.518056,
+            0.503906,
+            0.259722
+          ],
+          "text": "// executing an ls command\nchar* argv2[] = {\"ls\", \"-la\", NULL};\nexecvp(argv2[0], argv2);\nprintf(\".. and done!\");\n}",
+          "kind": "code",
+          "notes": "Separate lower block; black spans on gray background."
+        },
+        {
+          "timestamp": 615,
+          "roi": [
+            0.301563,
+            0.208333,
+            0.51875,
+            0.297222
+          ],
+          "text": "#include <stdio.h>\n#include <unistd.h>\n#include <stdlib.h>\nint main() {\npid_t childPid;\nprintf(\"Before fork %d\\n\", getpid());",
+          "kind": "code",
+          "notes": "Fork example upper half."
+        },
+        {
+          "timestamp": 615,
+          "roi": [
+            0.301563,
+            0.538889,
+            0.632031,
+            0.255556
+          ],
+          "text": "// fork creates a child and returns its process ID\nchildPid = fork();\nprintf(\"After fork %d\\n\", getpid());\nexit(0);\n}",
+          "kind": "code",
+          "notes": "Fork example lower half; gray background."
+        },
+        {
+          "timestamp": 750,
+          "roi": [
+            0.301563,
+            0.201389,
+            0.377344,
+            0.248611
+          ],
+          "text": "// updated!!!\nvoid eval(char *cmdline) {\nint bg;\nstruct command cmd;\nprintf(\"Evaluating '%s'\\n\", cmdline);\n// parse line into command struct\nbg = parse(cmdline, &cmd);",
+          "kind": "code",
+          "notes": "Updated function before added execution logic."
+        },
+        {
+          "timestamp": 750,
+          "roi": [
+            0.301563,
+            0.481944,
+            0.389844,
+            0.323611
+          ],
+          "text": "// parse error\nif (bg == -1) return;\n// empty line - ignore\nif (cmd.argv[0] == NULL) return;\nif (cmd.builtin == NONE)\nrunSystemCommand(&cmd, bg);\nelse\nrunBuiltinCommand(&cmd, bg);\n}",
+          "kind": "code",
+          "notes": "Lower function; cursor crosses part of the empty-line guard."
+        },
+        {
+          "timestamp": 790,
+          "roi": [
+            0.301563,
+            0.280556,
+            0.586719,
+            0.3375
+          ],
+          "text": "void runSystemCommand(struct command *cmd, int bg) {\npid_t childPid;\n// FORK !!!\nif ((childPid = fork()) < 0)\nerror(\"fork() error\");\nelse if (childPid == 0) { // I'm the child and could run a command\n// EXECVP !!!!\nif (execvp(cmd->argv[0], cmd->argv) < 0) {\nprintf(\"%s: Command not found\\n\", cmd->argv[0]);\nexit(0);\n}\n}",
+          "kind": "code",
+          "notes": "Child-process branch; source cursor covers a few pixels in the execvp expression."
+        },
+        {
+          "timestamp": 790,
+          "roi": [
+            0.301563,
+            0.626389,
+            0.524219,
+            0.204167
+          ],
+          "text": "else { // I'm the parent. Shell continues here.\nif (bg)\nprintf(\"Child in background [%d]\\n\",childPid);\nelse\nwait(&childPid);\n}\n}",
+          "kind": "code",
+          "notes": "Parent-process branch."
+        }
+      ],
+      "source_contact_sheets_reviewed": [
+        "contact-001.jpg",
+        "contact-002.jpg",
+        "contact-003.jpg",
+        "contact-004.jpg",
+        "contact-005.jpg",
+        "contact-006.jpg",
+        "contact-007.jpg",
+        "contact-008.jpg",
+        "contact-009.jpg",
+        "contact-010.jpg",
+        "contact-011.jpg",
+        "contact-012.jpg",
+        "contact-013.jpg",
+        "contact-014.jpg",
+        "contact-015.jpg",
+        "contact-016.jpg",
+        "contact-017.jpg"
+      ],
+      "notes": "Reviewed all 1020.019 seconds. Includes repeated content pages, C source, presenter inset, desktop zoom/reposition/blank intervals and a live terminal. Each completed terminal command/output is a content build; partial keystrokes, selection highlighting, cursor blinking and window movement are not separate changes. Tiny whole-program overview at 848 seconds is disclosed as not reliably transcribable. Code references span independent legible sections rather than guessing the overview.",
+      "negative_events": [
+        {
+          "start": 400,
+          "end": 439,
+          "kind": "layout_and_desktop",
+          "description": "Same run-programs content shrinks, moves and disappears during desktop manipulation; returning after the blank layout is not new content."
+        },
+        {
+          "start": 457,
+          "end": 465,
+          "kind": "layout_and_desktop",
+          "description": "Blank desktop then unchanged fork listing returns."
+        },
+        {
+          "start": 866,
+          "end": 878,
+          "kind": "desktop_setup",
+          "description": "Blank desktop while preparing terminal demonstration."
+        },
+        {
+          "start": 879,
+          "end": 884,
+          "kind": "window_and_selection",
+          "description": "Terminal repositioning and selected text changing highlight, without new command output."
+        },
+        {
+          "start": 0,
+          "end": 1020.019206,
+          "kind": "speaker_inset_and_cursor",
+          "description": "Presenter inset motion and cursor changes never count by themselves."
+        }
+      ],
+      "build_groups": [],
+      "code_ocr_applicable": true,
+      "untranscribable_code_regions": [
+        {
+          "timestamp": 850,
+          "roi": [
+            0.3,
+            0.14,
+            0.15,
+            0.72
+          ],
+          "reason": "Full-program overview is too small to transcribe without inferring from earlier slides."
+        }
+      ]
+    }
+  },
+  "label_version": "v1.5-development-1",
+  "split": "development",
+  "derived_from": {
+    "path": "docs/data/v140-holdout-labels.json",
+    "sha256": "4f6b067d3802d54f4ed37c1f5fe5cf4ad13a7579d8046c11307e8f67398ff20c",
+    "note": "The v1.4.0 holdout file, labels, results and assets are unchanged. This copy is development-only."
+  },
+  "changelog": [
+    {
+      "case_id": "wikimania-wikipie",
+      "field": "slide_changes",
+      "from": 124,
+      "to": 125.24,
+      "evidence": "First decoded source frame (zero-based PTS clock, 25.75 fps input) whose slide region differs from the preceding frame; the before/after pair shows the named addition.",
+      "addition": "Invocation definition"
+    },
+    {
+      "case_id": "wikimania-wikipie",
+      "field": "slide_changes",
+      "from": 140,
+      "to": 142.33,
+      "evidence": "First decoded source frame (zero-based PTS clock, 25.75 fps input) whose slide region differs from the preceding frame; the before/after pair shows the named addition.",
+      "addition": "Enactment definition"
+    },
+    {
+      "case_id": "wikimania-wikipie",
+      "field": "slide_changes",
+      "from": 152,
+      "to": 149.75,
+      "evidence": "First decoded source frame (zero-based PTS clock, 25.75 fps input) whose slide region differs from the preceding frame; the before/after pair shows the named addition.",
+      "addition": "Citation example sentence"
+    },
+    {
+      "case_id": "wikimania-wikipie",
+      "field": "slide_changes",
+      "from": 347,
+      "to": 344.97,
+      "evidence": "First decoded source frame (zero-based PTS clock, 25.75 fps input) whose slide region differs from the preceding frame; the before/after pair shows the named addition.",
+      "addition": "Classifier-sample findings (two bullets)"
+    },
+    {
+      "case_id": "wikimania-wikipie",
+      "field": "slide_changes",
+      "from": 393,
+      "to": 394.1,
+      "evidence": "First decoded source frame (zero-based PTS clock, 25.75 fps input) whose slide region differs from the preceding frame; the before/after pair shows the named addition.",
+      "addition": "Fifth next-steps bullet"
+    },
+    {
+      "case_id": "wikimania-wikipie",
+      "field": "build_groups",
+      "change": "build_changes and complete_start follow the five corrected times (definitions 152->149.75, findings 347->344.97, next_steps 393->394.10)."
+    },
+    {
+      "case_id": "enthusiasticon-shell",
+      "field": "ocr[timestamp=270, lower ROI].text",
+      "from": "// argument vector must be NULL-pointer",
+      "to": "// argument list must end with a NULL pointer",
+      "evidence": "Native 1280x720 source frame at 270 s, lower ROI enlarged 3x; the remaining nine lines already matched."
+    }
+  ],
+  "changelog_status": "AI-assisted source-frame verification; human review pending. The owner review of the v1.4.0 package has not been returned."
+}
