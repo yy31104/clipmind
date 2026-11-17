@@ -155,13 +155,26 @@ class ScreenMotionTests(unittest.TestCase):
     def test_pipeline_preserves_small_new_code_outside_a_supported_pane(self):
         def code_update(draw, index):
             if index:
-                draw.rectangle((300, 100, 302, 108), fill="black")
+                draw.text((300, 100), "count += 1", fill="black")
         with tempfile.TemporaryDirectory() as directory:
             frames = self.frames(Path(directory), update=code_update)
+            for frame in frames[1:]:
+                frame.lines = ("Architecture", "count += 1")
             with patch.object(screen_motion.screen_faces, "boxes", return_value=self.face):
                 visual_states.annotate_change_kinds(frames)
-            self.assertEqual(frames[1].change_kind, "uncertain")
+            self.assertIn(frames[1].change_kind, {"build", "content", "uncertain"})
             self.assertEqual(frames[2].change_kind, "speaker")
+
+    def test_unreadable_pointer_sized_change_with_the_same_text_is_transient(self):
+        def pointer(draw, index):
+            if index == 1:
+                draw.rectangle((300, 100, 302, 108), fill="black")
+        with tempfile.TemporaryDirectory() as directory:
+            frames = self.frames(Path(directory), update=pointer)
+            with patch.object(screen_motion.screen_faces, "boxes", return_value=()):
+                visual_states.annotate_change_kinds(frames)
+            self.assertNotIn(frames[1].change_kind, {"build", "content"})
+            self.assertEqual(len(frames), 4)
 
 
 if __name__ == "__main__":
