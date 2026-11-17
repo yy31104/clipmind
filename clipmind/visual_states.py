@@ -26,7 +26,6 @@ NOVEL_MIN_SHARE = 0.04
 RETURN_MAX_CHANGED_SHARE = 0.012
 TRANSITION_MAX_SECONDS = 0.6
 MISREAD_SIMILARITY = 0.6
-BRIGHT_AREA_MAX_SHARE = 0.2
 TRANSIENT_WINDOW_SECONDS = 6.0
 TRANSIENT_MAX_CHANGED_SHARE = 0.012
 SAME_PAGE_SIMILARITY = 0.8
@@ -90,6 +89,16 @@ def _same_viewport(earlier: Frame, later: Frame, old_layout: dict, layout: dict)
         return False
 
 
+_STROKE_GLYPHS = frozenset("一二三丨丶")
+
+
+def _meaningful(token: str) -> bool:
+    """Ignore fragments that recognizers produce from lines, dots and noise."""
+    if token in _STROKE_GLYPHS:
+        return False
+    return len(token) >= 3 or token.isdigit() or "\u3400" <= token[0] <= "\u9fff"
+
+
 def _text_novelty(anchor: tuple[str, ...], lines: tuple[str, ...]) -> tuple[int, int, int]:
     """Characters in tokens added and removed relative to the anchor.
 
@@ -99,8 +108,8 @@ def _text_novelty(anchor: tuple[str, ...], lines: tuple[str, ...]) -> tuple[int,
     added word that closely resembles a word that disappeared is a misread of
     the same text, not an addition.
     """
-    old = Counter(_tokens(" ".join(anchor)))
-    new = Counter(_tokens(" ".join(lines)))
+    old = Counter(token for token in _tokens(" ".join(anchor)) if _meaningful(token))
+    new = Counter(token for token in _tokens(" ".join(lines)) if _meaningful(token))
     added, removed = new - old, old - new
     spare = [token for token in removed.elements() if len(token) >= 3]
     novel = 0
@@ -136,24 +145,6 @@ def _changed_share(first: np.ndarray | None, second: np.ndarray | None) -> float
     if first is None or second is None:
         return None
     return float(np.mean(np.abs(first - second) > 28))
-
-
-def _outside_bright_area(anchor: Frame, frame: Frame) -> bool | None:
-    """True when nearly all changed pixels fall outside both images' brightest areas.
-
-    A projected or displayed screen is the brightest part of a camera view;
-    people and the room around it are not. Unreadable images stay undecided.
-    """
-    try:
-        before = media._detail_signature(anchor.path).astype(np.float32)
-        after = media._detail_signature(frame.path).astype(np.float32)
-    except (OSError, ValueError):
-        return None
-    changed = np.abs((before - before.mean()) - (after - after.mean())) > 28
-    if not changed.any():
-        return None
-    bright = (before > np.percentile(before, 85)) | (after > np.percentile(after, 85))
-    return float(np.count_nonzero(changed & bright)) < BRIGHT_AREA_MAX_SHARE * np.count_nonzero(changed)
 
 
 def _novel_or_empty(anchor_lines: tuple[str, ...], lines: tuple[str, ...]) -> bool:
@@ -257,9 +248,6 @@ def annotate_change_kinds(frames: list[Frame]) -> None:
               and persistent < TRANSIENT_MAX_CHANGED_SHARE):
             frame.change_kind = "speaker"
             frame.change_reason = "Transient motion in front of an unchanged screen; it does not persist."
-        elif not lines and anchor is not None and _outside_bright_area(anchor, frame) is True:
-            frame.change_kind = "speaker"
-            frame.change_reason = "Image-only change lies outside the bright screen area, such as people in a room."
         elif not lines:
             # Empty OCR, or a repeated title alone, cannot prove a speaker:
             # a new diagram may have no readable text at all.
