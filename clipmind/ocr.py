@@ -52,6 +52,9 @@ _worker_requests = 0
 _VISION_REQUEST_TIMEOUT = 10.0
 _VISION_MAX_REQUESTS = 32
 _VISION_IDLE_SECONDS = 30.0
+RECOVER_MAX_COVERED = 0.5
+RECOVER_MIN_INK = 0.05
+DARK_PANEL_MIN_SHARE = 0.04
 
 
 class OCRError(RuntimeError):
@@ -105,7 +108,7 @@ def _foreground_threshold(histogram: list[int]) -> int:
 
 
 @contextmanager
-def _recognition_image(path: Path, *, portable: bool = False):
+def _recognition_image(path: Path, *, portable: bool = False, scale: float | None = None):
     """A bounded, temporary OCR derivative; evidence images stay untouched."""
     from PIL import Image, ImageChops
 
@@ -125,8 +128,13 @@ def _recognition_image(path: Path, *, portable: bool = False):
         threshold = _foreground_threshold(histogram)
         image = value.point([255 if level <= threshold else 0
                              for level in range(256)])
+    elif portable:
+        image, panels = _binarize_dark_panels(image, value)
+        dark = dark or panels
     factor = (min(2.0, 2560 / width, math.sqrt(6_000_000 / total))
               if portable or dark else 1)
+    if scale is not None:
+        factor = min(scale, 4096 / width, math.sqrt(16_000_000 / total))
     if factor > 1:
         image = image.resize((round(width * factor), round(height * factor)),
                              Image.Resampling.LANCZOS)
@@ -137,6 +145,84 @@ def _recognition_image(path: Path, *, portable: bool = False):
         prepared = Path(folder) / "recognition.png"
         image.save(prepared)
         yield prepared
+
+
+def _recover_missing_lines(primary: list[OCRBlock], secondary: list[OCRBlock],
+                           prepared: Path) -> list[OCRBlock]:
+    """Add second-pass blocks only where the first pass found nothing but ink exists."""
+    import numpy as np
+    from PIL import Image
+
+    with Image.open(prepared) as image:
+        ink = np.asarray(image.convert("L")) < 128
+    height, width = ink.shape
+    covered = np.zeros_like(ink)
+
+    def window(box):
+        x, y, w, h = box
+        return (slice(max(0, int(y * height)), min(height, int((y + h) * height) + 1)),
+                slice(max(0, int(x * width)), min(width, int((x + w) * width) + 1)))
+
+    for block in primary:
+        if block.bbox is not None:
+            covered[window(block.bbox)] = True
+    recovered = list(primary)
+    for block in secondary:
+        if block.bbox is None:
+            continue
+        area = window(block.bbox)
+        if covered[area].size and covered[area].mean() <= RECOVER_MAX_COVERED and ink[area].mean() >= RECOVER_MIN_INK:
+            recovered.append(block)
+            covered[area] = True
+    return recovered
+
+
+_COMMENT_MARKERS = ("//", "#", "/*", "--", ";", "<!--")
+
+
+def _trailing_comments(left: list[OCRBlock], right: list[OCRBlock]) -> bool:
+    """A right-hand column of comments that annotate the code lines beside them."""
+    def same_row(first: OCRBlock, second: OCRBlock) -> bool:
+        overlap = (min(first.bbox[1] + first.bbox[3], second.bbox[1] + second.bbox[3])
+                   - max(first.bbox[1], second.bbox[1]))
+        return overlap >= min(first.bbox[3], second.bbox[3]) / 2
+
+    comments = [block for block in right if block.text.lstrip().startswith(_COMMENT_MARKERS)]
+    if len(right) < 2 or len(comments) < 0.6 * len(right):
+        return False
+    return sum(any(same_row(block, other) for other in left) for block in right) >= 0.6 * len(right)
+
+
+def _binarize_dark_panels(image, value):
+    """Binarize large dark code panels inside an otherwise light screen.
+
+    Portable OCR drops dim syntax colours on a dark panel; the rest of the
+    screen keeps its original pixels.
+    """
+    import numpy as np
+    from PIL import Image
+
+    try:
+        import cv2
+    except ImportError:
+        return image, False
+    levels = np.asarray(value)
+    height, width = levels.shape
+    dark = (levels < 96).astype(np.uint8)
+    dark = cv2.morphologyEx(dark, cv2.MORPH_CLOSE, np.ones((9, 9), np.uint8))
+    count, _, stats, _ = cv2.connectedComponentsWithStats(dark)
+    result = np.asarray(image.convert("L")).copy()
+    found = False
+    for left, top, panel_width, panel_height, area in stats[1:count]:
+        if (panel_width * panel_height < DARK_PANEL_MIN_SHARE * width * height
+                or area < 0.6 * panel_width * panel_height
+                or panel_width * panel_height > 0.9 * width * height):
+            continue
+        region = levels[top:top + panel_height, left:left + panel_width]
+        threshold = _foreground_threshold(np.bincount(region.ravel(), minlength=256).tolist())
+        result[top:top + panel_height, left:left + panel_width] = np.where(region <= threshold, 255, 0)
+        found = True
+    return (Image.fromarray(result), True) if found else (image, False)
 
 
 def _reading_order(blocks: list[OCRBlock]) -> tuple[OCRBlock, ...]:
@@ -160,6 +246,8 @@ def _reading_order(blocks: list[OCRBlock]) -> tuple[OCRBlock, ...]:
                 _, split = max(gaps)
                 before = [block for block in items if block.bbox[axis] < split]
                 after = [block for block in items if block.bbox[axis] >= split]
+                if axis == 0 and _trailing_comments(before, after):
+                    continue
                 return ordered(before) + ordered(after)
         rows: list[list[OCRBlock]] = []
         for block in sorted(items, key=lambda block: block.bbox[1]):
@@ -423,7 +511,14 @@ class VisionTextRecognizer:
     def recognize(self, image: Path) -> OCRResult:
         with _recognition_image(image) as prepared:
             result = _recognize_in_worker(prepared, languages=self.config.ocr_languages)
-        return OCRResult(_reading_order(list(result.blocks)))
+            blocks = list(result.blocks)
+            if prepared != image:
+                # High-contrast preparation removes faint background text but
+                # can also erase thin small glyphs. Recover lines the original
+                # image reads where the prepared image still has strokes.
+                original = _recognize_in_worker(image, languages=self.config.ocr_languages)
+                blocks = _recover_missing_lines(blocks, list(original.blocks), prepared)
+        return OCRResult(_reading_order(blocks))
 
 
 def tesseract_available() -> bool:
@@ -454,10 +549,13 @@ class TesseractTextRecognizer:
             raise OCRError(
                 "Tesseract unavailable; install tesseract and the portable OCR extra"
             )
+        return self._recognize_once(image, None)
+
+    def _recognize_once(self, image: Path, scale: float | None) -> OCRResult:
         import pytesseract
         from PIL import Image
 
-        with _recognition_image(image, portable=True) as prepared, Image.open(prepared) as source:
+        with _recognition_image(image, portable=True, scale=scale) as prepared, Image.open(prepared) as source:
             width, height = source.size
             data = pytesseract.image_to_data(
                 source,

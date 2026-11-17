@@ -271,6 +271,33 @@ class RecognitionImageTests(unittest.TestCase):
 
 
 class LayoutOrderTests(unittest.TestCase):
+    def test_trailing_comments_stay_on_their_code_lines(self):
+        def block(text, x, y, width):
+            return ocr.OCRBlock(text, bbox=(x, y, width, 0.03))
+
+        code1 = block("int argc;", 0.05, 0.2, 0.2)
+        code2 = block("char *argv[MAX];", 0.05, 0.25, 0.25)
+        note1 = block("// number of args", 0.5, 0.2, 0.3)
+        note2 = block("// argument list", 0.5, 0.25, 0.3)
+        ordered = ocr._reading_order([note2, code2, note1, code1])
+        self.assertEqual([item.text for item in ordered],
+                         ["int argc;", "// number of args", "char *argv[MAX];", "// argument list"])
+
+    def test_portable_preparation_binarizes_a_dark_code_panel_inside_a_light_slide(self):
+        from PIL import Image, ImageDraw
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "slide.png"
+            image = Image.new("RGB", (400, 300), "white")
+            draw = ImageDraw.Draw(image)
+            draw.rectangle((50, 100, 350, 250), fill=(30, 30, 30))
+            draw.text((70, 150), "requires", fill=(150, 90, 200))
+            image.save(path)
+            with ocr._recognition_image(path, portable=True) as prepared, Image.open(prepared) as result:
+                pixels = result.convert("L").resize((400, 300))
+                self.assertGreater(pixels.getpixel((300, 230)), 200)
+                self.assertEqual(pixels.getpixel((20, 20)), 255)
+
     def test_fragments_on_the_same_line_use_horizontal_order(self):
         left = ocr.OCRBlock("let value", bbox=(0.05, 0.21, 0.12, 0.04))
         right = ocr.OCRBlock("function()", bbox=(0.19, 0.2, 0.5, 0.06))
@@ -300,11 +327,13 @@ class LayoutOrderTests(unittest.TestCase):
             expected = ocr.OCRResult((ocr.OCRBlock("code", bbox=(0.1, 0.2, 0.4, 0.1)),))
             seen = []
 
+            sizes = []
+
             def recognize(prepared, *, languages):
                 seen.append(prepared)
                 self.assertEqual(languages, ("en-US",))
                 with Image.open(prepared) as image:
-                    self.assertEqual(image.size, (200, 160))
+                    sizes.append(image.size)
                 return expected
 
             with patch.object(ocr, "_recognize_in_worker", side_effect=recognize):
@@ -312,8 +341,28 @@ class LayoutOrderTests(unittest.TestCase):
                     SimpleNamespace(ocr_languages=("en-US",))
                 ).recognize(path)
 
+            # The prepared derivative is read first; the original only adds
+            # lines the prepared pass missed, so the same block is not doubled.
+            self.assertEqual(sizes, [(200, 160), (100, 80)])
             self.assertEqual(result, expected)
             self.assertFalse(seen[0].exists())
+            self.assertEqual(seen[1], path)
+
+    def test_vision_recovers_a_line_the_prepared_pass_missed_only_where_ink_exists(self):
+        from PIL import Image, ImageDraw
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "screen.png"
+            image = Image.new("RGB", (200, 100), "black")
+            ImageDraw.Draw(image).rectangle((20, 60, 120, 70), fill="white")
+            image.save(path)
+            first = ocr.OCRBlock("top line", 1.0, (0.1, 0.1, 0.5, 0.1))
+            missed = ocr.OCRBlock("lower line", 1.0, (0.1, 0.6, 0.5, 0.1))
+            faint = ocr.OCRBlock("background", 0.5, (0.7, 0.3, 0.2, 0.1))
+            replies = iter([ocr.OCRResult((first,)), ocr.OCRResult((first, missed, faint))])
+            with patch.object(ocr, "_recognize_in_worker", side_effect=lambda *a, **k: next(replies)):
+                result = ocr.VisionTextRecognizer(SimpleNamespace(ocr_languages=("en-US",))).recognize(path)
+            self.assertEqual([block.text for block in result.blocks], ["top line", "lower line"])
 
     def test_tesseract_boxes_use_prepared_dimensions(self):
         from PIL import Image
