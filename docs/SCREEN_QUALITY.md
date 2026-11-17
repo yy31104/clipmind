@@ -73,4 +73,4 @@ Three runnable open-source tools use the same development inputs and their defau
 
 ## Review and reuse
 
-The editable development and holdout review packs contain all 163 annotations, with before/after images and code crops, for an estimated 94-minute owner review. Until the completed table is returned, the annotation caveat remains. Downloads, source licenses and checksums are listed with the release evidence. Glama listing and community posts remain owner actions; the facts sheet contains measured numbers, links and a saved-frame GIF.
+The editable development and holdout review packs contain all 163 annotations, with before/after images and code crops, for an estimated 94-minute owner review. Until the completed table is returned, the annotation caveat remains. Downloads, source licenses and checksums are listed with the release evidence. The [facts sheet](V140_FACTS.md) contains measured numbers, links and a saved-frame GIF.
