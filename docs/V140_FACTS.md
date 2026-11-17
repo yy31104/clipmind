@@ -19,7 +19,7 @@ The published v1.3.0 CPU image processed the full 39:24 Xous talk in 450.892 s, 
 
 [Saved-frame comparison GIF](https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-screen-retention.gif) shows the actual baseline/final Xous selection at 68 s, with source credit. [Real search-to-slide and agent MCP demo](REAL_TALK_DEMO.md) remains the v1.3.0 recording.
 
-[Owner review ZIP](https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-owner-review.zip): all 163 source annotations, editable tables/CSV, about 94 minutes. Extract and open `index.html`; exported decision tables start blank. The optional inspection section locates five WikiPie timing questions and the Shell270 comment question. No owner review, Glama submission or community post has been completed by this report.
+[Owner review ZIP](https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-owner-review.zip): all 163 source annotations, editable tables/CSV, about 94 minutes. Extract and open `index.html`; exported decision tables start blank. The optional inspection section locates five WikiPie timing questions and the Shell270 comment question. Human review is still pending.
 
 [Run records and failures](https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-run-records.zip) · [All assets and SHA-256](https://github.com/yy31104/clipmind/releases/download/v1.4.0/SCREEN_ASSETS.json) · [Checksum file](https://github.com/yy31104/clipmind/releases/download/v1.4.0/SCREEN_SHA256SUMS)
 
