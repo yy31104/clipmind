@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "corpus_id": "screen-holdout-v150",
+  "split": "holdout",
+  "selected_at": "2026-11-17T17:09:50.110189+00:00",
+  "selection_protocol": "Three complete recordings from three publishers, none used before by ClipMind. Explicit reusable licenses. English Go code with a speaker inset (FOSDEM), Mandarin slides with Python/config code and a live demo (PyCon Taiwan), and a Mandarin room-camera recording of a projected screen (COSCUP). Selected from source thumbnails only.",
+  "protocol": "docs/HOLDOUT_V150_PROTOCOL.md",
+  "annotation_provenance": "AI-assisted annotations; human review pending.",
+  "cases": [
+    {
+      "case_id": "fosdem2026-synctest",
+      "title": "Concurrency + Testing = synctest",
+      "speakers": "Ronna Steinberg",
+      "publisher": "FOSDEM 2026",
+      "source_page": "https://fosdem.org/2026/schedule/event/BDH7G7-go-testing-synctest/",
+      "source_url": "https://video.fosdem.org/2026/ub5132/BDH7G7-go-testing-synctest.mp4",
+      "license": "CC-BY-2.0-BE",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/be/",
+      "license_proof": "https://video.fosdem.org/2026/ (site footer links the CC BY 2.0 Belgium license for all recordings)",
+      "attribution": "Ronna Steinberg; FOSDEM 2026 (video.fosdem.org); CC BY 2.0 BE",
+      "language": "en",
+      "language_source": "FOSDEM schedule export lists language en",
+      "ocr_languages": [
+        "en-US"
+      ],
+      "tesseract_languages": "eng",
+      "captions_available": true,
+      "captions_url": "https://video.fosdem.org/2026/ub5132/BDH7G7-go-testing-synctest.vtt",
+      "captions_provenance": "Publisher subtitle file; not human-verified",
+      "acquisition": {
+        "method": "http",
+        "original_name": "original.mp4"
+      },
+      "sample_start_seconds": 0,
+      "sample_end_seconds": 1356.066667,
+      "scope": "full published recording",
+      "original_bytes": 519836732,
+      "original_sha256": "c353afcc0be69c5b065fbe5b485a1fe77bdf71ca868807f563d027fcd7f697f5",
+      "input_sha256": "b2508d82e88bcc07d356ca74a924049cd672738fe28247f15d497cc6055e3fbd",
+      "transformation": "Full recording, 1280x720 letterbox, H.264 CRF20, AAC128k. No temporal crop.",
+      "captions_sha256": "4350fda3d183b3c9cf4216f2dbdc88619ebd7c8af0a2ec5751416b9bed7b1637"
+    },
+    {
+      "case_id": "pycontw2024-observability",
+      "title": "全方位強化 Python 服務可觀測性：以 FastAPI 和 Grafana Stack 為例",
+      "speakers": "劉義瑋 (Blueswen)",
+      "publisher": "PyCon Taiwan 2024",
+      "source_page": "https://www.youtube.com/watch?v=y3sumuoDq4w",
+      "source_url": "https://www.youtube.com/watch?v=y3sumuoDq4w",
+      "talk_page": "https://tw.pycon.org/2024/zh-hant/conference/talk/320",
+      "license": "CC-BY-3.0",
+      "license_url": "https://creativecommons.org/licenses/by/3.0/",
+      "license_proof": "YouTube metadata: 'Creative Commons Attribution license (reuse allowed)', uploaded by the PyCon Taiwan channel",
+      "attribution": "劉義瑋 (Blueswen); PyCon Taiwan 2024; YouTube, CC BY 3.0",
+      "language": "zh",
+      "language_source": "PyCon TW talk page: 中文演講/中文投影片",
+      "ocr_languages": [
+        "zh-Hant",
+        "en-US"
+      ],
+      "tesseract_languages": "chi_tra+eng",
+      "captions_available": false,
+      "captions_reason": "No publisher caption file is offered; automatic captions are not substituted.",
+      "acquisition": {
+        "method": "yt-dlp",
+        "format": "137+140",
+        "original_name": "original.mkv",
+        "note": "YouTube format 137 (1080p H.264) plus 140 (AAC), merged without re-encoding. Merge output bytes can differ by tool version; the release input archive is the scoring copy."
+      },
+      "sample_start_seconds": 0,
+      "sample_end_seconds": 1845.591655,
+      "scope": "full published recording",
+      "original_bytes": 164659619,
+      "original_sha256": "71baef41646c17d870116abb8bf44162e0ceee824e3a7caac37a1db7f5e6e959",
+      "input_sha256": "58e3cdee8a608d4388e4097cb017f382df7f2962cf7da0c35cd5194658c7f7f6",
+      "transformation": "Full recording, 1280x720 letterbox, H.264 CRF20, AAC128k. No temporal crop."
+    },
+    {
+      "case_id": "coscup2022-govdata",
+      "title": "WikiData 與政府公開資料整合經驗",
+      "speakers": "Hong-I Hsu",
+      "publisher": "COSCUP 2022 OpenStreetMap x Wikidata track",
+      "source_page": "https://commons.wikimedia.org/wiki/File:COSCUP_2022_OpenStreetMap_x_Wikidata_03.webm",
+      "source_url": "https://upload.wikimedia.org/wikipedia/commons/0/02/COSCUP_2022_OpenStreetMap_x_Wikidata_03.webm",
+      "license": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "license_proof": "Wikimedia Commons file page and API extmetadata: CC BY 4.0, attribution required",
+      "attribution": "Hong-I Hsu; Wikidata Taiwan; COSCUP 2022; CC BY 4.0",
+      "language": "zh",
+      "language_source": "Commons description: COSCUP 2022 開放內容議程軌 with Mandarin title and speaker",
+      "ocr_languages": [
+        "zh-Hant",
+        "en-US"
+      ],
+      "tesseract_languages": "chi_tra+eng",
+      "captions_available": false,
+      "captions_reason": "No publisher caption file accompanies the Commons recording; automatic captions are not substituted.",
+      "acquisition": {
+        "method": "http",
+        "original_name": "original.webm"
+      },
+      "original_sha1": "aecc1423fb62d0014862862616d3d7038ef79ecc",
+      "sample_start_seconds": 0,
+      "sample_end_seconds": 960.0,
+      "scope": "full published recording",
+      "original_bytes": 956006850,
+      "original_sha256": "02429a41454ac315d466dc4b40b0ba8f45ebf9307fb14f6174b9bdb30d308ac9",
+      "input_sha256": "e35588f979a4a1eede67e41e59f9ded1169e6ee06f2e92280857be7413962649",
+      "transformation": "Full recording, 1280x720 letterbox, H.264 CRF20, AAC128k. No temporal crop."
+    }
+  ],
+  "evaluation_matrix": [
+    {
+      "id": "mac-mlx-vision",
+      "asr_provider": "mlx",
+      "asr_model": "mlx-community/whisper-large-v3-turbo",
+      "asr_language": null,
+      "ocr_provider": "vision",
+      "ocr_languages": "per case",
+      "attempts": 1
+    },
+    {
+      "id": "docker-cpu-tesseract",
+      "asr_provider": "faster-whisper",
+      "faster_whisper_model": "large-v3-turbo",
+      "asr_language": null,
+      "device": "cpu",
+      "compute_type": "int8",
+      "ocr_provider": "tesseract",
+      "tesseract_languages": "per case",
+      "attempts": 1
+    }
+  ],
+  "preparation_command": "python scripts/prepare_v150_holdout.py --workdir ../holdout-v150"
+}

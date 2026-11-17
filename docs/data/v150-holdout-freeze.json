@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "frozen_at": "2026-11-17T17:10:21.208324+00:00",
+  "corpus_id": "screen-holdout-v150",
+  "runtime_base_commit": "f9d7f20d5d9543f2dee831e1949504ab012760d4",
+  "extraction_code_changed_since_base": false,
+  "files": {
+    "docs/HOLDOUT_V150_PROTOCOL.md": "c5477be57f2cc54d2e44019844ee7f7b285fc46883e646b9c567d09d3b610777",
+    "docs/data/v150-holdout-cases.json": "9597964a9f0796c7de5f758e853020046d0e59447af4c583f19de74081395d2d",
+    "docs/data/v150-holdout-labels.json": "807205b4045e1f260ba16f5c2b69f75739fed8ed1b8bb8559b8947c2e022d6a5",
+    "docs/data/v150-holdout-selection.json": "8ab4d22cd2c660136a877db4b2d8b0d7d394d142caea2aaedb060e5d9e64e442",
+    "docs/data/LICENSE-SCREEN-HOLDOUT-V150.txt": "fe317819663a39a7e7b6ad70d3ba35cb065ffcd20da47607093dd661a9b3d48d",
+    "scripts/prepare_v150_holdout.py": "312eaf99f352b1974844fe7f0aafb2d611967073043ae59b5acd7c57ac0eb0be",
+    "scripts/evaluate_real_talks.py": "86e25a47e3cdec87c4c4b7fa90b805b3709e1807119811a63261ce64e6ee2644",
+    "scripts/screen_evaluation.py": "c068100b0a1066b42282d09e9c7a123004ff94d80f9d42ddf23580db05eda395"
+  },
+  "cases": {
+    "fosdem2026-synctest": {
+      "input_sha256": "b2508d82e88bcc07d356ca74a924049cd672738fe28247f15d497cc6055e3fbd",
+      "original_sha256": "c353afcc0be69c5b065fbe5b485a1fe77bdf71ca868807f563d027fcd7f697f5",
+      "original_bytes": 519836732
+    },
+    "pycontw2024-observability": {
+      "input_sha256": "58e3cdee8a608d4388e4097cb017f382df7f2962cf7da0c35cd5194658c7f7f6",
+      "original_sha256": "71baef41646c17d870116abb8bf44162e0ceee824e3a7caac37a1db7f5e6e959",
+      "original_bytes": 164659619
+    },
+    "coscup2022-govdata": {
+      "input_sha256": "e35588f979a4a1eede67e41e59f9ded1169e6ee06f2e92280857be7413962649",
+      "original_sha256": "02429a41454ac315d466dc4b40b0ba8f45ebf9307fb14f6174b9bdb30d308ac9",
+      "original_bytes": 956006850
+    }
+  },
+  "primary_change_count": 182,
+  "code_roi_count": 15,
+  "code_reference_characters": 4165,
+  "code_roi_talks": [
+    "fosdem2026-synctest",
+    "pycontw2024-observability"
+  ],
+  "full_recording_count": 3,
+  "duration_seconds": 4161.658322,
+  "attempt_policy": "One campaign on one locked candidate commit: one Mac MLX/Vision attempt and one Linux Docker CPU/faster-whisper/Tesseract attempt per recording. No tuning or rerun after results. Failures stay public.",
+  "annotation_provenance": "AI-assisted annotations; human review pending."
+}

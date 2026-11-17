@@ -1,0 +1,30 @@
+v1.5.0 screen holdout: source attribution and licenses
+
+Each recording keeps its own license. The source-derived annotations and the
+code quoted from each talk in v150-holdout-labels.json, the normalized video
+inputs, and review frames derived from a talk carry that talk's license. The
+ClipMind code, including scripts/prepare_v150_holdout.py, keeps the
+repository's MIT license. The sources do not endorse ClipMind.
+
+Sources
+
+1. Concurrency + Testing = synctest
+   Ronna Steinberg; FOSDEM 2026. CC BY 2.0 Belgium.
+   https://fosdem.org/2026/schedule/event/BDH7G7-go-testing-synctest/
+   https://video.fosdem.org/2026/ub5132/BDH7G7-go-testing-synctest.mp4
+   https://creativecommons.org/licenses/by/2.0/be/
+
+2. 全方位強化 Python 服務可觀測性：以 FastAPI 和 Grafana Stack 為例
+   劉義瑋 (Blueswen); PyCon Taiwan 2024. Creative Commons Attribution
+   license (CC BY 3.0) as marked on YouTube by the PyCon Taiwan channel.
+   https://www.youtube.com/watch?v=y3sumuoDq4w
+   https://tw.pycon.org/2024/zh-hant/conference/talk/320
+   https://creativecommons.org/licenses/by/3.0/
+
+3. WikiData 與政府公開資料整合經驗
+   Hong-I Hsu; Wikidata Taiwan; COSCUP 2022. CC BY 4.0.
+   https://commons.wikimedia.org/wiki/File:COSCUP_2022_OpenStreetMap_x_Wikidata_03.webm
+   https://creativecommons.org/licenses/by/4.0/
+
+Changes to the source material: full published recordings transcoded to
+1280x720 letterboxed H.264 CRF20 with AAC audio at 128 kbit/s; no temporal crop.

@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "corpus_id": "screen-holdout-v150",
+  "rule": "One complete recording per publisher, at least two publishers, explicit reusable license, never used by ClipMind before (not the ten 39C3 excerpts, the full Xous talk, or the v1.4.0 holdout talks). Include Mandarin with a clear license and code in more than one talk. Screen candidates from three source thumbnails each; never use ClipMind output.",
+  "excluded_as_seen": [
+    "39C3 development excerpts and the full Xous talk (media.ccc.de)",
+    "COSCUP 2020 OSMxWikidata 04, EnthusiastiCon shell, Wiki Workshop WikiPie (v1.4.0 holdout, now development)"
+  ],
+  "pools": [
+    {
+      "publisher": "FOSDEM 2026 (CC BY 2.0 BE)",
+      "searched": "Schedule export, Go/Rust/Python/Testing/Databases tracks with a recording",
+      "thumbnailed": ["BDH7G7 Concurrency + Testing = synctest", "JQRUHP Inside Reflection", "S7RELZ Ducks to the rescue: ETL with Python and DuckDB", "DS7LFX Calling JIT-compiled Roto scripts from Rust"],
+      "selected": "BDH7G7",
+      "reason": "Code on slides in all three thumbnails, with a speaker inset beside the slides; one talk per publisher."
+    },
+    {
+      "publisher": "PyCon Taiwan (YouTube, CC BY)",
+      "searched": "YouTube search for PyCon Taiwan talks; license field checked per video",
+      "thumbnailed": ["y3sumuoDq4w Python observability with FastAPI and Grafana (2024)", "5Uf9p37jse0 pytest and AI coding agents (2025)", "MnnoStYCe04 Raspberry Shake (2025)", "4bVNxfX8Ev0 Python in healthcare (2024)"],
+      "selected": "y3sumuoDq4w",
+      "reason": "Mandarin talk with Traditional Chinese slides, small Python and configuration code, and a live demo; one talk per publisher."
+    },
+    {
+      "publisher": "COSCUP 2022 via Wikidata Taiwan on Wikimedia Commons (CC BY 4.0)",
+      "searched": "Commons file search for COSCUP and Mandarin Wikidata recordings",
+      "thumbnailed": ["COSCUP 2022 OpenStreetMap x Wikidata 03", "COSCUP 2022 OpenStreetMap x Wikidata 04", "COSCUP 2022 OpenStreetMap x Wikidata 09", "2026 Wikidata editing workshop", "Wikidata 13th birthday QuickStatements and OpenRefine workshops"],
+      "selected": "COSCUP 2022 OpenStreetMap x Wikidata 03",
+      "reason": "A complete 16-minute Mandarin talk filmed by a room camera, a different capture style from the other two; the workshops are hour-long tutorials rather than talks."
+    }
+  ],
+  "code_distribution": "Code references come from two talks: English Go (FOSDEM) and Python/YAML in a Mandarin talk (PyCon Taiwan). The COSCUP room camera shows one SPARQL screenshot that cannot be read from the source, so its code is N/A.",
+  "annotation_provenance": "AI-assisted annotations; human review pending."
+}
