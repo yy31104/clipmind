@@ -59,3 +59,5 @@ PATH="$TASK/envs/mcp-whisper/bin:$PATH" node comparators/mcp-video-analyzer/dist
 The runner clears inherited credentials and confines models, language data, temporary media and caches to the task directory. The archive includes every command, exit status, input hash, timestamp, dependency version and output. It excludes duplicate input media and model caches. No comparator implementation was copied into ClipMind.
 
 Recordings and derived images are CC BY 4.0, credited to the talk authors and CCC in the source manifest. Tool code remains under its respective MIT license. Raw outputs and code/build examples remain available for inspection; they are not substitutes for the pending manual annotation review.
+
+[Download the complete records and images](https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-comparators.zip). [Release checksums](https://github.com/yy31104/clipmind/releases/download/v1.4.0/SCREEN_SHA256SUMS).

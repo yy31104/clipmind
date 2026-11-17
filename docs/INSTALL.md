@@ -112,6 +112,8 @@ Installed builds choose a writable per-user directory:
 
 Override all of these with an absolute or user-relative `CLIPMIND_OUT` path.
 
+Reprocess an existing video to apply v1.4.0 sampling and OCR rules. Installing the new version preserves earlier saved packs.
+
 ## Provider selection
 
 The `auto` defaults are usually correct:

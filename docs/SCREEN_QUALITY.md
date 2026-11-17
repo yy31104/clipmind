@@ -40,7 +40,28 @@ Tesseract's previous Chinese-first multilingual default regressed an unchanged E
 
 Three complete recordings, 40 minutes, 78 annotated changes and 15 code ROIs were frozen before extraction changes. The set includes Mandarin and publishers beyond CCC. The wide projected Chinese source supports change labels but no legible code transcription; its code CER is not applicable. See the [source protocol](HOLDOUT_SCREEN_PROTOCOL.md), [execution plan](HOLDOUT_EXECUTION.md), and [fixed metric definitions](SCREEN_EVALUATION.md).
 
-The final campaign has not run. Targets remain **85% recall, 50% information precision and 15% code CER**. Both providers will use the same locked candidate once, without post-result tuning or replacement. Missing results keep every frozen denominator.
+The single campaign used locked candidate `47c5334` on both paths. All six complete-talk runs finished; all 78 changes and 15 ROIs remain in the score denominators. Independent arithmetic and hash checks found no accounting discrepancy. No parameters, source labels, scoring rules or outcomes were changed after the campaign.
+
+| Path | Changes captured | Information precision | Code CER | Complete-build coverage | Case time |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Mac, MLX + Vision | 73/78 (93.59%) | 73/358 (20.39%) | 436/2295 (19.00%) | 4/5 | 135.106 s |
+| Docker, CPU + Tesseract | 73/78 (93.59%) | 73/360 (20.28%) | 369/2295 (16.08%) | 4/5 | 419.568 s |
+
+**Recall meets 85%; precision misses 50% and code CER misses 15% on both paths.** No held-out frame was excluded as speaker/layout/animation, so the information and canonical control scores are identical. There were zero OCR exceptions and zero temporary-media leftovers. This establishes execution, not perfect extraction.
+
+| Full source | Mac / Docker captured changes | Mac / Docker predictions | Code references |
+| --- | ---: | ---: | --- |
+| COSCUP Python, Mandarin, 16 min | 25/25, both | 220 / 221 | N/A: projected code is not legible enough to transcribe |
+| EnthusiastiCon Shell, English, 17 min | 32/32, both | 105 / 106 | All 15 code ROIs, 2,295 characters |
+| Wikimania WikiPie, English, 7 min | 16/21, both | 33 / 33 | N/A: no code ROI |
+
+The five frozen misses are WikiPie labels at 124, 140, 152, 347 and 393 seconds. Post-result source inspection found the additions in nearby retained states, with source reveal brackets at 125.0–125.515, 142.0–142.524, 149.5–150.019, 344.5–345.010 and 394.0–394.524 seconds. These differ from the integer reference labels. At 124, 140 and 393 seconds, neither the source nor the SDK-selected image contains the later addition; at 152 and 347 seconds both already contain it. The findings image at 345 seconds is already complete; the frozen 4/5 temporal score does not prove lost findings content. A Shell comment also differs between the frozen transcription and the source. These are reference-quality caveats requiring owner review; no label, score or outcome was replaced. Code errors are measured from one English code talk; this set does not establish Chinese OCR accuracy or broad code coverage. These sources have no publisher captions, so held-out WER is not applicable. Development improvements did not establish the held-out precision or OCR targets.
+
+The [post-result inspection](data/v140-holdout-error-inspection.json) compares saved images with source crops. Shell code is retained; the struct OCR splits aligned comments into a later column, while the parser has small, softened glyphs. A deterministic sample of eight Coscup extra boundaries shows projection setup, foreground people, presenter motion and repeated content. This is a sample, not exhaustive attribution; some triggers remain uncertain. The [owner review package](https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-owner-review.zip) includes wider source context for the known reference questions.
+
+Raw [Mac](data/v140-holdout-mac-results.json) and [Docker](data/v140-holdout-docker-results.json) reports retain all hypotheses, boxes, predictions and misses. The [summary](data/v140-holdout-summary.json), [independent audit](data/v140-holdout-independent-audit.json), [campaign lock](data/v140-holdout-campaign-lock.json) and [runtime byte manifest](data/v140-holdout-runtime.json) bind the results to their source, evaluator and implementation.
+
+Development extraction used `13616c8`. The final candidate changes only the multilingual OCR default in `config.py`; the per-source development language overrides remain identical. Native development had stale 1.3.0 editable-install metadata while importing the verified 1.4.0 checkout bytes. The final campaign uses matching 1.4.0 package metadata and a clean candidate tree. Reports preserve the original provenance.
 
 ## CPU timing and comparisons
 

@@ -9,7 +9,20 @@ ClipMind turns YouTube and Douyin links or local media into timestamped transcri
 
 Personal project. Built with AI assistance.
 
-[Run locally](#run-locally) · [Real-video results](docs/REAL_TALK_BENCHMARK.md) · [Agent demo](docs/REAL_TALK_DEMO.md#a-real-agent-used-the-mcp-tools) · [Docs](#docs)
+[Run locally](#run-locally) · [Measured quality](docs/SCREEN_QUALITY.md) · [Agent demo](docs/REAL_TALK_DEMO.md#a-real-agent-used-the-mcp-tools) · [Docs](#docs)
+
+The v1.4.0 holdout used three complete public talks (40 minutes), including Mandarin, with one run per backend:
+
+| Backend | Change recall | Boundary precision | Code character error rate |
+| --- | ---: | ---: | ---: |
+| Mac: MLX + Vision | 73/78 (93.59%) | 20.39% | 19.00% |
+| Docker CPU: faster-whisper + Tesseract | 73/78 (93.59%) | 20.28% | 16.08% |
+
+Recall meets the 85% target. Precision misses 50%; code error rates miss 15%.
+AI-assisted annotations; human review pending. Source inspection found timing
+and transcription discrepancies; original frozen scores remain unchanged.
+Code scores cover 15 ROIs from one English talk. The Mandarin recording has change labels, with code OCR N/A.
+[Results, regressions, raw records and review downloads](docs/SCREEN_QUALITY.md).
 
 ![Search a real Xous talk and jump to the corresponding code slide](docs/images/real-talk-search.gif)
 
@@ -18,9 +31,10 @@ This recording uses a complete public 39-minute talk, not a generated fixture.
 An agent also answered a question using the saved transcript, timeline and images
 through MCP. [Source, attribution, captured calls and reproduction](docs/REAL_TALK_DEMO.md).
 
-The [real-video table](docs/REAL_TALK_BENCHMARK.md) covers ten fixed three-minute
-excerpts. It reports missed visual changes and code OCR errors as well as
-successful extraction. `complete` means the pipeline finished, not perfect recall.
+On the ten development excerpts, capture improved from 44/60 to 59/60 changes;
+code CER improved from 39.29% to 6.24% on Mac and 54.30% to 23.61% on Docker.
+These gains did not fully generalize to the holdout. `complete` means the
+pipeline finished, not perfect recall. [Saved-frame comparison](https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-screen-retention.gif).
 
 ## How it works
 
@@ -104,7 +118,7 @@ Evidence Pack files are the source of truth. The search index can be rebuilt, an
 ## Limits
 
 - Source sites can reject downloads, change their responses, or remove media. Browser cookies are optional and grant access to the configured cookie store; see [privacy](docs/PRIVACY.md).
-- OCR, speech recognition, and preview selection can miss information. The full frame set is uncapped, so long videos can require substantial time and disk space.
+- OCR, speech recognition, and preview selection can miss information. Full packs contain states retained by sampling and deduplication; brief changes can be missed. The retained set is uncapped, so long videos can require substantial time and disk space.
 - New social platforms from the old draft candidates are not shipped. See the [source verification matrix](docs/PLATFORMS.md); generic URL acceptance does not guarantee extraction.
 - The web server has no authentication and binds to loopback by default. Keep it local; share exported packs only after reviewing their contents.
 
@@ -113,7 +127,9 @@ Evidence Pack files are the source of truth. The search index can be rebuilt, an
 - [Installation and platform setup](docs/INSTALL.md)
 - [CLI, SDK, REST, and MCP usage](docs/USAGE.md)
 - [Real talk demo and MCP question answering](docs/REAL_TALK_DEMO.md)
-- [Ten-source quality measurements](docs/REAL_TALK_BENCHMARK.md)
+- [Screen quality, frozen holdout and CPU results](docs/SCREEN_QUALITY.md)
+- [Default-tool comparison](docs/TOOL_COMPARISON.md)
+- [Owner review packages and facts](docs/V140_FACTS.md)
 - [v1.4.0 release notes](docs/releases/v1.4.0.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Evidence Pack format](docs/EVIDENCE_PACK.md)

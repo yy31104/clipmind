@@ -1,0 +1,42 @@
+{
+  "status": "completed",
+  "candidate_commit": "47c5334f43f5841ebaaa3ecfeab4938088fdf97f",
+  "runtime_sha256": "e7c9c63c00c4843c4ed4128621b2b4aa6cb6514d6f2b6049102ee29e40fafc20",
+  "command": [
+    "HF_HUB_OFFLINE=1",
+    "PYTHON_DOTENV_DISABLED=1",
+    "<WORKDIR>/repo/.venv/bin/python",
+    "scripts/evaluate_real_talks.py",
+    "run",
+    "--corpus",
+    "docs/data/v140-holdout-cases.json",
+    "--labels",
+    "docs/data/v140-holdout-labels.json",
+    "--workdir",
+    "<WORKDIR>/runs/holdout-mac",
+    "--output",
+    "<WORKDIR>/runs/holdout-campaign/mac-results.json",
+    "--once-token",
+    "<WORKDIR>/runs/holdout-campaign/mac-once.json",
+    "--expected-runtime-fingerprint",
+    "<WORKDIR>/runs/holdout-campaign/runtime.json",
+    "--asr-provider",
+    "mlx",
+    "--ocr-provider",
+    "vision",
+    "--asr-language",
+    "auto",
+    "--ocr-diagnostics",
+    "--force"
+  ],
+  "cwd": "<WORKDIR>/candidate-final",
+  "environment": "native Apple Silicon; offline reads from existing warm model cache",
+  "cache_access": "offline native access; no filesystem read-only mount",
+  "sum_case_wall_seconds": 135.106,
+  "outer_launcher_wall_seconds": null,
+  "timing_note": "Per-case elapsed time recorded; no independent outer-launch stopwatch. Other development processes and Docker image preparation may overlap.",
+  "model_snapshots": {
+    "mlx-community/whisper-large-v3-turbo": "a4aaeec0636e6fef84abdcbe3544cb2bf7e9f6fb",
+    "SYSTRAN/faster-whisper-large-v3-turbo": "0a363e9161cbc7ed1431c9597a8ceaf0c4f78fcf"
+  }
+}

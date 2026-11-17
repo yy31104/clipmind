@@ -37,3 +37,5 @@ The final worker also passed an unguarded SDK call from stdin with the parent wo
 - `native-failure-images/`: the exact retained Xous JPEGs referenced by failures.
 
 All source frames and derived images are CC BY 4.0, credited to the talk authors and CCC in the attached development source manifest. No held-out image or prediction was used to select this candidate.
+
+[Download the complete records and images](https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-ocr-development.zip). [Release checksums](https://github.com/yy31104/clipmind/releases/download/v1.4.0/SCREEN_SHA256SUMS).

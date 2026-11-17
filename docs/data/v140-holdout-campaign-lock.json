@@ -1,0 +1,39 @@
+{
+  "candidate_commit": "47c5334f43f5841ebaaa3ecfeab4938088fdf97f",
+  "runtime_sha256": "e7c9c63c00c4843c4ed4128621b2b4aa6cb6514d6f2b6049102ee29e40fafc20",
+  "evaluator_sha256": {
+    "scripts/evaluate_real_talks.py": "86e25a47e3cdec87c4c4b7fa90b805b3709e1807119811a63261ce64e6ee2644",
+    "scripts/screen_evaluation.py": "c068100b0a1066b42282d09e9c7a123004ff94d80f9d42ddf23580db05eda395"
+  },
+  "frozen_source_sha256": {
+    "docs/HOLDOUT_SCREEN_PROTOCOL.md": "86da14df6eebd1c216c0383f0eafbcdd4a4ddf46260df669b59ee44d0e305f53",
+    "docs/data/v140-holdout-cases.json": "e5e3961c52431b82925f11824ebece1aa740ac3a339aaea9d733e77e20606145",
+    "docs/data/v140-holdout-labels.json": "4f6b067d3802d54f4ed37c1f5fe5cf4ad13a7579d8046c11307e8f67398ff20c",
+    "docs/data/v140-holdout-freeze.json": "24723ab71281b981e464e0d12584837e5ee6277f32be9559d18167a439aca3a3",
+    "scripts/prepare_screen_holdout.py": "53ffcf2e8f1bca3450bfab07d7b197526e68482274ad8766c8ffb1a2034d3424"
+  },
+  "targets": {
+    "change_recall": 0.85,
+    "information_precision": 0.5,
+    "code_cer_maximum": 0.15
+  },
+  "annotation_status": "AI-assisted; human review pending",
+  "paths": {
+    "mac": {
+      "asr": "mlx",
+      "ocr": "vision",
+      "asr_language": "auto",
+      "attempts_per_recording": 1
+    },
+    "docker": {
+      "asr": "faster-whisper",
+      "ocr": "tesseract",
+      "asr_language": "auto",
+      "cpu_limit": 6,
+      "memory_gib": 4,
+      "network": "none",
+      "attempts_per_recording": 1
+    }
+  },
+  "post_result_policy": "Publish all outcomes; no runtime or scoring changes, parameter tuning, or replacement runs."
+}
