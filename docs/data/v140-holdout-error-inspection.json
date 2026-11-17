@@ -1,0 +1,4106 @@
+{
+  "schema_version": 1,
+  "inspection_status": "Post-result explanatory source inspection; AI-assisted; human review pending.",
+  "scope": "Three selected Shell code ROIs, all five WikiPie frozen missed timestamps, the findings complete-build question, and a bounded eight-event Coscup extra-boundary sample. This is not an exhaustive holdout error attribution.",
+  "frozen_scores_labels_and_runtime_unchanged": true,
+  "no_ocr_asr_or_paid_model_calls": true,
+  "no_rescoring_or_alternative_scores": true,
+  "no_parameter_changes_or_new_runtime_variants": true,
+  "frozen_artifacts_sha256": {
+    "runs/holdout-campaign/mac-results.json": "b1888d10e404409d5fd475ad8dbdf6855aa3ac89136ec1d331ce9c67996d2400",
+    "runs/holdout-campaign/docker-results.json": "c2a83cb675390d10342b3c3270097ac31ea84e657bb3d9462ec721ba9c5225cf",
+    "repo/docs/data/v140-holdout-cases.json": "e5e3961c52431b82925f11824ebece1aa740ac3a339aaea9d733e77e20606145",
+    "repo/docs/data/v140-holdout-labels.json": "4f6b067d3802d54f4ed37c1f5fe5cf4ad13a7579d8046c11307e8f67398ff20c",
+    "repo/docs/data/v140-holdout-freeze.json": "24723ab71281b981e464e0d12584837e5ee6277f32be9559d18167a439aca3a3",
+    "runs/holdout-campaign/campaign-lock.json": "974177d454152ef77001c74f024aff0369c40224a0d340b037d327f06826e605",
+    "runs/holdout-campaign/runtime.json": "fe5f79f6882a28c7ec6c1534b6c21b4dea19bf1158796e17bf5bfad93236c8d7"
+  },
+  "source_inputs_sha256": {
+    "coscup2020-python": "f048f03dc1d874079ab0e659b4020f3c36de4d4503fb3dffe4723398ff864c25",
+    "enthusiasticon-shell": "47781f495823dd355a5aba279aa17b28417c567f885dd7ff977f92f5f456d651",
+    "wikimania-wikipie": "f6debc728ad29a377ed9580e824294839d40952bad8318c5613d5ad5e6b2818e"
+  },
+  "frozen_outcomes_as_reported": {
+    "mac": {
+      "matched_changes": 73,
+      "reference_changes": 78,
+      "information_precision_percent": 20.39,
+      "code_errors": 436,
+      "code_reference_units": 2295,
+      "code_cer_percent": 19.0
+    },
+    "docker": {
+      "matched_changes": 73,
+      "reference_changes": 78,
+      "information_precision_percent": 20.28,
+      "code_errors": 369,
+      "code_reference_units": 2295,
+      "code_cer_percent": 16.08
+    },
+    "wikipie_missed_timestamps": [
+      124,
+      140,
+      152,
+      347,
+      393
+    ],
+    "wikipie_complete_build_groups_covered": 4,
+    "wikipie_complete_build_groups_total": 5
+  },
+  "reference_caveats": [
+    {
+      "kind": "timing_or_complete_interval",
+      "priority": "Owner review required; do not describe the 345 s saved findings image as visibly incomplete.",
+      "observation": "The findings lower group is absent at requested 344.5 s but present at source 345.009709 s, 347 s and 370 s. Both retained 345 s images include the ~18% enact and ~6% invoke bullets. Frozen complete_start 347 s excludes their recorded capture time; temporal noncoverage does not establish missing pixels.",
+      "evidence": "post-result-wikipie-inspection/findings-contact.jpg",
+      "frozen_metric_unchanged": true
+    },
+    {
+      "kind": "timing_reference_alignment",
+      "priority": "The five official misses remain; inspect the wider reveal brackets before claiming content loss.",
+      "observation": "Observed source additions align with retained states but differ from the five frozen integer timestamps. At 124, 140 and 393 s, both source and actual SDK-selected images lack the not-yet-visible addition. At 152 and 347 s, both already contain the addition.",
+      "evidence": "post-result-wikipie-sdk-validation/actual-sdk-at-frozen-reference.jpg",
+      "frozen_metric_unchanged": true
+    },
+    {
+      "kind": "code_reference_transcription",
+      "priority": "Owner review required; no corrected CER calculated.",
+      "observation": "Shell 270 s lower source comment visibly reads argument list must end with a NULL pointer; the frozen reference reads argument vector must be NULL-pointer. Its frozen error count is not exclusively recognizer error.",
+      "evidence": "post-result-shell-inspection/source270-lower-comment-4x.png",
+      "frozen_metric_unchanged": true
+    }
+  ],
+  "shell": {
+    "schema_version": 1,
+    "case_id": "enthusiasticon-shell",
+    "annotation_status": "AI-assisted source/image inspection; human review pending.",
+    "scope": "Post-result explanation of three frozen code ROIs. No extraction pipeline, OCR/ASR calls, rescoring, tuning, or frozen-file changes.",
+    "input_sha256": "47781f495823dd355a5aba279aa17b28417c567f885dd7ff977f92f5f456d651",
+    "reports_sha256": {
+      "mac": "b1888d10e404409d5fd475ad8dbdf6855aa3ac89136ec1d331ce9c67996d2400",
+      "docker": "c2a83cb675390d10342b3c3270097ac31ea84e657bb3d9462ec721ba9c5225cf"
+    },
+    "labels_sha256": "4f6b067d3802d54f4ed37c1f5fe5cf4ad13a7579d8046c11307e8f67398ff20c",
+    "corpus_sha256": "e5e3961c52431b82925f11824ebece1aa740ac3a339aaea9d733e77e20606145",
+    "observations": [
+      {
+        "inspection_id": "shell-245-struct",
+        "frozen_reference_seconds": 245,
+        "normalized_roi": [
+          0.301563,
+          0.425,
+          0.636719,
+          0.226389
+        ],
+        "native_source_crop_pixels": [
+          815,
+          163
+        ],
+        "frozen_backend_rows": {
+          "mac": {
+            "backend": "mac",
+            "timestamp": 245,
+            "frozen_metric": {
+              "timestamp": 245,
+              "roi": [
+                0.301563,
+                0.425,
+                0.636719,
+                0.226389
+              ],
+              "text": "struct command {\nint argc; // number of args\nchar *argv[MAXARGS]; // arguments list\nenum builtin_t { // is argv[0] a builtin command?\nNONE, QUIT, JOBS, BG, FG } builtin;\n};",
+              "kind": "code",
+              "notes": "Struct with aligned comments; source cursor is below the text block.",
+              "status": "measured",
+              "value": 0.035211267605633804,
+              "reference_units": 142,
+              "errors": 5,
+              "substitutions": 3,
+              "deletions": 2,
+              "insertions": 0,
+              "reference": "structcommand{intargc;//numberofargschar*argv[MAXARGS];//argumentslistenumbuiltin_t{//isargv[0]abuiltincommand?NONE,QUIT,JOBS,BG,FG}builtin;};",
+              "hypothesis": "structcommand(intarge;//numberofargschar*argv[MAXARGS];//argumentslistenumbuiltin_t1//isargv[0]abuiltincommand?NONE,QUIT,JOBS,BG,FG}builtin;",
+              "visual_state_id": "visual-00021",
+              "retained_frame_available": true,
+              "frame_interval": [
+                228.5,
+                249.5
+              ]
+            },
+            "selection": {
+              "file": "mac-sdk-245.jpg",
+              "sha256": "52b263a7c1ca2e99bc6235c59a33c883487a54a3bfd06a35ee26bbb2e3e8dd35",
+              "state": {
+                "id": "visual-00021",
+                "start": 228.5,
+                "end": 249.5,
+                "source_timestamp": 230.5,
+                "change_kind": "content"
+              },
+              "timeline_sha256": "401c19d4fa5d475d96f3f65958393f7a525790652de3a00144a926f7f4f7fa99",
+              "ocr_file_sha256": "3293ea24b56bf16df4f1f2beb289b26cd15960fa0f9fbb9f481f809b1bd19eba",
+              "saved_ocr_record": {
+                "id": "ocr-00021",
+                "layout": [
+                  {
+                    "bbox": [
+                      0.598676,
+                      0.1655,
+                      0.388349,
+                      0.110557
+                    ],
+                    "confidence": 1.0,
+                    "text": "command struct"
+                  },
+                  {
+                    "bbox": [
+                      0.304167,
+                      0.318519,
+                      0.545833,
+                      0.044676
+                    ],
+                    "confidence": 1.0,
+                    "text": "// maxargs in struct can't be variable, use define"
+                  },
+                  {
+                    "bbox": [
+                      0.302326,
+                      0.359028,
+                      0.206395,
+                      0.025985
+                    ],
+                    "confidence": 1.0,
+                    "text": "#define MAXARGS 128"
+                  },
+                  {
+                    "bbox": [
+                      0.3,
+                      0.42963,
+                      0.183333,
+                      0.037037
+                    ],
+                    "confidence": 1.0,
+                    "text": "struct command ("
+                  },
+                  {
+                    "bbox": [
+                      0.320833,
+                      0.474074,
+                      0.104167,
+                      0.037037
+                    ],
+                    "confidence": 1.0,
+                    "text": "int arge;"
+                  },
+                  {
+                    "bbox": [
+                      0.572456,
+                      0.468449,
+                      0.183618,
+                      0.036071
+                    ],
+                    "confidence": 1.0,
+                    "text": "// number of args"
+                  },
+                  {
+                    "bbox": [
+                      0.322507,
+                      0.507075,
+                      0.21837,
+                      0.035818
+                    ],
+                    "confidence": 1.0,
+                    "text": "char *argv [MAXARGS];"
+                  },
+                  {
+                    "bbox": [
+                      0.572674,
+                      0.509028,
+                      0.184593,
+                      0.03125
+                    ],
+                    "confidence": 1.0,
+                    "text": "// arguments list"
+                  },
+                  {
+                    "bbox": [
+                      0.322147,
+                      0.535515,
+                      0.17563,
+                      0.052123
+                    ],
+                    "confidence": 1.0,
+                    "text": "enum builtin_t 1"
+                  },
+                  {
+                    "bbox": [
+                      0.570628,
+                      0.540376,
+                      0.354601,
+                      0.048465
+                    ],
+                    "confidence": 1.0,
+                    "text": "// is argv [0] a builtin command?"
+                  },
+                  {
+                    "bbox": [
+                      0.342977,
+                      0.58347,
+                      0.380924,
+                      0.038546
+                    ],
+                    "confidence": 1.0,
+                    "text": "NONE, QUIT, JOBS, BG, FG } builtin;"
+                  }
+                ],
+                "lines": [
+                  "command struct",
+                  "// maxargs in struct can't be variable, use define",
+                  "#define MAXARGS 128",
+                  "struct command (",
+                  "int arge;",
+                  "// number of args",
+                  "char *argv [MAXARGS];",
+                  "// arguments list",
+                  "enum builtin_t 1",
+                  "// is argv [0] a builtin command?",
+                  "NONE, QUIT, JOBS, BG, FG } builtin;"
+                ],
+                "text": "command struct\n// maxargs in struct can't be variable, use define\n#define MAXARGS 128\nstruct command (\nint arge;\n// number of args\nchar *argv [MAXARGS];\n// arguments list\nenum builtin_t 1\n// is argv [0] a builtin command?\nNONE, QUIT, JOBS, BG, FG } builtin;",
+                "timestamp": 228.5,
+                "visual_state_ref": "visual-00021"
+              }
+            }
+          },
+          "docker": {
+            "backend": "docker",
+            "timestamp": 245,
+            "frozen_metric": {
+              "timestamp": 245,
+              "roi": [
+                0.301563,
+                0.425,
+                0.636719,
+                0.226389
+              ],
+              "text": "struct command {\nint argc; // number of args\nchar *argv[MAXARGS]; // arguments list\nenum builtin_t { // is argv[0] a builtin command?\nNONE, QUIT, JOBS, BG, FG } builtin;\n};",
+              "kind": "code",
+              "notes": "Struct with aligned comments; source cursor is below the text block.",
+              "status": "measured",
+              "value": 0.6056338028169014,
+              "reference_units": 142,
+              "errors": 86,
+              "substitutions": 17,
+              "deletions": 36,
+              "insertions": 33,
+              "reference": "structcommand{intargc;//numberofargschar*argv[MAXARGS];//argumentslistenumbuiltin_t{//isargv[0]abuiltincommand?NONE,QUIT,JOBS,BG,FG}builtin;};",
+              "hypothesis": "structcommand{intargc;char*argv[MAXARGS];enumbuiltin_t{NONE,QUIT,JOBS,}3//numberofargs//argumentslist//isargv[0)abuiltincommand?FG}builtin;",
+              "visual_state_id": "visual-00022",
+              "retained_frame_available": true,
+              "frame_interval": [
+                228.5,
+                249.5
+              ]
+            },
+            "selection": {
+              "file": "docker-sdk-245.jpg",
+              "sha256": "21ff4ffc107564ee3c9f954dd2b273b187e851b0441a17a06b5346743abfef7b",
+              "state": {
+                "id": "visual-00022",
+                "start": 228.5,
+                "end": 249.5,
+                "source_timestamp": 230.5,
+                "change_kind": "content"
+              },
+              "timeline_sha256": "0b5a708e656a7648d61b8ee3673a2696ddbdfc160e47f6b203507435c2995f32",
+              "ocr_file_sha256": "dca4151114bf861769ff15be5c125da01c99f20288d188bee50ff0b60dfc0955",
+              "saved_ocr_record": {
+                "id": "ocr-00022",
+                "layout": [
+                  {
+                    "bbox": [
+                      0.0125,
+                      0.223611,
+                      0.03125,
+                      0.084722
+                    ],
+                    "confidence": 0.25,
+                    "text": "3"
+                  },
+                  {
+                    "bbox": [
+                      0.603125,
+                      0.1625,
+                      0.379688,
+                      0.106944
+                    ],
+                    "confidence": 0.96,
+                    "text": "command struct"
+                  },
+                  {
+                    "bbox": [
+                      0.305469,
+                      0.319444,
+                      0.535937,
+                      0.029167
+                    ],
+                    "confidence": 0.9367,
+                    "text": "// maxargs in struct can't be variable, use define"
+                  },
+                  {
+                    "bbox": [
+                      0.303906,
+                      0.358333,
+                      0.202344,
+                      0.022222
+                    ],
+                    "confidence": 0.9267,
+                    "text": "#define MAXARGS 128"
+                  },
+                  {
+                    "bbox": [
+                      0.304688,
+                      0.434722,
+                      0.16875,
+                      0.026389
+                    ],
+                    "confidence": 0.93,
+                    "text": "struct command {"
+                  },
+                  {
+                    "bbox": [
+                      0.326562,
+                      0.470833,
+                      0.092188,
+                      0.027778
+                    ],
+                    "confidence": 0.645,
+                    "text": "int argc;"
+                  },
+                  {
+                    "bbox": [
+                      0.325781,
+                      0.509722,
+                      0.210938,
+                      0.026389
+                    ],
+                    "confidence": 0.905,
+                    "text": "char *argv[MAXARGS];"
+                  },
+                  {
+                    "bbox": [
+                      0.325781,
+                      0.547222,
+                      0.169531,
+                      0.029167
+                    ],
+                    "confidence": 0.9167,
+                    "text": "enum builtin_t {"
+                  },
+                  {
+                    "bbox": [
+                      0.346875,
+                      0.586111,
+                      0.05,
+                      0.025
+                    ],
+                    "confidence": 0.96,
+                    "text": "NONE,"
+                  },
+                  {
+                    "bbox": [
+                      0.411719,
+                      0.586111,
+                      0.114062,
+                      0.025
+                    ],
+                    "confidence": 0.96,
+                    "text": "QUIT, JOBS,"
+                  },
+                  {
+                    "bbox": [
+                      0.30625,
+                      0.623611,
+                      0.014844,
+                      0.026389
+                    ],
+                    "confidence": 0.03,
+                    "text": "}3"
+                  },
+                  {
+                    "bbox": [
+                      0.575,
+                      0.470833,
+                      0.179688,
+                      0.027778
+                    ],
+                    "confidence": 0.9475,
+                    "text": "// number of args"
+                  },
+                  {
+                    "bbox": [
+                      0.575,
+                      0.508333,
+                      0.180469,
+                      0.027778
+                    ],
+                    "confidence": 0.9333,
+                    "text": "// arguments list"
+                  },
+                  {
+                    "bbox": [
+                      0.575,
+                      0.545833,
+                      0.341406,
+                      0.029167
+                    ],
+                    "confidence": 0.925,
+                    "text": "// is argv[0) a builtin command?"
+                  },
+                  {
+                    "bbox": [
+                      0.584375,
+                      0.584722,
+                      0.135937,
+                      0.026389
+                    ],
+                    "confidence": 0.9267,
+                    "text": "FG } builtin;"
+                  }
+                ],
+                "lines": [
+                  "3",
+                  "command struct",
+                  "// maxargs in struct can't be variable, use define",
+                  "#define MAXARGS 128",
+                  "struct command {",
+                  "int argc;",
+                  "char *argv[MAXARGS];",
+                  "enum builtin_t {",
+                  "NONE,",
+                  "QUIT, JOBS,",
+                  "}3",
+                  "// number of args",
+                  "// arguments list",
+                  "// is argv[0) a builtin command?",
+                  "FG } builtin;"
+                ],
+                "text": "3\ncommand struct\n// maxargs in struct can't be variable, use define\n#define MAXARGS 128\nstruct command {\nint argc;\nchar *argv[MAXARGS];\nenum builtin_t {\nNONE,\nQUIT, JOBS,\n}3\n// number of args\n// arguments list\n// is argv[0) a builtin command?\nFG } builtin;",
+                "timestamp": 228.5,
+                "visual_state_ref": "visual-00022"
+              }
+            }
+          }
+        },
+        "retention_loss_confirmed": false,
+        "visually_supported_primary_cause": "reading_order",
+        "observations": [
+          "The source 245 s image and SDK images captured 230.5 s show the same complete struct, aligned comments, enum values, and closing braces. No missing page or code block is visible.",
+          "Docker saved OCR lists the left code column first, then the right comments. For example int argc and its number-of-args comment are separated, unlike the source row order. BG is also absent from the saved ordered hypothesis.",
+          "Mac saved layout interleaves the code and comments in row order; its frozen errors include punctuation/character mistakes such as a brace read as a parenthesis and argc read as arge."
+        ],
+        "uncertainty": "The saved output directly demonstrates reading-order damage on Docker. This inspection does not allocate every edit to a single mechanism or infer an internal recognizer cause.",
+        "comparison_image": "245-struct-comparison.png"
+      },
+      {
+        "inspection_id": "shell-270-upper",
+        "frozen_reference_seconds": 270,
+        "normalized_roi": [
+          0.301563,
+          0.15,
+          0.349219,
+          0.108333
+        ],
+        "native_source_crop_pixels": [
+          447,
+          78
+        ],
+        "frozen_backend_rows": {
+          "mac": {
+            "backend": "mac",
+            "timestamp": 270,
+            "frozen_metric": {
+              "timestamp": 270,
+              "roi": [
+                0.301563,
+                0.15,
+                0.349219,
+                0.108333
+              ],
+              "text": "int parse(const char *cmdline, struct command *cmd) {\nstatic char array[MAXLINE]; // local copy of command line\nconst char delims[10] = \" \\t\\r\\n\"; // argument delimiters\nchar *line = array; // ptr that traverses command line\nchar *token; // ptr to the end of the current arg\nchar *endline; // ptr to the end of the cmdline string\nint is_bg; // background job?",
+              "kind": "code",
+              "notes": "Small source text, comments extend to the right; all included text is visibly transcribed.",
+              "status": "measured",
+              "value": 0.6161616161616161,
+              "reference_units": 297,
+              "errors": 183,
+              "substitutions": 40,
+              "deletions": 142,
+              "insertions": 1,
+              "reference": "intparse(constchar*cmdline,structcommand*cmd){staticchararray[MAXLINE];//localcopyofcommandlineconstchardelims[10]=\"\\t\\r\\n\";//argumentdelimiterschar*line=array;//ptrthattraversescommandlinechar*token;//ptrtotheendofthecurrentargchar*endline;//ptrtotheendofthecmdlinestringintis_bg;//backgroundjob?",
+              "hypothesis": "intpacao|conalchatstaticchararray|MAXLINE|!constchardelineli\u1ea0\u1ea1iIchas\u2022line-arrayicher\"coken;charlocalcopyofcoemandlineptrtotheandofthecurrentargIckgrounaJoor",
+              "visual_state_id": "visual-00024",
+              "retained_frame_available": true,
+              "frame_interval": [
+                257.0,
+                273.0
+              ]
+            },
+            "selection": {
+              "file": "mac-sdk-270.jpg",
+              "sha256": "fb8772e5859d317a1b4c276dc56251de05d41cc87e96d30dae881882d7a51eda",
+              "state": {
+                "id": "visual-00024",
+                "start": 257.0,
+                "end": 273.0,
+                "source_timestamp": 258.0,
+                "change_kind": "content"
+              },
+              "timeline_sha256": "401c19d4fa5d475d96f3f65958393f7a525790652de3a00144a926f7f4f7fa99",
+              "ocr_file_sha256": "3293ea24b56bf16df4f1f2beb289b26cd15960fa0f9fbb9f481f809b1bd19eba",
+              "saved_ocr_record": {
+                "id": "ocr-00024",
+                "layout": [
+                  {
+                    "bbox": [
+                      0.302326,
+                      0.152455,
+                      0.087209,
+                      0.015601
+                    ],
+                    "confidence": 1.0,
+                    "text": "int pacao| conal chat"
+                  },
+                  {
+                    "bbox": [
+                      0.319767,
+                      0.165278,
+                      0.107558,
+                      0.013194
+                    ],
+                    "confidence": 1.0,
+                    "text": "static char array| MAXLINE|!"
+                  },
+                  {
+                    "bbox": [
+                      0.32106,
+                      0.176395,
+                      0.084578,
+                      0.01876
+                    ],
+                    "confidence": 1.0,
+                    "text": "const char delineli\u1ea0\u1ea1iI"
+                  },
+                  {
+                    "bbox": [
+                      0.319626,
+                      0.190019,
+                      0.07736,
+                      0.017455
+                    ],
+                    "confidence": 1.0,
+                    "text": "chas \u2022line - arrayi"
+                  },
+                  {
+                    "bbox": [
+                      0.319767,
+                      0.206718,
+                      0.049419,
+                      0.01292
+                    ],
+                    "confidence": 1.0,
+                    "text": "cher \"coken;"
+                  },
+                  {
+                    "bbox": [
+                      0.319767,
+                      0.219638,
+                      0.017442,
+                      0.01292
+                    ],
+                    "confidence": 1.0,
+                    "text": "char"
+                  },
+                  {
+                    "bbox": [
+                      0.319767,
+                      0.263566,
+                      0.043605,
+                      0.01292
+                    ],
+                    "confidence": 0.5,
+                    "text": "it icodiine"
+                  },
+                  {
+                    "bbox": [
+                      0.319767,
+                      0.302083,
+                      0.079942,
+                      0.015972
+                    ],
+                    "confidence": 0.5,
+                    "text": "(void) stIncpylline,"
+                  },
+                  {
+                    "bbox": [
+                      0.475291,
+                      0.165278,
+                      0.107558,
+                      0.013194
+                    ],
+                    "confidence": 1.0,
+                    "text": "local copy of coe mand line"
+                  },
+                  {
+                    "bbox": [
+                      0.475291,
+                      0.206718,
+                      0.136628,
+                      0.01292
+                    ],
+                    "confidence": 1.0,
+                    "text": "ptr to the and of the current arg"
+                  },
+                  {
+                    "bbox": [
+                      0.485465,
+                      0.2375,
+                      0.052326,
+                      0.007978
+                    ],
+                    "confidence": 0.5,
+                    "text": "Ickgrouna Joor"
+                  },
+                  {
+                    "bbox": [
+                      0.334302,
+                      0.410853,
+                      0.122093,
+                      0.018314
+                    ],
+                    "confidence": 1.0,
+                    "text": "line * atropo (line, deismal)"
+                  },
+                  {
+                    "bbox": [
+                      0.335756,
+                      0.426357,
+                      0.107558,
+                      0.013227
+                    ],
+                    "confidence": 1.0,
+                    "text": "lf (lane \u203a= endlane| break;"
+                  },
+                  {
+                    "bbox": [
+                      0.334302,
+                      0.452083,
+                      0.094477,
+                      0.015617
+                    ],
+                    "confidence": 1.0,
+                    "text": "il Find cokes daliaster"
+                  },
+                  {
+                    "bbox": [
+                      0.334302,
+                      0.467361,
+                      0.055233,
+                      0.013259
+                    ],
+                    "confidence": 1.0,
+                    "text": "coken - 11n4 \u2022"
+                  },
+                  {
+                    "bbox": [
+                      0.388081,
+                      0.467361,
+                      0.100291,
+                      0.013259
+                    ],
+                    "confidence": 1.0,
+                    "text": "\u2022 arcapa liano, delical:"
+                  },
+                  {
+                    "bbox": [
+                      0.335756,
+                      0.495833,
+                      0.088663,
+                      0.013211
+                    ],
+                    "confidence": 1.0,
+                    "text": "i? tarminate the token"
+                  },
+                  {
+                    "bbox": [
+                      0.335756,
+                      0.50625,
+                      0.036337,
+                      0.015972
+                    ],
+                    "confidence": 1.0,
+                    "text": "* coken -"
+                  },
+                  {
+                    "bbox": [
+                      0.334217,
+                      0.534702,
+                      0.110632,
+                      0.016303
+                    ],
+                    "confidence": 1.0,
+                    "text": "/ Record loken es argament"
+                  },
+                  {
+                    "bbox": [
+                      0.338663,
+                      0.578472,
+                      0.06686,
+                      0.021011
+                    ],
+                    "confidence": 1.0,
+                    "text": "/ check if orgy"
+                  },
+                  {
+                    "bbox": [
+                      0.411337,
+                      0.576227,
+                      0.021802,
+                      0.01292
+                    ],
+                    "confidence": 0.5,
+                    "text": "PULL"
+                  },
+                  {
+                    "bbox": [
+                      0.412791,
+                      0.591667,
+                      0.059593,
+                      0.013194
+                    ],
+                    "confidence": 1.0,
+                    "text": "ARCS-. 1 break;"
+                  },
+                  {
+                    "bbox": [
+                      0.332849,
+                      0.617361,
+                      0.05814,
+                      0.013194
+                    ],
+                    "confidence": 1.0,
+                    "text": "11ne \u2022 token \u2022"
+                  },
+                  {
+                    "bbox": [
+                      0.319706,
+                      0.658713,
+                      0.180345,
+                      0.0182
+                    ],
+                    "confidence": 1.0,
+                    "text": "/ argument list ust and with a NULL pointer"
+                  },
+                  {
+                    "bbox": [
+                      0.318314,
+                      0.7,
+                      0.165698,
+                      0.015972
+                    ],
+                    "confidence": 0.5,
+                    "text": "if icod-sargo == ia // igroie blank line"
+                  },
+                  {
+                    "bbox": [
+                      0.321221,
+                      0.770026,
+                      0.126453,
+                      0.01292
+                    ],
+                    "confidence": 0.5,
+                    "text": "should on an in backgrounde"
+                  },
+                  {
+                    "bbox": [
+                      0.319767,
+                      0.824289,
+                      0.053779,
+                      0.013211
+                    ],
+                    "confidence": 1.0,
+                    "text": "razura la by:"
+                  },
+                  {
+                    "bbox": [
+                      0.790006,
+                      0.157474,
+                      0.208678,
+                      0.14088
+                    ],
+                    "confidence": 0.5,
+                    "text": "parse):"
+                  },
+                  {
+                    "bbox": [
+                      0.679614,
+                      0.327063,
+                      0.305016,
+                      0.113317
+                    ],
+                    "confidence": 1.0,
+                    "text": "line -> struct"
+                  }
+                ],
+                "lines": [
+                  "int pacao| conal chat",
+                  "static char array| MAXLINE|!",
+                  "const char delineli\u1ea0\u1ea1iI",
+                  "chas \u2022line - arrayi",
+                  "cher \"coken;",
+                  "char",
+                  "it icodiine",
+                  "(void) stIncpylline,",
+                  "local copy of coe mand line",
+                  "ptr to the and of the current arg",
+                  "Ickgrouna Joor",
+                  "line * atropo (line, deismal)",
+                  "lf (lane \u203a= endlane| break;",
+                  "il Find cokes daliaster",
+                  "coken - 11n4 \u2022",
+                  "\u2022 arcapa liano, delical:",
+                  "i? tarminate the token",
+                  "* coken -",
+                  "/ Record loken es argament",
+                  "/ check if orgy",
+                  "PULL",
+                  "ARCS-. 1 break;",
+                  "11ne \u2022 token \u2022",
+                  "/ argument list ust and with a NULL pointer",
+                  "if icod-sargo == ia // igroie blank line",
+                  "should on an in backgrounde",
+                  "razura la by:",
+                  "parse):",
+                  "line -> struct"
+                ],
+                "text": "int pacao| conal chat\nstatic char array| MAXLINE|!\nconst char delineli\u1ea0\u1ea1iI\nchas \u2022line - arrayi\ncher \"coken;\nchar\nit icodiine\n(void) stIncpylline,\nlocal copy of coe mand line\nptr to the and of the current arg\nIckgrouna Joor\nline * atropo (line, deismal)\nlf (lane \u203a= endlane| break;\nil Find cokes daliaster\ncoken - 11n4 \u2022\n\u2022 arcapa liano, delical:\ni? tarminate the token\n* coken -\n/ Record loken es argament\n/ check if orgy\nPULL\nARCS-. 1 break;\n11ne \u2022 token \u2022\n/ argument list ust and with a NULL pointer\nif icod-sargo == ia // igroie blank line\nshould on an in backgrounde\nrazura la by:\nparse):\nline -> struct",
+                "timestamp": 257.0,
+                "visual_state_ref": "visual-00024"
+              }
+            }
+          },
+          "docker": {
+            "backend": "docker",
+            "timestamp": 270,
+            "frozen_metric": {
+              "timestamp": 270,
+              "roi": [
+                0.301563,
+                0.15,
+                0.349219,
+                0.108333
+              ],
+              "text": "int parse(const char *cmdline, struct command *cmd) {\nstatic char array[MAXLINE]; // local copy of command line\nconst char delims[10] = \" \\t\\r\\n\"; // argument delimiters\nchar *line = array; // ptr that traverses command line\nchar *token; // ptr to the end of the current arg\nchar *endline; // ptr to the end of the cmdline string\nint is_bg; // background job?",
+              "kind": "code",
+              "notes": "Small source text, comments extend to the right; all included text is visibly transcribed.",
+              "status": "measured",
+              "value": 0.29292929292929293,
+              "reference_units": 297,
+              "errors": 87,
+              "substitutions": 73,
+              "deletions": 12,
+              "insertions": 2,
+              "reference": "intparse(constchar*cmdline,structcommand*cmd){staticchararray[MAXLINE];//localcopyofcommandlineconstchardelims[10]=\"\\t\\r\\n\";//argumentdelimiterschar*line=array;//ptrthattraversescommandlinechar*token;//ptrtotheendofthecurrentargchar*endline;//ptrtotheendofthecmdlinestringintis_bg;//backgroundjob?",
+              "hypothesis": "intpacaeiconstchac*cadline,strucceccomand*cmdb\u00a2statlecharacroy|MAXLIEI|eelocalcopyofcommendlineconatcherdelins!apeSearka>oeecqumentdelalterschar\u00a2line=accay;teptethattraversescommendLingchar-tohenteptetetheandofthecurrentarqchar-ondlsaepletotheandofthecodlinaatringaneLebierbackgroundjon?",
+              "visual_state_id": "visual-00025",
+              "retained_frame_available": true,
+              "frame_interval": [
+                257.0,
+                273.0
+              ]
+            },
+            "selection": {
+              "file": "docker-sdk-270.jpg",
+              "sha256": "10675f02deb8b15245fba26ce59c88e54bed9ea789a6d8882ab7d081c68a78eb",
+              "state": {
+                "id": "visual-00025",
+                "start": 257.0,
+                "end": 273.0,
+                "source_timestamp": 258.0,
+                "change_kind": "content"
+              },
+              "timeline_sha256": "0b5a708e656a7648d61b8ee3673a2696ddbdfc160e47f6b203507435c2995f32",
+              "ocr_file_sha256": "dca4151114bf861769ff15be5c125da01c99f20288d188bee50ff0b60dfc0955",
+              "saved_ocr_record": {
+                "id": "ocr-00025",
+                "layout": [
+                  {
+                    "bbox": [
+                      0.017969,
+                      0.223611,
+                      0.017969,
+                      0.025
+                    ],
+                    "confidence": 0.88,
+                    "text": "ae"
+                  },
+                  {
+                    "bbox": [
+                      0.0125,
+                      0.251389,
+                      0.028125,
+                      0.030556
+                    ],
+                    "confidence": 0.76,
+                    "text": "ad"
+                  },
+                  {
+                    "bbox": [
+                      0.04375,
+                      0.273611,
+                      0.004687,
+                      0.005556
+                    ],
+                    "confidence": 0.29,
+                    "text": "a"
+                  },
+                  {
+                    "bbox": [
+                      0.00625,
+                      0.304167,
+                      0.001563,
+                      0.001389
+                    ],
+                    "confidence": 0.37,
+                    "text": "_"
+                  },
+                  {
+                    "bbox": [
+                      0.305469,
+                      0.152778,
+                      0.208594,
+                      0.011111
+                    ],
+                    "confidence": 0.465,
+                    "text": "int pacaeiconst chac *cadline, strucce ccomand *cmdb \u00a2"
+                  },
+                  {
+                    "bbox": [
+                      0.320312,
+                      0.166667,
+                      0.105469,
+                      0.011111
+                    ],
+                    "confidence": 0.3833,
+                    "text": "statle char acroy|MAXLIEI|"
+                  },
+                  {
+                    "bbox": [
+                      0.46875,
+                      0.166667,
+                      0.00625,
+                      0.006944
+                    ],
+                    "confidence": 0.47,
+                    "text": "ee"
+                  },
+                  {
+                    "bbox": [
+                      0.480469,
+                      0.166667,
+                      0.102344,
+                      0.011111
+                    ],
+                    "confidence": 0.79,
+                    "text": "local copy of commend line"
+                  },
+                  {
+                    "bbox": [
+                      0.320312,
+                      0.180556,
+                      0.069531,
+                      0.009722
+                    ],
+                    "confidence": 0.62,
+                    "text": "conat cher delins!"
+                  },
+                  {
+                    "bbox": [
+                      0.396094,
+                      0.181944,
+                      0.014844,
+                      0.008333
+                    ],
+                    "confidence": 0.7,
+                    "text": "ape"
+                  },
+                  {
+                    "bbox": [
+                      0.424219,
+                      0.177778,
+                      0.03125,
+                      0.016667
+                    ],
+                    "confidence": 0.155,
+                    "text": "Searka >"
+                  },
+                  {
+                    "bbox": [
+                      0.46875,
+                      0.180556,
+                      0.00625,
+                      0.008333
+                    ],
+                    "confidence": 0.23,
+                    "text": "oe"
+                  },
+                  {
+                    "bbox": [
+                      0.479687,
+                      0.180556,
+                      0.046875,
+                      0.009722
+                    ],
+                    "confidence": 0.715,
+                    "text": "ecqument del"
+                  },
+                  {
+                    "bbox": [
+                      0.53125,
+                      0.180556,
+                      0.023438,
+                      0.008333
+                    ],
+                    "confidence": 0.17,
+                    "text": "alters"
+                  },
+                  {
+                    "bbox": [
+                      0.320312,
+                      0.194444,
+                      0.074219,
+                      0.009722
+                    ],
+                    "confidence": 0.41,
+                    "text": "char \u00a2line = accay;"
+                  },
+                  {
+                    "bbox": [
+                      0.46875,
+                      0.194444,
+                      0.00625,
+                      0.006944
+                    ],
+                    "confidence": 0.62,
+                    "text": "te"
+                  },
+                  {
+                    "bbox": [
+                      0.479687,
+                      0.194444,
+                      0.122656,
+                      0.009722
+                    ],
+                    "confidence": 0.816,
+                    "text": "pte that traverses commend Ling"
+                  },
+                  {
+                    "bbox": [
+                      0.320312,
+                      0.208333,
+                      0.042969,
+                      0.008333
+                    ],
+                    "confidence": 0.525,
+                    "text": "char -tohen"
+                  },
+                  {
+                    "bbox": [
+                      0.46875,
+                      0.208333,
+                      0.00625,
+                      0.006944
+                    ],
+                    "confidence": 0.71,
+                    "text": "te"
+                  },
+                  {
+                    "bbox": [
+                      0.479687,
+                      0.208333,
+                      0.130469,
+                      0.009722
+                    ],
+                    "confidence": 0.815,
+                    "text": "pte te the and of the current arq"
+                  },
+                  {
+                    "bbox": [
+                      0.320312,
+                      0.222222,
+                      0.042188,
+                      0.008333
+                    ],
+                    "confidence": 0.17,
+                    "text": "char -ondls"
+                  },
+                  {
+                    "bbox": [
+                      0.46875,
+                      0.222222,
+                      0.00625,
+                      0.005556
+                    ],
+                    "confidence": 0.54,
+                    "text": "ae"
+                  },
+                  {
+                    "bbox": [
+                      0.479687,
+                      0.222222,
+                      0.142969,
+                      0.009722
+                    ],
+                    "confidence": 0.8,
+                    "text": "ple to the and of the codlina atring"
+                  },
+                  {
+                    "bbox": [
+                      0.321094,
+                      0.236111,
+                      0.030469,
+                      0.006944
+                    ],
+                    "confidence": 0.7867,
+                    "text": "ane Le bi"
+                  },
+                  {
+                    "bbox": [
+                      0.46875,
+                      0.236111,
+                      0.00625,
+                      0.006944
+                    ],
+                    "confidence": 0.37,
+                    "text": "er"
+                  },
+                  {
+                    "bbox": [
+                      0.479687,
+                      0.236111,
+                      0.058594,
+                      0.009722
+                    ],
+                    "confidence": 0.79,
+                    "text": "background jon?"
+                  },
+                  {
+                    "bbox": [
+                      0.321094,
+                      0.2625,
+                      0.053906,
+                      0.009722
+                    ],
+                    "confidence": 0.6333,
+                    "text": "at demaline r="
+                  },
+                  {
+                    "bbox": [
+                      0.382031,
+                      0.263889,
+                      0.007031,
+                      0.006944
+                    ],
+                    "confidence": 0.55,
+                    "text": "chi"
+                  },
+                  {
+                    "bbox": [
+                      0.396875,
+                      0.263889,
+                      0.001563,
+                      0.008333
+                    ],
+                    "confidence": 0.61,
+                    "text": "d"
+                  },
+                  {
+                    "bbox": [
+                      0.335938,
+                      0.277778,
+                      0.028906,
+                      0.008333
+                    ],
+                    "confidence": 0.445,
+                    "text": "errort +"
+                  },
+                  {
+                    "bbox": [
+                      0.371875,
+                      0.277778,
+                      0.019531,
+                      0.006944
+                    ],
+                    "confidence": 0.18,
+                    "text": "tend"
+                  },
+                  {
+                    "bbox": [
+                      0.410156,
+                      0.279167,
+                      0.000781,
+                      0.002778
+                    ],
+                    "confidence": 0.05,
+                    "text": ","
+                  },
+                  {
+                    "bbox": [
+                      0.417187,
+                      0.280556,
+                      0.000781,
+                      0.004167
+                    ],
+                    "confidence": 0.69,
+                    "text": "'"
+                  },
+                  {
+                    "bbox": [
+                      0.428125,
+                      0.277778,
+                      0.033594,
+                      0.008333
+                    ],
+                    "confidence": 0.39,
+                    "text": "Wi: An bE"
+                  },
+                  {
+                    "bbox": [
+                      0.321094,
+                      0.304167,
+                      0.153125,
+                      0.011111
+                    ],
+                    "confidence": 0.4575,
+                    "text": "(void) wtrncpyiline, cmdline, MAXLINE);"
+                  },
+                  {
+                    "bbox": [
+                      0.320312,
+                      0.318056,
+                      0.117969,
+                      0.009722
+                    ],
+                    "confidence": 0.752,
+                    "text": "ondline = line * strlenilins);"
+                  },
+                  {
+                    "bbox": [
+                      0.321094,
+                      0.345833,
+                      0.05,
+                      0.009722
+                    ],
+                    "confidence": 0.26,
+                    "text": "\u00a2? Bultd argv"
+                  },
+                  {
+                    "bbox": [
+                      0.377344,
+                      0.345833,
+                      0.013281,
+                      0.008333
+                    ],
+                    "confidence": 0.33,
+                    "text": "Than"
+                  },
+                  {
+                    "bbox": [
+                      0.320312,
+                      0.359722,
+                      0.042969,
+                      0.009722
+                    ],
+                    "confidence": 0.48,
+                    "text": "end-rarge +"
+                  },
+                  {
+                    "bbox": [
+                      0.370312,
+                      0.361111,
+                      0.003906,
+                      0.006944
+                    ],
+                    "confidence": 0.0,
+                    "text": "%"
+                  },
+                  {
+                    "bbox": [
+                      0.320312,
+                      0.386111,
+                      0.085938,
+                      0.009722
+                    ],
+                    "confidence": 0.3425,
+                    "text": "white jline < endline!"
+                  },
+                  {
+                    "bbox": [
+                      0.4125,
+                      0.3875,
+                      0.001563,
+                      0.008333
+                    ],
+                    "confidence": 0.25,
+                    "text": "4"
+                  },
+                  {
+                    "bbox": [
+                      0.336719,
+                      0.4,
+                      0.070312,
+                      0.011111
+                    ],
+                    "confidence": 0.2667,
+                    "text": "f\u00e9 skap dellartere"
+                  },
+                  {
+                    "bbox": [
+                      0.336719,
+                      0.413889,
+                      0.117188,
+                      0.011111
+                    ],
+                    "confidence": 0.642,
+                    "text": "line *= stropn (line, detamsl)"
+                  },
+                  {
+                    "bbox": [
+                      0.3375,
+                      0.427778,
+                      0.076563,
+                      0.009722
+                    ],
+                    "confidence": 0.3925,
+                    "text": "L\u00a3 (iano >= endiane!"
+                  },
+                  {
+                    "bbox": [
+                      0.420312,
+                      0.427778,
+                      0.021875,
+                      0.009722
+                    ],
+                    "confidence": 0.4,
+                    "text": "brwak;"
+                  },
+                  {
+                    "bbox": [
+                      0.336719,
+                      0.455556,
+                      0.089844,
+                      0.008333
+                    ],
+                    "confidence": 0.54,
+                    "text": "J? Find token Gelimiser"
+                  },
+                  {
+                    "bbox": [
+                      0.336719,
+                      0.469444,
+                      0.149219,
+                      0.009722
+                    ],
+                    "confidence": 0.5529,
+                    "text": "token = ling * atrcapn iiing, deliear:"
+                  },
+                  {
+                    "bbox": [
+                      0.336719,
+                      0.497222,
+                      0.034375,
+                      0.006944
+                    ],
+                    "confidence": 0.385,
+                    "text": "ef vermin,"
+                  },
+                  {
+                    "bbox": [
+                      0.379688,
+                      0.497222,
+                      0.042969,
+                      0.006944
+                    ],
+                    "confidence": 0.8367,
+                    "text": "@ the token"
+                  },
+                  {
+                    "bbox": [
+                      0.336719,
+                      0.509722,
+                      0.030469,
+                      0.008333
+                    ],
+                    "confidence": 0.645,
+                    "text": "etoken ="
+                  },
+                  {
+                    "bbox": [
+                      0.373437,
+                      0.509722,
+                      0.016406,
+                      0.009722
+                    ],
+                    "confidence": 0.23,
+                    "text": "\u2018sure"
+                  },
+                  {
+                    "bbox": [
+                      0.336719,
+                      0.5375,
+                      0.10625,
+                      0.009722
+                    ],
+                    "confidence": 0.404,
+                    "text": "ff Record lohen as arqupent"
+                  },
+                  {
+                    "bbox": [
+                      0.335938,
+                      0.551389,
+                      0.117969,
+                      0.009722
+                    ],
+                    "confidence": 0.51,
+                    "text": "omd-sarqvicmd-yargct+) = lane;"
+                  },
+                  {
+                    "bbox": [
+                      0.336719,
+                      0.579167,
+                      0.030469,
+                      0.008333
+                    ],
+                    "confidence": 0.635,
+                    "text": "2? Check"
+                  },
+                  {
+                    "bbox": [
+                      0.373437,
+                      0.579167,
+                      0.025781,
+                      0.009722
+                    ],
+                    "confidence": 0.47,
+                    "text": "Lf ergy"
+                  },
+                  {
+                    "bbox": [
+                      0.405469,
+                      0.579167,
+                      0.025,
+                      0.008333
+                    ],
+                    "confidence": 0.535,
+                    "text": "Ae full"
+                  },
+                  {
+                    "bbox": [
+                      0.336719,
+                      0.593056,
+                      0.00625,
+                      0.006944
+                    ],
+                    "confidence": 0.58,
+                    "text": "as"
+                  },
+                  {
+                    "bbox": [
+                      0.349219,
+                      0.593056,
+                      0.05,
+                      0.009722
+                    ],
+                    "confidence": 0.16,
+                    "text": "lemd-sarge >|"
+                  },
+                  {
+                    "bbox": [
+                      0.415625,
+                      0.593056,
+                      0.054688,
+                      0.008333
+                    ],
+                    "confidence": 0.285,
+                    "text": "RACS-.) break:"
+                  },
+                  {
+                    "bbox": [
+                      0.336719,
+                      0.620833,
+                      0.053906,
+                      0.006944
+                    ],
+                    "confidence": 0.6875,
+                    "text": "ling \u00a9 token \u00a2"
+                  },
+                  {
+                    "bbox": [
+                      0.400781,
+                      0.622222,
+                      0.001563,
+                      0.002778
+                    ],
+                    "confidence": 0.67,
+                    "text": "2"
+                  },
+                  {
+                    "bbox": [
+                      0.321094,
+                      0.633333,
+                      0.001563,
+                      0.011111
+                    ],
+                    "confidence": 0.61,
+                    "text": "H"
+                  },
+                  {
+                    "bbox": [
+                      0.321094,
+                      0.661111,
+                      0.078125,
+                      0.009722
+                    ],
+                    "confidence": 0.36,
+                    "text": "ff argusent Jlet sue"
+                  },
+                  {
+                    "bbox": [
+                      0.407813,
+                      0.661111,
+                      0.090625,
+                      0.011111
+                    ],
+                    "confidence": 0.596,
+                    "text": "and with \u00ab \"ULL pointer"
+                  },
+                  {
+                    "bbox": [
+                      0.320312,
+                      0.675,
+                      0.094531,
+                      0.009722
+                    ],
+                    "confidence": 0.57,
+                    "text": "end->orgy|\u00a2rd->orge| = 4"
+                  },
+                  {
+                    "bbox": [
+                      0.321094,
+                      0.702778,
+                      0.073438,
+                      0.009722
+                    ],
+                    "confidence": 0.2925,
+                    "text": "af (emd-rerge e= 62"
+                  },
+                  {
+                    "bbox": [
+                      0.404687,
+                      0.702778,
+                      0.00625,
+                      0.006944
+                    ],
+                    "confidence": 0.58,
+                    "text": "tt"
+                  },
+                  {
+                    "bbox": [
+                      0.417187,
+                      0.702778,
+                      0.065625,
+                      0.009722
+                    ],
+                    "confidence": 0.66,
+                    "text": "lqnove Blank Line"
+                  },
+                  {
+                    "bbox": [
+                      0.336719,
+                      0.716667,
+                      0.022656,
+                      0.008333
+                    ],
+                    "confidence": 0.59,
+                    "text": "veturn"
+                  },
+                  {
+                    "bbox": [
+                      0.36875,
+                      0.722222,
+                      0.001563,
+                      0.002778
+                    ],
+                    "confidence": 0.61,
+                    "text": "3"
+                  },
+                  {
+                    "bbox": [
+                      0.369531,
+                      0.718056,
+                      0.000781,
+                      0.002778
+                    ],
+                    "confidence": 0.81,
+                    "text": ":"
+                  },
+                  {
+                    "bbox": [
+                      0.320312,
+                      0.743056,
+                      0.129688,
+                      0.011111
+                    ],
+                    "confidence": 0.4667,
+                    "text": "cod=>burttan = parseBualtin(cad);"
+                  },
+                  {
+                    "bbox": [
+                      0.321094,
+                      0.772222,
+                      0.005469,
+                      0.005556
+                    ],
+                    "confidence": 0.0,
+                    "text": "7]"
+                  },
+                  {
+                    "bbox": [
+                      0.332813,
+                      0.770833,
+                      0.114062,
+                      0.009722
+                    ],
+                    "confidence": 0.912,
+                    "text": "should job run an Background?"
+                  },
+                  {
+                    "bbox": [
+                      0.320312,
+                      0.784722,
+                      0.134375,
+                      0.011111
+                    ],
+                    "confidence": 0.405,
+                    "text": "af dqia_bg = (*cend-Sarqvicad-sarac"
+                  },
+                  {
+                    "bbox": [
+                      0.460938,
+                      0.786111,
+                      0.017969,
+                      0.008333
+                    ],
+                    "confidence": 0.24,
+                    "text": "ne."
+                  },
+                  {
+                    "bbox": [
+                      0.488281,
+                      0.788889,
+                      0.001563,
+                      0.002778
+                    ],
+                    "confidence": 0.31,
+                    "text": "."
+                  },
+                  {
+                    "bbox": [
+                      0.496875,
+                      0.786111,
+                      0.005469,
+                      0.008333
+                    ],
+                    "confidence": 0.46,
+                    "text": "Ih"
+                  },
+                  {
+                    "bbox": [
+                      0.508594,
+                      0.786111,
+                      0.00625,
+                      0.006944
+                    ],
+                    "confidence": 0.47,
+                    "text": "I-"
+                  },
+                  {
+                    "bbox": [
+                      0.524219,
+                      0.786111,
+                      0.001563,
+                      0.008333
+                    ],
+                    "confidence": 0.1,
+                    "text": "d"
+                  },
+                  {
+                    "bbox": [
+                      0.335938,
+                      0.798611,
+                      0.117969,
+                      0.009722
+                    ],
+                    "confidence": 0.1733,
+                    "text": "emd-*argvi--\u00a2rd-2arqcy = Nt;"
+                  },
+                  {
+                    "bbox": [
+                      0.321094,
+                      0.826389,
+                      0.049219,
+                      0.009722
+                    ],
+                    "confidence": 0.4533,
+                    "text": "return is bq?"
+                  },
+                  {
+                    "bbox": [
+                      0.798438,
+                      0.154167,
+                      0.182031,
+                      0.1375
+                    ],
+                    "confidence": 0.82,
+                    "text": "parse():"
+                  },
+                  {
+                    "bbox": [
+                      0.685156,
+                      0.326389,
+                      0.295312,
+                      0.102778
+                    ],
+                    "confidence": 0.8867,
+                    "text": "line -> struct"
+                  }
+                ],
+                "lines": [
+                  "ae",
+                  "ad",
+                  "a",
+                  "_",
+                  "int pacaeiconst chac *cadline, strucce ccomand *cmdb \u00a2",
+                  "statle char acroy|MAXLIEI|",
+                  "ee",
+                  "local copy of commend line",
+                  "conat cher delins!",
+                  "ape",
+                  "Searka >",
+                  "oe",
+                  "ecqument del",
+                  "alters",
+                  "char \u00a2line = accay;",
+                  "te",
+                  "pte that traverses commend Ling",
+                  "char -tohen",
+                  "te",
+                  "pte te the and of the current arq",
+                  "char -ondls",
+                  "ae",
+                  "ple to the and of the codlina atring",
+                  "ane Le bi",
+                  "er",
+                  "background jon?",
+                  "at demaline r=",
+                  "chi",
+                  "d",
+                  "errort +",
+                  "tend",
+                  ",",
+                  "'",
+                  "Wi: An bE",
+                  "(void) wtrncpyiline, cmdline, MAXLINE);",
+                  "ondline = line * strlenilins);",
+                  "\u00a2? Bultd argv",
+                  "Than",
+                  "end-rarge +",
+                  "%",
+                  "white jline < endline!",
+                  "4",
+                  "f\u00e9 skap dellartere",
+                  "line *= stropn (line, detamsl)",
+                  "L\u00a3 (iano >= endiane!",
+                  "brwak;",
+                  "J? Find token Gelimiser",
+                  "token = ling * atrcapn iiing, deliear:",
+                  "ef vermin,",
+                  "@ the token",
+                  "etoken =",
+                  "\u2018sure",
+                  "ff Record lohen as arqupent",
+                  "omd-sarqvicmd-yargct+) = lane;",
+                  "2? Check",
+                  "Lf ergy",
+                  "Ae full",
+                  "as",
+                  "lemd-sarge >|",
+                  "RACS-.) break:",
+                  "ling \u00a9 token \u00a2",
+                  "2",
+                  "H",
+                  "ff argusent Jlet sue",
+                  "and with \u00ab \"ULL pointer",
+                  "end->orgy|\u00a2rd->orge| = 4",
+                  "af (emd-rerge e= 62",
+                  "tt",
+                  "lqnove Blank Line",
+                  "veturn",
+                  "3",
+                  ":",
+                  "cod=>burttan = parseBualtin(cad);",
+                  "7]",
+                  "should job run an Background?",
+                  "af dqia_bg = (*cend-Sarqvicad-sarac",
+                  "ne.",
+                  ".",
+                  "Ih",
+                  "I-",
+                  "d",
+                  "emd-*argvi--\u00a2rd-2arqcy = Nt;",
+                  "return is bq?",
+                  "parse():",
+                  "line -> struct"
+                ],
+                "text": "ae\nad\na\n_\nint pacaeiconst chac *cadline, strucce ccomand *cmdb \u00a2\nstatle char acroy|MAXLIEI|\nee\nlocal copy of commend line\nconat cher delins!\nape\nSearka >\noe\necqument del\nalters\nchar \u00a2line = accay;\nte\npte that traverses commend Ling\nchar -tohen\nte\npte te the and of the current arq\nchar -ondls\nae\nple to the and of the codlina atring\nane Le bi\ner\nbackground jon?\nat demaline r=\nchi\nd\nerrort +\ntend\n,\n'\nWi: An bE\n(void) wtrncpyiline, cmdline, MAXLINE);\nondline = line * strlenilins);\n\u00a2? Bultd argv\nThan\nend-rarge +\n%\nwhite jline < endline!\n4\nf\u00e9 skap dellartere\nline *= stropn (line, detamsl)\nL\u00a3 (iano >= endiane!\nbrwak;\nJ? Find token Gelimiser\ntoken = ling * atrcapn iiing, deliear:\nef vermin,\n@ the token\netoken =\n\u2018sure\nff Record lohen as arqupent\nomd-sarqvicmd-yargct+) = lane;\n2? Check\nLf ergy\nAe full\nas\nlemd-sarge >|\nRACS-.) break:\nling \u00a9 token \u00a2\n2\nH\nff argusent Jlet sue\nand with \u00ab \"ULL pointer\nend->orgy|\u00a2rd->orge| = 4\naf (emd-rerge e= 62\ntt\nlqnove Blank Line\nveturn\n3\n:\ncod=>burttan = parseBualtin(cad);\n7]\nshould job run an Background?\naf dqia_bg = (*cend-Sarqvicad-sarac\nne.\n.\nIh\nI-\nd\nemd-*argvi--\u00a2rd-2arqcy = Nt;\nreturn is bq?\nparse():\nline -> struct",
+                "timestamp": 257.0,
+                "visual_state_ref": "visual-00025"
+              }
+            }
+          }
+        },
+        "retention_loss_confirmed": false,
+        "visually_supported_primary_cause": "small_text",
+        "observations": [
+          "The source 270 s frame and SDK images captured 258.0 s contain the same complete parser declarations and aligned comments.",
+          "Seven source lines occupy a native 447\u00d778-pixel ROI. Enlarged crops show thin, softened code glyphs on black; both saved hypotheses contain character substitutions and missing fragments.",
+          "Mac and Docker produce different degrees of damage on these same visible lines. Some fragments are reordered, so reading order may contribute alongside small-text recognition."
+        ],
+        "uncertainty": "Small/soft source text and damaged saved recognition are observed; still images cannot prove the internal reason for each error. No new recognition or score is produced.",
+        "comparison_image": "270-upper-comparison.png"
+      },
+      {
+        "inspection_id": "shell-270-lower",
+        "frozen_reference_seconds": 270,
+        "normalized_roi": [
+          0.301563,
+          0.652778,
+          0.332031,
+          0.202778
+        ],
+        "native_source_crop_pixels": [
+          425,
+          146
+        ],
+        "frozen_backend_rows": {
+          "mac": {
+            "backend": "mac",
+            "timestamp": 270,
+            "frozen_metric": {
+              "timestamp": 270,
+              "roi": [
+                0.301563,
+                0.652778,
+                0.332031,
+                0.202778
+              ],
+              "text": "// argument vector must be NULL-pointer\ncmd->argv[cmd->argc] = NULL;\nif (cmd->argc == 0) // ignore blank line\nreturn 1;\ncmd->builtin = parseBuiltin(cmd);\n// should job run in background?\nif ((is_bg = (*cmd->argv[cmd->argc-1] == '&')) != 0)\ncmd->argv[--cmd->argc] = NULL;\nreturn is_bg;\n}",
+              "kind": "code",
+              "notes": "Small lower parser block.",
+              "status": "measured",
+              "value": 0.7183673469387755,
+              "reference_units": 245,
+              "errors": 176,
+              "substitutions": 27,
+              "deletions": 146,
+              "insertions": 3,
+              "reference": "//argumentvectormustbeNULL-pointercmd->argv[cmd->argc]=NULL;if(cmd->argc==0)//ignoreblanklinereturn1;cmd->builtin=parseBuiltin(cmd);//shouldjobruninbackground?if((is_bg=(*cmd->argv[cmd->argc-1]=='&'))!=0)cmd->argv[--cmd->argc]=NULL;returnis_bg;}",
+              "hypothesis": "/argumentlistustandwithaNULLpointerificod-sargo==ia//igroieblanklineshouldonaninbackgrounderazuralaby:",
+              "visual_state_id": "visual-00024",
+              "retained_frame_available": true,
+              "frame_interval": [
+                257.0,
+                273.0
+              ]
+            },
+            "selection": {
+              "file": "mac-sdk-270.jpg",
+              "sha256": "fb8772e5859d317a1b4c276dc56251de05d41cc87e96d30dae881882d7a51eda",
+              "state": {
+                "id": "visual-00024",
+                "start": 257.0,
+                "end": 273.0,
+                "source_timestamp": 258.0,
+                "change_kind": "content"
+              },
+              "timeline_sha256": "401c19d4fa5d475d96f3f65958393f7a525790652de3a00144a926f7f4f7fa99",
+              "ocr_file_sha256": "3293ea24b56bf16df4f1f2beb289b26cd15960fa0f9fbb9f481f809b1bd19eba",
+              "saved_ocr_record": {
+                "id": "ocr-00024",
+                "layout": [
+                  {
+                    "bbox": [
+                      0.302326,
+                      0.152455,
+                      0.087209,
+                      0.015601
+                    ],
+                    "confidence": 1.0,
+                    "text": "int pacao| conal chat"
+                  },
+                  {
+                    "bbox": [
+                      0.319767,
+                      0.165278,
+                      0.107558,
+                      0.013194
+                    ],
+                    "confidence": 1.0,
+                    "text": "static char array| MAXLINE|!"
+                  },
+                  {
+                    "bbox": [
+                      0.32106,
+                      0.176395,
+                      0.084578,
+                      0.01876
+                    ],
+                    "confidence": 1.0,
+                    "text": "const char delineli\u1ea0\u1ea1iI"
+                  },
+                  {
+                    "bbox": [
+                      0.319626,
+                      0.190019,
+                      0.07736,
+                      0.017455
+                    ],
+                    "confidence": 1.0,
+                    "text": "chas \u2022line - arrayi"
+                  },
+                  {
+                    "bbox": [
+                      0.319767,
+                      0.206718,
+                      0.049419,
+                      0.01292
+                    ],
+                    "confidence": 1.0,
+                    "text": "cher \"coken;"
+                  },
+                  {
+                    "bbox": [
+                      0.319767,
+                      0.219638,
+                      0.017442,
+                      0.01292
+                    ],
+                    "confidence": 1.0,
+                    "text": "char"
+                  },
+                  {
+                    "bbox": [
+                      0.319767,
+                      0.263566,
+                      0.043605,
+                      0.01292
+                    ],
+                    "confidence": 0.5,
+                    "text": "it icodiine"
+                  },
+                  {
+                    "bbox": [
+                      0.319767,
+                      0.302083,
+                      0.079942,
+                      0.015972
+                    ],
+                    "confidence": 0.5,
+                    "text": "(void) stIncpylline,"
+                  },
+                  {
+                    "bbox": [
+                      0.475291,
+                      0.165278,
+                      0.107558,
+                      0.013194
+                    ],
+                    "confidence": 1.0,
+                    "text": "local copy of coe mand line"
+                  },
+                  {
+                    "bbox": [
+                      0.475291,
+                      0.206718,
+                      0.136628,
+                      0.01292
+                    ],
+                    "confidence": 1.0,
+                    "text": "ptr to the and of the current arg"
+                  },
+                  {
+                    "bbox": [
+                      0.485465,
+                      0.2375,
+                      0.052326,
+                      0.007978
+                    ],
+                    "confidence": 0.5,
+                    "text": "Ickgrouna Joor"
+                  },
+                  {
+                    "bbox": [
+                      0.334302,
+                      0.410853,
+                      0.122093,
+                      0.018314
+                    ],
+                    "confidence": 1.0,
+                    "text": "line * atropo (line, deismal)"
+                  },
+                  {
+                    "bbox": [
+                      0.335756,
+                      0.426357,
+                      0.107558,
+                      0.013227
+                    ],
+                    "confidence": 1.0,
+                    "text": "lf (lane \u203a= endlane| break;"
+                  },
+                  {
+                    "bbox": [
+                      0.334302,
+                      0.452083,
+                      0.094477,
+                      0.015617
+                    ],
+                    "confidence": 1.0,
+                    "text": "il Find cokes daliaster"
+                  },
+                  {
+                    "bbox": [
+                      0.334302,
+                      0.467361,
+                      0.055233,
+                      0.013259
+                    ],
+                    "confidence": 1.0,
+                    "text": "coken - 11n4 \u2022"
+                  },
+                  {
+                    "bbox": [
+                      0.388081,
+                      0.467361,
+                      0.100291,
+                      0.013259
+                    ],
+                    "confidence": 1.0,
+                    "text": "\u2022 arcapa liano, delical:"
+                  },
+                  {
+                    "bbox": [
+                      0.335756,
+                      0.495833,
+                      0.088663,
+                      0.013211
+                    ],
+                    "confidence": 1.0,
+                    "text": "i? tarminate the token"
+                  },
+                  {
+                    "bbox": [
+                      0.335756,
+                      0.50625,
+                      0.036337,
+                      0.015972
+                    ],
+                    "confidence": 1.0,
+                    "text": "* coken -"
+                  },
+                  {
+                    "bbox": [
+                      0.334217,
+                      0.534702,
+                      0.110632,
+                      0.016303
+                    ],
+                    "confidence": 1.0,
+                    "text": "/ Record loken es argament"
+                  },
+                  {
+                    "bbox": [
+                      0.338663,
+                      0.578472,
+                      0.06686,
+                      0.021011
+                    ],
+                    "confidence": 1.0,
+                    "text": "/ check if orgy"
+                  },
+                  {
+                    "bbox": [
+                      0.411337,
+                      0.576227,
+                      0.021802,
+                      0.01292
+                    ],
+                    "confidence": 0.5,
+                    "text": "PULL"
+                  },
+                  {
+                    "bbox": [
+                      0.412791,
+                      0.591667,
+                      0.059593,
+                      0.013194
+                    ],
+                    "confidence": 1.0,
+                    "text": "ARCS-. 1 break;"
+                  },
+                  {
+                    "bbox": [
+                      0.332849,
+                      0.617361,
+                      0.05814,
+                      0.013194
+                    ],
+                    "confidence": 1.0,
+                    "text": "11ne \u2022 token \u2022"
+                  },
+                  {
+                    "bbox": [
+                      0.319706,
+                      0.658713,
+                      0.180345,
+                      0.0182
+                    ],
+                    "confidence": 1.0,
+                    "text": "/ argument list ust and with a NULL pointer"
+                  },
+                  {
+                    "bbox": [
+                      0.318314,
+                      0.7,
+                      0.165698,
+                      0.015972
+                    ],
+                    "confidence": 0.5,
+                    "text": "if icod-sargo == ia // igroie blank line"
+                  },
+                  {
+                    "bbox": [
+                      0.321221,
+                      0.770026,
+                      0.126453,
+                      0.01292
+                    ],
+                    "confidence": 0.5,
+                    "text": "should on an in backgrounde"
+                  },
+                  {
+                    "bbox": [
+                      0.319767,
+                      0.824289,
+                      0.053779,
+                      0.013211
+                    ],
+                    "confidence": 1.0,
+                    "text": "razura la by:"
+                  },
+                  {
+                    "bbox": [
+                      0.790006,
+                      0.157474,
+                      0.208678,
+                      0.14088
+                    ],
+                    "confidence": 0.5,
+                    "text": "parse):"
+                  },
+                  {
+                    "bbox": [
+                      0.679614,
+                      0.327063,
+                      0.305016,
+                      0.113317
+                    ],
+                    "confidence": 1.0,
+                    "text": "line -> struct"
+                  }
+                ],
+                "lines": [
+                  "int pacao| conal chat",
+                  "static char array| MAXLINE|!",
+                  "const char delineli\u1ea0\u1ea1iI",
+                  "chas \u2022line - arrayi",
+                  "cher \"coken;",
+                  "char",
+                  "it icodiine",
+                  "(void) stIncpylline,",
+                  "local copy of coe mand line",
+                  "ptr to the and of the current arg",
+                  "Ickgrouna Joor",
+                  "line * atropo (line, deismal)",
+                  "lf (lane \u203a= endlane| break;",
+                  "il Find cokes daliaster",
+                  "coken - 11n4 \u2022",
+                  "\u2022 arcapa liano, delical:",
+                  "i? tarminate the token",
+                  "* coken -",
+                  "/ Record loken es argament",
+                  "/ check if orgy",
+                  "PULL",
+                  "ARCS-. 1 break;",
+                  "11ne \u2022 token \u2022",
+                  "/ argument list ust and with a NULL pointer",
+                  "if icod-sargo == ia // igroie blank line",
+                  "should on an in backgrounde",
+                  "razura la by:",
+                  "parse):",
+                  "line -> struct"
+                ],
+                "text": "int pacao| conal chat\nstatic char array| MAXLINE|!\nconst char delineli\u1ea0\u1ea1iI\nchas \u2022line - arrayi\ncher \"coken;\nchar\nit icodiine\n(void) stIncpylline,\nlocal copy of coe mand line\nptr to the and of the current arg\nIckgrouna Joor\nline * atropo (line, deismal)\nlf (lane \u203a= endlane| break;\nil Find cokes daliaster\ncoken - 11n4 \u2022\n\u2022 arcapa liano, delical:\ni? tarminate the token\n* coken -\n/ Record loken es argament\n/ check if orgy\nPULL\nARCS-. 1 break;\n11ne \u2022 token \u2022\n/ argument list ust and with a NULL pointer\nif icod-sargo == ia // igroie blank line\nshould on an in backgrounde\nrazura la by:\nparse):\nline -> struct",
+                "timestamp": 257.0,
+                "visual_state_ref": "visual-00024"
+              }
+            }
+          },
+          "docker": {
+            "backend": "docker",
+            "timestamp": 270,
+            "frozen_metric": {
+              "timestamp": 270,
+              "roi": [
+                0.301563,
+                0.652778,
+                0.332031,
+                0.202778
+              ],
+              "text": "// argument vector must be NULL-pointer\ncmd->argv[cmd->argc] = NULL;\nif (cmd->argc == 0) // ignore blank line\nreturn 1;\ncmd->builtin = parseBuiltin(cmd);\n// should job run in background?\nif ((is_bg = (*cmd->argv[cmd->argc-1] == '&')) != 0)\ncmd->argv[--cmd->argc] = NULL;\nreturn is_bg;\n}",
+              "kind": "code",
+              "notes": "Small lower parser block.",
+              "status": "measured",
+              "value": 0.4204081632653061,
+              "reference_units": 245,
+              "errors": 103,
+              "substitutions": 85,
+              "deletions": 14,
+              "insertions": 4,
+              "reference": "//argumentvectormustbeNULL-pointercmd->argv[cmd->argc]=NULL;if(cmd->argc==0)//ignoreblanklinereturn1;cmd->builtin=parseBuiltin(cmd);//shouldjobruninbackground?if((is_bg=(*cmd->argv[cmd->argc-1]=='&'))!=0)cmd->argv[--cmd->argc]=NULL;returnis_bg;}",
+              "hypothesis": "ffargusentJletsueandwith\u00ab\"ULLpointerend->orgy|\u00a2rd->orge|=4af(emd-rergee=62ttlqnoveBlankLineveturn3:cod=>burttan=parseBualtin(cad);7]shouldjobrunanBackground?afdqia_bg=(*cend-Sarqvicad-saracne..IhI-demd-*argvi--\u00a2rd-2arqcy=Nt;returnisbq?",
+              "visual_state_id": "visual-00025",
+              "retained_frame_available": true,
+              "frame_interval": [
+                257.0,
+                273.0
+              ]
+            },
+            "selection": {
+              "file": "docker-sdk-270.jpg",
+              "sha256": "10675f02deb8b15245fba26ce59c88e54bed9ea789a6d8882ab7d081c68a78eb",
+              "state": {
+                "id": "visual-00025",
+                "start": 257.0,
+                "end": 273.0,
+                "source_timestamp": 258.0,
+                "change_kind": "content"
+              },
+              "timeline_sha256": "0b5a708e656a7648d61b8ee3673a2696ddbdfc160e47f6b203507435c2995f32",
+              "ocr_file_sha256": "dca4151114bf861769ff15be5c125da01c99f20288d188bee50ff0b60dfc0955",
+              "saved_ocr_record": {
+                "id": "ocr-00025",
+                "layout": [
+                  {
+                    "bbox": [
+                      0.017969,
+                      0.223611,
+                      0.017969,
+                      0.025
+                    ],
+                    "confidence": 0.88,
+                    "text": "ae"
+                  },
+                  {
+                    "bbox": [
+                      0.0125,
+                      0.251389,
+                      0.028125,
+                      0.030556
+                    ],
+                    "confidence": 0.76,
+                    "text": "ad"
+                  },
+                  {
+                    "bbox": [
+                      0.04375,
+                      0.273611,
+                      0.004687,
+                      0.005556
+                    ],
+                    "confidence": 0.29,
+                    "text": "a"
+                  },
+                  {
+                    "bbox": [
+                      0.00625,
+                      0.304167,
+                      0.001563,
+                      0.001389
+                    ],
+                    "confidence": 0.37,
+                    "text": "_"
+                  },
+                  {
+                    "bbox": [
+                      0.305469,
+                      0.152778,
+                      0.208594,
+                      0.011111
+                    ],
+                    "confidence": 0.465,
+                    "text": "int pacaeiconst chac *cadline, strucce ccomand *cmdb \u00a2"
+                  },
+                  {
+                    "bbox": [
+                      0.320312,
+                      0.166667,
+                      0.105469,
+                      0.011111
+                    ],
+                    "confidence": 0.3833,
+                    "text": "statle char acroy|MAXLIEI|"
+                  },
+                  {
+                    "bbox": [
+                      0.46875,
+                      0.166667,
+                      0.00625,
+                      0.006944
+                    ],
+                    "confidence": 0.47,
+                    "text": "ee"
+                  },
+                  {
+                    "bbox": [
+                      0.480469,
+                      0.166667,
+                      0.102344,
+                      0.011111
+                    ],
+                    "confidence": 0.79,
+                    "text": "local copy of commend line"
+                  },
+                  {
+                    "bbox": [
+                      0.320312,
+                      0.180556,
+                      0.069531,
+                      0.009722
+                    ],
+                    "confidence": 0.62,
+                    "text": "conat cher delins!"
+                  },
+                  {
+                    "bbox": [
+                      0.396094,
+                      0.181944,
+                      0.014844,
+                      0.008333
+                    ],
+                    "confidence": 0.7,
+                    "text": "ape"
+                  },
+                  {
+                    "bbox": [
+                      0.424219,
+                      0.177778,
+                      0.03125,
+                      0.016667
+                    ],
+                    "confidence": 0.155,
+                    "text": "Searka >"
+                  },
+                  {
+                    "bbox": [
+                      0.46875,
+                      0.180556,
+                      0.00625,
+                      0.008333
+                    ],
+                    "confidence": 0.23,
+                    "text": "oe"
+                  },
+                  {
+                    "bbox": [
+                      0.479687,
+                      0.180556,
+                      0.046875,
+                      0.009722
+                    ],
+                    "confidence": 0.715,
+                    "text": "ecqument del"
+                  },
+                  {
+                    "bbox": [
+                      0.53125,
+                      0.180556,
+                      0.023438,
+                      0.008333
+                    ],
+                    "confidence": 0.17,
+                    "text": "alters"
+                  },
+                  {
+                    "bbox": [
+                      0.320312,
+                      0.194444,
+                      0.074219,
+                      0.009722
+                    ],
+                    "confidence": 0.41,
+                    "text": "char \u00a2line = accay;"
+                  },
+                  {
+                    "bbox": [
+                      0.46875,
+                      0.194444,
+                      0.00625,
+                      0.006944
+                    ],
+                    "confidence": 0.62,
+                    "text": "te"
+                  },
+                  {
+                    "bbox": [
+                      0.479687,
+                      0.194444,
+                      0.122656,
+                      0.009722
+                    ],
+                    "confidence": 0.816,
+                    "text": "pte that traverses commend Ling"
+                  },
+                  {
+                    "bbox": [
+                      0.320312,
+                      0.208333,
+                      0.042969,
+                      0.008333
+                    ],
+                    "confidence": 0.525,
+                    "text": "char -tohen"
+                  },
+                  {
+                    "bbox": [
+                      0.46875,
+                      0.208333,
+                      0.00625,
+                      0.006944
+                    ],
+                    "confidence": 0.71,
+                    "text": "te"
+                  },
+                  {
+                    "bbox": [
+                      0.479687,
+                      0.208333,
+                      0.130469,
+                      0.009722
+                    ],
+                    "confidence": 0.815,
+                    "text": "pte te the and of the current arq"
+                  },
+                  {
+                    "bbox": [
+                      0.320312,
+                      0.222222,
+                      0.042188,
+                      0.008333
+                    ],
+                    "confidence": 0.17,
+                    "text": "char -ondls"
+                  },
+                  {
+                    "bbox": [
+                      0.46875,
+                      0.222222,
+                      0.00625,
+                      0.005556
+                    ],
+                    "confidence": 0.54,
+                    "text": "ae"
+                  },
+                  {
+                    "bbox": [
+                      0.479687,
+                      0.222222,
+                      0.142969,
+                      0.009722
+                    ],
+                    "confidence": 0.8,
+                    "text": "ple to the and of the codlina atring"
+                  },
+                  {
+                    "bbox": [
+                      0.321094,
+                      0.236111,
+                      0.030469,
+                      0.006944
+                    ],
+                    "confidence": 0.7867,
+                    "text": "ane Le bi"
+                  },
+                  {
+                    "bbox": [
+                      0.46875,
+                      0.236111,
+                      0.00625,
+                      0.006944
+                    ],
+                    "confidence": 0.37,
+                    "text": "er"
+                  },
+                  {
+                    "bbox": [
+                      0.479687,
+                      0.236111,
+                      0.058594,
+                      0.009722
+                    ],
+                    "confidence": 0.79,
+                    "text": "background jon?"
+                  },
+                  {
+                    "bbox": [
+                      0.321094,
+                      0.2625,
+                      0.053906,
+                      0.009722
+                    ],
+                    "confidence": 0.6333,
+                    "text": "at demaline r="
+                  },
+                  {
+                    "bbox": [
+                      0.382031,
+                      0.263889,
+                      0.007031,
+                      0.006944
+                    ],
+                    "confidence": 0.55,
+                    "text": "chi"
+                  },
+                  {
+                    "bbox": [
+                      0.396875,
+                      0.263889,
+                      0.001563,
+                      0.008333
+                    ],
+                    "confidence": 0.61,
+                    "text": "d"
+                  },
+                  {
+                    "bbox": [
+                      0.335938,
+                      0.277778,
+                      0.028906,
+                      0.008333
+                    ],
+                    "confidence": 0.445,
+                    "text": "errort +"
+                  },
+                  {
+                    "bbox": [
+                      0.371875,
+                      0.277778,
+                      0.019531,
+                      0.006944
+                    ],
+                    "confidence": 0.18,
+                    "text": "tend"
+                  },
+                  {
+                    "bbox": [
+                      0.410156,
+                      0.279167,
+                      0.000781,
+                      0.002778
+                    ],
+                    "confidence": 0.05,
+                    "text": ","
+                  },
+                  {
+                    "bbox": [
+                      0.417187,
+                      0.280556,
+                      0.000781,
+                      0.004167
+                    ],
+                    "confidence": 0.69,
+                    "text": "'"
+                  },
+                  {
+                    "bbox": [
+                      0.428125,
+                      0.277778,
+                      0.033594,
+                      0.008333
+                    ],
+                    "confidence": 0.39,
+                    "text": "Wi: An bE"
+                  },
+                  {
+                    "bbox": [
+                      0.321094,
+                      0.304167,
+                      0.153125,
+                      0.011111
+                    ],
+                    "confidence": 0.4575,
+                    "text": "(void) wtrncpyiline, cmdline, MAXLINE);"
+                  },
+                  {
+                    "bbox": [
+                      0.320312,
+                      0.318056,
+                      0.117969,
+                      0.009722
+                    ],
+                    "confidence": 0.752,
+                    "text": "ondline = line * strlenilins);"
+                  },
+                  {
+                    "bbox": [
+                      0.321094,
+                      0.345833,
+                      0.05,
+                      0.009722
+                    ],
+                    "confidence": 0.26,
+                    "text": "\u00a2? Bultd argv"
+                  },
+                  {
+                    "bbox": [
+                      0.377344,
+                      0.345833,
+                      0.013281,
+                      0.008333
+                    ],
+                    "confidence": 0.33,
+                    "text": "Than"
+                  },
+                  {
+                    "bbox": [
+                      0.320312,
+                      0.359722,
+                      0.042969,
+                      0.009722
+                    ],
+                    "confidence": 0.48,
+                    "text": "end-rarge +"
+                  },
+                  {
+                    "bbox": [
+                      0.370312,
+                      0.361111,
+                      0.003906,
+                      0.006944
+                    ],
+                    "confidence": 0.0,
+                    "text": "%"
+                  },
+                  {
+                    "bbox": [
+                      0.320312,
+                      0.386111,
+                      0.085938,
+                      0.009722
+                    ],
+                    "confidence": 0.3425,
+                    "text": "white jline < endline!"
+                  },
+                  {
+                    "bbox": [
+                      0.4125,
+                      0.3875,
+                      0.001563,
+                      0.008333
+                    ],
+                    "confidence": 0.25,
+                    "text": "4"
+                  },
+                  {
+                    "bbox": [
+                      0.336719,
+                      0.4,
+                      0.070312,
+                      0.011111
+                    ],
+                    "confidence": 0.2667,
+                    "text": "f\u00e9 skap dellartere"
+                  },
+                  {
+                    "bbox": [
+                      0.336719,
+                      0.413889,
+                      0.117188,
+                      0.011111
+                    ],
+                    "confidence": 0.642,
+                    "text": "line *= stropn (line, detamsl)"
+                  },
+                  {
+                    "bbox": [
+                      0.3375,
+                      0.427778,
+                      0.076563,
+                      0.009722
+                    ],
+                    "confidence": 0.3925,
+                    "text": "L\u00a3 (iano >= endiane!"
+                  },
+                  {
+                    "bbox": [
+                      0.420312,
+                      0.427778,
+                      0.021875,
+                      0.009722
+                    ],
+                    "confidence": 0.4,
+                    "text": "brwak;"
+                  },
+                  {
+                    "bbox": [
+                      0.336719,
+                      0.455556,
+                      0.089844,
+                      0.008333
+                    ],
+                    "confidence": 0.54,
+                    "text": "J? Find token Gelimiser"
+                  },
+                  {
+                    "bbox": [
+                      0.336719,
+                      0.469444,
+                      0.149219,
+                      0.009722
+                    ],
+                    "confidence": 0.5529,
+                    "text": "token = ling * atrcapn iiing, deliear:"
+                  },
+                  {
+                    "bbox": [
+                      0.336719,
+                      0.497222,
+                      0.034375,
+                      0.006944
+                    ],
+                    "confidence": 0.385,
+                    "text": "ef vermin,"
+                  },
+                  {
+                    "bbox": [
+                      0.379688,
+                      0.497222,
+                      0.042969,
+                      0.006944
+                    ],
+                    "confidence": 0.8367,
+                    "text": "@ the token"
+                  },
+                  {
+                    "bbox": [
+                      0.336719,
+                      0.509722,
+                      0.030469,
+                      0.008333
+                    ],
+                    "confidence": 0.645,
+                    "text": "etoken ="
+                  },
+                  {
+                    "bbox": [
+                      0.373437,
+                      0.509722,
+                      0.016406,
+                      0.009722
+                    ],
+                    "confidence": 0.23,
+                    "text": "\u2018sure"
+                  },
+                  {
+                    "bbox": [
+                      0.336719,
+                      0.5375,
+                      0.10625,
+                      0.009722
+                    ],
+                    "confidence": 0.404,
+                    "text": "ff Record lohen as arqupent"
+                  },
+                  {
+                    "bbox": [
+                      0.335938,
+                      0.551389,
+                      0.117969,
+                      0.009722
+                    ],
+                    "confidence": 0.51,
+                    "text": "omd-sarqvicmd-yargct+) = lane;"
+                  },
+                  {
+                    "bbox": [
+                      0.336719,
+                      0.579167,
+                      0.030469,
+                      0.008333
+                    ],
+                    "confidence": 0.635,
+                    "text": "2? Check"
+                  },
+                  {
+                    "bbox": [
+                      0.373437,
+                      0.579167,
+                      0.025781,
+                      0.009722
+                    ],
+                    "confidence": 0.47,
+                    "text": "Lf ergy"
+                  },
+                  {
+                    "bbox": [
+                      0.405469,
+                      0.579167,
+                      0.025,
+                      0.008333
+                    ],
+                    "confidence": 0.535,
+                    "text": "Ae full"
+                  },
+                  {
+                    "bbox": [
+                      0.336719,
+                      0.593056,
+                      0.00625,
+                      0.006944
+                    ],
+                    "confidence": 0.58,
+                    "text": "as"
+                  },
+                  {
+                    "bbox": [
+                      0.349219,
+                      0.593056,
+                      0.05,
+                      0.009722
+                    ],
+                    "confidence": 0.16,
+                    "text": "lemd-sarge >|"
+                  },
+                  {
+                    "bbox": [
+                      0.415625,
+                      0.593056,
+                      0.054688,
+                      0.008333
+                    ],
+                    "confidence": 0.285,
+                    "text": "RACS-.) break:"
+                  },
+                  {
+                    "bbox": [
+                      0.336719,
+                      0.620833,
+                      0.053906,
+                      0.006944
+                    ],
+                    "confidence": 0.6875,
+                    "text": "ling \u00a9 token \u00a2"
+                  },
+                  {
+                    "bbox": [
+                      0.400781,
+                      0.622222,
+                      0.001563,
+                      0.002778
+                    ],
+                    "confidence": 0.67,
+                    "text": "2"
+                  },
+                  {
+                    "bbox": [
+                      0.321094,
+                      0.633333,
+                      0.001563,
+                      0.011111
+                    ],
+                    "confidence": 0.61,
+                    "text": "H"
+                  },
+                  {
+                    "bbox": [
+                      0.321094,
+                      0.661111,
+                      0.078125,
+                      0.009722
+                    ],
+                    "confidence": 0.36,
+                    "text": "ff argusent Jlet sue"
+                  },
+                  {
+                    "bbox": [
+                      0.407813,
+                      0.661111,
+                      0.090625,
+                      0.011111
+                    ],
+                    "confidence": 0.596,
+                    "text": "and with \u00ab \"ULL pointer"
+                  },
+                  {
+                    "bbox": [
+                      0.320312,
+                      0.675,
+                      0.094531,
+                      0.009722
+                    ],
+                    "confidence": 0.57,
+                    "text": "end->orgy|\u00a2rd->orge| = 4"
+                  },
+                  {
+                    "bbox": [
+                      0.321094,
+                      0.702778,
+                      0.073438,
+                      0.009722
+                    ],
+                    "confidence": 0.2925,
+                    "text": "af (emd-rerge e= 62"
+                  },
+                  {
+                    "bbox": [
+                      0.404687,
+                      0.702778,
+                      0.00625,
+                      0.006944
+                    ],
+                    "confidence": 0.58,
+                    "text": "tt"
+                  },
+                  {
+                    "bbox": [
+                      0.417187,
+                      0.702778,
+                      0.065625,
+                      0.009722
+                    ],
+                    "confidence": 0.66,
+                    "text": "lqnove Blank Line"
+                  },
+                  {
+                    "bbox": [
+                      0.336719,
+                      0.716667,
+                      0.022656,
+                      0.008333
+                    ],
+                    "confidence": 0.59,
+                    "text": "veturn"
+                  },
+                  {
+                    "bbox": [
+                      0.36875,
+                      0.722222,
+                      0.001563,
+                      0.002778
+                    ],
+                    "confidence": 0.61,
+                    "text": "3"
+                  },
+                  {
+                    "bbox": [
+                      0.369531,
+                      0.718056,
+                      0.000781,
+                      0.002778
+                    ],
+                    "confidence": 0.81,
+                    "text": ":"
+                  },
+                  {
+                    "bbox": [
+                      0.320312,
+                      0.743056,
+                      0.129688,
+                      0.011111
+                    ],
+                    "confidence": 0.4667,
+                    "text": "cod=>burttan = parseBualtin(cad);"
+                  },
+                  {
+                    "bbox": [
+                      0.321094,
+                      0.772222,
+                      0.005469,
+                      0.005556
+                    ],
+                    "confidence": 0.0,
+                    "text": "7]"
+                  },
+                  {
+                    "bbox": [
+                      0.332813,
+                      0.770833,
+                      0.114062,
+                      0.009722
+                    ],
+                    "confidence": 0.912,
+                    "text": "should job run an Background?"
+                  },
+                  {
+                    "bbox": [
+                      0.320312,
+                      0.784722,
+                      0.134375,
+                      0.011111
+                    ],
+                    "confidence": 0.405,
+                    "text": "af dqia_bg = (*cend-Sarqvicad-sarac"
+                  },
+                  {
+                    "bbox": [
+                      0.460938,
+                      0.786111,
+                      0.017969,
+                      0.008333
+                    ],
+                    "confidence": 0.24,
+                    "text": "ne."
+                  },
+                  {
+                    "bbox": [
+                      0.488281,
+                      0.788889,
+                      0.001563,
+                      0.002778
+                    ],
+                    "confidence": 0.31,
+                    "text": "."
+                  },
+                  {
+                    "bbox": [
+                      0.496875,
+                      0.786111,
+                      0.005469,
+                      0.008333
+                    ],
+                    "confidence": 0.46,
+                    "text": "Ih"
+                  },
+                  {
+                    "bbox": [
+                      0.508594,
+                      0.786111,
+                      0.00625,
+                      0.006944
+                    ],
+                    "confidence": 0.47,
+                    "text": "I-"
+                  },
+                  {
+                    "bbox": [
+                      0.524219,
+                      0.786111,
+                      0.001563,
+                      0.008333
+                    ],
+                    "confidence": 0.1,
+                    "text": "d"
+                  },
+                  {
+                    "bbox": [
+                      0.335938,
+                      0.798611,
+                      0.117969,
+                      0.009722
+                    ],
+                    "confidence": 0.1733,
+                    "text": "emd-*argvi--\u00a2rd-2arqcy = Nt;"
+                  },
+                  {
+                    "bbox": [
+                      0.321094,
+                      0.826389,
+                      0.049219,
+                      0.009722
+                    ],
+                    "confidence": 0.4533,
+                    "text": "return is bq?"
+                  },
+                  {
+                    "bbox": [
+                      0.798438,
+                      0.154167,
+                      0.182031,
+                      0.1375
+                    ],
+                    "confidence": 0.82,
+                    "text": "parse():"
+                  },
+                  {
+                    "bbox": [
+                      0.685156,
+                      0.326389,
+                      0.295312,
+                      0.102778
+                    ],
+                    "confidence": 0.8867,
+                    "text": "line -> struct"
+                  }
+                ],
+                "lines": [
+                  "ae",
+                  "ad",
+                  "a",
+                  "_",
+                  "int pacaeiconst chac *cadline, strucce ccomand *cmdb \u00a2",
+                  "statle char acroy|MAXLIEI|",
+                  "ee",
+                  "local copy of commend line",
+                  "conat cher delins!",
+                  "ape",
+                  "Searka >",
+                  "oe",
+                  "ecqument del",
+                  "alters",
+                  "char \u00a2line = accay;",
+                  "te",
+                  "pte that traverses commend Ling",
+                  "char -tohen",
+                  "te",
+                  "pte te the and of the current arq",
+                  "char -ondls",
+                  "ae",
+                  "ple to the and of the codlina atring",
+                  "ane Le bi",
+                  "er",
+                  "background jon?",
+                  "at demaline r=",
+                  "chi",
+                  "d",
+                  "errort +",
+                  "tend",
+                  ",",
+                  "'",
+                  "Wi: An bE",
+                  "(void) wtrncpyiline, cmdline, MAXLINE);",
+                  "ondline = line * strlenilins);",
+                  "\u00a2? Bultd argv",
+                  "Than",
+                  "end-rarge +",
+                  "%",
+                  "white jline < endline!",
+                  "4",
+                  "f\u00e9 skap dellartere",
+                  "line *= stropn (line, detamsl)",
+                  "L\u00a3 (iano >= endiane!",
+                  "brwak;",
+                  "J? Find token Gelimiser",
+                  "token = ling * atrcapn iiing, deliear:",
+                  "ef vermin,",
+                  "@ the token",
+                  "etoken =",
+                  "\u2018sure",
+                  "ff Record lohen as arqupent",
+                  "omd-sarqvicmd-yargct+) = lane;",
+                  "2? Check",
+                  "Lf ergy",
+                  "Ae full",
+                  "as",
+                  "lemd-sarge >|",
+                  "RACS-.) break:",
+                  "ling \u00a9 token \u00a2",
+                  "2",
+                  "H",
+                  "ff argusent Jlet sue",
+                  "and with \u00ab \"ULL pointer",
+                  "end->orgy|\u00a2rd->orge| = 4",
+                  "af (emd-rerge e= 62",
+                  "tt",
+                  "lqnove Blank Line",
+                  "veturn",
+                  "3",
+                  ":",
+                  "cod=>burttan = parseBualtin(cad);",
+                  "7]",
+                  "should job run an Background?",
+                  "af dqia_bg = (*cend-Sarqvicad-sarac",
+                  "ne.",
+                  ".",
+                  "Ih",
+                  "I-",
+                  "d",
+                  "emd-*argvi--\u00a2rd-2arqcy = Nt;",
+                  "return is bq?",
+                  "parse():",
+                  "line -> struct"
+                ],
+                "text": "ae\nad\na\n_\nint pacaeiconst chac *cadline, strucce ccomand *cmdb \u00a2\nstatle char acroy|MAXLIEI|\nee\nlocal copy of commend line\nconat cher delins!\nape\nSearka >\noe\necqument del\nalters\nchar \u00a2line = accay;\nte\npte that traverses commend Ling\nchar -tohen\nte\npte te the and of the current arq\nchar -ondls\nae\nple to the and of the codlina atring\nane Le bi\ner\nbackground jon?\nat demaline r=\nchi\nd\nerrort +\ntend\n,\n'\nWi: An bE\n(void) wtrncpyiline, cmdline, MAXLINE);\nondline = line * strlenilins);\n\u00a2? Bultd argv\nThan\nend-rarge +\n%\nwhite jline < endline!\n4\nf\u00e9 skap dellartere\nline *= stropn (line, detamsl)\nL\u00a3 (iano >= endiane!\nbrwak;\nJ? Find token Gelimiser\ntoken = ling * atrcapn iiing, deliear:\nef vermin,\n@ the token\netoken =\n\u2018sure\nff Record lohen as arqupent\nomd-sarqvicmd-yargct+) = lane;\n2? Check\nLf ergy\nAe full\nas\nlemd-sarge >|\nRACS-.) break:\nling \u00a9 token \u00a2\n2\nH\nff argusent Jlet sue\nand with \u00ab \"ULL pointer\nend->orgy|\u00a2rd->orge| = 4\naf (emd-rerge e= 62\ntt\nlqnove Blank Line\nveturn\n3\n:\ncod=>burttan = parseBualtin(cad);\n7]\nshould job run an Background?\naf dqia_bg = (*cend-Sarqvicad-sarac\nne.\n.\nIh\nI-\nd\nemd-*argvi--\u00a2rd-2arqcy = Nt;\nreturn is bq?\nparse():\nline -> struct",
+                "timestamp": 257.0,
+                "visual_state_ref": "visual-00025"
+              }
+            }
+          }
+        },
+        "retention_loss_confirmed": false,
+        "visually_supported_primary_cause": "small_text_with_reference_caveat",
+        "observations": [
+          "The source and both retained images contain the lower parser block through return is_bg and the closing brace.",
+          "The small, softened glyphs and punctuation are visibly present; the frozen saved hypotheses omit or garble substantial code text.",
+          "A separate reference-text mismatch is visible: the source comment reads argument list must end with a NULL pointer, while the frozen reference says argument vector must be NULL-pointer."
+        ],
+        "uncertainty": "The frozen error count combines recognizer/reading-order damage with at least this visible reference-transcription difference. No corrected reference, corrected CER, or error allocation is calculated.",
+        "reference_caveat": {
+          "source_visible_comment": "// argument list must end with a NULL pointer",
+          "frozen_reference_comment": "// argument vector must be NULL-pointer",
+          "evidence_image": "source270-lower-comment-4x.png"
+        },
+        "comparison_image": "270-lower-comparison.png"
+      }
+    ],
+    "background_and_cursor_limit": "The inspected code ROIs have black backgrounds without overlapping background text. The small projected-video inset is outside these ROIs. The 245 s cursor is below the struct, and the 270 s cursor is outside the inspected upper/lower blocks. Background distraction is not demonstrated as the cause in these examples.",
+    "frozen_scores_unchanged": true,
+    "source_evidence_manifest": "shell-inspection-source-evidence.json"
+  },
+  "wikipie": {
+    "evidence_prefix": "post-result-wikipie-inspection",
+    "miss_observations": [
+      {
+        "frozen_reference_seconds": 124,
+        "source_visual_observation": "The Invocation definition is absent at the earlier source decode and visible at the later one.",
+        "addition_absent_at_requested_source_seconds": 125.0,
+        "addition_present_at_requested_source_seconds": 125.514563,
+        "retained_addition_states": {
+          "mac": {
+            "id": "visual-00010",
+            "interval_start": 125.514563,
+            "source_timestamp": 125.514563,
+            "image_sha256": "89150d04983323dc1e03d146bc31f552ea8b6594c0adc5c7c2003286ac6ac4ef",
+            "copied_image": "retained/mac/02-05-00009.jpg"
+          },
+          "docker": {
+            "id": "visual-00010",
+            "interval_start": 125.515,
+            "source_timestamp": 125.515,
+            "image_sha256": "6446ec1c2baa7c5a25f0360f3881328259e5351c2c12e040acb6f03c113b909f",
+            "copied_image": "retained/docker/02-05-00009.jpg"
+          }
+        },
+        "actual_sdk_selection_at_frozen_reference": {
+          "mac": {
+            "call": "EvidencePack.open(pack).frame(timestamp=124)",
+            "state_id": "visual-00009",
+            "interval_start": 102.524272,
+            "interval_end": 125.514563,
+            "source_timestamp": 102.524272,
+            "image_sha256": "b099adf7734ae09203a9702063e193499ec806d6ca3aeb8fc3c8b90d05bca9cf",
+            "matches_recorded_interval_selection": true,
+            "copied_evidence_image": "post-result-wikipie-inspection/retained/mac/01-42-00008.jpg"
+          },
+          "docker": {
+            "call": "EvidencePack.open(pack).frame(timestamp=124)",
+            "state_id": "visual-00009",
+            "interval_start": 102.524,
+            "interval_end": 125.515,
+            "source_timestamp": 102.524,
+            "image_sha256": "6372e23b0391a34847da193f7b83389f76b4e0321688e291d9bc92a3b53e74bd",
+            "matches_recorded_interval_selection": true,
+            "copied_evidence_image": "post-result-wikipie-inspection/retained/docker/01-42-00008.jpg"
+          }
+        },
+        "supported_cause": "timing_or_reference_alignment",
+        "retention_loss_confirmed_in_inspected_images": false,
+        "interpretation_limit": "Observed decode brackets are not replacement ground-truth timestamps. All five official misses remain in the frozen reports."
+      },
+      {
+        "frozen_reference_seconds": 140,
+        "source_visual_observation": "The Enactment definition is absent at the earlier source decode and visible at the later one.",
+        "addition_absent_at_requested_source_seconds": 142.0,
+        "addition_present_at_requested_source_seconds": 142.524272,
+        "retained_addition_states": {
+          "mac": {
+            "id": "visual-00011",
+            "interval_start": 142.524272,
+            "source_timestamp": 142.524272,
+            "image_sha256": "f36452065fa35dc706d7111a0d7ee761a9e734f66bb6488bb3d95867f941e221",
+            "copied_image": "retained/mac/02-22-00010.jpg"
+          },
+          "docker": {
+            "id": "visual-00011",
+            "interval_start": 142.524,
+            "source_timestamp": 142.524,
+            "image_sha256": "4d037b30069fbfe758d133bda25a4837505e84b94bfbf3c624a3a8fac6d3893a",
+            "copied_image": "retained/docker/02-22-00010.jpg"
+          }
+        },
+        "actual_sdk_selection_at_frozen_reference": {
+          "mac": {
+            "call": "EvidencePack.open(pack).frame(timestamp=140)",
+            "state_id": "visual-00010",
+            "interval_start": 125.514563,
+            "interval_end": 142.524272,
+            "source_timestamp": 125.514563,
+            "image_sha256": "89150d04983323dc1e03d146bc31f552ea8b6594c0adc5c7c2003286ac6ac4ef",
+            "matches_recorded_interval_selection": true,
+            "copied_evidence_image": "post-result-wikipie-inspection/retained/mac/02-05-00009.jpg"
+          },
+          "docker": {
+            "call": "EvidencePack.open(pack).frame(timestamp=140)",
+            "state_id": "visual-00010",
+            "interval_start": 125.515,
+            "interval_end": 142.524,
+            "source_timestamp": 125.515,
+            "image_sha256": "6446ec1c2baa7c5a25f0360f3881328259e5351c2c12e040acb6f03c113b909f",
+            "matches_recorded_interval_selection": true,
+            "copied_evidence_image": "post-result-wikipie-inspection/retained/docker/02-05-00009.jpg"
+          }
+        },
+        "supported_cause": "timing_or_reference_alignment",
+        "retention_loss_confirmed_in_inspected_images": false,
+        "interpretation_limit": "Observed decode brackets are not replacement ground-truth timestamps. All five official misses remain in the frozen reports."
+      },
+      {
+        "frozen_reference_seconds": 152,
+        "source_visual_observation": "The citation example appears before the frozen label; the retained image captured at 151.029126 seconds contains it.",
+        "addition_absent_at_requested_source_seconds": 149.5,
+        "addition_present_at_requested_source_seconds": 150.019417,
+        "retained_addition_states": {
+          "mac": {
+            "id": "visual-00012",
+            "interval_start": 150.019417,
+            "source_timestamp": 151.029126,
+            "image_sha256": "dd9ba8dfea1a46b285888f093bf91ba164718ae8f689982769292e000db9562f",
+            "copied_image": "retained/mac/02-30-00011.jpg"
+          },
+          "docker": {
+            "id": "visual-00012",
+            "interval_start": 150.019,
+            "source_timestamp": 151.029,
+            "image_sha256": "2f064629dabf9de4fc625ac86b07be9ffc894a31d0e49a6a4c4dd955e6af9411",
+            "copied_image": "retained/docker/02-30-00011.jpg"
+          }
+        },
+        "actual_sdk_selection_at_frozen_reference": {
+          "mac": {
+            "call": "EvidencePack.open(pack).frame(timestamp=152)",
+            "state_id": "visual-00012",
+            "interval_start": 150.019417,
+            "interval_end": 159.533981,
+            "source_timestamp": 151.029126,
+            "image_sha256": "dd9ba8dfea1a46b285888f093bf91ba164718ae8f689982769292e000db9562f",
+            "matches_recorded_interval_selection": true,
+            "copied_evidence_image": "post-result-wikipie-inspection/retained/mac/02-30-00011.jpg"
+          },
+          "docker": {
+            "call": "EvidencePack.open(pack).frame(timestamp=152)",
+            "state_id": "visual-00012",
+            "interval_start": 150.019,
+            "interval_end": 160.0,
+            "source_timestamp": 151.029,
+            "image_sha256": "2f064629dabf9de4fc625ac86b07be9ffc894a31d0e49a6a4c4dd955e6af9411",
+            "matches_recorded_interval_selection": true,
+            "copied_evidence_image": "post-result-wikipie-inspection/retained/docker/02-30-00011.jpg"
+          }
+        },
+        "supported_cause": "timing_or_reference_alignment",
+        "retention_loss_confirmed_in_inspected_images": false,
+        "interpretation_limit": "Observed decode brackets are not replacement ground-truth timestamps. All five official misses remain in the frozen reports."
+      },
+      {
+        "frozen_reference_seconds": 347,
+        "source_visual_observation": "The second findings group appears before the frozen label; both retained images already contain its two bullets.",
+        "addition_absent_at_requested_source_seconds": 344.5,
+        "addition_present_at_requested_source_seconds": 345.009709,
+        "retained_addition_states": {
+          "mac": {
+            "id": "visual-00024",
+            "interval_start": 345.009709,
+            "source_timestamp": 345.009709,
+            "image_sha256": "b99c6dc8b33ef84cd77570c53fc51d2f432b599e2d1f4dd52d39b344a9bb1b26",
+            "copied_image": "retained/mac/05-45-00023.jpg"
+          },
+          "docker": {
+            "id": "visual-00024",
+            "interval_start": 345.01,
+            "source_timestamp": 345.01,
+            "image_sha256": "bf5b7aa9e2772cc36c1681ac213edf830e1925f664bcec36692c09fe35d63447",
+            "copied_image": "retained/docker/05-45-00023.jpg"
+          }
+        },
+        "actual_sdk_selection_at_frozen_reference": {
+          "mac": {
+            "call": "EvidencePack.open(pack).frame(timestamp=347)",
+            "state_id": "visual-00024",
+            "interval_start": 345.009709,
+            "interval_end": 375.533981,
+            "source_timestamp": 345.009709,
+            "image_sha256": "b99c6dc8b33ef84cd77570c53fc51d2f432b599e2d1f4dd52d39b344a9bb1b26",
+            "matches_recorded_interval_selection": true,
+            "copied_evidence_image": "post-result-wikipie-inspection/retained/mac/05-45-00023.jpg"
+          },
+          "docker": {
+            "call": "EvidencePack.open(pack).frame(timestamp=347)",
+            "state_id": "visual-00024",
+            "interval_start": 345.01,
+            "interval_end": 375.534,
+            "source_timestamp": 345.01,
+            "image_sha256": "bf5b7aa9e2772cc36c1681ac213edf830e1925f664bcec36692c09fe35d63447",
+            "matches_recorded_interval_selection": true,
+            "copied_evidence_image": "post-result-wikipie-inspection/retained/docker/05-45-00023.jpg"
+          }
+        },
+        "supported_cause": "timing_or_reference_alignment",
+        "retention_loss_confirmed_in_inspected_images": false,
+        "interpretation_limit": "Observed decode brackets are not replacement ground-truth timestamps. All five official misses remain in the frozen reports."
+      },
+      {
+        "frozen_reference_seconds": 393,
+        "source_visual_observation": "The final Next steps bullet is absent at the earlier source decode and visible at the later one.",
+        "addition_absent_at_requested_source_seconds": 394.0,
+        "addition_present_at_requested_source_seconds": 394.524272,
+        "retained_addition_states": {
+          "mac": {
+            "id": "visual-00027",
+            "interval_start": 394.524272,
+            "source_timestamp": 394.524272,
+            "image_sha256": "60852c1de619beb805585b5e1bf5305a3367ca8cae70346416927a1fcd59c4e9",
+            "copied_image": "retained/mac/06-34-00026.jpg"
+          },
+          "docker": {
+            "id": "visual-00027",
+            "interval_start": 394.524,
+            "source_timestamp": 394.524,
+            "image_sha256": "113ead0501dd90b962da6778dd44f8ccbda2aa87341acd4454730e4a97c7dbf0",
+            "copied_image": "retained/docker/06-34-00026.jpg"
+          }
+        },
+        "actual_sdk_selection_at_frozen_reference": {
+          "mac": {
+            "call": "EvidencePack.open(pack).frame(timestamp=393)",
+            "state_id": "visual-00026",
+            "interval_start": 383.029126,
+            "interval_end": 394.524272,
+            "source_timestamp": 383.029126,
+            "image_sha256": "cfe487a0022ef8b14b2de9dc73266de1d24779efe8bd5495932b6ed452735ffa",
+            "matches_recorded_interval_selection": true,
+            "copied_evidence_image": "post-result-wikipie-inspection/retained/mac/06-23-00025.jpg"
+          },
+          "docker": {
+            "call": "EvidencePack.open(pack).frame(timestamp=393)",
+            "state_id": "visual-00026",
+            "interval_start": 383.029,
+            "interval_end": 394.524,
+            "source_timestamp": 383.029,
+            "image_sha256": "54eb77c8dcf66991e9bb7115ff9651d2624610bb66135ff3262fd3ef7b11570a",
+            "matches_recorded_interval_selection": true,
+            "copied_evidence_image": "post-result-wikipie-inspection/retained/docker/06-23-00025.jpg"
+          }
+        },
+        "supported_cause": "timing_or_reference_alignment",
+        "retention_loss_confirmed_in_inspected_images": false,
+        "interpretation_limit": "Observed decode brackets are not replacement ground-truth timestamps. All five official misses remain in the frozen reports."
+      }
+    ],
+    "findings_complete_build_detail": {
+      "frozen_reference_seconds": 370,
+      "frozen_complete_interval": [
+        347,
+        375
+      ],
+      "saved_state_id": "visual-00024",
+      "mac_capture_seconds": 345.009709,
+      "docker_capture_seconds": 345.01,
+      "visually_present_in_saved_image": [
+        "Best-classifier invocation and enactment bullets.",
+        "Random-sample summary including the ~18% enact and ~6% invoke bullets."
+      ],
+      "source_comparison": "The second group is absent at requested344.5 and present at requested345.009709,347 and370. The saved Mac and Docker images show it.",
+      "interpretation": "The frozen interval starts later than the observed complete content. Temporal noncoverage does not demonstrate an incomplete image."
+    },
+    "actual_sdk_validation": {
+      "scope": "Actual EvidencePack.frame() read-only calls at each frozen missed timestamp; no extraction, recognition, or scoring.",
+      "inspection_json_sha256": "818e21c968d62338708f8749dc473abe5b2407b4fa4b4b9346167983919c5d1e",
+      "selections": [
+        {
+          "frozen_reference_seconds": 124,
+          "source_reference_image": "post-result-wikipie-inspection/source-frames/124.000000.png",
+          "source_reference_image_sha256": "5f4554846561907320a9337bfc4b4671d4fecd24d7d6f0f3255b70a4ca7314df",
+          "actual_sdk_selections": {
+            "mac": {
+              "call": "EvidencePack.open(pack).frame(timestamp=124)",
+              "state_id": "visual-00009",
+              "interval_start": 102.524272,
+              "interval_end": 125.514563,
+              "source_timestamp": 102.524272,
+              "image_sha256": "b099adf7734ae09203a9702063e193499ec806d6ca3aeb8fc3c8b90d05bca9cf",
+              "matches_recorded_interval_selection": true,
+              "copied_evidence_image": "post-result-wikipie-inspection/retained/mac/01-42-00008.jpg"
+            },
+            "docker": {
+              "call": "EvidencePack.open(pack).frame(timestamp=124)",
+              "state_id": "visual-00009",
+              "interval_start": 102.524,
+              "interval_end": 125.515,
+              "source_timestamp": 102.524,
+              "image_sha256": "6372e23b0391a34847da193f7b83389f76b4e0321688e291d9bc92a3b53e74bd",
+              "matches_recorded_interval_selection": true,
+              "copied_evidence_image": "post-result-wikipie-inspection/retained/docker/01-42-00008.jpg"
+            }
+          }
+        },
+        {
+          "frozen_reference_seconds": 140,
+          "source_reference_image": "post-result-wikipie-inspection/source-frames/140.000000.png",
+          "source_reference_image_sha256": "642b207a0a5b3e6bdf5d09302c019326f0331c257a9cc2867c1794239bf27120",
+          "actual_sdk_selections": {
+            "mac": {
+              "call": "EvidencePack.open(pack).frame(timestamp=140)",
+              "state_id": "visual-00010",
+              "interval_start": 125.514563,
+              "interval_end": 142.524272,
+              "source_timestamp": 125.514563,
+              "image_sha256": "89150d04983323dc1e03d146bc31f552ea8b6594c0adc5c7c2003286ac6ac4ef",
+              "matches_recorded_interval_selection": true,
+              "copied_evidence_image": "post-result-wikipie-inspection/retained/mac/02-05-00009.jpg"
+            },
+            "docker": {
+              "call": "EvidencePack.open(pack).frame(timestamp=140)",
+              "state_id": "visual-00010",
+              "interval_start": 125.515,
+              "interval_end": 142.524,
+              "source_timestamp": 125.515,
+              "image_sha256": "6446ec1c2baa7c5a25f0360f3881328259e5351c2c12e040acb6f03c113b909f",
+              "matches_recorded_interval_selection": true,
+              "copied_evidence_image": "post-result-wikipie-inspection/retained/docker/02-05-00009.jpg"
+            }
+          }
+        },
+        {
+          "frozen_reference_seconds": 152,
+          "source_reference_image": "post-result-wikipie-inspection/source-frames/152.000000.png",
+          "source_reference_image_sha256": "8a65a02763f7cf36fcd7ce7a40b09861e97c138a2c0a1cb11e3ebd6ab9674543",
+          "actual_sdk_selections": {
+            "mac": {
+              "call": "EvidencePack.open(pack).frame(timestamp=152)",
+              "state_id": "visual-00012",
+              "interval_start": 150.019417,
+              "interval_end": 159.533981,
+              "source_timestamp": 151.029126,
+              "image_sha256": "dd9ba8dfea1a46b285888f093bf91ba164718ae8f689982769292e000db9562f",
+              "matches_recorded_interval_selection": true,
+              "copied_evidence_image": "post-result-wikipie-inspection/retained/mac/02-30-00011.jpg"
+            },
+            "docker": {
+              "call": "EvidencePack.open(pack).frame(timestamp=152)",
+              "state_id": "visual-00012",
+              "interval_start": 150.019,
+              "interval_end": 160.0,
+              "source_timestamp": 151.029,
+              "image_sha256": "2f064629dabf9de4fc625ac86b07be9ffc894a31d0e49a6a4c4dd955e6af9411",
+              "matches_recorded_interval_selection": true,
+              "copied_evidence_image": "post-result-wikipie-inspection/retained/docker/02-30-00011.jpg"
+            }
+          }
+        },
+        {
+          "frozen_reference_seconds": 347,
+          "source_reference_image": "post-result-wikipie-inspection/source-frames/347.000000.png",
+          "source_reference_image_sha256": "16e81ce4201aa160800097ca3f092e6fa36a33a93295e1518e96838bc5cc0137",
+          "actual_sdk_selections": {
+            "mac": {
+              "call": "EvidencePack.open(pack).frame(timestamp=347)",
+              "state_id": "visual-00024",
+              "interval_start": 345.009709,
+              "interval_end": 375.533981,
+              "source_timestamp": 345.009709,
+              "image_sha256": "b99c6dc8b33ef84cd77570c53fc51d2f432b599e2d1f4dd52d39b344a9bb1b26",
+              "matches_recorded_interval_selection": true,
+              "copied_evidence_image": "post-result-wikipie-inspection/retained/mac/05-45-00023.jpg"
+            },
+            "docker": {
+              "call": "EvidencePack.open(pack).frame(timestamp=347)",
+              "state_id": "visual-00024",
+              "interval_start": 345.01,
+              "interval_end": 375.534,
+              "source_timestamp": 345.01,
+              "image_sha256": "bf5b7aa9e2772cc36c1681ac213edf830e1925f664bcec36692c09fe35d63447",
+              "matches_recorded_interval_selection": true,
+              "copied_evidence_image": "post-result-wikipie-inspection/retained/docker/05-45-00023.jpg"
+            }
+          }
+        },
+        {
+          "frozen_reference_seconds": 393,
+          "source_reference_image": "post-result-wikipie-inspection/source-frames/393.000000.png",
+          "source_reference_image_sha256": "bd343fec10173201e85a8435b4f2b40c7af43e4eb326de3038bf413d60a79e74",
+          "actual_sdk_selections": {
+            "mac": {
+              "call": "EvidencePack.open(pack).frame(timestamp=393)",
+              "state_id": "visual-00026",
+              "interval_start": 383.029126,
+              "interval_end": 394.524272,
+              "source_timestamp": 383.029126,
+              "image_sha256": "cfe487a0022ef8b14b2de9dc73266de1d24779efe8bd5495932b6ed452735ffa",
+              "matches_recorded_interval_selection": true,
+              "copied_evidence_image": "post-result-wikipie-inspection/retained/mac/06-23-00025.jpg"
+            },
+            "docker": {
+              "call": "EvidencePack.open(pack).frame(timestamp=393)",
+              "state_id": "visual-00026",
+              "interval_start": 383.029,
+              "interval_end": 394.524,
+              "source_timestamp": 383.029,
+              "image_sha256": "54eb77c8dcf66991e9bb7115ff9651d2624610bb66135ff3262fd3ef7b11570a",
+              "matches_recorded_interval_selection": true,
+              "copied_evidence_image": "post-result-wikipie-inspection/retained/docker/06-23-00025.jpg"
+            }
+          }
+        }
+      ],
+      "contact_sheet": "actual-sdk-at-frozen-reference.jpg",
+      "contact_sheet_sha256": "a07e577204913f06027499e50996918c25aa3a9770dd5a7cdb0c24401bcb54af"
+    },
+    "limitations": [
+      "The source decode brackets are visual observations, not replacement ground-truth timestamps.",
+      "A requested FFmpeg seek returns a decoded frame at or after that position; no new frame-accurate boundary annotation is claimed.",
+      "The saved temporal complete-build score checks a capture timestamp against a frozen interval, not whether all text is visible.",
+      "No alternative metric or corrected score is calculated. The original five misses and all campaign scores remain unchanged.",
+      "These five cases do not establish completeness for uninspected parts of any video."
+    ]
+  },
+  "coscup_extra_sample": {
+    "evidence_prefix": "holdout-coscup-extra-sample-v1",
+    "review": {
+      "schema_version": 1,
+      "scope": "Post-result sample of eight Coscup extra boundaries; not exhaustive attribution.",
+      "annotation_status": "AI-assisted source-frame inspection; human review pending.",
+      "sampling_policy": "Sort the frozen information-inventory extra events as stored; select round(i*(N-1)/7) for i=0..7.",
+      "extra_count": 196,
+      "selected_zero_based_indices": [
+        0,
+        28,
+        56,
+        84,
+        111,
+        139,
+        167,
+        195
+      ],
+      "raw_report_sha256": "c2a83cb675390d10342b3c3270097ac31ea84e657bb3d9462ec721ba9c5225cf",
+      "input_sha256": "f048f03dc1d874079ab0e659b4020f3c36de4d4503fb3dffe4723398ff864c25",
+      "sdk_calls": 0,
+      "ocr_calls": 0,
+      "asr_calls": 0,
+      "score_changes": false,
+      "status": "sample_reviewed",
+      "events": [
+        {
+          "event_id": "coscup2020-python-extra_boundary-prediction-0002",
+          "inventory_event_id": "extra_boundary-prediction-0002",
+          "extra_index": 0,
+          "timestamp": 0.5,
+          "visual_state_id": "visual-00002",
+          "state_source_timestamp": 1.0,
+          "change_reason": "Screen text changed.",
+          "source_frames": {
+            "before": {
+              "file": "coscup2020-python-extra_boundary-prediction-0002-before.jpg",
+              "sha256": "6554e9fb1c34fb895905d25eb76ab9f1fe01f0eddee96694ed0414e13ce939f0",
+              "requested_source_seconds": 0
+            },
+            "center": {
+              "file": "coscup2020-python-extra_boundary-prediction-0002-center.jpg",
+              "sha256": "96d0799e0db771ec38e76b465d1dd3b8b68fa199626b89de86cb2efd5d818ffc",
+              "requested_source_seconds": 0.5
+            },
+            "after": {
+              "file": "coscup2020-python-extra_boundary-prediction-0002-after.jpg",
+              "sha256": "56b43c0629f8d14d00a62f07cb4e04217ed6108d95d179d214d90b319d3992e8",
+              "requested_source_seconds": 1.5
+            }
+          },
+          "cause": "transition",
+          "explanation": "The projected opening screen disappears while several people cross the foreground. This is projection setup/blanking, not another informational slide.",
+          "status": "reviewed",
+          "retained_frame": {
+            "file": "coscup2020-python-extra_boundary-prediction-0002-retained.jpg",
+            "sha256": "cf1471b42a85537f4097d6e0f84daf57983ce9f2664b576ca85029934eece962",
+            "original_relative_path": "visual_states/all/00-00-00001.jpg"
+          },
+          "uncertainty": "The sample contains simultaneous screen blanking and foreground motion, so it cannot isolate which feature triggered this boundary."
+        },
+        {
+          "event_id": "coscup2020-python-extra_boundary-prediction-0030",
+          "inventory_event_id": "extra_boundary-prediction-0030",
+          "extra_index": 28,
+          "timestamp": 36.0,
+          "visual_state_id": "visual-00030",
+          "state_source_timestamp": 38.0,
+          "change_reason": "Screen text changed.",
+          "source_frames": {
+            "before": {
+              "file": "coscup2020-python-extra_boundary-prediction-0030-before.jpg",
+              "sha256": "680164ae136f449f9962a2cf7974d7caa3a0a494dc7d6e072e6fb351f8d65a73",
+              "requested_source_seconds": 35.0
+            },
+            "center": {
+              "file": "coscup2020-python-extra_boundary-prediction-0030-center.jpg",
+              "sha256": "5d7e1fd13c6bdaf5f1b6674b4a5675f0965ce588017763a586c5498ddd14b130",
+              "requested_source_seconds": 36.0
+            },
+            "after": {
+              "file": "coscup2020-python-extra_boundary-prediction-0030-after.jpg",
+              "sha256": "34e5cf7918d3392a76cd2928d9e4c3a972432fb712e9a8bb42e9b42683d557e0",
+              "requested_source_seconds": 37.0
+            }
+          },
+          "cause": "layout",
+          "explanation": "The same Windows desktop and projection-mode panel remain visible; the lower desktop/taskbar display changes during setup. No presentation page changes.",
+          "status": "reviewed",
+          "retained_frame": {
+            "file": "coscup2020-python-extra_boundary-prediction-0030-retained.jpg",
+            "sha256": "b5b655ffda18b0e94ca9e2f4d3bdbd26fdbccee0cdedc4778d48263be3e2c28d",
+            "original_relative_path": "visual_states/all/00-36-00029.jpg"
+          },
+          "uncertainty": "This is a computer-display setup interval. The exact contribution of the small UI change and room-camera noise is not isolated."
+        },
+        {
+          "event_id": "coscup2020-python-extra_boundary-prediction-0060",
+          "inventory_event_id": "extra_boundary-prediction-0060",
+          "extra_index": 56,
+          "timestamp": 113.5,
+          "visual_state_id": "visual-00060",
+          "state_source_timestamp": 114.0,
+          "change_reason": "Screen text changed.",
+          "source_frames": {
+            "before": {
+              "file": "coscup2020-python-extra_boundary-prediction-0060-before.jpg",
+              "sha256": "6019563fb8b804b47f6c6eaa13c5e9692b1a2fb1f89202cbb9ec3de4806cb7b1",
+              "requested_source_seconds": 112.5
+            },
+            "center": {
+              "file": "coscup2020-python-extra_boundary-prediction-0060-center.jpg",
+              "sha256": "43475c3c3a1fd099057455c7050ad68192fedc3da26ac441e973e369086089df",
+              "requested_source_seconds": 113.5
+            },
+            "after": {
+              "file": "coscup2020-python-extra_boundary-prediction-0060-after.jpg",
+              "sha256": "2cae0a6e266e1fa56f2dab7d046d47e2bd2b9c95813b8bb52c66ac5370367b08",
+              "requested_source_seconds": 114.5
+            }
+          },
+          "cause": "other",
+          "explanation": "A masked attendee passes very close to the camera and then leaves. The projected About Me slide stays the same in the source pair and retained frame.",
+          "status": "reviewed",
+          "retained_frame": {
+            "file": "coscup2020-python-extra_boundary-prediction-0060-retained.jpg",
+            "sha256": "7d5b84408d00a98de20fd0fbb17eb7c460670ec9756cb448c1632ad1f9da1f8a",
+            "original_relative_path": "visual_states/all/01-53-00059.jpg"
+          },
+          "uncertainty": "Foreground occlusion is visible; its precise share of the detector response is not measured."
+        },
+        {
+          "event_id": "coscup2020-python-extra_boundary-prediction-0089",
+          "inventory_event_id": "extra_boundary-prediction-0089",
+          "extra_index": 84,
+          "timestamp": 196.5,
+          "visual_state_id": "visual-00089",
+          "state_source_timestamp": 198.5,
+          "change_reason": "Screen text changed.",
+          "source_frames": {
+            "before": {
+              "file": "coscup2020-python-extra_boundary-prediction-0089-before.jpg",
+              "sha256": "3a4590719fa2f3db64084c5047fbbd56bb91d7da0e447cf95072d991856553f5",
+              "requested_source_seconds": 195.5
+            },
+            "center": {
+              "file": "coscup2020-python-extra_boundary-prediction-0089-center.jpg",
+              "sha256": "a10a4f669acb23d7d79523e37a252f38c02fec3456f12d2a634dcdd9c5c6d1d6",
+              "requested_source_seconds": 196.5
+            },
+            "after": {
+              "file": "coscup2020-python-extra_boundary-prediction-0089-after.jpg",
+              "sha256": "9237fcbb63dcbfda006dca090b1c47dcad9d15c5f1a083554b46d9b44fded9b7",
+              "requested_source_seconds": 197.5
+            }
+          },
+          "cause": "duplicate",
+          "explanation": "The projected dataset slide has the same three labeled steps before, at and after the event and in the retained image. No new information is visibly added.",
+          "status": "reviewed",
+          "retained_frame": {
+            "file": "coscup2020-python-extra_boundary-prediction-0089-retained.jpg",
+            "sha256": "d053fef56c36856665c01f40c925cfe50879274d40b38c462b3a1d9fc5f46a9b",
+            "original_relative_path": "visual_states/all/03-16-00088.jpg"
+          },
+          "uncertainty": "The sample establishes duplicate visible content but does not isolate the exact trigger; projection/camera changes and OCR instability are not separately measured."
+        },
+        {
+          "event_id": "coscup2020-python-extra_boundary-prediction-0132",
+          "inventory_event_id": "extra_boundary-prediction-0132",
+          "extra_index": 111,
+          "timestamp": 616.0,
+          "visual_state_id": "visual-00132",
+          "state_source_timestamp": 616.0,
+          "change_reason": "Screen text changed.",
+          "source_frames": {
+            "before": {
+              "file": "coscup2020-python-extra_boundary-prediction-0132-before.jpg",
+              "sha256": "da7f142ad04851bed29875ff908ac9991f7f2b6632185bafff4d9f6dbe36c1ba",
+              "requested_source_seconds": 615.0
+            },
+            "center": {
+              "file": "coscup2020-python-extra_boundary-prediction-0132-center.jpg",
+              "sha256": "d287a707a88f9e9352fd84d18b1a165a1518c9292d71f6b1d65aa450f1d98c10",
+              "requested_source_seconds": 616.0
+            },
+            "after": {
+              "file": "coscup2020-python-extra_boundary-prediction-0132-after.jpg",
+              "sha256": "143f935b0de344ff46f645288cc53fd9440f204b276878c4f62dab08a12985d2",
+              "requested_source_seconds": 617.0
+            }
+          },
+          "cause": "speaker",
+          "explanation": "The presenter walks from in front of the projected Moran calculation slide toward the lectern; the two plots and slide text remain unchanged.",
+          "status": "reviewed",
+          "retained_frame": {
+            "file": "coscup2020-python-extra_boundary-prediction-0132-retained.jpg",
+            "sha256": "ae21a173a936c51140e8d1522af0281501b45416b86bf6785695618c044b470c",
+            "original_relative_path": "visual_states/all/10-16-00131.jpg"
+          },
+          "uncertainty": "Presenter position and occlusion visibly change, while subtle source-camera variation is not isolated."
+        },
+        {
+          "event_id": "coscup2020-python-extra_boundary-prediction-0163",
+          "inventory_event_id": "extra_boundary-prediction-0163",
+          "extra_index": 139,
+          "timestamp": 784.0,
+          "visual_state_id": "visual-00163",
+          "state_source_timestamp": 785.0,
+          "change_reason": "Screen text changed.",
+          "source_frames": {
+            "before": {
+              "file": "coscup2020-python-extra_boundary-prediction-0163-before.jpg",
+              "sha256": "006b6deae15e020b295fa18521909a5a45b382908f29208794d76a582feed5e6",
+              "requested_source_seconds": 783.0
+            },
+            "center": {
+              "file": "coscup2020-python-extra_boundary-prediction-0163-center.jpg",
+              "sha256": "ec4461071c58852f92b0bf55b181d35a02ac9cb25e89401e317bd859578c3ed5",
+              "requested_source_seconds": 784.0
+            },
+            "after": {
+              "file": "coscup2020-python-extra_boundary-prediction-0163-after.jpg",
+              "sha256": "0874113770c84b27df3535acf0bab44541f2e854da48cab566f2bd17264a8880",
+              "requested_source_seconds": 785.0
+            }
+          },
+          "cause": "speaker",
+          "explanation": "The same Taiwan map remains projected while the presenter changes stance and gesture beside it. The retained image shows the same map.",
+          "status": "reviewed",
+          "retained_frame": {
+            "file": "coscup2020-python-extra_boundary-prediction-0163-retained.jpg",
+            "sha256": "34f247b3eceb56bca015e5a9fc28e23dce8f60745152649ea454209d709e7bda",
+            "original_relative_path": "visual_states/all/13-04-00162.jpg"
+          },
+          "uncertainty": "The sample supports presenter motion without a new map state; it does not establish that every unsampled extra has this cause."
+        },
+        {
+          "event_id": "coscup2020-python-extra_boundary-prediction-0194",
+          "inventory_event_id": "extra_boundary-prediction-0194",
+          "extra_index": 167,
+          "timestamp": 920.0,
+          "visual_state_id": "visual-00194",
+          "state_source_timestamp": 922.0,
+          "change_reason": "Screen text changed.",
+          "source_frames": {
+            "before": {
+              "file": "coscup2020-python-extra_boundary-prediction-0194-before.jpg",
+              "sha256": "10f2c86b67f998c79707a1086782199e11aad2a6860fa34394e8814f71de276b",
+              "requested_source_seconds": 919.0
+            },
+            "center": {
+              "file": "coscup2020-python-extra_boundary-prediction-0194-center.jpg",
+              "sha256": "9ba9a4facd44ec6d06b6d3928d6fad342ff9d2fb5b684c261cfccdcf77a0b260",
+              "requested_source_seconds": 920.0
+            },
+            "after": {
+              "file": "coscup2020-python-extra_boundary-prediction-0194-after.jpg",
+              "sha256": "11f8a7edfe29c4567a810dfebb46919f86f4565b98054feb93cba504ce3e417a",
+              "requested_source_seconds": 921.0
+            }
+          },
+          "cause": "other",
+          "explanation": "The same PowerPoint editing view and closing slide remain projected while a black-shirted attendee enters the foreground; the retained frame contains that passerby.",
+          "status": "reviewed",
+          "retained_frame": {
+            "file": "coscup2020-python-extra_boundary-prediction-0194-retained.jpg",
+            "sha256": "3efe402c87b08d5db2b0c34b007bd390574e92bb9d6261efd6fca8d61787b642",
+            "original_relative_path": "visual_states/all/15-20-00193.jpg"
+          },
+          "uncertainty": "Foreground motion is visible. No new slide content is apparent, and the exact detector trigger is not isolated."
+        },
+        {
+          "event_id": "coscup2020-python-extra_boundary-prediction-0222",
+          "inventory_event_id": "extra_boundary-prediction-0222",
+          "extra_index": 195,
+          "timestamp": 960.0,
+          "visual_state_id": "visual-00222",
+          "state_source_timestamp": 960.0,
+          "change_reason": "Screen text changed.",
+          "source_frames": {
+            "before": {
+              "file": "coscup2020-python-extra_boundary-prediction-0222-before.jpg",
+              "sha256": "9a31217c255061ea86ac00a041177465f95080e6fd415ddcac0d514e70a1308b",
+              "requested_source_seconds": 959.0
+            },
+            "center": {
+              "file": "coscup2020-python-extra_boundary-prediction-0222-center.jpg",
+              "sha256": "c65915e1bae78ab06d6c88a2083fa0faecffc17a3ad2361c226bfc24e2e7ae1c",
+              "requested_source_seconds": 960.0
+            },
+            "after": {
+              "file": "coscup2020-python-extra_boundary-prediction-0222-after.jpg",
+              "sha256": "df99b7358da527caae29dee19af169147cedc7148201334700c437973a29b214",
+              "requested_source_seconds": 960.01175
+            }
+          },
+          "cause": "other",
+          "explanation": "The projection is already blank before and after the event; attendees move and pack up in front of the empty whiteboard. The final retained image has no new informational page.",
+          "status": "reviewed",
+          "retained_frame": {
+            "file": "coscup2020-python-extra_boundary-prediction-0222-retained.jpg",
+            "sha256": "a1aee675e89d15ac8cbb0675af587af03de135b4cb8a3d2dc025b29fb9965a64",
+            "original_relative_path": "visual_states/all/16-00-00221.jpg"
+          },
+          "uncertainty": "This is motion in the room at the end of the recording, not a new screen state with useful slide content."
+        }
+      ],
+      "sample_cause_counts": {
+        "transition": 1,
+        "layout": 1,
+        "other": 3,
+        "duplicate": 1,
+        "speaker": 2
+      },
+      "limitations": [
+        "Only eight of196 extra boundaries were sampled. These counts are not an exhaustive error attribution.",
+        "Source pairs and retained images were inspected after the final result. Runtime, labels, scores and reports were not changed.",
+        "Room-camera recordings include people and computer setup outside the projected slide. Exact detector causality is not established for every sampled event."
+      ]
+    },
+    "scope_limit": "Eight of196 Docker extra boundaries were deterministically sampled from the frozen inventory; these causes are not an exhaustive attribution or population estimate."
+  },
+  "source_evidence_asset": "v1.4.0-post-result-holdout-inspection.zip",
+  "source_evidence_index": [
+    {
+      "path": "post-result-shell-inspection/shell-full-frame-comparison.png",
+      "sha256": "9a16a4ce43755e45665d7ecbc4c71344cb6d33278206fa74dfa7f33361f8e33d"
+    },
+    {
+      "path": "post-result-shell-inspection/245-struct-comparison.png",
+      "sha256": "90af2536ff76011a00fcf23c719468707784e8435b84c43a1cd7c7d717572a20"
+    },
+    {
+      "path": "post-result-shell-inspection/270-upper-comparison.png",
+      "sha256": "9cc3397e5c527b55c7103a7d9fbac00c107e601d24f60600af715dd279d29eff"
+    },
+    {
+      "path": "post-result-shell-inspection/270-lower-comparison.png",
+      "sha256": "1d8470aaa8e2425016a1111d541bd830981f9a077754988355b3b733634bfd52"
+    },
+    {
+      "path": "post-result-shell-inspection/source270-lower-comment-4x.png",
+      "sha256": "799dd789750377782f9a1467bc3fb6394fec64b589a9fcbe57446de9f69a72ad"
+    },
+    {
+      "path": "post-result-wikipie-inspection/findings-contact.jpg",
+      "sha256": "73cb72c0f6e7f1241cd438bd2ea55372fd77ad5d8c905b2c164e6556657a6540"
+    },
+    {
+      "path": "post-result-wikipie-inspection/missed-label-source-retained-comparison.jpg",
+      "sha256": "c50ef309bfea48d6a888d9590b6981847466ae5f7572738a59e9f902f28fc9e3"
+    },
+    {
+      "path": "post-result-wikipie-inspection/definitions-contact.jpg",
+      "sha256": "bfb1abc5eeafbf0e2ae7bef793a91664706f507b1a6d9ac402b98bb686aeb554"
+    },
+    {
+      "path": "post-result-wikipie-inspection/next-steps-contact.jpg",
+      "sha256": "026260cf5315f4f6e132cf22875e4732c753146b0936403ff039543d87391d75"
+    },
+    {
+      "path": "post-result-wikipie-sdk-validation/actual-sdk-at-frozen-reference.jpg",
+      "sha256": "a07e577204913f06027499e50996918c25aa3a9770dd5a7cdb0c24401bcb54af"
+    },
+    {
+      "path": "holdout-coscup-extra-sample-v1/README.md",
+      "sha256": "fd2869211036d3ba128ff263179d2236805a9e606c5baf5292bf11842c67bee8"
+    }
+  ],
+  "source_license_attribution": [
+    {
+      "case_id": "coscup2020-python",
+      "title": "Python cancer spatial-cluster map visualization",
+      "speakers": "Mok",
+      "publisher": "COSCUP 2020",
+      "source_page": "https://commons.wikimedia.org/wiki/File:OSMxWikidata_COSCUP_2020_04.webm",
+      "source_url": "https://upload.wikimedia.org/wikipedia/commons/9/9b/OSMxWikidata_COSCUP_2020_04.webm",
+      "license": "CC-BY-SA-4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Mok; Wikidata Taiwan; COSCUP 2020; CC BY-SA 4.0"
+    },
+    {
+      "case_id": "enthusiasticon-shell",
+      "title": "OMG, building a shell in ten minutes",
+      "speakers": "Stefanie Schirmer",
+      "publisher": "EnthusiastiCon",
+      "source_page": "https://commons.wikimedia.org/wiki/File:EnthusiastiCon_-_Stefanie_Schirmer_%E2%80%9COMG_building_a_shell_in_10_minutes%E2%80%9D.webm",
+      "source_url": "https://upload.wikimedia.org/wikipedia/commons/0/0b/EnthusiastiCon_-_Stefanie_Schirmer_%E2%80%9COMG_building_a_shell_in_10_minutes%E2%80%9D.webm",
+      "license": "CC-BY-SA-4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Stefanie Schirmer; Jusc(wmde); EnthusiastiCon; CC BY-SA 4.0"
+    },
+    {
+      "case_id": "wikimania-wikipie",
+      "title": "Wiki-Pie: a policy invocation and enactment English Wikipedia dataset",
+      "speakers": "Sohyeon Hwang and Nathan TeBlunthuis",
+      "publisher": "Wiki Workshop 2026",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Wikimania_presentation,_Wiki_Pie_Wikipedia_Policy_and_Invocation_Dataset.webm",
+      "source_url": "https://upload.wikimedia.org/wikipedia/commons/1/1c/Wikimania_presentation%2C_Wiki_Pie_Wikipedia_Policy_and_Invocation_Dataset.webm",
+      "license": "CC-BY-SA-4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Sohyeon Hwang and Nathan TeBlunthuis; Groceryheist; Wiki Workshop 2026; CC BY-SA 4.0"
+    }
+  ],
+  "path_resolution": "In the evidence ZIP, paths beginning <WORKDIR>/runs/ map to the archive root after removing that prefix. Each subreport also provides relative copied-image paths.",
+  "limitations": [
+    "These are post-result explanations, not holdout tuning inputs or replacement ground truth.",
+    "Still-image inspection supports visible content presence and order/size symptoms, not a proved internal cause for every OCR edit.",
+    "No corrected recall, CER, precision, or complete-build coverage is calculated.",
+    "The frozen score conclusions remain: recall meets the target, precision and code CER do not."
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "release": "v1.4.0",
+  "annotation_status": "AI-assisted; human review pending",
+  "owner_review": {
+    "file": "clipmind-v1.4.0-owner-review.zip",
+    "rows": 163,
+    "estimated_minutes": 94,
+    "decision_columns": "blank"
+  },
+  "assets": [
+    {
+      "file": "HOLDOUT_SHA256SUMS",
+      "bytes": 203,
+      "sha256": "95352ca9199291d582779b9cc698881f892a7187a42f8b423a3c3b3559814037",
+      "url": "https://github.com/yy31104/clipmind/releases/download/v1.4.0/HOLDOUT_SHA256SUMS"
+    },
+    {
+      "file": "clipmind-v1.4.0-baseline-boundary-review.zip",
+      "bytes": 29991300,
+      "sha256": "7b25d9940e0e0e6d8298fce1f86af5c21d7b8f9965481036d140b96d4556d8a8",
+      "url": "https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-baseline-boundary-review.zip"
+    },
+    {
+      "file": "clipmind-v1.4.0-baseline-evaluator.zip",
+      "bytes": 14394,
+      "sha256": "b8035b6c709867dfe6a0c3a2bf7b976d2a9348bb8a3f4b0e6b3b1bf23833731f",
+      "url": "https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-baseline-evaluator.zip"
+    },
+    {
+      "file": "clipmind-v1.4.0-comparators.zip",
+      "bytes": 23956592,
+      "sha256": "d0b8e20eabc587882e32a936ee8d7706355e9674d4e0af3d9f469ec67d654f82",
+      "url": "https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-comparators.zip"
+    },
+    {
+      "file": "clipmind-v1.4.0-development-review.zip",
+      "bytes": 23600931,
+      "sha256": "db38518ac9bcedbbe56776bae08d1e5d9c1144ceab5441da1989afbde0f6069a",
+      "url": "https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-development-review.zip"
+    },
+    {
+      "file": "clipmind-v1.4.0-final-boundary-review.zip",
+      "bytes": 57321757,
+      "sha256": "1ce58f5a8a0ac4027d50bf54d18f9320d2f619036c86278b3f2af82b39a9b662",
+      "url": "https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-final-boundary-review.zip"
+    },
+    {
+      "file": "clipmind-v1.4.0-holdout-inputs.zip",
+      "bytes": 154864450,
+      "sha256": "fe20ddb66ce0f0b8e0dda8990b24ffbafe027d32ad908c8a87cc32a2ae635058",
+      "url": "https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-holdout-inputs.zip"
+    },
+    {
+      "file": "clipmind-v1.4.0-holdout-inspection.zip",
+      "bytes": 15076565,
+      "sha256": "2370457b2825666f6090f7bd5e55dd613badd0362b2da43e51edb9681120cfc7",
+      "url": "https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-holdout-inspection.zip"
+    },
+    {
+      "file": "clipmind-v1.4.0-holdout-license.txt",
+      "bytes": 1754,
+      "sha256": "9a313e126ee06c38ad5d424ba2c42b44e999e0a625b14e59bbefcdf0604a5078",
+      "url": "https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-holdout-license.txt"
+    },
+    {
+      "file": "clipmind-v1.4.0-holdout-review.zip",
+      "bytes": 26547390,
+      "sha256": "d93e0a43f9054ec47958f0533986e76e3a1054c31b844f94f6f217b17569d6f4",
+      "url": "https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-holdout-review.zip"
+    },
+    {
+      "file": "clipmind-v1.4.0-motion-evidence.zip",
+      "bytes": 410620501,
+      "sha256": "f287bb7033836e2dc86f45d6c01d03e5ddb004b8d06383eb1f4c374a9a0f0c1e",
+      "url": "https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-motion-evidence.zip"
+    },
+    {
+      "file": "clipmind-v1.4.0-ocr-development.zip",
+      "bytes": 20592439,
+      "sha256": "b28f8f9589969337f095c3a277f3377e0df67c460e798d7313e079368af24e3a",
+      "url": "https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-ocr-development.zip"
+    },
+    {
+      "file": "clipmind-v1.4.0-owner-review.zip",
+      "bytes": 65279831,
+      "sha256": "a5ffef9cb33062dd7719df533d0279002885f82d745bbfc73de1157c277b2be6",
+      "url": "https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-owner-review.zip"
+    },
+    {
+      "file": "clipmind-v1.4.0-retention-late-source.zip",
+      "bytes": 23218,
+      "sha256": "18e8f844fe058c50d3b5a952e0ec917d7908ee2f576840b9dd505bf8aff94b30",
+      "url": "https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-retention-late-source.zip"
+    },
+    {
+      "file": "clipmind-v1.4.0-retention-only-source.zip",
+      "bytes": 22987,
+      "sha256": "4dc1522fecd3ebe0ad99a8a4bed190f9c922bab882f9e4120ba2e9173154dc78",
+      "url": "https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-retention-only-source.zip"
+    },
+    {
+      "file": "clipmind-v1.4.0-run-records.zip",
+      "bytes": 1606248,
+      "sha256": "5aadac2fc05f9e330bd2ba7d9080be52e6354d98efcab7c01f20460d803a523c",
+      "url": "https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-run-records.zip"
+    },
+    {
+      "file": "clipmind-v1.4.0-screen-retention-attribution.txt",
+      "bytes": 951,
+      "sha256": "91aeb57d2cff68f76d5eeb89b1155e66e1b5cc8b7d7e4ef377130fed1015728d",
+      "url": "https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-screen-retention-attribution.txt"
+    },
+    {
+      "file": "clipmind-v1.4.0-screen-retention.gif",
+      "bytes": 471661,
+      "sha256": "19faf3a25bc0e5b96fa145ff6715924f11c42639ccf16260f923e5a086cbc63d",
+      "url": "https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-screen-retention.gif"
+    },
+    {
+      "file": "clipmind-v1.4.0-xous-attribution.txt",
+      "bytes": 659,
+      "sha256": "c63bb7e2128876cf8b2ce757376f26533a61bbe50be78bdd3e39e19e3a04a385",
+      "url": "https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-xous-attribution.txt"
+    },
+    {
+      "file": "clipmind-v1.4.0-xous-input.mp4",
+      "bytes": 363200963,
+      "sha256": "d1b4e900afe2b12b9636ffdb498a809d0cba38eba011abad9f5fbc630a1bd01a",
+      "url": "https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-xous-input.mp4"
+    },
+    {
+      "file": "SCREEN_ASSETS.json",
+      "sha256": "647ebe520c4c3ca2908175cd7677a89f6f7c1cc6f4c208233fed4b2e9f99852f"
+    }
+  ]
+}

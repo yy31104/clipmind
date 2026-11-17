@@ -35,3 +35,9 @@ Before transcription and OCR, ClipMind shows a broad planning range. It excludes
 The published v1.3.0 Docker image processed the complete 39:24 Xous recording in 450.892 seconds with the resource limits above: 382.773 seconds of ASR, 66.159 seconds of OCR and 61.794 seconds of sampling. Speech and OCR overlap, so their stage times should not be added to predict elapsed time. The model download took another 92.120 seconds and was measured separately. This development recording informed the portable estimate's lower range; no holdout result is used to tune it.
 
 Annotations remain AI-assisted; human review is pending. Source review packages are separate from model outputs and contain editable owner-review tables.
+
+## Recorded campaign
+
+Candidate: `47c5334f43f5841ebaaa3ecfeab4938088fdf97f`. Runtime SHA-256: `e7c9c63c00c4843c4ed4128621b2b4aa6cb6514d6f2b6049102ee29e40fafc20`. Both one-attempt tokens bind these bytes, the frozen source files and the evaluator hashes. The installed Docker byte check passed before its token was reserved.
+
+Both paths finished all three recordings. Recall is 73/78 on each; precision is 20.39% on Mac and 20.28% on Docker; code CER is 19.00% and 16.08%. Recall meets its target; precision and code CER miss theirs. See the [complete results and limits](SCREEN_QUALITY.md#frozen-holdout) and [independent audit](data/v140-holdout-independent-audit.json). No replacement run or post-result tuning was performed.

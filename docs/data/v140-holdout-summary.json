@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "status": "completed_once",
+  "candidate_commit": "47c5334f43f5841ebaaa3ecfeab4938088fdf97f",
+  "runtime_sha256": "e7c9c63c00c4843c4ed4128621b2b4aa6cb6514d6f2b6049102ee29e40fafc20",
+  "annotation_status": "AI-assisted; human review pending",
+  "targets": {
+    "change_recall_min": 0.85,
+    "information_precision_min": 0.5,
+    "code_cer_max": 0.15
+  },
+  "backends": {
+    "mac": {
+      "status": "measured",
+      "matched": 73,
+      "reference_count": 78,
+      "prediction_count": 358,
+      "code_errors": 436,
+      "code_reference_characters": 2295,
+      "code_roi_count": 15,
+      "ocr_calls": 361,
+      "ocr_exceptions": 0,
+      "sum_case_wall_seconds": 135.106,
+      "raw_report_sha256": "b1888d10e404409d5fd475ad8dbdf6855aa3ac89136ec1d331ce9c67996d2400",
+      "cleanup_leftovers": 0,
+      "change_recall": 0.9358974358974359,
+      "information_precision": 0.20391061452513967,
+      "code_cer": 0.18997821350762528,
+      "targets_met": {
+        "change_recall": true,
+        "information_precision": false,
+        "code_cer": false
+      }
+    },
+    "docker": {
+      "status": "measured",
+      "matched": 73,
+      "reference_count": 78,
+      "prediction_count": 360,
+      "code_errors": 369,
+      "code_reference_characters": 2295,
+      "code_roi_count": 15,
+      "ocr_calls": 363,
+      "ocr_exceptions": 0,
+      "sum_case_wall_seconds": 419.568,
+      "raw_report_sha256": "c2a83cb675390d10342b3c3270097ac31ea84e657bb3d9462ec721ba9c5225cf",
+      "cleanup_leftovers": 0,
+      "change_recall": 0.9358974358974359,
+      "information_precision": 0.20277777777777778,
+      "code_cer": 0.1607843137254902,
+      "targets_met": {
+        "change_recall": true,
+        "information_precision": false,
+        "code_cer": false
+      }
+    }
+  },
+  "scope": {
+    "complete_recordings": 3,
+    "duration_minutes": 40,
+    "languages": [
+      "Mandarin",
+      "English"
+    ],
+    "code_reference_source_count": 1,
+    "code_reference_source_ids": [
+      "enthusiasticon-shell"
+    ],
+    "chinese_code_cer": "not_applicable: projected source code cannot be transcribed legibly",
+    "caption_wer": "not_applicable: no publisher captions",
+    "reference_caveats": [
+      "five WikiPie timing discrepancies",
+      "Shell270 lower-comment transcription mismatch"
+    ]
+  }
+}
