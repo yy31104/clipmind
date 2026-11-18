@@ -103,6 +103,17 @@ class ScreenInteractionTests(unittest.TestCase):
         )
         self.assertEqual(self.selected(frames, {1: .4, 2: .4, 3: .4, 4: .4, 5: .4, 6: .08}), {6})
 
+    def test_same_ink_movement_can_corroborate_an_earlier_change(self):
+        original = np.full((160, 240), 250, np.uint8)
+        early = original.copy()
+        early[65:78, 100:114] = 35
+        settled = original.copy()
+        settled[65:78, 106:120] = 35
+        separate = original.copy()
+        separate[65:78, 150:164] = 35
+        self.assertTrue(screen_interaction._continues_ink_move(original, early, settled, 36))
+        self.assertFalse(screen_interaction._continues_ink_move(original, early, separate, 36))
+
     def test_entered_shell_input_is_discounted_and_new_prompt_with_output_is_selected(self):
         transcripts = [
             [("host:~$", 120)],

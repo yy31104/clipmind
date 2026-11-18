@@ -13,8 +13,10 @@ import cv2
 import numpy as np
 
 from .media import Frame
+from .screen_rank_model import CUTOFF
 
 _WIDTH = 640
+_SHAPE_SCORE = .18
 _SHELL = re.compile(r"^([^\s$>%#]*[@:~][^\s$>%#]*[$>%#]|[$>%#])(?:\s+(.*?))?\s*$")
 _FIELD = re.compile(r"^([^\W\d_][^:@!?.;(){}/<>\[\]\\|=]{2,26}):\s*(.*?)\s*$")
 _QUOTED = re.compile(r'"(?:[^"\\]|\\.)*"' r"|'(?:[^'\\]|\\.)*'")
@@ -26,6 +28,7 @@ class _Change:
     menu_only: bool
     recurring_chrome: bool
     persistent_shape: bool
+    continues_move: bool = False
 
 
 def _components(mask):
@@ -149,6 +152,27 @@ def _persistent_line_edit(changed, before, current, following):
     return False
 
 
+def _continues_ink_move(before, first, settled, filled):
+    # Two consecutive depictions of the same compact object movement
+    # share a region, with part of the earlier change still visible.
+    if (filled < 16 or min(np.mean(image >= 232) for image in (before, first, settled)) < .8
+            or not .001 <= np.mean(cv2.absdiff(before, first) >= 25) <= .012):
+        return False
+
+    def ink_change(a, b):
+        return ((a < 105) & (b > 170)) | ((b < 105) & (a > 170))
+
+    initial = ink_change(before, first)
+    count = np.count_nonzero(initial)
+    if not count:
+        return False
+    continued = cv2.dilate(np.uint8(ink_change(first, settled)), np.ones((11, 11), np.uint8))
+    if np.count_nonzero(initial & (continued != 0)) < .8 * count:
+        return False
+    retained = initial & ink_change(before, settled) & (cv2.absdiff(first, settled) < 30)
+    return .25 * count <= np.count_nonzero(retained) <= .75 * count
+
+
 def _recurs(i, times, masks):
     t = times[i]
     old = masks[bisect_left(times, t - 100, lo=1) - 1:bisect_left(times, t - 6, lo=1) - 1]
@@ -233,7 +257,14 @@ def _raster_changes(frames):
         if not shape and i + 1 < len(times) and times[i + 1] >= t + .8 and share <= .0014:
             shape = _persistent_line_edit(changed, before, current, gray(i + 1))
         menu_only = opening_only or menu_hover or i in menu_dismissals
-        evidence.append(_Change(bands, menu_only, chrome, shape))
+        continues = False
+        if (i >= 2 and shape and not menu_only and not evidence[-1].persistent_shape
+                and not evidence[-1].menu_only and t - times[i - 1] <= 2):
+            original = gray(i - 2)
+            early_ink = ((dark(i - 1) & (original > 170)) | (dark(i - 2) & (before > 170)))[interior]
+            continues = _continues_ink_move(original[interior], before[interior], current[interior],
+                                           np.count_nonzero(early_ink))
+        evidence.append(_Change(bands, menu_only, chrome, shape, continues))
     return evidence, height
 
 
@@ -381,5 +412,13 @@ def adjust_scores(frames: list[Frame], scores: dict[int, float]) -> dict[int, fl
         elif change and change.recurring_chrome:
             adjusted[i] = score * .34
         elif change and change.persistent_shape:
-            adjusted[i] = max(score, .18)
+            adjusted[i] = max(score, _SHAPE_SCORE)
+    for i, score in scores.items():
+        change = changes[i]
+        if (change and change.continues_move and adjusted[i] == _SHAPE_SCORE
+                and score < CUTOFF and i - 1 in adjusted and adjusted[i - 1] < CUTOFF
+                and i - 1 not in pending):
+            # The settled frame corroborates the earlier onset. Only move
+            # the raster bonus when neither candidate has its own rank vote.
+            adjusted[i - 1], adjusted[i] = _SHAPE_SCORE, score
     return adjusted
