@@ -101,6 +101,27 @@ class FullFrameSpeakerTests(unittest.TestCase):
         frames, faces = self.room_frames(prop)
         self.assertNotIn(frames[2].index, self.post_pass(frames, faces))
 
+    def test_inner_diagram_reusing_existing_room_colors_is_preserved(self):
+        wall = (142, 139, 141)
+        cuff = (87, 110, 110)
+        for color in (wall, cuff):
+            with self.subTest(color=color):
+                frames, faces = self.room_frames()
+                for position, frame in enumerate(frames):
+                    with Image.open(frame.path) as source:
+                        image = source.copy()
+                    draw = ImageDraw.Draw(image)
+                    draw.rectangle((495, 651, 577, 699), fill=cuff)
+                    if position >= 2:
+                        draw.line((672, 555, 719, 555, 719, 610, 752, 610), fill=color, width=7)
+                        draw.ellipse((658, 541, 685, 569), fill=color)
+                        draw.polygon(((741, 596), (767, 610), (741, 624)), fill=color)
+                    image.save(frame.path)
+                with patch.object(screen_motion.screen_faces, "boxes", side_effect=faces.get):
+                    visual_states.annotate_change_kinds(frames)
+                self.assertEqual(frames[2].change_kind, "uncertain")
+                self.assertEqual(frames[2].change_reason, visual_states.NO_READABLE_TEXT_REASON)
+
     def test_foreground_occluder_leaves_the_boundary_unresolved(self):
         frames, faces = self.room_frames(
             lambda draw: draw.ellipse((22, 603, 246, 770), fill=(47, 69, 85)))

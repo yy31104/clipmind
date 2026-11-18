@@ -168,6 +168,8 @@ FULL_FRAME_SPEAKER_REASON = "Motion confined to the presenter in a recurring ful
 class _RoomView:
     pixels: np.ndarray
     foreground: np.ndarray
+    silhouette: np.ndarray
+    wall_like: np.ndarray
 
 
 def _room_margins(pixels: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
@@ -184,8 +186,9 @@ def _room_view(pixels: np.ndarray, cv2) -> _RoomView | None:
            for side, color in zip(margins, colors, strict=True)):
         return None
     wall = np.linspace(*colors, _ROOM_WIDTH)[None, :, :]
-    mask = np.uint8(np.max(np.abs(small - wall), axis=2) >= 23)
-    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, np.ones((7, 7), dtype=np.uint8))
+    distance = np.max(np.abs(small - wall), axis=2)
+    raw = distance >= 23
+    mask = cv2.morphologyEx(raw.astype(np.uint8), cv2.MORPH_CLOSE, np.ones((7, 7), dtype=np.uint8))
     count, labels, components, centers = cv2.connectedComponentsWithStats(mask)
     if count <= 1:
         return None
@@ -195,11 +198,12 @@ def _room_view(pixels: np.ndarray, cv2) -> _RoomView | None:
             or not 0.05 <= area / mask.size <= 0.60
             or not _ROOM_WIDTH / 4 <= centers[component, 0] <= 3 * _ROOM_WIDTH / 4):
         return None
-    points = cv2.findNonZero(np.uint8(labels == component))
+    silhouette = labels == component
+    points = cv2.findNonZero(silhouette.astype(np.uint8))
     foreground = np.zeros_like(mask)
     cv2.fillConvexPoly(foreground, cv2.convexHull(points), 1)
     foreground = cv2.dilate(foreground, np.ones((9, 9), dtype=np.uint8))
-    return _RoomView(small, foreground.astype(bool))
+    return _RoomView(small, foreground.astype(bool), silhouette & raw, distance <= 14)
 
 
 def _same_room_margins(first: _RoomView, second: _RoomView) -> bool:
@@ -221,6 +225,16 @@ def _connected_change(mask: np.ndarray, minimum: int, cv2) -> bool:
     return bool(np.any(components[1:, cv2.CC_STAT_AREA] >= minimum))
 
 
+def _new_enclosed_wall(first: _RoomView, second: _RoomView, cv2) -> bool:
+    # Wall-colored artwork can appear over the speaker. A newly exposed
+    # patch completely inside the silhouette has no visible link to the room.
+    _, labels = cv2.connectedComponents(second.wall_like.astype(np.uint8))
+    border = np.unique(np.concatenate((labels[0], labels[-1], labels[:, 0], labels[:, -1])))
+    changed = np.max(np.abs(first.pixels - second.pixels), axis=2) >= 24
+    new_hole = first.silhouette & second.wall_like & second.foreground & ~np.isin(labels, border) & changed
+    return _connected_change(new_hole, 12, cv2)
+
+
 def _room_native_motion(first: np.ndarray, second: np.ndarray, foreground: np.ndarray, cv2) -> bool:
     """Require confined native changes, including small strokes and new colors."""
     if first.shape != second.shape:
@@ -238,6 +252,29 @@ def _room_native_motion(first: np.ndarray, second: np.ndarray, foreground: np.nd
     known = np.any(neighborhoods, axis=(-3, -2, -1))
     novel = ~known[tuple(np.moveaxis(second // 16, 2, 0))]
     return not _connected_change(changed & novel, 12, cv2)
+
+
+def _new_stable_detail(older: _RoomView, before: _RoomView, after: _RoomView,
+                       later: _RoomView, cv2) -> bool:
+    """Keep a stable interior change when nearby colors cannot explain it."""
+    old, new = before.pixels, after.pixels
+    steady_before = np.max(np.abs(older.pixels - old), axis=2) <= 8
+    steady_after = np.max(np.abs(later.pixels - new), axis=2) <= 8
+    changed = np.max(np.abs(new - old), axis=2) >= 25
+    ys, xs = np.nonzero(before.silhouette & after.silhouette & steady_before & steady_after & changed)
+    if len(ys) < 25:
+        return False
+    radius = 12
+    padded = np.pad(old, ((radius, radius), (radius, radius), (0, 0)), mode="edge")
+    offsets = np.arange(2 * radius + 1)
+    novel = np.zeros_like(changed)
+    for start in range(0, len(ys), 256):
+        y, x = ys[start:start + 256], xs[start:start + 256]
+        nearby = padded[y[:, None, None] + offsets[None, :, None],
+                        x[:, None, None] + offsets[None, None, :]]
+        distance = np.max(np.abs(nearby - new[y, x][:, None, None]), axis=3)
+        novel[y, x] = np.min(distance, axis=(1, 2)) > 22
+    return _connected_change(novel, 25, cv2)
 
 
 def full_frame_speaker_positions(
@@ -286,10 +323,14 @@ def full_frame_speaker_positions(
                     and abs(frames[index].timestamp - frames[position].timestamp) <= _ROOM_WITNESS_SECONDS
                     and (view := room(index)) is not None and _same_room_margins(view, current)):
                 witnesses.append((index, view))
-        if not witnesses:
+        if len(witnesses) != 2:
             continue
         same_room = [(position - 1, previous), (position, current), *witnesses]
         if sum(_has_room_face(view, detect_faces(frames[index].path)) for index, view in same_room) < 2:
+            continue
+        if _new_enclosed_wall(previous, current, cv2):
+            continue
+        if _new_stable_detail(witnesses[0][1], previous, current, witnesses[1][1], cv2):
             continue
         first, second = native(position - 1), native(position)
         if first is not None and second is not None and _room_native_motion(first, second, foreground, cv2):
