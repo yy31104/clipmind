@@ -1,0 +1,522 @@
+{
+  "round3-room-guard": {
+    "mac": {
+      "status": "measured",
+      "mode": "run",
+      "extraction_code_revision": "c9f2b4283a23b52a5c4aee8059a168b73ffae02f",
+      "runtime_sha256": "3b646fbf384f6f7f4a09de360281877521408978120a428da490aa188acdd066",
+      "source_sha256": "d360de7f3261a854cc3bec7c12c14a21353bd563597b6a404146e5152b94c7ba",
+      "labels_sha256": "84cc77f2270b5997eb39d7c7cd8f816c8591661b484100d0fdf723e04c98874e",
+      "totals": {
+        "matched": 128,
+        "references": 139,
+        "predictions": 572,
+        "canonical_predictions": 1029,
+        "canonical_matched": 130,
+        "code_errors": 499,
+        "code_characters": 6980,
+        "ocr_failures": 0
+      },
+      "values": {
+        "recall": 0.920863309352518,
+        "precision": 0.22377622377622378,
+        "code_cer": 0.07148997134670487
+      },
+      "reaches_targets": {
+        "recall": true,
+        "precision": false,
+        "code_cer": true
+      },
+      "all_recordings_measured": true,
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "r02-a01",
+          "status": "measured",
+          "matched": 23,
+          "references": 23,
+          "predictions": 40,
+          "recall": 1.0,
+          "precision": 0.575,
+          "canonical_matched": 23,
+          "canonical_predictions": 86,
+          "code_errors": 269,
+          "code_characters": 269,
+          "ocr_failures": 0,
+          "cleanup_leftovers": {},
+          "wall_seconds": 52.107,
+          "timings": {
+            "acquisition_seconds": 0.056,
+            "asr_seconds": 35.186,
+            "ocr_seconds": 26.729,
+            "preview_seconds": 6.611,
+            "sampling_seconds": 10.068
+          }
+        },
+        {
+          "case_id": "r02-a02",
+          "status": "measured",
+          "matched": 22,
+          "references": 22,
+          "predictions": 24,
+          "recall": 1.0,
+          "precision": 0.9166666666666666,
+          "canonical_matched": 22,
+          "canonical_predictions": 37,
+          "code_errors": 56,
+          "code_characters": 1503,
+          "ocr_failures": 0,
+          "cleanup_leftovers": {},
+          "wall_seconds": 63.719,
+          "timings": {
+            "acquisition_seconds": 0.148,
+            "asr_seconds": 40.075,
+            "ocr_seconds": 7.477,
+            "preview_seconds": 2.135,
+            "sampling_seconds": 21.118
+          }
+        },
+        {
+          "case_id": "r02-a03",
+          "status": "measured",
+          "matched": 27,
+          "references": 27,
+          "predictions": 279,
+          "recall": 1.0,
+          "precision": 0.0967741935483871,
+          "canonical_matched": 27,
+          "canonical_predictions": 600,
+          "code_errors": 19,
+          "code_characters": 1665,
+          "ocr_failures": 0,
+          "cleanup_leftovers": {},
+          "wall_seconds": 133.987,
+          "timings": {
+            "acquisition_seconds": 0.188,
+            "asr_seconds": 59.61,
+            "ocr_seconds": 46.037,
+            "preview_seconds": 34.328,
+            "sampling_seconds": 39.432
+          }
+        },
+        {
+          "case_id": "r02-a04",
+          "status": "measured",
+          "matched": 56,
+          "references": 67,
+          "predictions": 229,
+          "recall": 0.835820895522388,
+          "precision": 0.2445414847161572,
+          "canonical_matched": 58,
+          "canonical_predictions": 306,
+          "code_errors": 155,
+          "code_characters": 3543,
+          "ocr_failures": 0,
+          "cleanup_leftovers": {},
+          "wall_seconds": 110.504,
+          "timings": {
+            "acquisition_seconds": 0.169,
+            "asr_seconds": 47.094,
+            "ocr_seconds": 62.384,
+            "preview_seconds": 23.527,
+            "sampling_seconds": 23.944
+          }
+        }
+      ],
+      "report_sha256": "afe2be7838f914b255c84e9d56cb05ae227d6cbb2c6d44eb50e6294e985f5624",
+      "runtime_import": "checkout",
+      "docker_environment": null
+    },
+    "docker": {
+      "status": "measured",
+      "mode": "run",
+      "extraction_code_revision": "c9f2b4283a23b52a5c4aee8059a168b73ffae02f",
+      "runtime_sha256": "3b646fbf384f6f7f4a09de360281877521408978120a428da490aa188acdd066",
+      "source_sha256": "d360de7f3261a854cc3bec7c12c14a21353bd563597b6a404146e5152b94c7ba",
+      "labels_sha256": "84cc77f2270b5997eb39d7c7cd8f816c8591661b484100d0fdf723e04c98874e",
+      "totals": {
+        "matched": 130,
+        "references": 139,
+        "predictions": 565,
+        "canonical_predictions": 1031,
+        "canonical_matched": 130,
+        "code_errors": 977,
+        "code_characters": 6980,
+        "ocr_failures": 0
+      },
+      "values": {
+        "recall": 0.935251798561151,
+        "precision": 0.23008849557522124,
+        "code_cer": 0.13997134670487105
+      },
+      "reaches_targets": {
+        "recall": true,
+        "precision": false,
+        "code_cer": true
+      },
+      "all_recordings_measured": true,
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "r02-a01",
+          "status": "measured",
+          "matched": 23,
+          "references": 23,
+          "predictions": 41,
+          "recall": 1.0,
+          "precision": 0.5609756097560976,
+          "canonical_matched": 23,
+          "canonical_predictions": 86,
+          "code_errors": 269,
+          "code_characters": 269,
+          "ocr_failures": 0,
+          "cleanup_leftovers": {},
+          "wall_seconds": 196.084,
+          "timings": {
+            "acquisition_seconds": 0.151,
+            "asr_seconds": 168.231,
+            "ocr_seconds": 73.936,
+            "preview_seconds": 8.676,
+            "sampling_seconds": 18.335
+          }
+        },
+        {
+          "case_id": "r02-a02",
+          "status": "measured",
+          "matched": 22,
+          "references": 22,
+          "predictions": 29,
+          "recall": 1.0,
+          "precision": 0.7586206896551724,
+          "canonical_matched": 22,
+          "canonical_predictions": 37,
+          "code_errors": 111,
+          "code_characters": 1503,
+          "ocr_failures": 0,
+          "cleanup_leftovers": {},
+          "wall_seconds": 201.999,
+          "timings": {
+            "acquisition_seconds": 0.61,
+            "asr_seconds": 172.297,
+            "ocr_seconds": 28.626,
+            "preview_seconds": 2.489,
+            "sampling_seconds": 25.981
+          }
+        },
+        {
+          "case_id": "r02-a03",
+          "status": "measured",
+          "matched": 27,
+          "references": 27,
+          "predictions": 237,
+          "recall": 1.0,
+          "precision": 0.11392405063291139,
+          "canonical_matched": 27,
+          "canonical_predictions": 603,
+          "code_errors": 201,
+          "code_characters": 1665,
+          "ocr_failures": 0,
+          "cleanup_leftovers": {},
+          "wall_seconds": 359.486,
+          "timings": {
+            "acquisition_seconds": 0.464,
+            "asr_seconds": 253.785,
+            "ocr_seconds": 247.187,
+            "preview_seconds": 52.89,
+            "sampling_seconds": 50.229
+          }
+        },
+        {
+          "case_id": "r02-a04",
+          "status": "measured",
+          "matched": 58,
+          "references": 67,
+          "predictions": 258,
+          "recall": 0.8656716417910447,
+          "precision": 0.2248062015503876,
+          "canonical_matched": 58,
+          "canonical_predictions": 305,
+          "code_errors": 396,
+          "code_characters": 3543,
+          "ocr_failures": 0,
+          "cleanup_leftovers": {},
+          "wall_seconds": 442.633,
+          "timings": {
+            "acquisition_seconds": 0.875,
+            "asr_seconds": 358.425,
+            "ocr_seconds": 369.676,
+            "preview_seconds": 27.371,
+            "sampling_seconds": 43.609
+          }
+        }
+      ],
+      "report_sha256": "ab6ee89f9592dca7ea9087d346732a0f36ab7aa6e40beb67593d5ee09fe86020",
+      "runtime_import": "verified_installed_package",
+      "docker_environment": "Pinned working tree mounted over the preceding local image"
+    }
+  },
+  "round3-rank": {
+    "mac": {
+      "status": "measured",
+      "mode": "run",
+      "extraction_code_revision": "a604b7c3f24f95bd6d139dc43c88a4840f8a6678",
+      "runtime_sha256": "a3364116f5a0c025898508e6dd40fb4bb64f954b522e69f52b92cfcf788ed707",
+      "source_sha256": "d360de7f3261a854cc3bec7c12c14a21353bd563597b6a404146e5152b94c7ba",
+      "labels_sha256": "84cc77f2270b5997eb39d7c7cd8f816c8591661b484100d0fdf723e04c98874e",
+      "totals": {
+        "matched": 126,
+        "references": 139,
+        "predictions": 196,
+        "canonical_predictions": 1029,
+        "canonical_matched": 130,
+        "code_errors": 499,
+        "code_characters": 6980,
+        "ocr_failures": 0
+      },
+      "values": {
+        "recall": 0.9064748201438849,
+        "precision": 0.6428571428571429,
+        "code_cer": 0.07148997134670487
+      },
+      "reaches_targets": {
+        "recall": true,
+        "precision": true,
+        "code_cer": true
+      },
+      "all_recordings_measured": true,
+      "passed": true,
+      "cases": [
+        {
+          "case_id": "r02-a01",
+          "status": "measured",
+          "matched": 23,
+          "references": 23,
+          "predictions": 28,
+          "recall": 1.0,
+          "precision": 0.8214285714285714,
+          "canonical_matched": 23,
+          "canonical_predictions": 86,
+          "code_errors": 269,
+          "code_characters": 269,
+          "ocr_failures": 0,
+          "cleanup_leftovers": {},
+          "wall_seconds": 61.886,
+          "timings": {
+            "acquisition_seconds": 0.094,
+            "asr_seconds": 35.929,
+            "boundary_rank_seconds": 1.307,
+            "ocr_seconds": 27.099,
+            "preview_seconds": 6.564,
+            "sampling_seconds": 17.823
+          }
+        },
+        {
+          "case_id": "r02-a02",
+          "status": "measured",
+          "matched": 22,
+          "references": 22,
+          "predictions": 22,
+          "recall": 1.0,
+          "precision": 1.0,
+          "canonical_matched": 22,
+          "canonical_predictions": 37,
+          "code_errors": 56,
+          "code_characters": 1503,
+          "ocr_failures": 0,
+          "cleanup_leftovers": {},
+          "wall_seconds": 64.957,
+          "timings": {
+            "acquisition_seconds": 0.079,
+            "asr_seconds": 43.723,
+            "boundary_rank_seconds": 0.647,
+            "ocr_seconds": 8.532,
+            "preview_seconds": 2.333,
+            "sampling_seconds": 17.933
+          }
+        },
+        {
+          "case_id": "r02-a03",
+          "status": "measured",
+          "matched": 27,
+          "references": 27,
+          "predictions": 46,
+          "recall": 1.0,
+          "precision": 0.5869565217391305,
+          "canonical_matched": 27,
+          "canonical_predictions": 600,
+          "code_errors": 19,
+          "code_characters": 1665,
+          "ocr_failures": 0,
+          "cleanup_leftovers": {},
+          "wall_seconds": 182.075,
+          "timings": {
+            "acquisition_seconds": 0.369,
+            "asr_seconds": 72.304,
+            "boundary_rank_seconds": 8.338,
+            "ocr_seconds": 63.06,
+            "preview_seconds": 40.939,
+            "sampling_seconds": 59.507
+          }
+        },
+        {
+          "case_id": "r02-a04",
+          "status": "measured",
+          "matched": 54,
+          "references": 67,
+          "predictions": 100,
+          "recall": 0.8059701492537313,
+          "precision": 0.54,
+          "canonical_matched": 58,
+          "canonical_predictions": 306,
+          "code_errors": 155,
+          "code_characters": 3543,
+          "ocr_failures": 0,
+          "cleanup_leftovers": {},
+          "wall_seconds": 144.497,
+          "timings": {
+            "acquisition_seconds": 0.169,
+            "asr_seconds": 57.847,
+            "boundary_rank_seconds": 5.034,
+            "ocr_seconds": 78.306,
+            "preview_seconds": 24.313,
+            "sampling_seconds": 36.176
+          }
+        }
+      ],
+      "report_sha256": "ecbecabe86cea50ba5bfe9f12f3af523683fb8de9da2f7397224c6c40ec77c71",
+      "runtime_import": "checkout",
+      "docker_environment": null
+    },
+    "docker": {
+      "status": "measured",
+      "mode": "run",
+      "extraction_code_revision": "a604b7c3f24f95bd6d139dc43c88a4840f8a6678",
+      "runtime_sha256": "a3364116f5a0c025898508e6dd40fb4bb64f954b522e69f52b92cfcf788ed707",
+      "source_sha256": "d360de7f3261a854cc3bec7c12c14a21353bd563597b6a404146e5152b94c7ba",
+      "labels_sha256": "84cc77f2270b5997eb39d7c7cd8f816c8591661b484100d0fdf723e04c98874e",
+      "totals": {
+        "matched": 125,
+        "references": 139,
+        "predictions": 202,
+        "canonical_predictions": 1031,
+        "canonical_matched": 130,
+        "code_errors": 977,
+        "code_characters": 6980,
+        "ocr_failures": 0
+      },
+      "values": {
+        "recall": 0.8992805755395683,
+        "precision": 0.6188118811881188,
+        "code_cer": 0.13997134670487105
+      },
+      "reaches_targets": {
+        "recall": true,
+        "precision": true,
+        "code_cer": true
+      },
+      "all_recordings_measured": true,
+      "passed": true,
+      "cases": [
+        {
+          "case_id": "r02-a01",
+          "status": "measured",
+          "matched": 23,
+          "references": 23,
+          "predictions": 26,
+          "recall": 1.0,
+          "precision": 0.8846153846153846,
+          "canonical_matched": 23,
+          "canonical_predictions": 86,
+          "code_errors": 269,
+          "code_characters": 269,
+          "ocr_failures": 0,
+          "cleanup_leftovers": {},
+          "wall_seconds": 187.45,
+          "timings": {
+            "acquisition_seconds": 0.127,
+            "asr_seconds": 161.079,
+            "boundary_rank_seconds": 1.687,
+            "ocr_seconds": 68.831,
+            "preview_seconds": 8.105,
+            "sampling_seconds": 15.733
+          }
+        },
+        {
+          "case_id": "r02-a02",
+          "status": "measured",
+          "matched": 22,
+          "references": 22,
+          "predictions": 28,
+          "recall": 1.0,
+          "precision": 0.7857142857142857,
+          "canonical_matched": 22,
+          "canonical_predictions": 37,
+          "code_errors": 111,
+          "code_characters": 1503,
+          "ocr_failures": 0,
+          "cleanup_leftovers": {},
+          "wall_seconds": 216.8,
+          "timings": {
+            "acquisition_seconds": 0.364,
+            "asr_seconds": 184.858,
+            "boundary_rank_seconds": 0.771,
+            "ocr_seconds": 32.731,
+            "preview_seconds": 2.581,
+            "sampling_seconds": 27.399
+          }
+        },
+        {
+          "case_id": "r02-a03",
+          "status": "measured",
+          "matched": 27,
+          "references": 27,
+          "predictions": 48,
+          "recall": 1.0,
+          "precision": 0.5625,
+          "canonical_matched": 27,
+          "canonical_predictions": 603,
+          "code_errors": 201,
+          "code_characters": 1665,
+          "ocr_failures": 0,
+          "cleanup_leftovers": {},
+          "wall_seconds": 346.432,
+          "timings": {
+            "acquisition_seconds": 0.872,
+            "asr_seconds": 241.603,
+            "boundary_rank_seconds": 9.639,
+            "ocr_seconds": 241.874,
+            "preview_seconds": 43.857,
+            "sampling_seconds": 49.169
+          }
+        },
+        {
+          "case_id": "r02-a04",
+          "status": "measured",
+          "matched": 53,
+          "references": 67,
+          "predictions": 100,
+          "recall": 0.7910447761194029,
+          "precision": 0.53,
+          "canonical_matched": 58,
+          "canonical_predictions": 305,
+          "code_errors": 396,
+          "code_characters": 3543,
+          "ocr_failures": 0,
+          "cleanup_leftovers": {},
+          "wall_seconds": 340.656,
+          "timings": {
+            "acquisition_seconds": 0.414,
+            "asr_seconds": 238.039,
+            "boundary_rank_seconds": 6.355,
+            "ocr_seconds": 274.653,
+            "preview_seconds": 26.781,
+            "sampling_seconds": 31.538
+          }
+        }
+      ],
+      "report_sha256": "13feeeb5dbbfdb34dd1c270a6af64f90eae34d2c057fba6515ca1e6ca62417c8",
+      "runtime_import": "verified_installed_package",
+      "docker_environment": "Canonical installed image of the candidate"
+    }
+  }
+}

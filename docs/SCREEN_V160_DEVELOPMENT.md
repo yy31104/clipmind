@@ -139,3 +139,20 @@ separately on both backends. Two real changes within a second can
 also compete for one prediction.
 
 [Training inputs and per-recording development scores](data/v160-development-rank.json)
+
+The same four recordings also went through full extraction with and
+without ranking. Both rows use the guarded room and revised OCR code.
+
+| Backend | Boundary mode | Recall | Precision | Code CER |
+| --- | --- | ---: | ---: | ---: |
+| Mac / Vision | Before ranking | 128/139 (92.09%) | 128/572 (22.38%) | 499/6980 (7.15%) |
+| Mac / Vision | With ranking | 126/139 (90.65%) | 126/196 (64.29%) | 499/6980 (7.15%) |
+| Docker / Tesseract | Before ranking | 130/139 (93.53%) | 130/565 (23.01%) | 977/6980 (14.00%) |
+| Docker / Tesseract | With ranking | 125/139 (89.93%) | 125/202 (61.88%) | 977/6980 (14.00%) |
+
+The deployed fit includes earlier extractions of these recordings.
+The ranking pass took 15.3 seconds across four Mac runs and 18.5
+seconds across four Docker runs. The installed candidate kept the
+same canonical counts and code errors on each backend.
+
+[Full-extraction score receipts](data/v160-development-rank-extraction.json)
