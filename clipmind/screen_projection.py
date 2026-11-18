@@ -9,6 +9,7 @@ from pathlib import Path
 import numpy as np
 
 from .media import Frame
+from .screen_viewport import _new_side_detail
 
 _WIDTH, _HEIGHT = 480, 270
 _RIM_SAMPLES = np.linspace(0.12, 0.88, 20, dtype=np.float32)
@@ -174,7 +175,7 @@ def unchanged_projection_indices(frames: list[Frame]) -> set[int]:
             observed.append((frame.timestamp, corners))
     times = [timestamp for timestamp, _ in observed]
     result = set()
-    for previous, current in zip(frames, frames[1:]):
+    for position, (previous, current) in enumerate(zip(frames, frames[1:]), start=1):
         if current.change_kind not in {"content", "build", "uncertain"} or current.ocr_warning or current.dedupe_warning:
             continue
         left = bisect_left(times, current.timestamp - _CONTEXT_SECONDS)
@@ -200,8 +201,19 @@ def unchanged_projection_indices(frames: list[Frame]) -> set[int]:
                 continue
             actual = median * np.float32([later.shape[1] / _WIDTH, later.shape[0] / _HEIGHT])
             size = (int(np.linalg.norm(actual[1] - actual[0])), int(np.linalg.norm(actual[3] - actual[0])))
-            if _same_projection(_rectify(earlier, actual, size, cv2),
-                                _rectify(later, actual, size, cv2), cv2):
-                result.add(current.index)
+            if not _same_projection(_rectify(earlier, actual, size, cv2),
+                                    _rectify(later, actual, size, cv2), cv2):
+                break
+            stable = None
+            if position + 1 < len(frames) and frames[position + 1].timestamp - current.timestamp <= 10:
+                stable, _ = read(frames[position + 1].path)
+            if stable is None and current.stable_duration >= 1:
+                stable = later
+            x, y, width, height = cv2.boundingRect(actual)
+            if stable is not None and _new_side_detail(
+                earlier, later, stable, (x, y, x + width, y + height), True, cv2,
+            ):
+                break
+            result.add(current.index)
             break
     return result
