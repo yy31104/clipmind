@@ -1,6 +1,6 @@
 FROM python:3.12-slim-bookworm
 
-ARG VERSION=1.5.0
+ARG VERSION=1.6.0
 ARG VCS_REF=unknown
 
 LABEL org.opencontainers.image.title="ClipMind" \
