@@ -167,6 +167,25 @@ class BoundaryInventoryTests(unittest.TestCase):
                 screen.resolve_pack_path("<WORKDIR>/../other", root)
         self.assertEqual(screen.safe_report("version 1.4.0", Path(".")), "version 1.4.0")
 
+    def test_shareable_report_keeps_url_and_literal_ocr_text(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary).resolve()
+            url = f"https://example.org{root}/rows.csv"
+            measured_text = f"{root}/input.mp4 and {url}"
+            pack = root / "case" / "library" / "pack"
+            record = {"source_url": url, "pack_path": str(pack),
+                      "ocr_references": [{"text": measured_text, "hypothesis": measured_text,
+                                          "reference": measured_text}],
+                      "error": f"Could not open '{root / 'input.mp4'}' from {url}",
+                      "other": f"{root}-different/input.mp4"}
+            shared = screen.safe_report(record, root)
+            self.assertEqual(shared["source_url"], url)
+            self.assertEqual(shared["ocr_references"], record["ocr_references"])
+            self.assertEqual(shared["other"], record["other"])
+            self.assertEqual(shared["pack_path"], str(pack).replace(str(root), "<WORKDIR>", 1))
+            relative_input = str(root / "input.mp4").replace(str(root), "<WORKDIR>", 1)
+            self.assertEqual(shared["error"], f"Could not open '{relative_input}' from {url}")
+
 
 class SourceReviewTests(unittest.TestCase):
     def make_inputs(self, root):

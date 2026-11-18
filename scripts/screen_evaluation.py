@@ -100,19 +100,24 @@ def case_source_url(case: dict) -> str:
 
 def safe_report(value, workdir: Path):
     """Remove machine-specific paths from a shareable result, including errors."""
-    if isinstance(value, Path):
-        value = str(value)
-    if isinstance(value, str):
-        value = value.replace(str(workdir.resolve()), "<WORKDIR>")
-        # A relative workdir of '.' must not replace punctuation in every string.
-        return value.replace(str(workdir), "<WORKDIR>") if workdir.is_absolute() else value
-    if isinstance(value, list):
-        return [safe_report(item, workdir) for item in value]
-    if isinstance(value, tuple):
-        return [safe_report(item, workdir) for item in value]
-    if isinstance(value, dict):
-        return {key: safe_report(item, workdir) for key, item in value.items()}
-    return value
+    roots = {str(workdir.resolve())}
+    if workdir.is_absolute():
+        roots.add(str(workdir))
+    alternatives = "|".join(re.escape(root) for root in sorted(roots, key=len, reverse=True))
+    path = re.compile(r"""(?<![^\s"'\[({=,:])(?:%s)(?=$|[/\\\s"'\])}:,])""" % alternatives)
+    evidence_fields = {"reference", "hypothesis", "text", "source_url"}
+
+    def redact(item):
+        if isinstance(item, (str, Path)):
+            return path.sub("<WORKDIR>", str(item))
+        if isinstance(item, (list, tuple)):
+            return [redact(entry) for entry in item]
+        if isinstance(item, dict):
+            return {key: entry if key in evidence_fields and isinstance(entry, str)
+                    else redact(entry) for key, entry in item.items()}
+        return item
+
+    return redact(value)
 
 
 def resolve_pack_path(value: str, workdir: Path) -> Path:
