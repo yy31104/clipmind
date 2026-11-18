@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "annotation_status": "AI-assisted annotations; human review pending.",
+  "targets": {
+    "recall": ">=0.85",
+    "information_precision": ">=0.50",
+    "code_cer": "<=0.15"
+  },
+  "development_set": "Ten 39C3 excerpts (real-talk-labels.json) plus the three v1.4.0 holdout talks with corrected labels (v150-development-labels.json).",
+  "development": {
+    "mac": {
+      "v1.4.0": {
+        "matched": 137,
+        "references": 138,
+        "predictions": 585,
+        "recall": 0.9928,
+        "precision": 0.2342,
+        "code_errors": 461,
+        "code_units": 2891,
+        "code_cer": 0.1595
+      },
+      "v1.5.0": {
+        "matched": 130,
+        "references": 138,
+        "predictions": 315,
+        "recall": 0.942,
+        "precision": 0.4127,
+        "code_errors": 295,
+        "code_units": 2891,
+        "code_cer": 0.102
+      }
+    },
+    "docker": {
+      "v1.4.0": {
+        "matched": 137,
+        "references": 138,
+        "predictions": 584,
+        "recall": 0.9928,
+        "precision": 0.2346,
+        "code_errors": 503,
+        "code_units": 2891,
+        "code_cer": 0.174
+      },
+      "v1.5.0": {
+        "matched": 130,
+        "references": 138,
+        "predictions": 377,
+        "recall": 0.942,
+        "precision": 0.3448,
+        "code_errors": 367,
+        "code_units": 2891,
+        "code_cer": 0.1269
+      }
+    }
+  },
+  "development_baseline_runtime": "v1.4.0 (f9d7f20); Mac checkout and the published ghcr.io/yy31104/clipmind:v1.4.0 image",
+  "holdout": {
+    "mac": {
+      "matched": 169,
+      "references": 182,
+      "predictions": 499,
+      "recall": 0.9286,
+      "precision": 0.3387,
+      "code_errors": 935,
+      "code_units": 4165,
+      "code_cer": 0.2245
+    },
+    "docker": {
+      "matched": 173,
+      "references": 182,
+      "predictions": 693,
+      "recall": 0.9505,
+      "precision": 0.2496,
+      "code_errors": 549,
+      "code_units": 4165,
+      "code_cer": 0.1318
+    }
+  },
+  "candidate_commit": "28f8669188fbbea7f5fa59d95665ebb077269564",
+  "reports_sha256": {
+    "v150-development-docker-dev10-results.json": "54bc6ffff5b101266fa9609ee720dae3136e685e690ff4f0ff1ba20c4a5cbd41",
+    "v150-development-docker-dev3-results.json": "4fc76f4113132dd21182d6f43414150d63d78ea8b0407de1d54b12765e2f8081",
+    "v150-development-mac-dev10-results.json": "4f5b1aa667e078815161049758659bde591a5abd7e36c1b2b95529f2ff7ca01b",
+    "v150-development-mac-dev3-results.json": "7f0239fe1bc293aa092b6f3c309da08b84759448649c6716c2080c9a31139678",
+    "v150-holdout-docker-results.json": "22c3c925ea1a66ae3ddeb7a7ea0b5b54a7c47ff43119133f2c2c034fab2655ae",
+    "v150-holdout-mac-results.json": "ad0d69d082bb8a1514ce84fcc727464a77d695dd57157c49a2138364c19ae5e9"
+  }
+}

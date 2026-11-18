@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "corpus_id": "screen-holdout-v150",
+  "locked_at": "2026-11-17T23:17:10.173581+00:00",
+  "candidate_commit": "28f8669188fbbea7f5fa59d95665ebb077269564",
+  "runtime_sha256": "2ea07344fdf5152dcbbf1d21b8c749e3445b6a2badd656fc5a4d751f8415aaf8",
+  "runtime_manifest_sha256": "cd03523d699166700dceb5f1decc83ffd007694dc300b61bfb517ee00439f44b",
+  "evaluator_sha256": {
+    "scripts/evaluate_real_talks.py": "86e25a47e3cdec87c4c4b7fa90b805b3709e1807119811a63261ce64e6ee2644",
+    "scripts/screen_evaluation.py": "c068100b0a1066b42282d09e9c7a123004ff94d80f9d42ddf23580db05eda395"
+  },
+  "frozen_files_sha256": {
+    "docs/data/v150-holdout-cases.json": "9597964a9f0796c7de5f758e853020046d0e59447af4c583f19de74081395d2d",
+    "docs/data/v150-holdout-labels.json": "807205b4045e1f260ba16f5c2b69f75739fed8ed1b8bb8559b8947c2e022d6a5",
+    "docs/data/v150-holdout-freeze.json": "067dad0d961b699086692b870d5053cb83a7c648674292b94f4b4e2a2b774fd5",
+    "docs/HOLDOUT_V150_PROTOCOL.md": "c5477be57f2cc54d2e44019844ee7f7b285fc46883e646b9c567d09d3b610777"
+  },
+  "freeze_commit": "c6d72f1",
+  "docker_image_id": "sha256:ebc7679ebf16c91fe3cba97ccfa1edc0aef06bc1bb4160769a8e5fcbdd994078",
+  "paths": [
+    {
+      "id": "mac-mlx-vision",
+      "asr_provider": "mlx",
+      "ocr_provider": "vision",
+      "attempts": 1
+    },
+    {
+      "id": "docker-cpu-tesseract",
+      "asr_provider": "faster-whisper",
+      "ocr_provider": "tesseract",
+      "cpus": 6,
+      "memory_gib": 4,
+      "network": "none",
+      "attempts": 1
+    }
+  ],
+  "attempt_policy": "One attempt per path on the same inputs and labels. No parameter change, rerun or replacement after results. Failures are published.",
+  "annotation_status": "AI-assisted; human review pending",
+  "mac_once_token_sha256": "8bdb21a3511354282c19426ca643f04efcfcfbe0b81a41c8bd8f54b4863a26b3",
+  "docker_once_token_sha256": "6a3c9b72768244789204a3ea7849baa308ba83b6c235df8e20948e836fc60c5b"
+}

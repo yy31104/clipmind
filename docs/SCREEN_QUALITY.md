@@ -1,76 +1,72 @@
-# Screen quality: v1.4.0
+# Screen quality: v1.5.0
 
-The original ten 180-second 39C3 excerpts are development data: 30 minutes, 60 annotated changes across seven applicable excerpts, and seven code ROIs containing 593 normalized characters. Annotations are AI-assisted; human review is pending. Publisher-caption agreement measures agreement with generated captions, rather than a human transcript.
+Targets, unchanged since v1.4.0: change recall at least 85%, information-boundary precision at least 50%, code character error rate (CER) at most 15%, on both paths. Annotations are AI-assisted; human review is pending.
 
-## Development results
+| Set | Path | Version | Changes captured | Information precision | Code CER |
+| --- | --- | --- | ---: | ---: | ---: |
+| Development | Mac, MLX + Vision | v1.4.0 | 137/138 (99.28%) | 137/585 (23.42%) | 461/2891 (15.95%) |
+| Development | Mac, MLX + Vision | v1.5.0 | 130/138 (94.20%) | 130/315 (41.27%) | 295/2891 (10.20%) |
+| Development | Docker, CPU + Tesseract | v1.4.0 | 137/138 (99.28%) | 137/584 (23.46%) | 503/2891 (17.40%) |
+| Development | Docker, CPU + Tesseract | v1.5.0 | 130/138 (94.20%) | 130/377 (34.48%) | 367/2891 (12.69%) |
+| New holdout, one run | Mac, MLX + Vision | v1.5.0 | 169/182 (92.86%) | 169/499 (33.87%) | 935/4165 (22.45%) |
+| New holdout, one run | Docker, CPU + Tesseract | v1.5.0 | 173/182 (95.05%) | 173/693 (24.96%) | 549/4165 (13.18%) |
 
-| Path | Version | Changes captured | Information precision | Canonical control precision | Code CER | Caption WER | Sum case time |
-| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Mac, MLX + Vision | v1.3.0 | 44/60 (73.33%) | 44/159 (27.67%) | 27.67% | 233/593 (39.29%) | 193/4572 (4.22%) | 118.897 s |
-| Mac, MLX + Vision | v1.4.0 development | 59/60 (98.33%) | 59/227 (25.99%) | 59/371 (15.90%) | 37/593 (6.24%) | 193/4572 (4.22%) | 126.500 s |
-| Docker, CPU + Tesseract | v1.3.0 | 44/60 (73.33%) | 44/160 (27.50%) | 27.50% | 322/593 (54.30%) | 186/4572 (4.07%) | 317.933 s |
-| Docker, CPU + Tesseract | v1.4.0 development | 59/60 (98.33%) | 59/224 (26.34%) | 59/368 (16.03%) | 140/593 (23.61%) | 186/4572 (4.07%) | 409.299 s |
+On development data, recall and code CER meet their targets on both paths and precision does not. **On the new holdout, recall meets the target on both paths and Docker code CER meets it. Precision misses 50% on both paths, and Mac code CER misses 15%.** The canonical control, which counts every retained state, is 176/1119 (15.73%) on Mac and 176/1118 (15.74%) on Docker. Typing states as speaker, layout or animation costs 7 matches on Mac and 3 on Docker.
 
-Code retention and recognition improve, but precision regresses slightly and portable code OCR still misses 15%. Typed speaker/layout frames remain saved. Uncertain changes and recognition failures count as information boundaries. The canonical control counts every retained state start. Matching stays one-to-one within one second; every incremental build remains a reference.
+## Development set
 
-| Code-heavy case | Mac before → after | Docker before → after |
-| --- | ---: | ---: |
-| Variable Fonts | 0.00% → 6.90% | 0.00% → 3.45% |
-| Ghidra | 6.58% → 5.26% | 9.21% → 10.53% |
-| Xous | 47.50% → 1.88% | 46.88% → 1.25% |
-| Proofs (Dafny) | 5.56% → 5.56% | 80.16% → 53.97% |
-| Fuzzer | 71.78% → 10.40% | 68.81% → 30.20% |
+The ten 39C3 excerpts (60 changes, 7 code regions, 593 characters) plus the three complete v1.4.0 holdout talks (78 changes, 15 code regions, 2,298 characters). The v1.4.0 holdout was scored once and is development data now. Its files, results and assets are unchanged. A [corrected copy of its labels](data/v150-development-labels.json) moves five WikiPie times to the first source frame that shows each addition and fixes one Shell comment; each correction is listed in its changelog.
 
-All ten cases finished. Mac recognized 629 frames and Docker 626, with zero OCR exceptions or temporary-media leftovers in these runs. The remaining Docker errors concentrate in small Dafny method contracts and the second Fuzzer snippet. The Mac's sole missed boundary is a timing error: the image contains the new circles at source PTS 8.0, but its retained interval begins at 6.0. That still fails the fixed one-second boundary test.
-
-The [baseline attribution](SCREEN_ERROR_ANALYSIS.md) covers every original miss and extra boundary. The [final attribution](data/v140-final-development-attribution.json) covers all 169 Mac typed errors: 65 speaker, 37 layout, 34 animation, 14 transition, six progressive-build, two timing and 11 unresolved. Individual hypotheses, character counts, case timings and provenance are in the [summary](data/v140-development-summary.json), [case CSV](data/v140-development-cases.csv), [ROI CSV](data/v140-development-rois.csv), and raw [Mac](data/v140-final-development-mac-results.json) / [Docker](data/v140-final-development-docker-results.json) reports.
+Before changing code, every extra boundary and code error of the v1.4.0 baseline was attributed ([boundaries](data/v150-development-boundary-attribution.json), [code](data/v150-development-code-attribution.json)). Across both paths there were 460 distinct extra boundaries: 208 speaker or people motion, 114 recognition differences on the same small-text page, 54 transition frames, 46 layout or camera changes and 38 animation frames. Code errors were mostly small text (Mac 393 of 461 errors), then background text and comment reading order (Docker 125 and 86 of 503).
 
 ## What each change did
 
-- **Retention:** progressive-stroke sampling raised recall from 44/60 to 59/60, but created 1,087–1,096 canonical predictions. Code CER improved to 28.50% on Mac and 43.68% on Docker. This intermediate precision regression remains in the raw reports.
-- **Settling:** choosing a later near-duplicate image removed a ghosted previous page in the prose ROI: Mac CER fell from 25.82% to 0.47%. Aggregate portable code CER did not improve. Two native frame errors made the intermediate Mac run incomplete; their underlying causes were not recorded.
-- **Motion:** on identical corrected-clock source samples, stationary strokes plus recurring-pane evidence reduced 1,121 raw predictions to 228 typed predictions, with 59/60 matches. [The ablation](SCREEN_MOTION_DEVELOPMENT.md) retains every variant, setup failure, and the simultaneous-presenter-motion/small-code residual risk.
-- **OCR:** exact-source-frame diagnostics isolate contrast and reading order. Vision code CER changed from 30.69% to 5.23%; native Mac Tesseract from 41.15% to 18.55%. These are diagnostic source frames, separate from the end-to-end table. [Every attempted variant and native failure](OCR_DEVELOPMENT.md) remains available.
+Boundary rules were measured by reclassifying the saved v1.4.0 development packs, which isolates them from OCR. Code changes were measured on the exact frames the baseline scored. The full runs in the first table are the reported results.
 
-Early native runs hung and were interrupted. The bounded worker still recorded one timeout in 666 repeated requests during development. Failures remain visible and contribute missing text; they are not retried away. The final real-video runs above recorded none.
+| Boundary rule | Mac precision | Docker precision |
+| --- | ---: | ---: |
+| v1.4.0 | 137/585 (23.42%) | 137/584 (23.46%) |
+| Compare with the last information screen, all rules | 129/293 (44.03%) | 131/414 (31.64%) |
+| without one-sample transition settling | 129/352 (36.65%) | 131/427 (30.68%) |
+| without return to the last information screen | 129/313 (41.21%) | 132/429 (30.77%) |
+| without the transient-motion test | 129/304 (42.43%) | 131/420 (31.19%) |
+| without the same-page misread test | 131/306 (42.81%) | 131/427 (30.68%) |
+| without misread word matching | 129/307 (42.02%) | 135/438 (30.82%) |
+| without the low-confidence filter | 129/293 (44.03%) | 135/475 (28.42%) |
 
-Tesseract's previous Chinese-first multilingual default regressed an unchanged English fixture. English-first order restores all four labels on Docker Tesseract 5.3.0 and CI 5.3.4. Two generated mixed Chinese controls retain their prior scores; this does not establish broad Chinese OCR accuracy. Explicit language overrides stay unchanged. Old failures are retained.
+The rules trade recall for precision: development matches fall from 137 to 129 (Mac) and 131 (Docker) in this replay. A rule for changes outside the bright screen area had no measurable effect and was removed. Ignoring stroke-like fragments was measured afterwards on the newer development packs: Mac 130/317 → 130/315, Docker 131/416 → 130/377.
 
-## Frozen holdout
+| Code change, exact-frame diagnostic | Mac Vision CER | Docker Tesseract CER |
+| --- | ---: | ---: |
+| v1.4.0 | 461/2891 (15.95%) | 503/2891 (17.40%) |
+| Keep trailing comments on their code line | 461/2891 (15.95%) | 422/2891 (14.60%) |
+| Vision: recover lines the high-contrast pass missed | 295/2891 (10.20%) | not used |
+| Tesseract: binarize dark code panels inside light slides | not used | 367/2891 (12.69%) |
 
-Three complete recordings, 40 minutes, 78 annotated changes and 15 code ROIs were frozen before extraction changes. The set includes Mandarin and publishers beyond CCC. The wide projected Chinese source supports change labels but no legible code transcription; its code CER is not applicable. See the [source protocol](HOLDOUT_SCREEN_PROTOCOL.md), [execution plan](HOLDOUT_EXECUTION.md), and [fixed metric definitions](SCREEN_EVALUATION.md).
+Three- and four-times upscaling did not reduce Tesseract errors on the smallest development code and was not kept. The [classification](data/v150-development-ablation.json) and [OCR](data/v150-development-ocr-diagnostics.json) records are kept.
 
-The single campaign used locked candidate `47c5334` on both paths. All six complete-talk runs finished; all 78 changes and 15 ROIs remain in the score denominators. Independent arithmetic and hash checks found no accounting discrepancy. No parameters, source labels, scoring rules or outcomes were changed after the campaign.
+## New holdout
 
-| Path | Changes captured | Information precision | Code CER | Complete-build coverage | Case time |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Mac, MLX + Vision | 73/78 (93.59%) | 73/358 (20.39%) | 436/2295 (19.00%) | 4/5 | 135.106 s |
-| Docker, CPU + Tesseract | 73/78 (93.59%) | 73/360 (20.28%) | 369/2295 (16.08%) | 4/5 | 419.568 s |
+Three complete recordings, 69 minutes, 182 changes and 15 code regions, frozen in a [separate commit](HOLDOUT_V150_PROTOCOL.md) before any extraction change: FOSDEM 2026 (English Go code with a speaker inset), PyCon Taiwan 2024 (Mandarin slides with Python and YAML code and a live demo) and COSCUP 2022 (Mandarin, room camera). Code regions come from two talks in two languages; the room camera's only code is unreadable at source and is N/A.
 
-**Recall meets 85%; precision misses 50% and code CER misses 15% on both paths.** No held-out frame was excluded as speaker/layout/animation, so the information and canonical control scores are identical. There were zero OCR exceptions and zero temporary-media leftovers. This establishes execution, not perfect extraction.
+The single campaign used locked candidate `28f8669` on both paths. Both paths finished all three recordings with no OCR exceptions and no leftover temporary media. No parameter, label or result was changed after the campaign, and nothing was rerun.
 
-| Full source | Mac / Docker captured changes | Mac / Docker predictions | Code references |
-| --- | ---: | ---: | --- |
-| COSCUP Python, Mandarin, 16 min | 25/25, both | 220 / 221 | N/A: projected code is not legible enough to transcribe |
-| EnthusiastiCon Shell, English, 17 min | 32/32, both | 105 / 106 | All 15 code ROIs, 2,295 characters |
-| Wikimania WikiPie, English, 7 min | 16/21, both | 33 / 33 | N/A: no code ROI |
+| Recording | Mac / Docker changes | Mac / Docker predictions | Mac / Docker code CER |
+| --- | ---: | ---: | ---: |
+| FOSDEM synctest, English, 23 min | 44/45, 45/45 | 73 / 80 | 34/1588 (2.14%) / 42/1588 (2.64%) |
+| PyCon Taiwan observability, Mandarin, 31 min | 83/87, 85/87 | 255 / 338 | 901/2577 (34.96%) / 507/2577 (19.67%) |
+| COSCUP 2022 government data, Mandarin room camera, 16 min | 42/50, 43/50 | 171 / 275 | N/A |
 
-The five frozen misses are WikiPie labels at 124, 140, 152, 347 and 393 seconds. Post-result source inspection found the additions in nearby retained states, with source reveal brackets at 125.0–125.515, 142.0–142.524, 149.5–150.019, 344.5–345.010 and 394.0–394.524 seconds. These differ from the integer reference labels. At 124, 140 and 393 seconds, neither the source nor the SDK-selected image contains the later addition; at 152 and 347 seconds both already contain it. The findings image at 345 seconds is already complete; the frozen 4/5 temporal score does not prove lost findings content. A Shell comment also differs between the frozen transcription and the source. These are reference-quality caveats requiring owner review; no label, score or outcome was replaced. Code errors are measured from one English code talk; this set does not establish Chinese OCR accuracy or broad code coverage. These sources have no publisher captions, so held-out WER is not applicable. Development improvements did not establish the held-out precision or OCR targets.
+Post-result inspection, without tuning:
 
-The [post-result inspection](data/v140-holdout-error-inspection.json) compares saved images with source crops. Shell code is retained; the struct OCR splits aligned comments into a later column, while the parser has small, softened glyphs. A deterministic sample of eight Coscup extra boundaries shows projection setup, foreground people, presenter motion and repeated content. This is a sample, not exhaustive attribution; some triggers remain uncertain. The [owner review package](https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-owner-review.zip) includes wider source context for the known reference questions.
+- **Mac code CER** comes almost entirely from PyCon. 867 of its 901 errors are deletions: Vision skips many lines inside the dark code windows on light Mandarin slides. The Tesseract path binarizes such panels; the Vision path does not.
+- **Precision** is lowest on the room camera (COSCUP) and in the PyCon live demo, where people, camera moves, scrolling and menus produce states that still add recognized text.
+- **Misses**: on Mac, 8 COSCUP changes (three of them within five seconds around 637–642 s), 4 PyCon changes and the FOSDEM closing terminal command; on Docker, 7 COSCUP and 2 PyCon changes.
 
-Raw [Mac](data/v140-holdout-mac-results.json) and [Docker](data/v140-holdout-docker-results.json) reports retain all hypotheses, boxes, predictions and misses. The [summary](data/v140-holdout-summary.json), [independent audit](data/v140-holdout-independent-audit.json), [campaign lock](data/v140-holdout-campaign-lock.json) and [runtime byte manifest](data/v140-holdout-runtime.json) bind the results to their source, evaluator and implementation.
+Raw [Mac](data/v150-holdout-mac-results.json) and [Docker](data/v150-holdout-docker-results.json) reports keep every prediction, match and miss; the [summary](data/v150-summary.json) also lists the final development reports. The [campaign lock](data/v150-holdout-campaign-lock.json), [runtime manifest](data/v150-holdout-runtime.json) and [execution record](data/v150-holdout-execution.json) bind them to the candidate, image and evaluator. The host slept during the Docker run, so its elapsed time is not a speed measurement; per-recording times use a monotonic clock.
 
-Development extraction used `13616c8`. The final candidate changes only the multilingual OCR default in `config.py`; the per-source development language overrides remain identical. Native development had stale 1.3.0 editable-install metadata while importing the verified 1.4.0 checkout bytes. The final campaign uses matching 1.4.0 package metadata and a clean candidate tree. Reports preserve the original provenance.
+## Review
 
-## CPU timing and comparisons
+The [holdout review package](https://github.com/yy31104/clipmind/releases/download/v1.5.0/clipmind-v1.5.0-holdout-review.zip) has all 197 annotations with source images and code crops, and a blank CSV, for about 106 minutes of review. Until it is returned, results say: AI-assisted annotations; human review pending.
 
-The published v1.3.0 image processed the complete 39:24 Xous talk in **450.892 seconds**, plus **92.120 seconds** for the separate first model download. ASR took 382.773 s, OCR 66.159 s and sampling 61.794 s; overlapping stages should not be summed. The [record](data/v140-full-xous-docker.json) includes the image digest, input checksum and empty cleanup inventory.
-
-Docker measurements use Linux ARM64, six CPUs, 4 GiB and a warm offline model cache on an M4 Pro / 24 GB Mac. Development processes can overlap, so these timings are not isolated hardware comparisons. The CPU model resolves to int8_float32. Both Docker development runs explicitly use English; the new Mac run and final holdout use automatic speech language. Source preparation and downloads are separate from case times. Windows, x86 quality and CUDA were not measured.
-
-Three runnable open-source tools use the same development inputs and their defaults in the [comparison table](TOOL_COMPARISON.md). Slidegeist and slides-extractor have higher boundary precision than ClipMind. Some tools retain later Xous content that v1.3.0 missed. Unavailable spatial OCR or speech measures stay not applicable.
-
-## Review and reuse
-
-The editable development and holdout review packs contain all 163 annotations, with before/after images and code crops, for an estimated 94-minute owner review. Until the completed table is returned, the annotation caveat remains. Downloads, source licenses and checksums are listed with the release evidence. The [facts sheet](V140_FACTS.md) contains measured numbers, links and a saved-frame GIF.
+v1.4.0 results, comparisons and CPU timings remain in the [v1.4.0 version of this page](https://github.com/yy31104/clipmind/blob/v1.4.0/docs/SCREEN_QUALITY.md).

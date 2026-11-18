@@ -1,0 +1,114 @@
+{
+ "method": "Reclassification of the saved v1.4.0 development packs with each rule disabled; OCR held fixed.",
+ "mac": {
+  "all rules": {
+   "matched": 129,
+   "references": 138,
+   "predictions": 293
+  },
+  "without transition settling": {
+   "matched": 129,
+   "references": 138,
+   "predictions": 352
+  },
+  "without return-to-anchor": {
+   "matched": 129,
+   "references": 138,
+   "predictions": 313
+  },
+  "without transient-motion test": {
+   "matched": 129,
+   "references": 138,
+   "predictions": 304
+  },
+  "without outside-bright-area test": {
+   "matched": 129,
+   "references": 138,
+   "predictions": 293
+  },
+  "without same-page misread test": {
+   "matched": 131,
+   "references": 138,
+   "predictions": 306
+  },
+  "without misread token matching": {
+   "matched": 129,
+   "references": 138,
+   "predictions": 307
+  },
+  "without low-confidence filter": {
+   "matched": 129,
+   "references": 138,
+   "predictions": 293
+  }
+ },
+ "docker": {
+  "all rules": {
+   "matched": 131,
+   "references": 138,
+   "predictions": 414
+  },
+  "without transition settling": {
+   "matched": 131,
+   "references": 138,
+   "predictions": 427
+  },
+  "without return-to-anchor": {
+   "matched": 132,
+   "references": 138,
+   "predictions": 429
+  },
+  "without transient-motion test": {
+   "matched": 131,
+   "references": 138,
+   "predictions": 420
+  },
+  "without outside-bright-area test": {
+   "matched": 131,
+   "references": 138,
+   "predictions": 414
+  },
+  "without same-page misread test": {
+   "matched": 131,
+   "references": 138,
+   "predictions": 427
+  },
+  "without misread token matching": {
+   "matched": 135,
+   "references": 138,
+   "predictions": 438
+  },
+  "without low-confidence filter": {
+   "matched": 135,
+   "references": 138,
+   "predictions": 475
+  }
+ },
+ "fragment_filter_on_development_run_packs": {
+  "mac": {
+   "before": [
+    130,
+    138,
+    317
+   ],
+   "after": [
+    130,
+    138,
+    315
+   ]
+  },
+  "docker": {
+   "before": [
+    131,
+    138,
+    416
+   ],
+   "after": [
+    130,
+    138,
+    377
+   ]
+  }
+ },
+ "removed_rule": "changes outside the bright screen area: identical results with and without it on both paths"
+}

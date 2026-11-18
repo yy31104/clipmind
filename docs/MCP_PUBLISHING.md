@@ -9,8 +9,8 @@ The registry stores metadata; the image remains on GitHub Container Registry.
 
 1. Finish the real-video benchmark and demo, and merge the reviewed release
    changes into `main`.
-2. Publish the matching non-draft GitHub Release and public image, initially
-   `v1.4.0` and `ghcr.io/yy31104/clipmind:v1.4.0`.
+2. Publish the matching non-draft GitHub Release and public image,
+   for example `v1.5.0` and `ghcr.io/yy31104/clipmind:v1.5.0`.
 3. Check that the image can be pulled without registry credentials, and test
    its MCP initialization and tools using the command below. Making the source
    repository public does not automatically make a GHCR package public.
@@ -19,8 +19,8 @@ The registry stores metadata; the image remains on GitHub Container Registry.
 
    ```text
    io.modelcontextprotocol.server.name=io.github.yy31104/clipmind
-   org.opencontainers.image.version=1.4.0
-   org.opencontainers.image.revision=<commit pointed to by v1.4.0>
+   org.opencontainers.image.version=1.5.0
+   org.opencontainers.image.revision=<commit pointed to by v1.5.0>
    ```
 
 The `clipmind` name on PyPI belongs to another project. This release uses GitHub
@@ -40,7 +40,7 @@ After the public release image is available, configure an MCP client with:
         "run", "--rm", "-i",
         "--entrypoint", "clipmind-mcp",
         "--mount", "type=volume,src=clipmind-data,dst=/data",
-        "ghcr.io/yy31104/clipmind:v1.4.0"
+        "ghcr.io/yy31104/clipmind:v1.5.0"
       ]
     }
   }
@@ -86,7 +86,7 @@ official release and schema compatibility; do not replace them with `latest`.
 After the workflow succeeds, inspect the public record:
 
 ```bash
-curl --fail 'https://registry.modelcontextprotocol.io/v0.1/servers/io.github.yy31104%2Fclipmind/versions/1.4.0'
+curl --fail 'https://registry.modelcontextprotocol.io/v0.1/servers/io.github.yy31104%2Fclipmind/versions/1.5.0'
 ```
 
 Only then describe this release as listed. The registry is currently in

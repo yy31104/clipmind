@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "candidate_commit": "28f8669188fbbea7f5fa59d95665ebb077269564",
+  "runtime_sha256": "2ea07344fdf5152dcbbf1d21b8c749e3445b6a2badd656fc5a4d751f8415aaf8",
+  "docker_image_id": "sha256:ebc7679ebf16c91fe3cba97ccfa1edc0aef06bc1bb4160769a8e5fcbdd994078",
+  "campaign_lock_sha256": "f3dbb3762406e3cce2af085c9d19426e5b82d79a0b7707e484a9add564aec68e",
+  "mac": {
+    "command": "<WORKDIR>/repo/.venv/bin/python scripts/evaluate_real_talks.py run --corpus docs/data/v150-holdout-cases.json --labels docs/data/v150-holdout-labels.json --workdir <WORKDIR>/campaign/holdout-mac/work --output <WORKDIR>/campaign/mac-results.json --once-token <WORKDIR>/campaign/mac-once.json --expected-runtime-fingerprint <WORKDIR>/campaign/runtime.json --force --asr-provider mlx --ocr-provider vision --ocr-diagnostics ",
+    "started_at": "2026-11-17T23:17:23Z",
+    "finished_at": "2026-11-17T23:23:30Z",
+    "exit_code": 0,
+    "host_wall_seconds": 367,
+    "runtime_import": "checkout at the candidate commit, byte-checked against the runtime manifest",
+    "asr_language": "auto"
+  },
+  "docker": {
+    "command": "docker run --rm --name clipmind-v150-holdout-docker --cpus=6 --memory=4g --network=none -v <WORKDIR>/wt-cand/scripts:/evaluation/scripts:ro -v <WORKDIR>/wt-cand/docs/data/v150-holdout-cases.json:/evaluation/docs/data/v150-holdout-cases.json:ro -v <WORKDIR>/wt-cand/docs/data/v150-holdout-labels.json:/evaluation/docs/data/v150-holdout-labels.json:ro -v <WORKDIR>/campaign/runtime.json:/expected-runtime.json:ro -v <WORKDIR>/docker/evaldeps:/evaldeps:ro -v <WORKDIR>/docker/model-cache:/model-cache:ro -v <WORKDIR>/campaign/holdout-docker/work:/data -v <WORKDIR>/campaign:/campaign -e PYTHONPATH=/evaldeps -e HF_HOME=/model-cache -e HF_HUB_OFFLINE=1 -e HF_HUB_DISABLE_TELEMETRY=1 -e PYTHON_DOTENV_DISABLED=1 clipmind-v150-candidate python /evaluation/scripts/evaluate_real_talks.py run --installed-runtime --expected-runtime-fingerprint /expected-runtime.json --corpus /evaluation/docs/data/v150-holdout-cases.json --labels /evaluation/docs/data/v150-holdout-labels.json --workdir /data --output /campaign/docker-results.json --once-token /campaign/docker-once.json --asr-provider faster-whisper --ocr-provider tesseract --asr-language auto --ocr-diagnostics --force ",
+    "started_at": "2026-11-17T23:17:23Z",
+    "finished_at": "2026-11-18T02:47:30Z",
+    "exit_code": 0,
+    "host_wall_seconds": 12607,
+    "cpu_limit": 6,
+    "memory_limit_gib": 4,
+    "network": "none",
+    "model_cache": "warm; offline, read-only",
+    "asr_language": "auto",
+    "runtime_import": "installed package in the candidate image, byte-checked before the token was reserved"
+  },
+  "timing_context": "Both paths ran at the same time on an M4 Pro / 24 GB Mac. The host slept during the Docker run, so host wall time is not a speed measurement; per-recording wall_seconds in the reports use a monotonic clock.",
+  "attempts": "One per path. No rerun or replacement."
+}

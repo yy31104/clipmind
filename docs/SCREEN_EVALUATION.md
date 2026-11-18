@@ -1,6 +1,6 @@
 # Screen extraction evaluation
 
-Protocol: `screen-evidence-v1`. The original ten 39C3 excerpts are the development set. New sources, intervals and source-frame annotations are frozen before extraction changes. Every incremental content addition remains a reference boundary. Build groups and full-build frame coverage are secondary measures; they never reduce the primary denominator.
+Protocol: `screen-evidence-v1`. The ten 39C3 excerpts and, from v1.5.0, the three used v1.4.0 holdout talks are the development set. A holdout is used once and then becomes development data. New sources, intervals and source-frame annotations are frozen before extraction changes. Every incremental content addition remains a reference boundary. Build groups and full-build frame coverage are secondary measures; they never reduce the primary denominator.
 
 Annotations are AI-assisted; human review is pending. Publisher caption agreement is not a claim about transcription against a human transcript.
 
