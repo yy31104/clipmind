@@ -17,6 +17,7 @@ from .media import Frame
 _WIDTH = 640
 _SHELL = re.compile(r"^([^\s$>%#]*[@:~][^\s$>%#]*[$>%#]|[$>%#])(?:\s+(.*?))?\s*$")
 _FIELD = re.compile(r"^([^\W\d_][^:@!?.;(){}/<>\[\]\\|=]{2,26}):\s*(.*?)\s*$")
+_QUOTED = re.compile(r'"(?:[^"\\]|\\.)*"' r"|'(?:[^'\\]|\\.)*'")
 
 
 @dataclass(frozen=True)
@@ -248,6 +249,43 @@ def _grows(before, after):
     return after.startswith(before) or SequenceMatcher(None, before, after[:len(before)], autojunk=False).ratio() >= .86
 
 
+def _statement(text):
+    # A semicolon can terminate a statement or occur inside a partial header.
+    # OCR can also mistake the caret after a real terminator for a stroke.
+    if not text.rstrip("!|¦•").endswith(";") or len(_characters(text)) < 4:
+        return False
+    code = _QUOTED.sub("", text)
+    if "'" in code or '"' in code:
+        return False
+    stack = []
+    pairs = {")": "(", "]": "[", "}": "{"}
+    for char in code:
+        if char in "([{":
+            stack.append(char)
+        elif char in pairs and (not stack or stack.pop() != pairs[char]):
+            return False
+    return not stack
+
+
+def _settled_statement(i, frames, lines, center, dominance, previous, current):
+    if (not .12 < center < .85 or dominance < .74
+            or frames[i + 1].timestamp - frames[i].timestamp < 1.2
+            or not _statement(current)):
+        return False
+    text = _characters(current)
+    if _statement(previous) and text == _characters(previous):
+        return False
+    if not any(.023 < abs(y - center) < .12 and (_statement(line) or ("(" in line and line.endswith("{")))
+               for _, y, line in lines[i]):
+        return False
+    for supported in lines[i + 1:i + 3]:
+        following = _line_at(supported, center)
+        if (_statement(following)
+                and SequenceMatcher(None, text, _characters(following), autojunk=False).ratio() >= .75):
+            return True
+    return False
+
+
 def _text_adjustments(frames, changes, height):
     lines = list(map(_text_items, frames))
     prompts = Counter()
@@ -304,6 +342,8 @@ def _text_adjustments(frames, changes, height):
                 and len(after) >= 8 and not _grows(before, after)):
             results.add(i)
         elif pending.get(i - 1) and wait >= 5 and len(after) >= 10 and closed:
+            results.add(i)
+        elif _settled_statement(i, frames, lines, center, dominance, previous, current):
             results.add(i)
     return pending, results
 
