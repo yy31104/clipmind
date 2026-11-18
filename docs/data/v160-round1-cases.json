@@ -1,0 +1,90 @@
+{
+  "split": "holdout",
+  "cases": [
+    {
+      "case_id": "b01",
+      "title": "Realistic Lighting Hacks in Blender",
+      "authors": [
+        "Gleb Alexandrov"
+      ],
+      "publisher": "Blender Foundation / Blender Conference 2016",
+      "page_url": "https://www.youtube.com/watch?v=TooIqZ1SS24",
+      "video_url": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Realistic_Lighting_Hacks_in_Blender.webm",
+      "license": "CC BY 3.0",
+      "license_url": "https://creativecommons.org/licenses/by/3.0/",
+      "license_proof_url": "https://commons.wikimedia.org/wiki/File:Realistic_Lighting_Hacks_in_Blender.webm",
+      "sample_start_seconds": 0,
+      "sample_end_seconds": 1104.759021,
+      "ocr_languages": [
+        "en-US"
+      ],
+      "tesseract_languages": "eng",
+      "captions_available": false,
+      "captions_reason": "No publisher speech caption track supplied with this benchmark input."
+    },
+    {
+      "case_id": "b02",
+      "title": "Modern Emacs/Elisp hardware/software accelerated graphics",
+      "authors": [
+        "Emanuel Berg"
+      ],
+      "publisher": "EmacsConf 2025",
+      "page_url": "https://emacsconf.org/2025/talks/graphics/",
+      "video_url": "https://media.emacsconf.org/2025/emacsconf-2025-graphics--modern-emacselisp-hardwaresoftware-accelerated-graphics--emanuel-berg--main.webm",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "license_proof_url": "https://emacsconf.org/2025/submit/",
+      "sample_start_seconds": 0,
+      "sample_end_seconds": 1216.373854,
+      "ocr_languages": [
+        "en-US"
+      ],
+      "tesseract_languages": "eng",
+      "captions_available": false,
+      "captions_reason": "Publisher identifies this talk as narration-free; the chapter track is not speech."
+    },
+    {
+      "case_id": "b03",
+      "title": "Managing WordPress On the Go / 隨時隨地的部落格管理",
+      "authors": [
+        "Jaclyn Chen / 陳奕如"
+      ],
+      "publisher": "WordCamp Taipei 2019 / WordPress.tv",
+      "page_url": "https://wordpress.tv/2020/06/08/jaclyn-chen-%E9%9A%A8%E6%99%82%E9%9A%A8%E5%9C%B0%E7%9A%84%E9%83%A8%E8%90%BD%E6%A0%BC%E7%AE%A1%E7%90%86-wordpress-app-%E4%BD%BF%E7%94%A8-%E9%96%8B%E7%99%BC%E7%B6%93%E9%A9%97%E5%88%86/",
+      "video_url": "https://videos.files.wordpress.com/o5juAPQJ/video-e3a03dced3_dvd.mp4",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "license_proof_url": "https://wordpress.tv/2020/06/08/jaclyn-chen-%E9%9A%A8%E6%99%82%E9%9A%A8%E5%9C%B0%E7%9A%84%E9%83%A8%E8%90%BD%E6%A0%BC%E7%AE%A1%E7%90%86-wordpress-app-%E4%BD%BF%E7%94%A8-%E9%96%8B%E7%99%BC%E7%B6%93%E9%A9%97%E5%88%86/",
+      "sample_start_seconds": 0,
+      "sample_end_seconds": 1230.03,
+      "ocr_languages": [
+        "zh-Hant",
+        "en-US"
+      ],
+      "tesseract_languages": "chi_tra+eng",
+      "captions_available": false,
+      "captions_reason": "No publisher speech caption track supplied with this benchmark input."
+    },
+    {
+      "case_id": "b04",
+      "title": "virtme-ng: quickly test a kernel from Debian",
+      "authors": [
+        "Helen Koike"
+      ],
+      "publisher": "DebConf25 / Debian",
+      "page_url": "https://debconf25.debconf.org/talks/56-virtme-ng-quickly-test-a-kernel-from-debian/",
+      "video_url": "https://meetings-archive.debian.net/pub/debian-meetings/2025/DebConf25/debconf25-299-virtme-ng-quickly-test-a-kernel-from-debian.av1.webm",
+      "license": "MIT/Expat (DebConf recording license)",
+      "license_url": "https://opensource.org/license/mit",
+      "license_proof_url": "https://debconf25.debconf.org/cfp/#video-coverage",
+      "sample_start_seconds": 0,
+      "sample_end_seconds": 1259.68,
+      "ocr_languages": [
+        "en-US"
+      ],
+      "tesseract_languages": "eng",
+      "captions_available": false,
+      "captions_reason": "No publisher speech caption track supplied with this benchmark input."
+    }
+  ]
+}
