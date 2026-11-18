@@ -44,7 +44,9 @@ def main():
                                 ocr_layout=tuple(text.get('layout', ())),
                                 stable_duration=state.get('stable_duration_seconds', 0),
                                 observed_sample_count=state.get('observed_sample_count', 1),
-                                ocr_warning=text.get('warning'), dedupe_warning=state.get('dedupe_warning')))
+                                source_timestamp=state.get('source_timestamp'),
+                                ocr_warning=text.get('error') or text.get('warning'),
+                                dedupe_warning=state.get('dedupe_warning')))
         started = time.perf_counter()
         annotate_change_kinds(frames)
         typed = [dict(state, change_kind=frame.change_kind, change_reason=frame.change_reason)
