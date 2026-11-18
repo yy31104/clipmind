@@ -113,3 +113,29 @@ and 977/6980 on Tesseract. Both engines still missed the projected
 JSON-LD example, where some glyphs are only five pixels high.
 
 [Per-recording development receipts](data/v160-development-room-ocr.json)
+
+## Information-boundary ranking
+
+The ranker combines a small fitted logistic model and a fixed decision
+forest. It compares neighboring raster texture, screen motion, OCR
+layout and changes in visible words. All frames and OCR stay in the
+full pack. The frames view can show the marked information changes.
+
+The development folds kept 12 producers separate, with both backend
+copies of each recording in the same fold. There are 21 scored
+recordings and 670 reference events per backend. The shared cutoff
+was selected from these exposed predictions.
+
+| Development cohort | Backend | Recall | Precision |
+| --- | --- | ---: | ---: |
+| All exposed | Mac / Vision | 588/670 (87.76%) | 588/1086 (54.14%) |
+| All exposed | Docker / Tesseract | 585/670 (87.31%) | 585/1080 (54.17%) |
+| Former round 2 | Mac / Vision | 121/139 (87.05%) | 121/226 (53.54%) |
+| Former round 2 | Docker / Tesseract | 121/139 (87.05%) | 121/238 (50.84%) |
+
+The former round 2 cohort has two producers, with 116 of its 139
+references from FOSS4G. No shared cutoff passed every earlier cohort
+separately on both backends. Two real changes within a second can
+also compete for one prediction.
+
+[Training inputs and per-recording development scores](data/v160-development-rank.json)
