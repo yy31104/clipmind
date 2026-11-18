@@ -86,6 +86,7 @@ def _load_frames(pack: Path, timeline: list[dict], records: list[dict], *, hash_
             source_timestamp=row.get("source_timestamp"),
             change_kind=row.get("change_kind", "uncertain"),
             change_reason=row.get("change_reason", ""),
+            information_boundary=row.get("information_boundary"),
             text=text["text"], lines=tuple(text.get("lines", ())),
             ocr_layout=tuple(text.get("layout", ())), ocr_warning=text.get("error"),
             dedupe_warning=row.get("dedupe_warning"),

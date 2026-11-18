@@ -107,6 +107,24 @@ class CompactExportTests(unittest.TestCase):
         self.assertTrue(all(set(x) == {"id", "timestamp", "text", "lines", "selection_reason"} for x in omitted))
         self.assertEqual(before, self.snapshot())
 
+    def test_compact_keeps_the_original_decision_for_retained_information_boundaries(self):
+        path = self.pack / "visual_timeline.jsonl"
+        rows = self.rows(path)
+        rows[2]["information_boundary"] = True
+        path.write_text("".join(json.dumps(row) + "\n" for row in rows), encoding="utf-8")
+        manifest_path = self.pack / "manifest.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest["configuration"]["information_boundary_algorithm"] = "offline-screen-rank-v1"
+        self.write_json(manifest_path, manifest)
+
+        with patch.object(compact.visual_content, "select_content_frames", side_effect=lambda frames, **kw: [frames[-1]]):
+            report = compact.build_compact_pack(self.pack, self.root / "reading")
+
+        derived = EvidencePack.open(Path(report["path"]))
+        self.assertEqual(len(derived.visual_timeline), 1)
+        self.assertIs(derived.visual_timeline[0]["information_boundary"], True)
+        self.assertEqual(derived.manifest["configuration"]["information_boundary_algorithm"], "offline-screen-rank-v1")
+
     def test_zip_is_deterministic_smaller_and_never_overwrites_full_archive(self):
         full = handoff.export_zip(self.pack)
         full_bytes, before = full.read_bytes(), self.snapshot()

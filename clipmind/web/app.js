@@ -468,7 +468,7 @@ function showEvidenceAt(kind, at) {
   if (kind === "ocr") {
     selectTab("frames");
     if (state.detail?.states.length) {
-      state.detail.showAllFrames = true;
+      state.detail.frameView = "all";
       renderDetailFrames();
     }
     focusRow("#pane-frames .frame[data-at]", at);
@@ -482,14 +482,20 @@ function showEvidenceAt(kind, at) {
 function renderDetailFrames() {
   const detail = state.detail;
   if (!detail) return;
-  const all = detail.showAllFrames && detail.states.length > 0;
-  const frames = all ? detail.states : detail.frames;
-  const collection = all ? "visual_states/all" : null;
+  const view = detail.states.length ? detail.frameView : "selected";
+  const changes = detail.states.filter((frame) => frame.information_boundary === true);
+  const hasClassification = detail.states.some((frame) => typeof frame.information_boundary === "boolean");
+  const frames = view === "all" ? detail.states : view === "changes" ? changes : detail.frames;
+  const collection = view === "all" || view === "changes" ? "visual_states/all" : null;
+  const labels = { all: "all frames", changes: "information changes" };
   const description = detail.states.length
-    ? `Showing ${all ? `all frames (${detail.states.length})` : `selected frames (${detail.frames.length})`}.`
+    ? `Showing ${labels[view] || "selected frames"} (${frames.length}).`
     : "This pack has no separate list of all frames.";
   $("pane-frames").innerHTML = `<div class="frames-toolbar"><span>${description}</span>
-    ${detail.states.length ? `<button class="secondary compact" id="toggle-all-frames">${all ? "Selected frames only" : `View all frames (${detail.states.length})`}</button>` : ""}</div>`
+    <div class="frames-options">
+      ${hasClassification ? `<button class="secondary compact" id="toggle-information-frames" aria-pressed="${view === "changes"}">Information changes (${changes.length})</button>` : ""}
+      ${detail.states.length ? `<button class="secondary compact" id="toggle-all-frames">${view === "all" ? "Selected frames only" : `View all frames (${detail.states.length})`}</button>` : ""}
+    </div></div>`
     + (frames.map((frame) => `
     <article class="frame" data-at="${Number(frame.timestamp) || 0}">
       <div class="frame-cap"><span class="ts">${esc(frame.clock || clock(frame.timestamp))}</span>${frameBadges(frame)}</div>
@@ -497,10 +503,18 @@ function renderDetailFrames() {
         <img loading="lazy" src="${frameUrl(detail.job.id, frame, detail.modernFrames, collection)}" alt="Visual evidence at ${esc(frame.clock || clock(frame.timestamp))}">
       </button>
       ${frame.text ? `<div class="frame-ocr">${esc(frame.text)}</div>` : ""}
-    </article>`).join("") || `<p class="hint">No charts, code, or document screenshots selected. Read the transcript for speech; all sampled frames remain available.</p>`);
-  if ($("toggle-all-frames")) {
+    </article>`).join("") || (view === "changes"
+      ? `<p class="hint">No information changes identified.</p>`
+      : `<p class="hint">No charts, code, or document screenshots selected. Read the transcript for speech; all sampled frames remain available.</p>`));
+  if (detail.states.length) {
     $("toggle-all-frames").onclick = () => {
-      detail.showAllFrames = !detail.showAllFrames;
+      detail.frameView = view === "all" ? "selected" : "all";
+      renderDetailFrames();
+    };
+  }
+  if (hasClassification) {
+    $("toggle-information-frames").onclick = () => {
+      detail.frameView = view === "changes" ? "selected" : "changes";
       renderDetailFrames();
     };
   }
@@ -526,7 +540,7 @@ async function openDetail(id, focus = null) {
     states: modernFrames && Array.isArray(metadata.visual_states)
       ? metadata.visual_states.filter((item) => item && item.file)
       : [],
-    showAllFrames: false,
+    frameView: "selected",
   };
   const sourceUrl = /^https?:\/\//i.test(metadata.url || "") ? metadata.url : "";
   $("d-title").textContent = job.title;

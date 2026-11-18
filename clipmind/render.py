@@ -105,6 +105,8 @@ def build_metadata(
                 "observed_sample_count": frame.observed_sample_count,
                 "stable_duration_seconds": round(frame.stable_duration, 3),
             }
+            if frame.information_boundary is not None:
+                state["information_boundary"] = frame.information_boundary
             if frame.dedupe_warning:
                 state["dedupe_warning"] = frame.dedupe_warning
             if frame.build_group_id:
