@@ -1,0 +1,14 @@
+{
+  "metric_protocol": "screen-evidence-v1",
+  "code_revision": "b8982c4c708e585b3f19faf6cf61b57716ab1632",
+  "runtime_code_fingerprint": "52e494afac13d6f3896c2f5fbc920686ffbbdff89d330bbe333befaf5b76dc2a",
+  "metric_implementation_sha256": {
+    "scripts/evaluate_real_talks.py": "91dd7e8c9b114f338af4bb4e3f05cd39ce5b125558c06ed9426a4e097f8268aa",
+    "scripts/screen_evaluation.py": "c068100b0a1066b42282d09e9c7a123004ff94d80f9d42ddf23580db05eda395"
+  },
+  "corpus_sha256": "54233a1bd6ccf3d3866eb3f91ccc3985698672ffaedc719142071b0e8a4dce45",
+  "labels_sha256": "8a21223c50151107991b2a0c53a30a8e5e9733c33179efdc4ffc8d587c7b1cd2",
+  "asr_provider": "mlx",
+  "ocr_provider": "vision",
+  "status": "attempt_started"
+}

@@ -7,7 +7,7 @@ from unittest.mock import patch
 
 from PIL import Image, ImageDraw
 
-from clipmind import screen_motion, visual_states
+from clipmind import screen_motion, screen_viewport, visual_states
 from clipmind.media import Frame
 
 
@@ -175,6 +175,148 @@ class ScreenMotionTests(unittest.TestCase):
                 visual_states.annotate_change_kinds(frames)
             self.assertNotIn(frames[1].change_kind, {"build", "content"})
             self.assertEqual(len(frames), 4)
+
+
+class DisplayEvidenceTests(unittest.TestCase):
+    def frames(self, directory, *, edit=None):
+        frames = []
+        for index in range(9):
+            image = Image.new("RGB", (1280, 720), "#403071")
+            draw = ImageDraw.Draw(image)
+            draw.rectangle((55, 85, 954, 580), fill="white")
+            draw.text((96, 124), "Active display", fill="black")
+            draw.rectangle((1000, 300, 1240, 570), fill=(15 * index, 50, 100))
+            path = Path(directory) / f"display-{index}.png"
+            lines = ("Active display", f"Recognized changing foreground text {index}")
+            if edit is not None:
+                lines = edit(draw, index, lines)
+            image.save(path)
+            frames.append(Frame(index, index * 3.5, path, lines=lines))
+        return frames
+
+    def test_recurring_display_outranks_text_from_motion_outside_it(self):
+        with tempfile.TemporaryDirectory() as directory:
+            frames = self.frames(directory)
+            with patch.object(screen_motion.screen_faces, "boxes", return_value=()):
+                visual_states.annotate_change_kinds(frames)
+            self.assertTrue(all(frame.change_kind == "layout" for frame in frames[1:]))
+            self.assertTrue(all("display stayed the same" in frame.change_reason for frame in frames[1:]))
+            self.assertEqual([(frame.index, frame.timestamp) for frame in frames],
+                             [(index, index * 3.5) for index in range(9)])
+
+    def test_native_display_evidence_vetoes_a_compact_glyph_and_colored_mark(self):
+        def add_mark(draw, index, lines):
+            if index >= 2:
+                # A five-pixel stroke is largely lost in a 320 px signature.
+                draw.line((450, 350, 454, 350), fill=(255, 0, 0))
+            if index >= 5:
+                draw.line((575, 380, 575, 388), fill="black")
+            return lines
+
+        with tempfile.TemporaryDirectory() as directory:
+            frames = self.frames(directory, edit=add_mark)
+            evidence = screen_viewport.DisplayEvidence(frames)
+            self.assertTrue(evidence.unchanged(1, 0))
+            self.assertFalse(evidence.unchanged(2, 0))
+            self.assertTrue(evidence.unchanged(3, 2))
+            self.assertFalse(evidence.unchanged(5, 2))
+
+    def test_a_new_terminal_result_in_the_display_stays_eligible(self):
+        result = "Task completed with 27 accepted items and zero errors"
+
+        def command_result(draw, index, lines):
+            if index >= 4:
+                draw.rectangle((215, 230, 835, 460), fill="#242424")
+                draw.text((250, 300), result, fill="white")
+                return lines + (result,)
+            return lines
+
+        with tempfile.TemporaryDirectory() as directory:
+            frames = self.frames(directory, edit=command_result)
+            with patch.object(screen_motion.screen_faces, "boxes", return_value=()):
+                visual_states.annotate_change_kinds(frames)
+            self.assertIn(frames[4].change_kind, {"build", "content", "uncertain"})
+            self.assertEqual(frames[5].change_kind, "layout")
+
+    def test_side_whiteboard_strokes_stay_eligible(self):
+        def side_diagram(draw, index, lines):
+            draw.rectangle((992, 100, 1248, 250), fill="white")
+            if index >= 4:
+                draw.line(((1020, 185), (1075, 155), (1120, 192), (1220, 125)), fill="black", width=4)
+                draw.text((1030, 205), "Confirmed response after replay", fill="black")
+            return lines
+
+        with tempfile.TemporaryDirectory() as directory:
+            frames = self.frames(directory, edit=side_diagram)
+            with patch.object(screen_motion.screen_faces, "boxes", return_value=()):
+                visual_states.annotate_change_kinds(frames)
+            self.assertEqual(frames[3].change_kind, "layout")
+            self.assertEqual(frames[4].change_kind, "content")
+            self.assertEqual(frames[4].change_reason, visual_states.SIDE_DETAIL_REASON)
+            self.assertEqual(frames[5].change_kind, "layout")
+
+    def test_repeated_result_change_on_existing_side_console_stays_eligible(self):
+        def text_at(index):
+            return "Result: 0 success" if index < 4 else "Result: build 42 passed"
+
+        def side_console(draw, index, lines):
+            draw.rectangle((982, 107, 1255, 239), fill="#22242a")
+            draw.text((1000, 165), text_at(index), fill="white")
+            return lines + (text_at(index),)
+
+        with tempfile.TemporaryDirectory() as directory:
+            frames = self.frames(directory, edit=side_console)
+            for frame in frames:
+                frame.ocr_layout = (
+                    {"text": "Active display", "bbox": (0.07, 0.17, 0.11, 0.03)},
+                    {"text": text_at(frame.index), "bbox": (0.78, 0.22, 0.16, 0.04)},
+                )
+            with patch.object(screen_motion.screen_faces, "boxes", return_value=()):
+                visual_states.annotate_change_kinds(frames)
+            self.assertEqual(frames[4].change_kind, "content")
+            self.assertEqual(frames[5].change_kind, "layout")
+
+    def test_display_accepts_unicode_image_paths_and_empty_images(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            image = root / "frame-\u00e9.png"
+            Image.new("RGB", (32, 16)).save(image)
+            empty = root / "empty.png"
+            empty.touch()
+            evidence = screen_viewport.DisplayEvidence([])
+            self.assertEqual(evidence._read(image).shape, (16, 32, 3))
+            self.assertIsNone(evidence._read(empty))
+            self.assertIsNone(evidence._read(root / "missing.png"))
+
+    def test_room_landmarks_preserve_projection_scope_before_it_lights_up(self):
+        with tempfile.TemporaryDirectory() as directory:
+            frames = []
+            for index in range(21):
+                room = Image.new("RGB", (1280, 720), "#24262a")
+                draw = ImageDraw.Draw(room)
+                draw.rectangle((27, 24, 1262, 110), outline="#dddadd", width=4)
+                draw.rectangle((73, 532, 440, 687), outline="#aaa9a7", width=4)
+                for left in (42, 214, 1010, 1132):
+                    draw.rectangle((left, 152, left + 65, 488), outline="#adaab8", width=10)
+                for y in (41, 72, 556, 614):
+                    draw.line((68, y, 1230, y), fill="#c6c2ca", width=3)
+                draw.rectangle((385, 173, 835, 432), fill="#fcf9ef" if index >= 10 else "#24262a")
+                if index in (2, 3):
+                    draw.line((503, 254, 507, 254), fill="#0612eb")
+                draw.rectangle((931 + index % 3 * 5, 540, 973, 579), fill=(50 + 7 * index, 35, 37))
+                if index == 4:
+                    room.paste("#3a383a", (0, 0, 1280, 720))
+                    ImageDraw.Draw(room).line((0, 0, 1280, 720), fill="#bcbcbc", width=19)
+                path = Path(directory) / f"room-{index}.png"
+                room.save(path)
+                frames.append(Frame(index, 8.0 * index, path))
+
+            evidence = screen_viewport.DisplayEvidence(frames)
+            self.assertTrue(evidence.projector[0])
+            self.assertTrue(evidence.unchanged(1, 0))
+            self.assertFalse(evidence.unchanged(2, 0), "The projected glyph is new content")
+            self.assertFalse(evidence.unchanged(10, 9), "Projection lighting may introduce content")
+            self.assertIsNone(evidence.regions[4], "A different camera must supply its own evidence")
 
 
 if __name__ == "__main__":

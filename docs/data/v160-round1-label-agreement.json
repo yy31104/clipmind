@@ -1,0 +1,1431 @@
+{
+  "cases": {
+    "b01": {
+      "source_sha256": "21ac6f74e89e709853d4bf9a0d71f397e1a964582d9686cc152f9ea212f0a04e",
+      "boundaries": {
+        "reference_count": 51,
+        "prediction_count": 51,
+        "matched": 50,
+        "matches": [
+          [
+            5.0,
+            5.0
+          ],
+          [
+            91.0,
+            90.0
+          ],
+          [
+            144.0,
+            144.0
+          ],
+          [
+            191.0,
+            191.0
+          ],
+          [
+            225.0,
+            225.0
+          ],
+          [
+            227.0,
+            227.0
+          ],
+          [
+            279.0,
+            279.0
+          ],
+          [
+            308.0,
+            308.0
+          ],
+          [
+            316.0,
+            316.0
+          ],
+          [
+            332.0,
+            332.0
+          ],
+          [
+            340.0,
+            340.0
+          ],
+          [
+            354.0,
+            354.0
+          ],
+          [
+            389.0,
+            389.0
+          ],
+          [
+            411.0,
+            411.0
+          ],
+          [
+            427.0,
+            427.0
+          ],
+          [
+            443.0,
+            443.0
+          ],
+          [
+            475.0,
+            475.0
+          ],
+          [
+            478.0,
+            478.0
+          ],
+          [
+            481.0,
+            481.0
+          ],
+          [
+            491.0,
+            491.0
+          ],
+          [
+            526.0,
+            526.0
+          ],
+          [
+            562.0,
+            562.0
+          ],
+          [
+            566.0,
+            566.0
+          ],
+          [
+            568.0,
+            568.0
+          ],
+          [
+            576.0,
+            576.0
+          ],
+          [
+            609.0,
+            609.0
+          ],
+          [
+            620.0,
+            620.0
+          ],
+          [
+            631.0,
+            630.0
+          ],
+          [
+            639.0,
+            639.0
+          ],
+          [
+            661.0,
+            661.0
+          ],
+          [
+            684.0,
+            684.0
+          ],
+          [
+            689.0,
+            688.0
+          ],
+          [
+            695.0,
+            695.0
+          ],
+          [
+            718.0,
+            718.0
+          ],
+          [
+            735.0,
+            735.0
+          ],
+          [
+            745.0,
+            745.0
+          ],
+          [
+            776.0,
+            776.0
+          ],
+          [
+            790.0,
+            790.0
+          ],
+          [
+            807.0,
+            807.0
+          ],
+          [
+            818.0,
+            818.0
+          ],
+          [
+            827.0,
+            827.0
+          ],
+          [
+            857.0,
+            857.0
+          ],
+          [
+            893.0,
+            893.0
+          ],
+          [
+            899.0,
+            899.0
+          ],
+          [
+            912.0,
+            912.0
+          ],
+          [
+            918.0,
+            918.0
+          ],
+          [
+            984.0,
+            984.0
+          ],
+          [
+            1008.0,
+            1008.0
+          ],
+          [
+            1065.0,
+            1065.0
+          ],
+          [
+            1095.0,
+            1095.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 0.9803921568627451,
+        "precision": 0.9803921568627451,
+        "f1": 0.9803921568627451
+      },
+      "shared_code": [],
+      "independent_regions": {
+        "pairs": [],
+        "first_unmatched": 0,
+        "second_unmatched": 0
+      }
+    },
+    "b02": {
+      "source_sha256": "c9206b00969eb36af26417f18410b974e106899092b014ebcfa19a5236d58186",
+      "boundaries": {
+        "reference_count": 69,
+        "prediction_count": 78,
+        "matched": 66,
+        "matches": [
+          [
+            3.0,
+            3.0
+          ],
+          [
+            6.0,
+            6.0
+          ],
+          [
+            33.0,
+            33.0
+          ],
+          [
+            39.0,
+            39.0
+          ],
+          [
+            119.0,
+            119.0
+          ],
+          [
+            127.0,
+            127.0
+          ],
+          [
+            144.0,
+            144.0
+          ],
+          [
+            156.0,
+            156.0
+          ],
+          [
+            165.0,
+            165.0
+          ],
+          [
+            200.0,
+            200.0
+          ],
+          [
+            206.0,
+            206.0
+          ],
+          [
+            223.0,
+            223.0
+          ],
+          [
+            230.0,
+            230.0
+          ],
+          [
+            269.0,
+            269.0
+          ],
+          [
+            274.0,
+            274.0
+          ],
+          [
+            279.0,
+            278.0
+          ],
+          [
+            287.0,
+            287.0
+          ],
+          [
+            289.0,
+            288.0
+          ],
+          [
+            296.0,
+            296.0
+          ],
+          [
+            331.0,
+            331.0
+          ],
+          [
+            344.0,
+            343.0
+          ],
+          [
+            346.0,
+            346.0
+          ],
+          [
+            348.0,
+            347.0
+          ],
+          [
+            354.0,
+            354.0
+          ],
+          [
+            363.0,
+            363.0
+          ],
+          [
+            372.0,
+            371.0
+          ],
+          [
+            493.0,
+            493.0
+          ],
+          [
+            507.0,
+            507.0
+          ],
+          [
+            539.0,
+            539.0
+          ],
+          [
+            557.0,
+            557.0
+          ],
+          [
+            580.0,
+            580.0
+          ],
+          [
+            586.0,
+            586.0
+          ],
+          [
+            589.0,
+            589.0
+          ],
+          [
+            721.0,
+            721.0
+          ],
+          [
+            729.0,
+            729.0
+          ],
+          [
+            735.0,
+            735.0
+          ],
+          [
+            746.0,
+            745.0
+          ],
+          [
+            778.0,
+            778.0
+          ],
+          [
+            788.0,
+            788.0
+          ],
+          [
+            795.0,
+            795.0
+          ],
+          [
+            799.0,
+            799.0
+          ],
+          [
+            802.0,
+            802.0
+          ],
+          [
+            813.0,
+            813.0
+          ],
+          [
+            819.0,
+            819.0
+          ],
+          [
+            847.0,
+            847.0
+          ],
+          [
+            872.0,
+            872.0
+          ],
+          [
+            884.0,
+            884.0
+          ],
+          [
+            901.0,
+            901.0
+          ],
+          [
+            910.0,
+            910.0
+          ],
+          [
+            917.0,
+            917.0
+          ],
+          [
+            924.0,
+            924.0
+          ],
+          [
+            928.0,
+            928.0
+          ],
+          [
+            930.0,
+            930.0
+          ],
+          [
+            932.0,
+            932.0
+          ],
+          [
+            936.0,
+            936.0
+          ],
+          [
+            952.0,
+            952.0
+          ],
+          [
+            955.0,
+            955.0
+          ],
+          [
+            975.0,
+            975.0
+          ],
+          [
+            984.0,
+            984.0
+          ],
+          [
+            1122.0,
+            1122.0
+          ],
+          [
+            1123.0,
+            1123.0
+          ],
+          [
+            1131.0,
+            1131.0
+          ],
+          [
+            1139.0,
+            1139.0
+          ],
+          [
+            1141.0,
+            1141.0
+          ],
+          [
+            1184.0,
+            1184.0
+          ],
+          [
+            1196.0,
+            1197.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 0.9565217391304348,
+        "precision": 0.8461538461538461,
+        "f1": 0.8979591836734694
+      },
+      "shared_code": [
+        {
+          "crop_id": "b02-shared-01",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 198,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "2263texturescreated2263--------destroyed2261surfacescreated(3.4%ofworst-case65568)2261--------destroyed47--------collisions2049frames0--------skippedasidentical(0.0%)0--------notdrawnastimeout(0.0%)",
+            "hypothesis": "2263texturescreated2263--------destroyed2261surfacescreated(3.4%ofworst-case65568)2261--------destroyed47--------collisions2049frames0--------skippedasidentical(0.0%)0--------notdrawnastimeout(0.0%)"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 198,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "2263texturescreated2263--------destroyed2261surfacescreated(3.4%ofworst-case65568)2261--------destroyed47--------collisions2049frames0--------skippedasidentical(0.0%)0--------notdrawnastimeout(0.0%)",
+            "hypothesis": "2263texturescreated2263--------destroyed2261surfacescreated(3.4%ofworst-case65568)2261--------destroyed47--------collisions2049frames0--------skippedasidentical(0.0%)0--------notdrawnastimeout(0.0%)"
+          }
+        },
+        {
+          "crop_id": "b02-shared-02",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 179,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "OpenGLversion....4.6shadercompile....okshadercompile....oklinking...........okinit..............okversionused......4.6.0NVIDIA550.163.01framesdrawn......2048errors............none",
+            "hypothesis": "OpenGLversion....4.6shadercompile....okshadercompile....oklinking...........okinit..............okversionused......4.6.0NVIDIA550.163.01framesdrawn......2048errors............none"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 179,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "OpenGLversion....4.6shadercompile....okshadercompile....oklinking...........okinit..............okversionused......4.6.0NVIDIA550.163.01framesdrawn......2048errors............none",
+            "hypothesis": "OpenGLversion....4.6shadercompile....okshadercompile....oklinking...........okinit..............okversionused......4.6.0NVIDIA550.163.01framesdrawn......2048errors............none"
+          }
+        },
+        {
+          "crop_id": "b02-shared-03",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 368,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "(let((dm(@f\"bad-sdl%s\"module-file-suffix)))(loaddmnilt)(declare-functionsdl_draw_circledm)(declare-functionsdl_draw_cleardm)(declare-functionsdl_draw_framedm)(declare-functionsdl_draw_grid_toggledm)(declare-functionsdl_draw_initdm)(declare-functionsdl_draw_quitdm)(declare-functionsdl_draw_textdm)(declare-functionsdl_draw_triangledm)(declare-functionsdl_draw_webpdm))",
+            "hypothesis": "(let((dm(@f\"bad-sdl%s\"module-file-suffix)))(loaddmnilt)(declare-functionsdl_draw_circledm)(declare-functionsdl_draw_cleardm)(declare-functionsdl_draw_framedm)(declare-functionsdl_draw_grid_toggledm)(declare-functionsdl_draw_initdm)(declare-functionsdl_draw_quitdm)(declare-functionsdl_draw_textdm)(declare-functionsdl_draw_triangledm)(declare-functionsdl_draw_webpdm))"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 368,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "(let((dm(@f\"bad-sdl%s\"module-file-suffix)))(loaddmnilt)(declare-functionsdl_draw_circledm)(declare-functionsdl_draw_cleardm)(declare-functionsdl_draw_framedm)(declare-functionsdl_draw_grid_toggledm)(declare-functionsdl_draw_initdm)(declare-functionsdl_draw_quitdm)(declare-functionsdl_draw_textdm)(declare-functionsdl_draw_triangledm)(declare-functionsdl_draw_webpdm))",
+            "hypothesis": "(let((dm(@f\"bad-sdl%s\"module-file-suffix)))(loaddmnilt)(declare-functionsdl_draw_circledm)(declare-functionsdl_draw_cleardm)(declare-functionsdl_draw_framedm)(declare-functionsdl_draw_grid_toggledm)(declare-functionsdl_draw_initdm)(declare-functionsdl_draw_quitdm)(declare-functionsdl_draw_textdm)(declare-functionsdl_draw_triangledm)(declare-functionsdl_draw_webpdm))"
+          }
+        },
+        {
+          "crop_id": "b02-shared-04",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 371,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "(defunecs-solar-render()(pcase-let((`[,p,u,r,d](ecs-camera)))(cl-loopwithch=21withcw=11withchgh=(*checs-grid-h)withcwgw=(*cwecs-grid-w)withchb=(*2(//cwgwchgh))withcwb=(*96(//chghcwgw))withcxp=(//ecs-grid-w2)withcyp=(//ecs-grid-h2)foridin(sortecs-entities:key#'ecs-camera-distance:lessp#'<:in-placet)forpos=(ecs-get-componentid'position)forrad=(ecs-get-componentid'radius)",
+            "hypothesis": "(defunecs-solar-render()(pcase-let((`[,p,u,r,d](ecs-camera)))(cl-loopwithch=21withcw=11withchgh=(*checs-grid-h)withcwgw=(*cwecs-grid-w)withchb=(*2(//cwgwchgh))withcwb=(*96(//chghcwgw))withcxp=(//ecs-grid-w2)withcyp=(//ecs-grid-h2)foridin(sortecs-entities:key#'ecs-camera-distance:lessp#'<:in-placet)forpos=(ecs-get-componentid'position)forrad=(ecs-get-componentid'radius)"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 371,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "(defunecs-solar-render()(pcase-let((`[,p,u,r,d](ecs-camera)))(cl-loopwithch=21withcw=11withchgh=(*checs-grid-h)withcwgw=(*cwecs-grid-w)withchb=(*2(//cwgwchgh))withcwb=(*96(//chghcwgw))withcxp=(//ecs-grid-w2)withcyp=(//ecs-grid-h2)foridin(sortecs-entities:key#'ecs-camera-distance:lessp#'<:in-placet)forpos=(ecs-get-componentid'position)forrad=(ecs-get-componentid'radius)",
+            "hypothesis": "(defunecs-solar-render()(pcase-let((`[,p,u,r,d](ecs-camera)))(cl-loopwithch=21withcw=11withchgh=(*checs-grid-h)withcwgw=(*cwecs-grid-w)withchb=(*2(//cwgwchgh))withcwb=(*96(//chghcwgw))withcxp=(//ecs-grid-w2)withcyp=(//ecs-grid-h2)foridin(sortecs-entities:key#'ecs-camera-distance:lessp#'<:in-placet)forpos=(ecs-get-componentid'position)forrad=(ecs-get-componentid'radius)"
+          }
+        }
+      ],
+      "independent_regions": {
+        "pairs": [
+          {
+            "first_index": 0,
+            "second_index": 0,
+            "region_iou": 0.9451099726038753,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 9,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "makesolar",
+              "hypothesis": "makesolar"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 9,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "makesolar",
+              "hypothesis": "makesolar"
+            }
+          },
+          {
+            "first_index": 2,
+            "second_index": 5,
+            "region_iou": 0.8259837148321425,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.1941747572815534,
+              "reference_units": 103,
+              "errors": 20,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 20,
+              "reference": "[ELCELN]bad-alpha.el[ELCELN]bad-ascii.el[ELCELN]bad-box.el[ELCELN]bad-color.el[ELCELN]bad-color-norm.el",
+              "hypothesis": "[ELCELN]bad-alpha.el[ELCELN]bad-ascii.el[ELCELN]bad-box.el[ELCELN]bad-color.el[ELCELN]bad-color-norm.el[ELCELN]bad-demos.el"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.16260162601626016,
+              "reference_units": 123,
+              "errors": 20,
+              "substitutions": 0,
+              "deletions": 20,
+              "insertions": 0,
+              "reference": "[ELCELN]bad-alpha.el[ELCELN]bad-ascii.el[ELCELN]bad-box.el[ELCELN]bad-color.el[ELCELN]bad-color-norm.el[ELCELN]bad-demos.el",
+              "hypothesis": "[ELCELN]bad-alpha.el[ELCELN]bad-ascii.el[ELCELN]bad-box.el[ELCELN]bad-color.el[ELCELN]bad-color-norm.el"
+            }
+          },
+          {
+            "first_index": 3,
+            "second_index": 11,
+            "region_iou": 0.7728926325804488,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 7,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "makefps",
+              "hypothesis": "makefps"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 7,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "makefps",
+              "hypothesis": "makefps"
+            }
+          },
+          {
+            "first_index": 5,
+            "second_index": 15,
+            "region_iou": 0.9788191038672289,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 179,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "OpenGLversion....4.6shadercompile....okshadercompile....oklinking...........okinit..............okversionused......4.6.0NVIDIA550.163.01framesdrawn......2048errors............none",
+              "hypothesis": "OpenGLversion....4.6shadercompile....okshadercompile....oklinking...........okinit..............okversionused......4.6.0NVIDIA550.163.01framesdrawn......2048errors............none"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 179,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "OpenGLversion....4.6shadercompile....okshadercompile....oklinking...........okinit..............okversionused......4.6.0NVIDIA550.163.01framesdrawn......2048errors............none",
+              "hypothesis": "OpenGLversion....4.6shadercompile....okshadercompile....oklinking...........okinit..............okversionused......4.6.0NVIDIA550.163.01framesdrawn......2048errors............none"
+            }
+          },
+          {
+            "first_index": 8,
+            "second_index": 22,
+            "region_iou": 0.958372198091223,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 135,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "(defvarecs-circlesnil)(defvarecs-componentsnil)(defvarecs-debugnil)(defvarecs-entitiesnil)(defvarecs-overviewt)(defvarecs-trianglesnil)",
+              "hypothesis": "(defvarecs-circlesnil)(defvarecs-componentsnil)(defvarecs-debugnil)(defvarecs-entitiesnil)(defvarecs-overviewt)(defvarecs-trianglesnil)"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 135,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "(defvarecs-circlesnil)(defvarecs-componentsnil)(defvarecs-debugnil)(defvarecs-entitiesnil)(defvarecs-overviewt)(defvarecs-trianglesnil)",
+              "hypothesis": "(defvarecs-circlesnil)(defvarecs-componentsnil)(defvarecs-debugnil)(defvarecs-entitiesnil)(defvarecs-overviewt)(defvarecs-trianglesnil)"
+            }
+          },
+          {
+            "first_index": 9,
+            "second_index": 25,
+            "region_iou": 0.6212754896946264,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.8,
+              "reference_units": 75,
+              "errors": 60,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 60,
+              "reference": "(cl-loopwithdist=(**211)withbeg=(**22)withend=(**25)withstp=(**2-5)withk=64",
+              "hypothesis": "(defunbad-sdl-3d()(i)(cl-loopwithdist=(**211)withbeg=(**22)withend=(**25)withstp=(**2-5)withk=64withpyramid=(ecs-ld4)withcube=(ecs-ld6)"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.4444444444444444,
+              "reference_units": 135,
+              "errors": 60,
+              "substitutions": 0,
+              "deletions": 60,
+              "insertions": 0,
+              "reference": "(defunbad-sdl-3d()(i)(cl-loopwithdist=(**211)withbeg=(**22)withend=(**25)withstp=(**2-5)withk=64withpyramid=(ecs-ld4)withcube=(ecs-ld6)",
+              "hypothesis": "(cl-loopwithdist=(**211)withbeg=(**22)withend=(**25)withstp=(**2-5)withk=64"
+            }
+          }
+        ],
+        "first_unmatched": 4,
+        "second_unmatched": 22
+      }
+    },
+    "b03": {
+      "source_sha256": "711f5d2c4cc78f0095b5483eb83915500814196f2ca2fce1027666369474e390",
+      "boundaries": {
+        "reference_count": 48,
+        "prediction_count": 48,
+        "matched": 48,
+        "matches": [
+          [
+            16.0,
+            16.0
+          ],
+          [
+            61.0,
+            61.0
+          ],
+          [
+            65.0,
+            65.0
+          ],
+          [
+            129.0,
+            129.0
+          ],
+          [
+            173.0,
+            173.0
+          ],
+          [
+            206.0,
+            206.0
+          ],
+          [
+            258.0,
+            258.0
+          ],
+          [
+            310.0,
+            310.0
+          ],
+          [
+            316.0,
+            316.0
+          ],
+          [
+            364.0,
+            364.0
+          ],
+          [
+            432.0,
+            432.0
+          ],
+          [
+            466.0,
+            466.0
+          ],
+          [
+            503.0,
+            503.0
+          ],
+          [
+            581.0,
+            581.0
+          ],
+          [
+            611.0,
+            611.0
+          ],
+          [
+            635.0,
+            635.0
+          ],
+          [
+            645.0,
+            645.0
+          ],
+          [
+            698.0,
+            698.0
+          ],
+          [
+            772.0,
+            772.0
+          ],
+          [
+            779.0,
+            779.0
+          ],
+          [
+            795.0,
+            795.0
+          ],
+          [
+            803.0,
+            803.0
+          ],
+          [
+            810.0,
+            810.0
+          ],
+          [
+            819.0,
+            819.0
+          ],
+          [
+            826.0,
+            826.0
+          ],
+          [
+            834.0,
+            834.0
+          ],
+          [
+            842.0,
+            842.0
+          ],
+          [
+            862.0,
+            862.0
+          ],
+          [
+            868.0,
+            868.0
+          ],
+          [
+            874.0,
+            874.0
+          ],
+          [
+            887.0,
+            887.0
+          ],
+          [
+            896.0,
+            896.0
+          ],
+          [
+            923.0,
+            923.0
+          ],
+          [
+            934.0,
+            934.0
+          ],
+          [
+            965.0,
+            965.0
+          ],
+          [
+            970.0,
+            970.0
+          ],
+          [
+            985.0,
+            984.0
+          ],
+          [
+            994.0,
+            993.0
+          ],
+          [
+            1003.0,
+            1003.0
+          ],
+          [
+            1052.0,
+            1052.0
+          ],
+          [
+            1076.0,
+            1076.0
+          ],
+          [
+            1079.0,
+            1079.0
+          ],
+          [
+            1082.0,
+            1082.0
+          ],
+          [
+            1085.0,
+            1085.0
+          ],
+          [
+            1091.0,
+            1091.0
+          ],
+          [
+            1105.0,
+            1104.0
+          ],
+          [
+            1109.0,
+            1109.0
+          ],
+          [
+            1124.0,
+            1124.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "f1": 1.0
+      },
+      "shared_code": [],
+      "independent_regions": {
+        "pairs": [],
+        "first_unmatched": 0,
+        "second_unmatched": 0
+      }
+    },
+    "b04": {
+      "source_sha256": "66b9f41181cf052f890625fc5cc76ef581296f7685dfdad8356f988f9bcfcece",
+      "boundaries": {
+        "reference_count": 35,
+        "prediction_count": 35,
+        "matched": 34,
+        "matches": [
+          [
+            27.0,
+            27.0
+          ],
+          [
+            52.0,
+            52.0
+          ],
+          [
+            93.0,
+            93.0
+          ],
+          [
+            197.0,
+            197.0
+          ],
+          [
+            235.0,
+            235.0
+          ],
+          [
+            239.0,
+            239.0
+          ],
+          [
+            251.0,
+            251.0
+          ],
+          [
+            312.0,
+            312.0
+          ],
+          [
+            353.0,
+            353.0
+          ],
+          [
+            426.0,
+            426.0
+          ],
+          [
+            485.0,
+            485.0
+          ],
+          [
+            534.0,
+            534.0
+          ],
+          [
+            554.0,
+            554.0
+          ],
+          [
+            598.0,
+            598.0
+          ],
+          [
+            609.0,
+            609.0
+          ],
+          [
+            629.0,
+            629.0
+          ],
+          [
+            662.0,
+            662.0
+          ],
+          [
+            673.0,
+            673.0
+          ],
+          [
+            688.0,
+            688.0
+          ],
+          [
+            695.0,
+            694.0
+          ],
+          [
+            706.0,
+            706.0
+          ],
+          [
+            741.0,
+            741.0
+          ],
+          [
+            765.0,
+            765.0
+          ],
+          [
+            795.0,
+            795.0
+          ],
+          [
+            798.0,
+            798.0
+          ],
+          [
+            804.0,
+            804.0
+          ],
+          [
+            829.0,
+            829.0
+          ],
+          [
+            885.0,
+            885.0
+          ],
+          [
+            917.0,
+            917.0
+          ],
+          [
+            948.0,
+            948.0
+          ],
+          [
+            951.0,
+            951.0
+          ],
+          [
+            1110.0,
+            1110.0
+          ],
+          [
+            1132.0,
+            1132.0
+          ],
+          [
+            1255.0,
+            1255.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 0.9714285714285714,
+        "precision": 0.9714285714285714,
+        "f1": 0.9714285714285714
+      },
+      "shared_code": [
+        {
+          "crop_id": "b04-shared-01",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 49,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "qemu-system-x86_64-kernelbzImage-initrdinitrd.img",
+            "hypothesis": "qemu-system-x86_64-kernelbzImage-initrdinitrd.img"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 49,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "qemu-system-x86_64-kernelbzImage-initrdinitrd.img",
+            "hypothesis": "qemu-system-x86_64-kernelbzImage-initrdinitrd.img"
+          }
+        },
+        {
+          "crop_id": "b04-shared-02",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 17,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "cdlinuxvng--build",
+            "hypothesis": "cdlinuxvng--build"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 17,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "cdlinuxvng--build",
+            "hypothesis": "cdlinuxvng--build"
+          }
+        },
+        {
+          "crop_id": "b04-shared-03",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 165,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "[4.285861]</TASK>[4.285928]Moduleslinkedin:[4.286525]---[endtrace0000000000000000]---[4.286529]Oops:int3:0000[#2]SMPNOPTI[4.286673]RIP:0010:sched_clock_cpu+0x9/0x190",
+            "hypothesis": "[4.285861]</TASK>[4.285928]Moduleslinkedin:[4.286525]---[endtrace0000000000000000]---[4.286529]Oops:int3:0000[#2]SMPNOPTI[4.286673]RIP:0010:sched_clock_cpu+0x9/0x190"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 165,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "[4.285861]</TASK>[4.285928]Moduleslinkedin:[4.286525]---[endtrace0000000000000000]---[4.286529]Oops:int3:0000[#2]SMPNOPTI[4.286673]RIP:0010:sched_clock_cpu+0x9/0x190",
+            "hypothesis": "[4.285861]</TASK>[4.285928]Moduleslinkedin:[4.286525]---[endtrace0000000000000000]---[4.286529]Oops:int3:0000[#2]SMPNOPTI[4.286673]RIP:0010:sched_clock_cpu+0x9/0x190"
+          }
+        },
+        {
+          "crop_id": "b04-shared-04",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 29,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "vng--root=/path/to/rootfs-dir",
+            "hypothesis": "vng--root=/path/to/rootfs-dir"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 29,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "vng--root=/path/to/rootfs-dir",
+            "hypothesis": "vng--root=/path/to/rootfs-dir"
+          }
+        },
+        {
+          "crop_id": "b04-shared-05",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 41,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "vng--arch=arm64--root=/path/to/rootfs-dir",
+            "hypothesis": "vng--arch=arm64--root=/path/to/rootfs-dir"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 41,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "vng--arch=arm64--root=/path/to/rootfs-dir",
+            "hypothesis": "vng--arch=arm64--root=/path/to/rootfs-dir"
+          }
+        }
+      ],
+      "independent_regions": {
+        "pairs": [
+          {
+            "first_index": 0,
+            "second_index": 0,
+            "region_iou": 0.8012000871767367,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 49,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "qemu-system-x86_64-kernelbzImage-initrdinitrd.img",
+              "hypothesis": "qemu-system-x86_64-kernelbzImage-initrdinitrd.img"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 49,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "qemu-system-x86_64-kernelbzImage-initrdinitrd.img",
+              "hypothesis": "qemu-system-x86_64-kernelbzImage-initrdinitrd.img"
+            }
+          },
+          {
+            "first_index": 1,
+            "second_index": 1,
+            "region_iou": 0.7698111384823452,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 17,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "cdlinuxvng--build",
+              "hypothesis": "cdlinuxvng--build"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 17,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "cdlinuxvng--build",
+              "hypothesis": "cdlinuxvng--build"
+            }
+          },
+          {
+            "first_index": 2,
+            "second_index": 5,
+            "region_iou": 0.945400275608779,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 22,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "6.15.4-200.fc42.x86_64",
+              "hypothesis": "6.15.4-200.fc42.x86_64"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 22,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "6.15.4-200.fc42.x86_64",
+              "hypothesis": "6.15.4-200.fc42.x86_64"
+            }
+          },
+          {
+            "first_index": 4,
+            "second_index": 10,
+            "region_iou": 0.7727136493023612,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 41,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "vng--arch=arm64--root=/path/to/rootfs-dir",
+              "hypothesis": "vng--arch=arm64--root=/path/to/rootfs-dir"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 41,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "vng--arch=arm64--root=/path/to/rootfs-dir",
+              "hypothesis": "vng--arch=arm64--root=/path/to/rootfs-dir"
+            }
+          },
+          {
+            "first_index": 5,
+            "second_index": 11,
+            "region_iou": 0.7579328244429702,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 31,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "dpkg-xlinux-image-*.debextract/",
+              "hypothesis": "dpkg-xlinux-image-*.debextract/"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 31,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "dpkg-xlinux-image-*.debextract/",
+              "hypothesis": "dpkg-xlinux-image-*.debextract/"
+            }
+          }
+        ],
+        "first_unmatched": 2,
+        "second_unmatched": 11
+      }
+    }
+  },
+  "boundary_totals": {
+    "first_count": 203,
+    "second_count": 212,
+    "matched": 198,
+    "f1": 0.9542168674698795
+  },
+  "shared_code_totals": {
+    "first_as_reference": {
+      "paired_crops": 9,
+      "errors": 0,
+      "reference_units": 1417,
+      "cer": 0.0
+    },
+    "second_as_reference": {
+      "paired_crops": 9,
+      "errors": 0,
+      "reference_units": 1417,
+      "cer": 0.0
+    }
+  }
+}

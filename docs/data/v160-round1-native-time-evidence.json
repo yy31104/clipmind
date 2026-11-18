@@ -1,0 +1,290 @@
+{
+  "input_labels_sha256": "bf4668cccad0ffaf17bc1397193e3e0fa4986161fe2d7f2da57abbd582723069",
+  "revised_labels_sha256": "8a21223c50151107991b2a0c53a30a8e5e9733c33179efdc4ffc8d587c7b1cd2",
+  "cases": {
+    "b02": [
+      {
+        "sample": "frames/00004.jpg",
+        "native_frame_index": 134,
+        "native_timestamp": 4.466666667,
+        "native_pts": "67/15",
+        "sample_sha256": "cdd2687460b312082df0b7354774d1afd880303e81cc3b9a27e0b3352f8cf518",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00119.jpg",
+        "native_frame_index": 3584,
+        "native_timestamp": 119.466666667,
+        "native_pts": "1792/15",
+        "sample_sha256": "c9b8a4b2817333f2d837339a0646b2dda1f1e4f6a1dd41f37fc26bf2aa0317ac",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00200.jpg",
+        "native_frame_index": 6014,
+        "native_timestamp": 200.466666667,
+        "native_pts": "3007/15",
+        "sample_sha256": "061cc05b50273da5f6c0ed9321cd2b4cc5a5d9593b62a65d5f7b41df1c3187b9",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00269.jpg",
+        "native_frame_index": 8084,
+        "native_timestamp": 269.466666667,
+        "native_pts": "4042/15",
+        "sample_sha256": "abeb5a100904138c316d1d559cd024d057568137010a8681ee11ed2f909e7afe",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00281.jpg",
+        "native_frame_index": 8444,
+        "native_timestamp": 281.466666667,
+        "native_pts": "4222/15",
+        "sample_sha256": "b7d211390efcffd452cecdac3c2b681e3dc14caa3a607b10508bd2679795ed36",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00288.jpg",
+        "native_frame_index": 8654,
+        "native_timestamp": 288.466666667,
+        "native_pts": "4327/15",
+        "sample_sha256": "959bc01e3b2e7e81c83bc25d6ce42b4aff925b388040e3a7cfec182b0cdfd31e",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00344.jpg",
+        "native_frame_index": 10334,
+        "native_timestamp": 344.466666667,
+        "native_pts": "5167/15",
+        "sample_sha256": "55912c477ce2625ecad81b81b3e8e5633613efd274a3078275ff7393ea9e9032",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00352.jpg",
+        "native_frame_index": 10574,
+        "native_timestamp": 352.466666667,
+        "native_pts": "5287/15",
+        "sample_sha256": "a903d48a489df97b1b5148ec8de192654a5c2ed9c9c2a24b833a07302148dde9",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00580.jpg",
+        "native_frame_index": 17414,
+        "native_timestamp": 580.466666667,
+        "native_pts": "8707/15",
+        "sample_sha256": "06f73a56af5f6e246e4e4362a12ec146a7ce153589260c7dbee9480ef44eba6f",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00587.jpg",
+        "native_frame_index": 17624,
+        "native_timestamp": 587.466666667,
+        "native_pts": "8812/15",
+        "sample_sha256": "23b58672d6201f7bd47bc3c30875fd658d0f8ac60fe817c463deb54a8a2bf17c",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00721.jpg",
+        "native_frame_index": 21644,
+        "native_timestamp": 721.466666667,
+        "native_pts": "10822/15",
+        "sample_sha256": "38bfe6180196ac13c4a56db9f103422a5b35d0db00af078cef37f2047ede52c9",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00728.jpg",
+        "native_frame_index": 21854,
+        "native_timestamp": 728.466666667,
+        "native_pts": "10927/15",
+        "sample_sha256": "a1c9713ed00884c115531e54c49128fd704b1c529478942ed753f8d40083ef54",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00737.jpg",
+        "native_frame_index": 22124,
+        "native_timestamp": 737.466666667,
+        "native_pts": "11062/15",
+        "sample_sha256": "7adaa2acac2f4b16de699e95e5b6ce049a8863a73696cec9e89a358d6a96cbad",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00778.jpg",
+        "native_frame_index": 23354,
+        "native_timestamp": 778.466666667,
+        "native_pts": "11677/15",
+        "sample_sha256": "9c9d7fe5dc8d76ca42bac93a8c3272e35921b7e31f91c787f6d426c5ef4e454e",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00799.jpg",
+        "native_frame_index": 23984,
+        "native_timestamp": 799.466666667,
+        "native_pts": "11992/15",
+        "sample_sha256": "ecf5dfde576720a1282a399ac28d69420c6d89277fac661b354474f29efab9bf",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00819.jpg",
+        "native_frame_index": 24584,
+        "native_timestamp": 819.466666667,
+        "native_pts": "12292/15",
+        "sample_sha256": "1f648a90e7177f456bc792331057518e095d610fad1af494d211b51518eafee3",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00840.jpg",
+        "native_frame_index": 25214,
+        "native_timestamp": 840.466666667,
+        "native_pts": "12607/15",
+        "sample_sha256": "35bc0faa7f7e76c886270ffac3516322638e54dd64df1448b8323dd7ec2ee4e8",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00924.jpg",
+        "native_frame_index": 27734,
+        "native_timestamp": 924.466666667,
+        "native_pts": "13867/15",
+        "sample_sha256": "d45a263e02b2faab5d2551a26387716648230e6c83ced2d9bbff4535c6e98eb0",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00928.jpg",
+        "native_frame_index": 27854,
+        "native_timestamp": 928.466666667,
+        "native_pts": "13927/15",
+        "sample_sha256": "cfdd68278267396fa83983c51b238b76fb998fccb61391a67c63af261c408737",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00952.jpg",
+        "native_frame_index": 28574,
+        "native_timestamp": 952.466666667,
+        "native_pts": "14287/15",
+        "sample_sha256": "fb3fd9d7d6291bd62d75bda9bc4aa772430cacdd8a6c81348069430961210be6",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00984.jpg",
+        "native_frame_index": 29534,
+        "native_timestamp": 984.466666667,
+        "native_pts": "14767/15",
+        "sample_sha256": "8545b6f5b37ade4b81b43cef1c99bbe2cf8f016b1e17c6e23733366839104c8c",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/01047.jpg",
+        "native_frame_index": 31424,
+        "native_timestamp": 1047.466666667,
+        "native_pts": "15712/15",
+        "sample_sha256": "aac3d9af434310d99739cb89369e054699bf39fd015760f6288a5a878e87def1",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/01061.jpg",
+        "native_frame_index": 31844,
+        "native_timestamp": 1061.466666667,
+        "native_pts": "15922/15",
+        "sample_sha256": "a915913edef8913f1c594c77604c72c8c884bb098b042365a2a3d04e3e458c92",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/01126.jpg",
+        "native_frame_index": 33794,
+        "native_timestamp": 1126.466666667,
+        "native_pts": "16897/15",
+        "sample_sha256": "0f8944f5ff0f986450791876f4b9d3d4ac04ad7f4e1fa2c602ecd1f741def029",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/01197.jpg",
+        "native_frame_index": 35924,
+        "native_timestamp": 1197.466666667,
+        "native_pts": "17962/15",
+        "sample_sha256": "4fc6dd74506776ca221cf064ef03b760e4672c17d47a3762c9a4d71e579f7e3d",
+        "exact_jpeg_bytes": true
+      }
+    ],
+    "b04": [
+      {
+        "sample": "frames/00353.jpg",
+        "native_frame_index": 8381,
+        "native_timestamp": 353.48,
+        "native_pts": "8837/25",
+        "sample_sha256": "3c23c1860025b75d0a2fee9d7662dd473c28719510530fda4307fb5165b9b3c0",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00629.jpg",
+        "native_frame_index": 15279,
+        "native_timestamp": 629.48,
+        "native_pts": "15737/25",
+        "sample_sha256": "26450d9ac16faa653f69603a6f032d27a537858897321a684a5fc9ff1b592aa1",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00688.jpg",
+        "native_frame_index": 16754,
+        "native_timestamp": 688.48,
+        "native_pts": "17212/25",
+        "sample_sha256": "11cca108c24ac58ef46e06fefca6c199deddedb489636926dea346e7c9be9de6",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00694.jpg",
+        "native_frame_index": 16904,
+        "native_timestamp": 694.48,
+        "native_pts": "17362/25",
+        "sample_sha256": "cd5456eb701abf371ad51816e665aef3f3ded8cfb4705863241f12f2278007de",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00695.jpg",
+        "native_frame_index": 16929,
+        "native_timestamp": 695.48,
+        "native_pts": "17387/25",
+        "sample_sha256": "2b508b84b025c1376831195644b3354319f40d5c303abc78ed563f2f1d63b672",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00706.jpg",
+        "native_frame_index": 17204,
+        "native_timestamp": 706.48,
+        "native_pts": "17662/25",
+        "sample_sha256": "9a76d1045649fb9bafd0ce6eb3dc198e1bf3079ff0cc7e79cc665c58a1292cea",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00765.jpg",
+        "native_frame_index": 18679,
+        "native_timestamp": 765.48,
+        "native_pts": "19137/25",
+        "sample_sha256": "c1609de70a3024075f3c29a00ce38d8aa31c16ef309dff3894eeb2467d6a9ab4",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00885.jpg",
+        "native_frame_index": 21679,
+        "native_timestamp": 885.48,
+        "native_pts": "22137/25",
+        "sample_sha256": "61664bfbd2f296967c658157f97f985428878bd30756229d306880696dff4055",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00917.jpg",
+        "native_frame_index": 22479,
+        "native_timestamp": 917.48,
+        "native_pts": "22937/25",
+        "sample_sha256": "c5f94bf5739259c5f65eba8e5f29b7349ee38c99b7e7da45e2706635eb61aad6",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00958.jpg",
+        "native_frame_index": 23504,
+        "native_timestamp": 958.48,
+        "native_pts": "23962/25",
+        "sample_sha256": "1e54289d8ecf9c4c22917b57434b9a6fcdadaf1a4c1e29d23898175c0a773638",
+        "exact_jpeg_bytes": true
+      }
+    ]
+  }
+}

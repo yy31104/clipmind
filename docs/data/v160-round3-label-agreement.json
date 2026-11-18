@@ -1,0 +1,1172 @@
+{
+  "cases": {
+    "r03-a01": {
+      "source_sha256": "52b467504adf268a0dc03887bd4fcfe46d776f50e3a6fc0816365087a968de7e",
+      "boundaries": {
+        "reference_count": 42,
+        "prediction_count": 38,
+        "matched": 38,
+        "matches": [
+          [
+            7.321015625,
+            7.321015625
+          ],
+          [
+            37.454348958333334,
+            37.454348958333334
+          ],
+          [
+            39.35434895833333,
+            39.35434895833333
+          ],
+          [
+            99.25434895833334,
+            99.25434895833334
+          ],
+          [
+            134.45434895833333,
+            134.45434895833333
+          ],
+          [
+            162.58768229166665,
+            162.58768229166665
+          ],
+          [
+            178.55434895833332,
+            178.55434895833332
+          ],
+          [
+            230.821015625,
+            230.821015625
+          ],
+          [
+            273.85434895833333,
+            273.85434895833333
+          ],
+          [
+            316.021015625,
+            316.021015625
+          ],
+          [
+            317.021015625,
+            317.021015625
+          ],
+          [
+            348.28768229166667,
+            348.28768229166667
+          ],
+          [
+            367.2543489583333,
+            367.2543489583333
+          ],
+          [
+            408.721015625,
+            408.721015625
+          ],
+          [
+            479.521015625,
+            479.521015625
+          ],
+          [
+            516.2543489583334,
+            516.2543489583334
+          ],
+          [
+            558.521015625,
+            558.521015625
+          ],
+          [
+            602.8876822916667,
+            602.8876822916667
+          ],
+          [
+            632.4543489583333,
+            632.4543489583333
+          ],
+          [
+            674.121015625,
+            674.121015625
+          ],
+          [
+            732.9543489583333,
+            732.9543489583333
+          ],
+          [
+            740.2543489583334,
+            740.2543489583334
+          ],
+          [
+            798.721015625,
+            798.721015625
+          ],
+          [
+            843.221015625,
+            843.221015625
+          ],
+          [
+            880.0876822916666,
+            880.0876822916666
+          ],
+          [
+            928.621015625,
+            928.621015625
+          ],
+          [
+            1006.021015625,
+            1006.021015625
+          ],
+          [
+            1018.9543489583333,
+            1018.9543489583333
+          ],
+          [
+            1026.021015625,
+            1026.021015625
+          ],
+          [
+            1040.2876822916667,
+            1040.2876822916667
+          ],
+          [
+            1069.921015625,
+            1069.921015625
+          ],
+          [
+            1116.5876822916666,
+            1116.5876822916666
+          ],
+          [
+            1117.6543489583332,
+            1117.6543489583332
+          ],
+          [
+            1134.321015625,
+            1134.321015625
+          ],
+          [
+            1145.2543489583334,
+            1145.2543489583334
+          ],
+          [
+            1176.221015625,
+            1176.221015625
+          ],
+          [
+            1357.4876822916667,
+            1357.4876822916667
+          ],
+          [
+            1413.221015625,
+            1413.221015625
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 0.9047619047619048,
+        "precision": 1.0,
+        "f1": 0.95
+      },
+      "shared_code": [
+        {
+          "crop_id": "r03-c01",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 46,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "</draw:frame></presentation:notes></draw:page>",
+            "hypothesis": "</draw:frame></presentation:notes></draw:page>"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 46,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "</draw:frame></presentation:notes></draw:page>",
+            "hypothesis": "</draw:frame></presentation:notes></draw:page>"
+          }
+        },
+        {
+          "crop_id": "r03-c02",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 73,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "<office:formsform:automatic-focus=\"false\"form:apply-design-mode=\"false\"/>",
+            "hypothesis": "<office:formsform:automatic-focus=\"false\"form:apply-design-mode=\"false\"/>"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 73,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "<office:formsform:automatic-focus=\"false\"form:apply-design-mode=\"false\"/>",
+            "hypothesis": "<office:formsform:automatic-focus=\"false\"form:apply-design-mode=\"false\"/>"
+          }
+        },
+        {
+          "crop_id": "r03-c03",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 169,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "#!/usr/bin/envbash#Exitimmediatelyifxmllintisnotinstalledif!command-vxmllint&>/dev/null;thenecho\"Error:xmllintisnotinstalled.Pleaseinstalllibxml2-utilsorlibxml2.\"exit1fi",
+            "hypothesis": "#!/usr/bin/envbash#Exitimmediatelyifxmllintisnotinstalledif!command-vxmllint&>/dev/null;thenecho\"Error:xmllintisnotinstalled.Pleaseinstalllibxml2-utilsorlibxml2.\"exit1fi"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 169,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "#!/usr/bin/envbash#Exitimmediatelyifxmllintisnotinstalledif!command-vxmllint&>/dev/null;thenecho\"Error:xmllintisnotinstalled.Pleaseinstalllibxml2-utilsorlibxml2.\"exit1fi",
+            "hypothesis": "#!/usr/bin/envbash#Exitimmediatelyifxmllintisnotinstalledif!command-vxmllint&>/dev/null;thenecho\"Error:xmllintisnotinstalled.Pleaseinstalllibxml2-utilsorlibxml2.\"exit1fi"
+          }
+        },
+        {
+          "crop_id": "r03-c04",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 202,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "#Findallstaged.fodpfilesthatareadded(A),copied(C),ormodified(M)STAGED_FILES=$(gitdiff--cached--name-only--diff-filter=ACM|grep'\\.fodp$')#Exitearlyifno.fodpfilesarestagedif[-z\"$STAGED_FILES\"];thenexit0fi",
+            "hypothesis": "#Findallstaged.fodpfilesthatareadded(A),copied(C),ormodified(M)STAGED_FILES=$(gitdiff--cached--name-only--diff-filter=ACM|grep'\\.fodp$')#Exitearlyifno.fodpfilesarestagedif[-z\"$STAGED_FILES\"];thenexit0fi"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 202,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "#Findallstaged.fodpfilesthatareadded(A),copied(C),ormodified(M)STAGED_FILES=$(gitdiff--cached--name-only--diff-filter=ACM|grep'\\.fodp$')#Exitearlyifno.fodpfilesarestagedif[-z\"$STAGED_FILES\"];thenexit0fi",
+            "hypothesis": "#Findallstaged.fodpfilesthatareadded(A),copied(C),ormodified(M)STAGED_FILES=$(gitdiff--cached--name-only--diff-filter=ACM|grep'\\.fodp$')#Exitearlyifno.fodpfilesarestagedif[-z\"$STAGED_FILES\"];thenexit0fi"
+          }
+        },
+        {
+          "crop_id": "r03-c05",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 245,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "echo\"Formattingstaged.fodpfiles...\"forFILEin$STAGED_FILES;doif[-f\"$FILE\"];then#Formatthefilein-placeusingxmllintxmllint--format\"$FILE\"--output\"$FILE\"#Re-addtheformattedfiletothestagingareagitadd\"$FILE\"echo\"Formattedandre-staged:$FILE\"fidoneexit0",
+            "hypothesis": "echo\"Formattingstaged.fodpfiles...\"forFILEin$STAGED_FILES;doif[-f\"$FILE\"];then#Formatthefilein-placeusingxmllintxmllint--format\"$FILE\"--output\"$FILE\"#Re-addtheformattedfiletothestagingareagitadd\"$FILE\"echo\"Formattedandre-staged:$FILE\"fidoneexit0"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 245,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "echo\"Formattingstaged.fodpfiles...\"forFILEin$STAGED_FILES;doif[-f\"$FILE\"];then#Formatthefilein-placeusingxmllintxmllint--format\"$FILE\"--output\"$FILE\"#Re-addtheformattedfiletothestagingareagitadd\"$FILE\"echo\"Formattedandre-staged:$FILE\"fidoneexit0",
+            "hypothesis": "echo\"Formattingstaged.fodpfiles...\"forFILEin$STAGED_FILES;doif[-f\"$FILE\"];then#Formatthefilein-placeusingxmllintxmllint--format\"$FILE\"--output\"$FILE\"#Re-addtheformattedfiletothestagingareagitadd\"$FILE\"echo\"Formattedandre-staged:$FILE\"fidoneexit0"
+          }
+        }
+      ],
+      "independent_regions": {
+        "pairs": [
+          {
+            "first_index": 2,
+            "second_index": 2,
+            "region_iou": 0.9810643622136496,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 46,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "</draw:frame></presentation:notes></draw:page>",
+              "hypothesis": "</draw:frame></presentation:notes></draw:page>"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 46,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "</draw:frame></presentation:notes></draw:page>",
+              "hypothesis": "</draw:frame></presentation:notes></draw:page>"
+            }
+          }
+        ],
+        "first_unmatched": 4,
+        "second_unmatched": 4
+      }
+    },
+    "r03-a02": {
+      "source_sha256": "785476d46c2dc456e58131f38669aa19ef0b978793257be26ebc8c70e2090f7b",
+      "boundaries": {
+        "reference_count": 20,
+        "prediction_count": 20,
+        "matched": 18,
+        "matches": [
+          [
+            37.700006625,
+            37.700006625
+          ],
+          [
+            41.433339958333335,
+            41.466673291666666
+          ],
+          [
+            64.000006625,
+            64.100006625
+          ],
+          [
+            75.66667329166667,
+            75.800006625
+          ],
+          [
+            79.56667329166666,
+            79.56667329166666
+          ],
+          [
+            102.800006625,
+            102.900006625
+          ],
+          [
+            105.36667329166667,
+            105.36667329166667
+          ],
+          [
+            114.400006625,
+            114.400006625
+          ],
+          [
+            117.53333995833333,
+            117.53333995833333
+          ],
+          [
+            132.800006625,
+            132.800006625
+          ],
+          [
+            137.700006625,
+            137.700006625
+          ],
+          [
+            154.800006625,
+            155.100006625
+          ],
+          [
+            170.83333995833334,
+            170.83333995833334
+          ],
+          [
+            194.03333995833333,
+            194.03333995833333
+          ],
+          [
+            197.63333995833332,
+            197.63333995833332
+          ],
+          [
+            212.53333995833333,
+            212.73333995833335
+          ],
+          [
+            216.83333995833334,
+            216.83333995833334
+          ],
+          [
+            240.500006625,
+            240.800006625
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 0.9,
+        "precision": 0.9,
+        "f1": 0.9
+      },
+      "shared_code": [],
+      "independent_regions": {
+        "pairs": [],
+        "first_unmatched": 0,
+        "second_unmatched": 0
+      }
+    },
+    "r03-a03": {
+      "source_sha256": "4909bfc4e21573032dd69bb814f90514867d351ce5d01d343478e72fc9d5b7de",
+      "boundaries": {
+        "reference_count": 47,
+        "prediction_count": 44,
+        "matched": 43,
+        "matches": [
+          [
+            0.3333333333333333,
+            0.3333333333333333
+          ],
+          [
+            111.93333333333334,
+            112.13333333333334
+          ],
+          [
+            120.13333333333334,
+            120.13333333333334
+          ],
+          [
+            125.06666666666666,
+            125.06666666666666
+          ],
+          [
+            136.53333333333333,
+            136.53333333333333
+          ],
+          [
+            151.26666666666668,
+            151.26666666666668
+          ],
+          [
+            233.53333333333333,
+            233.53333333333333
+          ],
+          [
+            243.86666666666667,
+            243.86666666666667
+          ],
+          [
+            250.6,
+            250.6
+          ],
+          [
+            272.2,
+            272.2
+          ],
+          [
+            273.8666666666667,
+            273.8666666666667
+          ],
+          [
+            279.2,
+            279.2
+          ],
+          [
+            282.3333333333333,
+            282.3333333333333
+          ],
+          [
+            303.53333333333336,
+            303.53333333333336
+          ],
+          [
+            332.0,
+            332.0
+          ],
+          [
+            338.8666666666667,
+            338.8666666666667
+          ],
+          [
+            371.4,
+            371.4
+          ],
+          [
+            378.8,
+            378.8
+          ],
+          [
+            390.06666666666666,
+            390.06666666666666
+          ],
+          [
+            453.0,
+            453.0
+          ],
+          [
+            503.6,
+            503.6
+          ],
+          [
+            509.06666666666666,
+            509.06666666666666
+          ],
+          [
+            511.4,
+            511.4
+          ],
+          [
+            597.8,
+            598.3333333333334
+          ],
+          [
+            626.0666666666667,
+            626.0666666666667
+          ],
+          [
+            753.2,
+            753.2
+          ],
+          [
+            761.8666666666667,
+            761.8666666666667
+          ],
+          [
+            779.7333333333333,
+            779.7333333333333
+          ],
+          [
+            787.6,
+            787.6
+          ],
+          [
+            793.2,
+            793.2
+          ],
+          [
+            803.3333333333334,
+            803.3333333333334
+          ],
+          [
+            838.4666666666667,
+            838.4666666666667
+          ],
+          [
+            895.8666666666667,
+            895.8666666666667
+          ],
+          [
+            915.0,
+            915.0
+          ],
+          [
+            945.4,
+            945.4
+          ],
+          [
+            1006.1333333333333,
+            1006.1333333333333
+          ],
+          [
+            1016.7333333333333,
+            1016.7333333333333
+          ],
+          [
+            1041.4666666666667,
+            1041.4666666666667
+          ],
+          [
+            1058.4,
+            1058.4
+          ],
+          [
+            1089.9333333333334,
+            1089.9333333333334
+          ],
+          [
+            1214.7333333333333,
+            1214.7333333333333
+          ],
+          [
+            1220.9333333333334,
+            1220.9333333333334
+          ],
+          [
+            1231.4,
+            1231.4
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 0.9148936170212766,
+        "precision": 0.9772727272727273,
+        "f1": 0.945054945054945
+      },
+      "shared_code": [
+        {
+          "crop_id": "r03-c06",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 170,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "Nocommand'was'found,didyoumean:Command'cas'frompackage'amule-adunanza-utils'(universe)Command'cas'frompackage'amule-utils'(universe)Command'as'frompackage'binutils'(main)",
+            "hypothesis": "Nocommand'was'found,didyoumean:Command'cas'frompackage'amule-adunanza-utils'(universe)Command'cas'frompackage'amule-utils'(universe)Command'as'frompackage'binutils'(main)"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 170,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "Nocommand'was'found,didyoumean:Command'cas'frompackage'amule-adunanza-utils'(universe)Command'cas'frompackage'amule-utils'(universe)Command'as'frompackage'binutils'(main)",
+            "hypothesis": "Nocommand'was'found,didyoumean:Command'cas'frompackage'amule-adunanza-utils'(universe)Command'cas'frompackage'amule-utils'(universe)Command'as'frompackage'binutils'(main)"
+          }
+        },
+        {
+          "crop_id": "r03-c07",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 131,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "Theprogram'emacs'canbefoundinthefollowingpackages:*emacs23*emacs23-nox*e3*emacs23-lucid*joveTry:sudoapt-getinstall<selectedpackage>",
+            "hypothesis": "Theprogram'emacs'canbefoundinthefollowingpackages:*emacs23*emacs23-nox*e3*emacs23-lucid*joveTry:sudoapt-getinstall<selectedpackage>"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 131,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "Theprogram'emacs'canbefoundinthefollowingpackages:*emacs23*emacs23-nox*e3*emacs23-lucid*joveTry:sudoapt-getinstall<selectedpackage>",
+            "hypothesis": "Theprogram'emacs'canbefoundinthefollowingpackages:*emacs23*emacs23-nox*e3*emacs23-lucid*joveTry:sudoapt-getinstall<selectedpackage>"
+          }
+        },
+        {
+          "crop_id": "r03-c08",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 118,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "#include<stdio.h>intmain(intargc,char**argv){printf(\"\\nHalloichbineinComputerprogrammundheiss:%s\\n\",argv[0]);return0;}",
+            "hypothesis": "#include<stdio.h>intmain(intargc,char**argv){printf(\"\\nHalloichbineinComputerprogrammundheiss:%s\\n\",argv[0]);return0;}"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 118,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "#include<stdio.h>intmain(intargc,char**argv){printf(\"\\nHalloichbineinComputerprogrammundheiss:%s\\n\",argv[0]);return0;}",
+            "hypothesis": "#include<stdio.h>intmain(intargc,char**argv){printf(\"\\nHalloichbineinComputerprogrammundheiss:%s\\n\",argv[0]);return0;}"
+          }
+        },
+        {
+          "crop_id": "r03-c09",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 30,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "hello:hello.cgcchello.c-ohello",
+            "hypothesis": "hello:hello.cgcchello.c-ohello"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 30,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "hello:hello.cgcchello.c-ohello",
+            "hypothesis": "hello:hello.cgcchello.c-ohello"
+          }
+        },
+        {
+          "crop_id": "r03-c10",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 96,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "CompilationstartedatFriMay2419:27:46make-kgcchello.c-ohelloCompilationfinishedatFriMay2419:27:46",
+            "hypothesis": "CompilationstartedatFriMay2419:27:46make-kgcchello.c-ohelloCompilationfinishedatFriMay2419:27:46"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 96,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "CompilationstartedatFriMay2419:27:46make-kgcchello.c-ohelloCompilationfinishedatFriMay2419:27:46",
+            "hypothesis": "CompilationstartedatFriMay2419:27:46make-kgcchello.c-ohelloCompilationfinishedatFriMay2419:27:46"
+          }
+        },
+        {
+          "crop_id": "r03-c11",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 75,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "inti;for(i=1;i<argc;i++){printf(\"parameternummer%dlautet:%s\\n\",i,argv[i]);}",
+            "hypothesis": "inti;for(i=1;i<argc;i++){printf(\"parameternummer%dlautet:%s\\n\",i,argv[i]);}"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 75,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "inti;for(i=1;i<argc;i++){printf(\"parameternummer%dlautet:%s\\n\",i,argv[i]);}",
+            "hypothesis": "inti;for(i=1;i<argc;i++){printf(\"parameternummer%dlautet:%s\\n\",i,argv[i]);}"
+          }
+        },
+        {
+          "crop_id": "r03-c12",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 131,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "HalloichbineinComputerprogrammundheiss:./helloparameternummer1lautet:dasparameternummer2lautet:sindparameternummer3lautet:parameter",
+            "hypothesis": "HalloichbineinComputerprogrammundheiss:./helloparameternummer1lautet:dasparameternummer2lautet:sindparameternummer3lautet:parameter"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 131,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "HalloichbineinComputerprogrammundheiss:./helloparameternummer1lautet:dasparameternummer2lautet:sindparameternummer3lautet:parameter",
+            "hypothesis": "HalloichbineinComputerprogrammundheiss:./helloparameternummer1lautet:dasparameternummer2lautet:sindparameternummer3lautet:parameter"
+          }
+        },
+        {
+          "crop_id": "r03-c13",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 20,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "./hellomitparametern",
+            "hypothesis": "./hellomitparametern"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 20,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "./hellomitparametern",
+            "hypothesis": "./hellomitparametern"
+          }
+        }
+      ],
+      "independent_regions": {
+        "pairs": [
+          {
+            "first_index": 5,
+            "second_index": 4,
+            "region_iou": 0.9724767686437169,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 96,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "CompilationstartedatFriMay2419:27:46make-kgcchello.c-ohelloCompilationfinishedatFriMay2419:27:46",
+              "hypothesis": "CompilationstartedatFriMay2419:27:46make-kgcchello.c-ohelloCompilationfinishedatFriMay2419:27:46"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 96,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "CompilationstartedatFriMay2419:27:46make-kgcchello.c-ohelloCompilationfinishedatFriMay2419:27:46",
+              "hypothesis": "CompilationstartedatFriMay2419:27:46make-kgcchello.c-ohelloCompilationfinishedatFriMay2419:27:46"
+            }
+          }
+        ],
+        "first_unmatched": 8,
+        "second_unmatched": 7
+      }
+    },
+    "r03-a04": {
+      "source_sha256": "c4b268ff4889fa20c3d726240a090f7627068c0d0e47cda5676785ff648bb85c",
+      "boundaries": {
+        "reference_count": 69,
+        "prediction_count": 69,
+        "matched": 69,
+        "matches": [
+          [
+            7.354341145833334,
+            7.354341145833334
+          ],
+          [
+            16.812674479166667,
+            16.812674479166667
+          ],
+          [
+            38.3960078125,
+            38.3960078125
+          ],
+          [
+            89.72934114583333,
+            89.72934114583333
+          ],
+          [
+            94.22934114583333,
+            94.22934114583333
+          ],
+          [
+            106.2710078125,
+            106.2710078125
+          ],
+          [
+            123.85434114583333,
+            123.85434114583333
+          ],
+          [
+            132.97934114583333,
+            132.97934114583333
+          ],
+          [
+            145.8960078125,
+            145.8960078125
+          ],
+          [
+            156.97934114583333,
+            156.97934114583333
+          ],
+          [
+            177.06267447916667,
+            177.06267447916667
+          ],
+          [
+            199.7710078125,
+            199.7710078125
+          ],
+          [
+            216.31267447916667,
+            216.31267447916667
+          ],
+          [
+            236.43767447916667,
+            236.43767447916667
+          ],
+          [
+            240.93767447916667,
+            240.97934114583333
+          ],
+          [
+            305.1460078125,
+            305.1460078125
+          ],
+          [
+            334.8126744791667,
+            334.85434114583336
+          ],
+          [
+            365.2710078125,
+            365.2710078125
+          ],
+          [
+            367.8126744791667,
+            367.85434114583336
+          ],
+          [
+            368.22934114583336,
+            368.22934114583336
+          ],
+          [
+            397.22934114583336,
+            397.3126744791667
+          ],
+          [
+            414.3960078125,
+            414.4376744791667
+          ],
+          [
+            433.10434114583336,
+            433.10434114583336
+          ],
+          [
+            436.8960078125,
+            436.9376744791667
+          ],
+          [
+            460.72934114583336,
+            460.72934114583336
+          ],
+          [
+            472.0626744791667,
+            472.0626744791667
+          ],
+          [
+            496.8960078125,
+            496.8960078125
+          ],
+          [
+            499.60434114583336,
+            499.6876744791667
+          ],
+          [
+            538.8960078125,
+            538.8960078125
+          ],
+          [
+            554.8543411458334,
+            554.8543411458334
+          ],
+          [
+            557.4376744791666,
+            557.4376744791666
+          ],
+          [
+            568.3543411458334,
+            568.3543411458334
+          ],
+          [
+            570.5626744791666,
+            570.6043411458334
+          ],
+          [
+            586.8543411458334,
+            586.8543411458334
+          ],
+          [
+            619.7710078125,
+            619.8543411458334
+          ],
+          [
+            642.1460078125,
+            642.1460078125
+          ],
+          [
+            652.7293411458334,
+            652.7293411458334
+          ],
+          [
+            654.5626744791666,
+            654.5626744791666
+          ],
+          [
+            663.7710078125,
+            663.8543411458334
+          ],
+          [
+            692.8960078125,
+            692.8960078125
+          ],
+          [
+            696.5626744791666,
+            696.6460078125
+          ],
+          [
+            705.6460078125,
+            705.6460078125
+          ],
+          [
+            723.1460078125,
+            723.1876744791666
+          ],
+          [
+            753.6043411458334,
+            753.6876744791666
+          ],
+          [
+            760.7293411458334,
+            760.8126744791666
+          ],
+          [
+            776.1876744791666,
+            776.2710078125
+          ],
+          [
+            782.4793411458334,
+            782.4793411458334
+          ],
+          [
+            784.2293411458334,
+            784.2293411458334
+          ],
+          [
+            822.7293411458334,
+            822.8126744791666
+          ],
+          [
+            832.7710078125,
+            832.8126744791666
+          ],
+          [
+            851.3960078125,
+            851.3960078125
+          ],
+          [
+            855.9793411458334,
+            855.9793411458334
+          ],
+          [
+            893.3126744791666,
+            893.3960078125
+          ],
+          [
+            933.8960078125,
+            933.8960078125
+          ],
+          [
+            962.3126744791666,
+            962.3126744791666
+          ],
+          [
+            964.8960078125,
+            964.9376744791666
+          ],
+          [
+            993.4793411458334,
+            993.4793411458334
+          ],
+          [
+            1048.2293411458334,
+            1048.2293411458334
+          ],
+          [
+            1097.1876744791666,
+            1097.1876744791666
+          ],
+          [
+            1099.4793411458334,
+            1099.5210078125
+          ],
+          [
+            1118.6876744791666,
+            1118.7293411458334
+          ],
+          [
+            1138.3543411458334,
+            1138.3543411458334
+          ],
+          [
+            1152.7293411458334,
+            1152.8126744791666
+          ],
+          [
+            1173.0626744791666,
+            1173.0626744791666
+          ],
+          [
+            1177.3126744791666,
+            1177.3543411458334
+          ],
+          [
+            1187.0210078125,
+            1187.0210078125
+          ],
+          [
+            1215.1876744791666,
+            1215.2293411458334
+          ],
+          [
+            1239.2293411458334,
+            1239.2293411458334
+          ],
+          [
+            1260.6043411458334,
+            1260.6043411458334
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "f1": 1.0
+      },
+      "shared_code": [],
+      "independent_regions": {
+        "pairs": [],
+        "first_unmatched": 0,
+        "second_unmatched": 0
+      }
+    }
+  },
+  "boundary_totals": {
+    "first_count": 178,
+    "second_count": 171,
+    "matched": 168,
+    "f1": 0.9627507163323782
+  },
+  "shared_code_totals": {
+    "first_as_reference": {
+      "paired_crops": 13,
+      "errors": 0,
+      "reference_units": 1506,
+      "cer": 0.0
+    },
+    "second_as_reference": {
+      "paired_crops": 13,
+      "errors": 0,
+      "reference_units": 1506,
+      "cer": 0.0
+    }
+  }
+}

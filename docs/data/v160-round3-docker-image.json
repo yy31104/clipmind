@@ -1,0 +1,12 @@
+{
+  "image_id": "sha256:4274bec1c88d481216ec9b42263ce9d8d6e8e7b92f9a5dd80c2d608c083070ad",
+  "code_revision": "a604b7c3f24f95bd6d139dc43c88a4840f8a6678",
+  "os": "linux",
+  "architecture": "arm64",
+  "cpu_limit": 6,
+  "memory_limit": "4 GiB",
+  "network": "none",
+  "version": "1.6.0",
+  "model_cache": "read-only local cache",
+  "dockerfile_sha256": "22ea234c9dd0241ed29455a6ccd36ae487147d5fc281dc82af6246f7034f75f3"
+}

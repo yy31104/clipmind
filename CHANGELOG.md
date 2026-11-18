@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.6.0
+
+- Rank information changes separately from retained screenshots and show them in the frames view.
+- Improve OCR on dark code panels and light overlays, and keep complete screen states available for search.
+
 ## v1.5.0
 
 - Compare each screen state with the last information screen; speaker, camera, pointer and transition states stay saved but are typed separately instead of counting as new information.

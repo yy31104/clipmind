@@ -1,0 +1,95 @@
+{
+  "recordings": [
+    {
+      "bytes": 93335890,
+      "download": "https://peertube.opencloud.lu/static/streaming-playlists/hls/a5c24ad6-0748-4ef5-8d95-07bb5aa152bd/eb797f8b-9cab-4d2c-becb-7fd1a538996d-720-fragmented.mp4",
+      "event": "LibreOffice Conference 2026",
+      "id": "r03-a01",
+      "licence": {
+        "default_deed": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "item_label": "Attribution - Share Alike",
+        "item_version": null,
+        "organizer_default": "CC BY-SA 4.0",
+        "version_evidence": [
+          "https://blog.documentfoundation.org/blog/2026/03/11/libocon-2026-call-for-papers/",
+          "https://blog.documentfoundation.org/blog/2026/10/11/libreoffice-conference-2026-group-photo-and-final-video-updates/"
+        ]
+      },
+      "producer_family": "The Document Foundation and Pordenone Linux User Group",
+      "program": "https://events.documentfoundation.org/libreoffice-conference-2026/talk/CN78T3/",
+      "published_utc": "2026-09-30T16:44:55.411Z",
+      "publisher_metadata": "https://peertube.opencloud.lu/api/v1/videos/a5c24ad6-0748-4ef5-8d95-07bb5aa152bd",
+      "recording": "https://peertube.opencloud.lu/videos/watch/a5c24ad6-0748-4ef5-8d95-07bb5aa152bd",
+      "sha256": "52b467504adf268a0dc03887bd4fcfe46d776f50e3a6fc0816365087a968de7e",
+      "speakers": [
+        "Marco Marinello",
+        "Gabriele Ponzo"
+      ],
+      "spoken_language": "English",
+      "title": "Seamless Collaboration: Versioning Flat ODF Documents with Git"
+    },
+    {
+      "bytes": 11946015,
+      "download": "https://peertube.slat.org/static/streaming-playlists/hls/a55a16cd-822a-44ab-ad92-1c86c0b20da4/73e734b9-0488-4574-8551-b8f13924d0c9-720-fragmented.mp4",
+      "id": "r03-a02",
+      "licence": {
+        "deed": "https://creativecommons.org/licenses/by/4.0/",
+        "item_label": "CC BY 4.0",
+        "item_version": "4.0"
+      },
+      "producer_family": "有關仲佑的教學影片",
+      "publication_host": "Software Liberty Association Taiwan",
+      "published_utc": "2022-05-15T13:59:26.995Z",
+      "publisher_metadata": "https://peertube.slat.org/api/v1/videos/a55a16cd-822a-44ab-ad92-1c86c0b20da4",
+      "recording": "https://peertube.slat.org/videos/watch/a55a16cd-822a-44ab-ad92-1c86c0b20da4",
+      "sha256": "785476d46c2dc456e58131f38669aa19ef0b978793257be26ebc8c70e2090f7b",
+      "spoken_language": "Mandarin",
+      "title": "文字部件拆解在Inkscape"
+    },
+    {
+      "bytes": 57962395,
+      "download": "https://upload.wikimedia.org/wikipedia/commons/6/6c/Hallo_Welt_in_Linux_mit_gcc%2C_emacs_und_make_files..ogv",
+      "id": "r03-a03",
+      "licence": {
+        "deed": "https://creativecommons.org/licenses/by-sa/3.0/",
+        "item_label": "CC BY-SA 3.0 Unported",
+        "item_version": "3.0"
+      },
+      "producer_family": "Renepick",
+      "publication_host": "Wikimedia Commons",
+      "published_date": "2013-05-24",
+      "recording": "https://commons.wikimedia.org/wiki/File:Hallo_Welt_in_Linux_mit_gcc,_emacs_und_make_files..ogv",
+      "sha256": "4909bfc4e21573032dd69bb814f90514867d351ce5d01d343478e72fc9d5b7de",
+      "spoken_language": "German",
+      "title": "Hallo Welt in Linux mit gcc, emacs und make files."
+    },
+    {
+      "bytes": 60533903,
+      "download": "https://peertube.opencloud.lu/static/streaming-playlists/hls/46226350-0aba-4af8-825d-3f4eb535a05b/3722fde0-56e2-4c70-84cb-8597147690d1-720-fragmented.mp4",
+      "event": "LibreOffice Conference 2026",
+      "id": "r03-a04",
+      "licence": {
+        "default_deed": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "item_label": "Attribution - Share Alike",
+        "item_version": null,
+        "organizer_default": "CC BY-SA 4.0",
+        "version_evidence": [
+          "https://blog.documentfoundation.org/blog/2026/03/11/libocon-2026-call-for-papers/",
+          "https://blog.documentfoundation.org/blog/2026/10/11/libreoffice-conference-2026-group-photo-and-final-video-updates/"
+        ]
+      },
+      "producer_family": "The Document Foundation and Pordenone Linux User Group",
+      "program": "https://events.documentfoundation.org/libreoffice-conference-2026/talk/B3HZCJ/",
+      "published_utc": "2026-09-28T17:06:30.734Z",
+      "publisher_metadata": "https://peertube.opencloud.lu/api/v1/videos/46226350-0aba-4af8-825d-3f4eb535a05b",
+      "recording": "https://peertube.opencloud.lu/videos/watch/46226350-0aba-4af8-825d-3f4eb535a05b",
+      "sha256": "c4b268ff4889fa20c3d726240a090f7627068c0d0e47cda5676785ff648bb85c",
+      "speakers": [
+        "Emiliano Vavassori"
+      ],
+      "spoken_language": "English",
+      "title": "Distributing LibreOffice as AppImage"
+    }
+  ],
+  "schema_version": 1
+}

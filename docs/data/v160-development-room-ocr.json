@@ -1,0 +1,208 @@
+{
+  "schema_version": 1,
+  "split": "exposed development (former round 2)",
+  "full_reextraction": {
+    "docker_local_image_manifest": "sha256:bc5581d85a47babece57cd20bf5494745ab4f478b665b87decffef5352fa1ced",
+    "mac": {
+      "status": "measured",
+      "extraction_code_revision": "80163de265b69d49d3f5cef11b40c74a4b7bdd8d",
+      "runtime_sha256": "7d398ecbdf7f98dffc0fdf98eb116d1cbc638a9dec6cd07c523c844ad0859cd9",
+      "source_sha256": "d360de7f3261a854cc3bec7c12c14a21353bd563597b6a404146e5152b94c7ba",
+      "labels_sha256": "84cc77f2270b5997eb39d7c7cd8f816c8591661b484100d0fdf723e04c98874e",
+      "totals": {
+        "matched": 128,
+        "references": 139,
+        "predictions": 515,
+        "canonical_predictions": 1029,
+        "canonical_matched": 130,
+        "code_errors": 498,
+        "code_characters": 6980,
+        "ocr_failures": 0
+      },
+      "values": {
+        "recall": 0.920863309352518,
+        "precision": 0.24854368932038834,
+        "code_cer": 0.07134670487106017
+      },
+      "extraction_report_sha256": "d3b2e62c87340712fec69e356788593dfc89167a08c7ae9fd8caeaa3842394ad",
+      "cases": [
+        {
+          "case_id": "r02-a01",
+          "status": "measured",
+          "matched": 23,
+          "references": 23,
+          "predictions": 42,
+          "code_errors": 269,
+          "code_characters": 269,
+          "wall_seconds": 49.039,
+          "cleanup_leftovers": {}
+        },
+        {
+          "case_id": "r02-a02",
+          "status": "measured",
+          "matched": 22,
+          "references": 22,
+          "predictions": 24,
+          "code_errors": 55,
+          "code_characters": 1503,
+          "wall_seconds": 56.398,
+          "cleanup_leftovers": {}
+        },
+        {
+          "case_id": "r02-a03",
+          "status": "measured",
+          "matched": 27,
+          "references": 27,
+          "predictions": 219,
+          "code_errors": 19,
+          "code_characters": 1665,
+          "wall_seconds": 122.795,
+          "cleanup_leftovers": {}
+        },
+        {
+          "case_id": "r02-a04",
+          "status": "measured",
+          "matched": 56,
+          "references": 67,
+          "predictions": 230,
+          "code_errors": 155,
+          "code_characters": 3543,
+          "wall_seconds": 92.957,
+          "cleanup_leftovers": {}
+        }
+      ]
+    },
+    "docker": {
+      "status": "measured",
+      "extraction_code_revision": "80163de265b69d49d3f5cef11b40c74a4b7bdd8d",
+      "runtime_sha256": "7d398ecbdf7f98dffc0fdf98eb116d1cbc638a9dec6cd07c523c844ad0859cd9",
+      "source_sha256": "d360de7f3261a854cc3bec7c12c14a21353bd563597b6a404146e5152b94c7ba",
+      "labels_sha256": "84cc77f2270b5997eb39d7c7cd8f816c8591661b484100d0fdf723e04c98874e",
+      "totals": {
+        "matched": 129,
+        "references": 139,
+        "predictions": 515,
+        "canonical_predictions": 1031,
+        "canonical_matched": 130,
+        "code_errors": 999,
+        "code_characters": 6980,
+        "ocr_failures": 0
+      },
+      "values": {
+        "recall": 0.9280575539568345,
+        "precision": 0.2504854368932039,
+        "code_cer": 0.14312320916905444
+      },
+      "extraction_report_sha256": "57f9183f74132145a2b8e753dddbe147162eda46af61e738d1e9dea2cc9ca877",
+      "cases": [
+        {
+          "case_id": "r02-a01",
+          "status": "measured",
+          "matched": 23,
+          "references": 23,
+          "predictions": 40,
+          "code_errors": 269,
+          "code_characters": 269,
+          "wall_seconds": 159.459,
+          "cleanup_leftovers": {}
+        },
+        {
+          "case_id": "r02-a02",
+          "status": "measured",
+          "matched": 22,
+          "references": 22,
+          "predictions": 28,
+          "code_errors": 118,
+          "code_characters": 1503,
+          "wall_seconds": 170.799,
+          "cleanup_leftovers": {}
+        },
+        {
+          "case_id": "r02-a03",
+          "status": "measured",
+          "matched": 27,
+          "references": 27,
+          "predictions": 192,
+          "code_errors": 201,
+          "code_characters": 1665,
+          "wall_seconds": 329.83,
+          "cleanup_leftovers": {}
+        },
+        {
+          "case_id": "r02-a04",
+          "status": "measured",
+          "matched": 57,
+          "references": 67,
+          "predictions": 255,
+          "code_errors": 411,
+          "code_characters": 3543,
+          "wall_seconds": 301.469,
+          "cleanup_leftovers": {}
+        }
+      ]
+    }
+  },
+  "saved_frame_provider_replay": {
+    "code_revision": "c9f2b4283a23b52a5c4aee8059a168b73ffae02f",
+    "mac": {
+      "ocr_module_sha256": "b7097340b91fddecae158ececbf0da4418662a8a253fed03fde685a7baa72e6b",
+      "replay_report_sha256": "c1201777c9a21d4abf36b4e83745b11e5f570997767351ce2d9591191eb0144f",
+      "cases": [
+        {
+          "case_id": "r02-a01",
+          "regions": 2,
+          "reference_units": 269,
+          "code_errors": 269
+        },
+        {
+          "case_id": "r02-a02",
+          "regions": 8,
+          "reference_units": 1503,
+          "code_errors": 56
+        },
+        {
+          "case_id": "r02-a03",
+          "regions": 14,
+          "reference_units": 1665,
+          "code_errors": 19
+        },
+        {
+          "case_id": "r02-a04",
+          "regions": 15,
+          "reference_units": 3543,
+          "code_errors": 155
+        }
+      ]
+    },
+    "docker": {
+      "ocr_module_sha256": "b7097340b91fddecae158ececbf0da4418662a8a253fed03fde685a7baa72e6b",
+      "replay_report_sha256": "a3fbab877a5202d9cefc6c422a316139e726ad0c2dfd4801868c21ba3bf40d9c",
+      "cases": [
+        {
+          "case_id": "r02-a01",
+          "regions": 2,
+          "reference_units": 269,
+          "code_errors": 269
+        },
+        {
+          "case_id": "r02-a02",
+          "regions": 8,
+          "reference_units": 1503,
+          "code_errors": 111
+        },
+        {
+          "case_id": "r02-a03",
+          "regions": 14,
+          "reference_units": 1665,
+          "code_errors": 201
+        },
+        {
+          "case_id": "r02-a04",
+          "regions": 15,
+          "reference_units": 3543,
+          "code_errors": 396
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,1860 @@
+{
+  "schema_version": 1,
+  "annotation_protocol": "v160-round3",
+  "annotation_method": "Two independent AI source-only passes and an independent AI adjudication.",
+  "source_roi_timestamp_method": "Native PTS minus the first decoded video PTS times the native time base.",
+  "cases": {
+    "r03-a01": {
+      "reviewed": true,
+      "review_start": 0,
+      "review_end": 1444.421016,
+      "input_sha256": "52b467504adf268a0dc03887bd4fcfe46d776f50e3a6fc0816365087a968de7e",
+      "slide_changes": [
+        7.3,
+        37.43333333333333,
+        39.333333333333336,
+        99.23333333333333,
+        134.43333333333334,
+        162.56666666666666,
+        178.53333333333333,
+        230.8,
+        273.8333333333333,
+        316.0,
+        317.0,
+        348.26666666666665,
+        367.23333333333335,
+        408.7,
+        479.5,
+        516.2333333333333,
+        558.5,
+        602.8666666666667,
+        632.4333333333333,
+        674.1,
+        732.9333333333333,
+        740.2333333333333,
+        798.7,
+        843.2,
+        880.0666666666667,
+        928.6,
+        1006.0,
+        1018.9333333333333,
+        1026.0,
+        1040.2666666666667,
+        1069.9,
+        1116.5666666666666,
+        1117.6333333333334,
+        1134.3,
+        1145.2333333333333,
+        1176.2,
+        1357.4666666666667,
+        1413.2
+      ],
+      "boundary_evidence": [
+        {
+          "timestamp": 7.3,
+          "source_timestamp": 7.321015625,
+          "native_pts": 113142,
+          "native_frame_index": 219,
+          "category": "slide",
+          "description": "The conference opener gives way to Seamless Collaboration: Versioning Flat ODF Documents with Git, with the speakers’ names and a QR code."
+        },
+        {
+          "timestamp": 37.43333333333333,
+          "source_timestamp": 37.454348958333334,
+          "native_pts": 575990,
+          "native_frame_index": 1123,
+          "category": "slide",
+          "description": "Abstract introduces the Flat ODF and Git workflow for granular text-based versioning and attributable changes."
+        },
+        {
+          "timestamp": 39.333333333333336,
+          "source_timestamp": 39.35434895833333,
+          "native_pts": 605174,
+          "native_frame_index": 1180,
+          "category": "slide",
+          "description": "It's a looong story introduces bits, bytes, files and character representation, with an ASCII chart."
+        },
+        {
+          "timestamp": 99.23333333333333,
+          "source_timestamp": 99.25434895833334,
+          "native_pts": 1525238,
+          "native_frame_index": 2977,
+          "category": "slide",
+          "description": "Text files gives the squared-paper analogy, the one-byte-per-character example and a hexadecimal view."
+        },
+        {
+          "timestamp": 134.43333333333334,
+          "source_timestamp": 134.45434895833333,
+          "native_pts": 2065910,
+          "native_frame_index": 4033,
+          "category": "slide",
+          "description": "Plain TXT explains the continued use and formatting limitations of plain text."
+        },
+        {
+          "timestamp": 162.56666666666666,
+          "source_timestamp": 162.58768229166665,
+          "native_pts": 2498038,
+          "native_frame_index": 4877,
+          "category": "slide",
+          "description": "Encodings contrasts published open specifications with proprietary systems."
+        },
+        {
+          "timestamp": 178.53333333333333,
+          "source_timestamp": 178.55434895833332,
+          "native_pts": 2743286,
+          "native_frame_index": 5356,
+          "category": "slide",
+          "description": "Some encodings examples lists open and closed formats and shows an XML editor example."
+        },
+        {
+          "timestamp": 230.8,
+          "source_timestamp": 230.821015625,
+          "native_pts": 3546102,
+          "native_frame_index": 6924,
+          "category": "slide",
+          "description": "MarkUp encodings introduces the history of GML, SGML, HTML, XML and markers."
+        },
+        {
+          "timestamp": 273.8333333333333,
+          "source_timestamp": 273.85434895833333,
+          "native_pts": 4207094,
+          "native_frame_index": 8215,
+          "category": "slide",
+          "description": "MarkDown encoding contrasts verbose markup with a lightweight syntax."
+        },
+        {
+          "timestamp": 316.0,
+          "source_timestamp": 316.021015625,
+          "native_pts": 4854774,
+          "native_frame_index": 9480,
+          "category": "slide",
+          "description": "OK, what’s new? first appears as a complete screen for exactly one second, asking the audience about familiar concepts."
+        },
+        {
+          "timestamp": 317.0,
+          "source_timestamp": 317.021015625,
+          "native_pts": 4870134,
+          "native_frame_index": 9510,
+          "category": "return",
+          "description": "The talk returns to MarkDown encoding after the brief question slide."
+        },
+        {
+          "timestamp": 348.26666666666665,
+          "source_timestamp": 348.28768229166667,
+          "native_pts": 5350390,
+          "native_frame_index": 10448,
+          "category": "return",
+          "description": "OK, what’s new? returns and remains on screen before the audience cutaway."
+        },
+        {
+          "timestamp": 367.23333333333335,
+          "source_timestamp": 367.2543489583333,
+          "native_pts": 5641718,
+          "native_frame_index": 11017,
+          "category": "slide",
+          "description": "A side-by-side illustration compares raw Markdown in a dark editor with rendered Italian bullet points."
+        },
+        {
+          "timestamp": 408.7,
+          "source_timestamp": 408.721015625,
+          "native_pts": 6278646,
+          "native_frame_index": 12261,
+          "category": "slide",
+          "description": "Text structures distinguishes elements, separators and how to use spacing and breaks correctly."
+        },
+        {
+          "timestamp": 479.5,
+          "source_timestamp": 479.521015625,
+          "native_pts": 7366134,
+          "native_frame_index": 14385,
+          "category": "slide",
+          "description": "The skeleton of the document explains the accessibility and processing benefits of a well-structured document."
+        },
+        {
+          "timestamp": 516.2333333333333,
+          "source_timestamp": 516.2543489583334,
+          "native_pts": 7930358,
+          "native_frame_index": 15487,
+          "category": "slide",
+          "description": "Other reasons for structuring covers automatic numbering, tables of contents and layout."
+        },
+        {
+          "timestamp": 558.5,
+          "source_timestamp": 558.521015625,
+          "native_pts": 8579574,
+          "native_frame_index": 16755,
+          "category": "slide",
+          "description": "The keyword: STYLES recommends styles for consistency, hierarchy, versioning and merging."
+        },
+        {
+          "timestamp": 602.8666666666667,
+          "source_timestamp": 602.8876822916667,
+          "native_pts": 9261046,
+          "native_frame_index": 18086,
+          "category": "slide",
+          "description": "Encoding formats (again) distinguishes ODF and ODT and identifies ODF as an ISO standard."
+        },
+        {
+          "timestamp": 632.4333333333333,
+          "source_timestamp": 632.4543489583333,
+          "native_pts": 9715190,
+          "native_frame_index": 18973,
+          "category": "slide",
+          "description": "Just a revival? asks whether using source and linked files is a step back."
+        },
+        {
+          "timestamp": 674.1,
+          "source_timestamp": 674.121015625,
+          "native_pts": 10355190,
+          "native_frame_index": 20223,
+          "category": "slide",
+          "description": "This is how the professionals compares this approach with LaTeX and describes a WYSIWYG preview."
+        },
+        {
+          "timestamp": 732.9333333333333,
+          "source_timestamp": 732.9543489583333,
+          "native_pts": 11258870,
+          "native_frame_index": 21988,
+          "category": "slide",
+          "description": "The importance of Open Formats covers public specifications, readability, interoperability and independence."
+        },
+        {
+          "timestamp": 740.2333333333333,
+          "source_timestamp": 740.2543489583334,
+          "native_pts": 11370998,
+          "native_frame_index": 22207,
+          "category": "slide",
+          "description": "Master and child documents explains linked sections, child documents and dividing work."
+        },
+        {
+          "timestamp": 798.7,
+          "source_timestamp": 798.721015625,
+          "native_pts": 12269046,
+          "native_frame_index": 23961,
+          "category": "slide",
+          "description": "How ODFs work contrasts ZIP packages with flat single-XML files."
+        },
+        {
+          "timestamp": 843.2,
+          "source_timestamp": 843.221015625,
+          "native_pts": 12952566,
+          "native_frame_index": 25296,
+          "category": "slide",
+          "description": "How do Flat ODF work? explains embedded Base64 objects and recommends links for readability."
+        },
+        {
+          "timestamp": 880.0666666666667,
+          "source_timestamp": 880.0876822916666,
+          "native_pts": 13518838,
+          "native_frame_index": 26402,
+          "category": "slide",
+          "description": "Why use Flat ODTs? shows immediate source readability, version control and recoverability."
+        },
+        {
+          "timestamp": 928.6,
+          "source_timestamp": 928.621015625,
+          "native_pts": 14264310,
+          "native_frame_index": 27858,
+          "category": "slide",
+          "description": "Why tracking in git? lists tracking, branching, merging, linting and CI/CD."
+        },
+        {
+          "timestamp": 1006.0,
+          "source_timestamp": 1006.021015625,
+          "native_pts": 15453174,
+          "native_frame_index": 30180,
+          "category": "slide",
+          "description": "Why linting? introduces formatting problems in Flat ODF output and a pre-commit linter."
+        },
+        {
+          "timestamp": 1018.9333333333333,
+          "source_timestamp": 1018.9543489583333,
+          "native_pts": 15651830,
+          "native_frame_index": 30568,
+          "category": "build_addition",
+          "description": "The Why linting? slide adds the outcome of cleaner diffs."
+        },
+        {
+          "timestamp": 1026.0,
+          "source_timestamp": 1026.021015625,
+          "native_pts": 15760374,
+          "native_frame_index": 30780,
+          "category": "build_addition",
+          "description": "Why linting? adds that cleaner LibreOffice XML export could make linting unnecessary."
+        },
+        {
+          "timestamp": 1040.2666666666667,
+          "source_timestamp": 1040.2876822916667,
+          "native_pts": 15979510,
+          "native_frame_index": 31208,
+          "category": "slide",
+          "description": "Clean diff shows a dark XML diff with focused renaming changes."
+        },
+        {
+          "timestamp": 1069.9,
+          "source_timestamp": 1069.921015625,
+          "native_pts": 16434678,
+          "native_frame_index": 32097,
+          "category": "slide",
+          "description": "Managing huge documents introduces linting for easier merges and retaining subdocuments or paragraphs."
+        },
+        {
+          "timestamp": 1116.5666666666666,
+          "source_timestamp": 1116.5876822916666,
+          "native_pts": 17151478,
+          "native_frame_index": 33497,
+          "category": "build_addition",
+          "description": "The Managing huge documents slide adds the parenthetical enables fast-forward."
+        },
+        {
+          "timestamp": 1117.6333333333334,
+          "source_timestamp": 1117.6543489583332,
+          "native_pts": 17167862,
+          "native_frame_index": 33529,
+          "category": "build_addition",
+          "description": "Managing huge documents adds a bullet about spurious information updated on each commit, such as the LibreOffice version."
+        },
+        {
+          "timestamp": 1134.3,
+          "source_timestamp": 1134.321015625,
+          "native_pts": 17423862,
+          "native_frame_index": 34029,
+          "category": "slide",
+          "description": "Spurious XML content shows diffs involving generated metadata, configuration and a long printer setup value."
+        },
+        {
+          "timestamp": 1145.2333333333333,
+          "source_timestamp": 1145.2543489583334,
+          "native_pts": 17591798,
+          "native_frame_index": 34357,
+          "category": "slide",
+          "description": "Thanks for listening! introduces the presentation source link, QR code and closing credits."
+        },
+        {
+          "timestamp": 1176.2,
+          "source_timestamp": 1176.221015625,
+          "native_pts": 18067446,
+          "native_frame_index": 35286,
+          "category": "demo_screen",
+          "description": "The browser displays the conference presentation repository listing, with its readable README heading."
+        },
+        {
+          "timestamp": 1357.4666666666667,
+          "source_timestamp": 1357.4876822916667,
+          "native_pts": 20851702,
+          "native_frame_index": 40724,
+          "category": "demo_screen",
+          "description": "The pre-commit shell script becomes readable in the full-screen repository browser view."
+        },
+        {
+          "timestamp": 1413.2,
+          "source_timestamp": 1413.221015625,
+          "native_pts": 21707766,
+          "native_frame_index": 42396,
+          "category": "return",
+          "description": "The closing Thanks for listening! slide and presentation source link return after the repository demonstration."
+        }
+      ],
+      "ocr": [
+        {
+          "timestamp": 114.0,
+          "kind": "code",
+          "roi": [
+            0.19953051643192488,
+            0.6458333333333334,
+            0.44913928012519566,
+            0.25
+          ],
+          "text": "00000000  23 20 4c 69 62 4f 63 6f  6e 20 32 30 32 36 20 54\n00000010  61 6c 6b 0a 0a 2d 2d 2d  0a 0a 23 23 20 53 65 61\n00000020  6d 6c 65 73 73 20 43 6f  6c 6c 61 62 6f 72 61 74\n00000030  69 6f 6e 3a 20 56 65 72  73 69 6f 6e 69 6e 67 20\n00000040  46 6c 61 74 20 4f 44 46  20 44 6f 63 75 6d 65 6e\n00000050  74 73 20 77 69 74 68 20  47 69 74 0a 0a 54 72 61",
+          "crop_id": "r03-ca01",
+          "native_pts": 1752054,
+          "native_frame_index": 3420,
+          "source_timestamp": 114.021015625,
+          "reference_sha256": "accdbc49c45cf515a0ec43705269bbb0bc182acf40d6f3e6de5ec0f8b260a335"
+        },
+        {
+          "timestamp": 1062.0,
+          "kind": "code",
+          "roi": [
+            0.27856025039123633,
+            0.28888888888888886,
+            0.18779342723004694,
+            0.10416666666666669
+          ],
+          "text": "</draw:frame>\n</presentation:notes>\n</draw:page>",
+          "crop_id": "r03-c01",
+          "native_pts": 16313334,
+          "native_frame_index": 31860,
+          "source_timestamp": 1062.021015625,
+          "reference_sha256": "ab78d205a981b1f5852ab5de47a793e41629984d732bc1e0a17c9a8eecb5b03f"
+        },
+        {
+          "timestamp": 1062.0,
+          "kind": "code",
+          "roi": [
+            0.27856025039123633,
+            0.46805555555555556,
+            0.5649452269170578,
+            0.03472222222222221
+          ],
+          "text": "<office:forms form:automatic-focus=\"false\" form:apply-design-mode=\"false\"/>",
+          "crop_id": "r03-c02",
+          "native_pts": 16313334,
+          "native_frame_index": 31860,
+          "source_timestamp": 1062.021015625,
+          "reference_sha256": "47464a0c221e97ccfb6ddd14adc0d327cfdbcb7bb3c3c694a510cb817b7d225d"
+        },
+        {
+          "timestamp": 1365.0,
+          "kind": "code",
+          "roi": [
+            0.06807511737089202,
+            0.16111111111111112,
+            0.48669796557120504,
+            0.19583333333333333
+          ],
+          "text": "#!/usr/bin/env bash\n\n# Exit immediately if xmllint is not installed\nif ! command -v xmllint &> /dev/null; then\n    echo \"Error: xmllint is not installed. Please install libxml2-utils or libxml2.\"\n    exit 1\nfi",
+          "crop_id": "r03-c03",
+          "native_pts": 20967414,
+          "native_frame_index": 40950,
+          "source_timestamp": 1365.021015625,
+          "reference_sha256": "deb402dd061a3dc050f7f51ddc7d7eb5fb38533051ead507b2552b8668a7b920"
+        },
+        {
+          "timestamp": 1380.0,
+          "kind": "code",
+          "roi": [
+            0.06807511737089202,
+            0.3402777777777778,
+            0.4679186228482003,
+            0.19166666666666665
+          ],
+          "text": "# Find all staged .fodp files that are added (A), copied (C), or modified (M)\nSTAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\\.fodp$')\n\n# Exit early if no .fodp files are staged\nif [ -z \"$STAGED_FILES\" ]; then\n    exit 0\nfi",
+          "crop_id": "r03-c04",
+          "native_pts": 21197814,
+          "native_frame_index": 41400,
+          "source_timestamp": 1380.021015625,
+          "reference_sha256": "bcc9e733d36237f79846d3651cb2c44bce48f4f1d85637d02c32ce4a61bdc69c"
+        },
+        {
+          "timestamp": 1392.0,
+          "kind": "code",
+          "roi": [
+            0.06807511737089202,
+            0.5611111111111111,
+            0.32785602503912364,
+            0.3916666666666666
+          ],
+          "text": "echo \"Formatting staged .fodp files...\"\n\nfor FILE in $STAGED_FILES; do\n    if [ -f \"$FILE\" ]; then\n        # Format the file in-place using xmllint\n        xmllint --format \"$FILE\" --output \"$FILE\"\n\n        # Re-add the formatted file to the staging area\n        git add \"$FILE\"\n        echo \"Formatted and re-staged: $FILE\"\n    fi\ndone\n\nexit 0",
+          "crop_id": "r03-c05",
+          "native_pts": 21382134,
+          "native_frame_index": 41760,
+          "source_timestamp": 1392.021015625,
+          "reference_sha256": "cfbb0b2685d53c0876fc6fb6f348dd81b01dbc269ef6b1e29e1a156e6ddf25bd"
+        }
+      ]
+    },
+    "r03-a02": {
+      "reviewed": true,
+      "review_start": 0,
+      "review_end": 254.627029,
+      "input_sha256": "785476d46c2dc456e58131f38669aa19ef0b978793257be26ebc8c70e2090f7b",
+      "slide_changes": [
+        17.0,
+        37.7,
+        41.43333333333333,
+        63.96666666666667,
+        75.7,
+        79.56666666666666,
+        102.83333333333333,
+        105.36666666666666,
+        114.4,
+        117.53333333333333,
+        132.8,
+        137.7,
+        154.8,
+        170.83333333333334,
+        179.83333333333334,
+        194.03333333333333,
+        197.63333333333333,
+        212.56666666666666,
+        216.83333333333334,
+        240.5
+      ],
+      "boundary_evidence": [
+        {
+          "timestamp": 17.0,
+          "source_timestamp": 17.000006625,
+          "native_pts": 262134,
+          "native_frame_index": 510,
+          "category": "demo_edit",
+          "description": "The complete 部 glyph first enters the previously blank Inkscape drawing."
+        },
+        {
+          "timestamp": 37.7,
+          "source_timestamp": 37.700006625,
+          "native_pts": 580086,
+          "native_frame_index": 1131,
+          "category": "demo_command",
+          "description": "Path Combine converts the text to a single 50-node path within the text16 group."
+        },
+        {
+          "timestamp": 41.43333333333333,
+          "source_timestamp": 41.433339958333335,
+          "native_pts": 637430,
+          "native_frame_index": 1243,
+          "category": "demo_command",
+          "description": "Path Break Apart creates six selected paths in text16. The hollow lower-left component becomes filled."
+        },
+        {
+          "timestamp": 63.96666666666667,
+          "source_timestamp": 63.966673291666666,
+          "native_pts": 983542,
+          "native_frame_index": 1919,
+          "category": "demo_result",
+          "description": "The attempted Ungroup reports that there is no group to ungroup in the selection."
+        },
+        {
+          "timestamp": 75.7,
+          "source_timestamp": 75.700006625,
+          "native_pts": 1163766,
+          "native_frame_index": 2271,
+          "category": "demo_command",
+          "description": "Ungroup succeeds on the text group as a whole and leaves six paths selected directly in Layer 1."
+        },
+        {
+          "timestamp": 79.56666666666666,
+          "source_timestamp": 79.56667329166666,
+          "native_pts": 1223158,
+          "native_frame_index": 2387,
+          "category": "demo_edit",
+          "description": "The right-hand 阝 radical is released apart from the rest of 部, above and to the right."
+        },
+        {
+          "timestamp": 102.83333333333333,
+          "source_timestamp": 102.83333995833334,
+          "native_pts": 1580534,
+          "native_frame_index": 3085,
+          "category": "demo_command",
+          "description": "Group combines the three selected paths forming the upper-left 立 component."
+        },
+        {
+          "timestamp": 105.36666666666666,
+          "source_timestamp": 105.36667329166667,
+          "native_pts": 1619446,
+          "native_frame_index": 3161,
+          "category": "demo_edit",
+          "description": "The grouped 立 is released above the lower-left component, leaving a visible gap."
+        },
+        {
+          "timestamp": 114.4,
+          "source_timestamp": 114.400006625,
+          "native_pts": 1758198,
+          "native_frame_index": 3432,
+          "category": "demo_edit",
+          "description": "The small inner path of the lower-left component is pulled downward and released visibly separate."
+        },
+        {
+          "timestamp": 117.53333333333333,
+          "source_timestamp": 117.53333995833333,
+          "native_pts": 1806326,
+          "native_frame_index": 3526,
+          "category": "demo_edit",
+          "description": "The smaller inner subpath returns to overlap the larger lower-left subpath."
+        },
+        {
+          "timestamp": 132.8,
+          "source_timestamp": 132.800006625,
+          "native_pts": 2040822,
+          "native_frame_index": 3984,
+          "category": "demo_edit",
+          "description": "A second demonstration leaves the small inner path visibly separated below the larger path."
+        },
+        {
+          "timestamp": 137.7,
+          "source_timestamp": 137.700006625,
+          "native_pts": 2116086,
+          "native_frame_index": 4131,
+          "category": "demo_edit",
+          "description": "The small path returns to its overlapping position beneath 立."
+        },
+        {
+          "timestamp": 154.8,
+          "source_timestamp": 154.800006625,
+          "native_pts": 2378742,
+          "native_frame_index": 4644,
+          "category": "demo_result",
+          "description": "Path Exclusion turns the solid lower-left component into a hollow outline, with a single 12-node path reported."
+        },
+        {
+          "timestamp": 170.83333333333334,
+          "source_timestamp": 170.83333995833334,
+          "native_pts": 2625014,
+          "native_frame_index": 5125,
+          "category": "demo_edit",
+          "description": "The first drawing is deleted, leaving the page blank."
+        },
+        {
+          "timestamp": 179.83333333333334,
+          "source_timestamp": 179.83333995833334,
+          "native_pts": 2763254,
+          "native_frame_index": 5395,
+          "category": "demo_edit",
+          "description": "A complete 部 glyph first appears on the blank drawing in the second demonstration."
+        },
+        {
+          "timestamp": 194.03333333333333,
+          "source_timestamp": 194.03333995833333,
+          "native_pts": 2981366,
+          "native_frame_index": 5821,
+          "category": "demo_command",
+          "description": "Path Combine converts the second text object to a single 50-node path within the text48 group."
+        },
+        {
+          "timestamp": 197.63333333333333,
+          "source_timestamp": 197.63333995833332,
+          "native_pts": 3036662,
+          "native_frame_index": 5929,
+          "category": "demo_command",
+          "description": "Path Break Apart leaves six selected paths in text48 and fills its former lower-left hole."
+        },
+        {
+          "timestamp": 212.56666666666666,
+          "source_timestamp": 212.56667329166666,
+          "native_pts": 3266038,
+          "native_frame_index": 6377,
+          "category": "demo_command",
+          "description": "Ungroup removes the second outer text group, leaving six selected paths directly on Layer 1."
+        },
+        {
+          "timestamp": 216.83333333333334,
+          "source_timestamp": 216.83333995833334,
+          "native_pts": 3331574,
+          "native_frame_index": 6505,
+          "category": "demo_edit",
+          "description": "The right-hand 阝 radical is released to the right of the remaining paths."
+        },
+        {
+          "timestamp": 240.5,
+          "source_timestamp": 240.500006625,
+          "native_pts": 3695094,
+          "native_frame_index": 7215,
+          "category": "demo_result",
+          "description": "Path Exclusion turns the selected left-hand components into one 32-node path with a hollow lower counter. The detached right radical remains."
+        }
+      ],
+      "ocr": []
+    },
+    "r03-a03": {
+      "reviewed": true,
+      "review_start": 0,
+      "review_end": 1242.133333,
+      "input_sha256": "4909bfc4e21573032dd69bb814f90514867d351ce5d01d343478e72fc9d5b7de",
+      "slide_changes": [
+        0.3333333333333333,
+        111.93333333333334,
+        120.13333333333334,
+        125.06666666666666,
+        136.53333333333333,
+        151.26666666666668,
+        233.53333333333333,
+        243.86666666666667,
+        250.6,
+        272.2,
+        273.8666666666667,
+        279.2,
+        282.3333333333333,
+        303.53333333333336,
+        332.0,
+        338.8666666666667,
+        371.4,
+        378.8,
+        390.06666666666666,
+        453.0,
+        476.3333333333333,
+        492.53333333333336,
+        503.6,
+        509.06666666666666,
+        511.4,
+        542.0666666666667,
+        597.8,
+        626.0666666666667,
+        753.2,
+        761.8666666666667,
+        779.7333333333333,
+        787.6,
+        793.2,
+        803.3333333333334,
+        838.4666666666667,
+        895.8666666666667,
+        915.0,
+        942.1333333333333,
+        945.4,
+        1006.1333333333333,
+        1016.7333333333333,
+        1041.4666666666667,
+        1058.4,
+        1089.9333333333334,
+        1214.7333333333333,
+        1220.9333333333334,
+        1231.4
+      ],
+      "boundary_evidence": [
+        {
+          "timestamp": 0.3333333333333333,
+          "source_timestamp": 0.3333333333333333,
+          "native_pts": 5,
+          "native_frame_index": 5,
+          "category": "demo_screen",
+          "description": "The initial capture terminal is hidden and the Wikiversity C course overview becomes visible."
+        },
+        {
+          "timestamp": 111.93333333333334,
+          "source_timestamp": 111.93333333333334,
+          "native_pts": 1679,
+          "native_frame_index": 549,
+          "category": "demo_screen",
+          "description": "A new Terminal window opens over the course page for the command demonstration."
+        },
+        {
+          "timestamp": 120.13333333333334,
+          "source_timestamp": 120.13333333333334,
+          "native_pts": 1802,
+          "native_frame_index": 645,
+          "category": "demo_screen",
+          "description": "A Keyboard Shortcuts settings dialog opens with its shortcut list and checkboxes."
+        },
+        {
+          "timestamp": 125.06666666666666,
+          "source_timestamp": 125.06666666666666,
+          "native_pts": 1876,
+          "native_frame_index": 716,
+          "category": "return",
+          "description": "Closing the shortcut dialog returns to the unoccluded terminal prompt."
+        },
+        {
+          "timestamp": 136.53333333333333,
+          "source_timestamp": 136.53333333333333,
+          "native_pts": 2048,
+          "native_frame_index": 792,
+          "category": "demo_result",
+          "description": "The shell rejects was jetzt and lists suggested commands."
+        },
+        {
+          "timestamp": 151.26666666666668,
+          "source_timestamp": 151.26666666666668,
+          "native_pts": 2269,
+          "native_frame_index": 879,
+          "category": "demo_result",
+          "description": "The first pwd returns the home directory."
+        },
+        {
+          "timestamp": 233.53333333333333,
+          "source_timestamp": 233.53333333333333,
+          "native_pts": 3503,
+          "native_frame_index": 1469,
+          "category": "demo_command",
+          "description": "The completed cd enters the C course directory, which appears in the new prompt."
+        },
+        {
+          "timestamp": 243.86666666666667,
+          "source_timestamp": 243.86666666666667,
+          "native_pts": 3658,
+          "native_frame_index": 1588,
+          "category": "demo_result",
+          "description": "A second pwd prints the absolute path to the C course directory."
+        },
+        {
+          "timestamp": 250.6,
+          "source_timestamp": 250.6,
+          "native_pts": 3759,
+          "native_frame_index": 1636,
+          "category": "demo_result",
+          "description": "ls prints the initial set of lesson and course directories."
+        },
+        {
+          "timestamp": 272.2,
+          "source_timestamp": 272.2,
+          "native_pts": 4083,
+          "native_frame_index": 1816,
+          "category": "demo_command",
+          "description": "mkdir lesson2 completes and returns to a new prompt."
+        },
+        {
+          "timestamp": 273.8666666666667,
+          "source_timestamp": 273.8666666666667,
+          "native_pts": 4108,
+          "native_frame_index": 1833,
+          "category": "demo_result",
+          "description": "Another ls includes the newly created lesson2 directory."
+        },
+        {
+          "timestamp": 279.2,
+          "source_timestamp": 279.2,
+          "native_pts": 4188,
+          "native_frame_index": 1875,
+          "category": "demo_command",
+          "description": "cd lesson2 completes and the prompt switches to that directory."
+        },
+        {
+          "timestamp": 282.3333333333333,
+          "source_timestamp": 282.3333333333333,
+          "native_pts": 4235,
+          "native_frame_index": 1898,
+          "category": "demo_result",
+          "description": "ls in the new lesson2 directory completes with no output."
+        },
+        {
+          "timestamp": 303.53333333333336,
+          "source_timestamp": 303.53333333333336,
+          "native_pts": 4553,
+          "native_frame_index": 2070,
+          "category": "demo_result",
+          "description": "The shell reports that Emacs is missing and lists packages that provide it."
+        },
+        {
+          "timestamp": 332.0,
+          "source_timestamp": 332.0,
+          "native_pts": 4980,
+          "native_frame_index": 2367,
+          "category": "demo_result",
+          "description": "The submitted Emacs installation command produces a stable sudo password prompt. No password is visible."
+        },
+        {
+          "timestamp": 338.8666666666667,
+          "source_timestamp": 338.8666666666667,
+          "native_pts": 5083,
+          "native_frame_index": 2445,
+          "category": "demo_result",
+          "description": "The package installation settles and the shell prompt returns below the install messages."
+        },
+        {
+          "timestamp": 371.4,
+          "source_timestamp": 371.4,
+          "native_pts": 5571,
+          "native_frame_index": 2757,
+          "category": "demo_screen",
+          "description": "Emacs opens the new blank C file hello.c. The preceding single scratch frame was transient."
+        },
+        {
+          "timestamp": 378.8,
+          "source_timestamp": 378.8,
+          "native_pts": 5682,
+          "native_frame_index": 2823,
+          "category": "demo_edit",
+          "description": "The complete practice sentence ich kann etwas schreiben. appears in the editor."
+        },
+        {
+          "timestamp": 390.06666666666666,
+          "source_timestamp": 390.06666666666666,
+          "native_pts": 5851,
+          "native_frame_index": 2886,
+          "category": "demo_edit",
+          "description": "The editor removes the practice sentence and the empty source buffer remains."
+        },
+        {
+          "timestamp": 453.0,
+          "source_timestamp": 453.0,
+          "native_pts": 6795,
+          "native_frame_index": 3196,
+          "category": "demo_edit",
+          "description": "The full #include <stdio.h> directive is added."
+        },
+        {
+          "timestamp": 476.3333333333333,
+          "source_timestamp": 476.3333333333333,
+          "native_pts": 7145,
+          "native_frame_index": 3319,
+          "category": "demo_edit",
+          "description": "The editable main header first has a complete empty parenthesis pair."
+        },
+        {
+          "timestamp": 492.53333333333336,
+          "source_timestamp": 492.53333333333336,
+          "native_pts": 7388,
+          "native_frame_index": 3421,
+          "category": "demo_edit",
+          "description": "The edit completes the parameterized main header with argc and argv."
+        },
+        {
+          "timestamp": 503.6,
+          "source_timestamp": 503.6,
+          "native_pts": 7554,
+          "native_frame_index": 3487,
+          "category": "demo_edit",
+          "description": "An opening brace starts the body of the already completed main signature."
+        },
+        {
+          "timestamp": 509.06666666666666,
+          "source_timestamp": 509.06666666666666,
+          "native_pts": 7636,
+          "native_frame_index": 3543,
+          "category": "demo_edit",
+          "description": "The completed return 0; statement appears."
+        },
+        {
+          "timestamp": 511.4,
+          "source_timestamp": 511.4,
+          "native_pts": 7671,
+          "native_frame_index": 3554,
+          "category": "demo_edit",
+          "description": "The closing brace completes the initial function body."
+        },
+        {
+          "timestamp": 542.0666666666667,
+          "source_timestamp": 542.0666666666667,
+          "native_pts": 8131,
+          "native_frame_index": 3747,
+          "category": "demo_edit",
+          "description": "The editor adds a recognizable empty printf call scaffold before filling in its arguments."
+        },
+        {
+          "timestamp": 597.8,
+          "source_timestamp": 597.8,
+          "native_pts": 8967,
+          "native_frame_index": 4150,
+          "category": "demo_edit",
+          "description": "The complete first printf statement displays a formatted German greeting and the program name from argv[0]."
+        },
+        {
+          "timestamp": 626.0666666666667,
+          "source_timestamp": 626.0666666666667,
+          "native_pts": 9391,
+          "native_frame_index": 4253,
+          "category": "demo_result",
+          "description": "Emacs confirms hello.c was written to disk."
+        },
+        {
+          "timestamp": 753.2,
+          "source_timestamp": 753.2,
+          "native_pts": 11298,
+          "native_frame_index": 4888,
+          "category": "demo_screen",
+          "description": "Emacs opens a new empty makefile buffer."
+        },
+        {
+          "timestamp": 761.8666666666667,
+          "source_timestamp": 761.8666666666667,
+          "native_pts": 11428,
+          "native_frame_index": 4959,
+          "category": "demo_edit",
+          "description": "The makefile gains the hello target and hello.c dependency."
+        },
+        {
+          "timestamp": 779.7333333333333,
+          "source_timestamp": 779.7333333333333,
+          "native_pts": 11696,
+          "native_frame_index": 5086,
+          "category": "demo_edit",
+          "description": "The makefile gains the completed compiler recipe gcc hello.c -o hello."
+        },
+        {
+          "timestamp": 787.6,
+          "source_timestamp": 787.6,
+          "native_pts": 11814,
+          "native_frame_index": 5124,
+          "category": "demo_result",
+          "description": "Emacs confirms the makefile was written."
+        },
+        {
+          "timestamp": 793.2,
+          "source_timestamp": 793.2,
+          "native_pts": 11898,
+          "native_frame_index": 5164,
+          "category": "demo_screen",
+          "description": "A second pane opens with the Emacs buffer list, including makefile and hello.c."
+        },
+        {
+          "timestamp": 803.3333333333334,
+          "source_timestamp": 803.3333333333334,
+          "native_pts": 12050,
+          "native_frame_index": 5239,
+          "category": "demo_screen",
+          "description": "The top pane switches from the makefile to the hello.c source while the buffer list remains below."
+        },
+        {
+          "timestamp": 838.4666666666667,
+          "source_timestamp": 838.4666666666667,
+          "native_pts": 12577,
+          "native_frame_index": 5485,
+          "category": "demo_result",
+          "description": "The compilation pane records make -k, the compiler invocation and successful exit."
+        },
+        {
+          "timestamp": 895.8666666666667,
+          "source_timestamp": 895.8666666666667,
+          "native_pts": 13438,
+          "native_frame_index": 5893,
+          "category": "demo_result",
+          "description": "Running ./hello displays the German greeting and ./hello as the program name."
+        },
+        {
+          "timestamp": 915.0,
+          "source_timestamp": 915.0,
+          "native_pts": 13725,
+          "native_frame_index": 6021,
+          "category": "demo_edit",
+          "description": "The complete int i; declaration appears in hello.c."
+        },
+        {
+          "timestamp": 942.1333333333333,
+          "source_timestamp": 942.1333333333333,
+          "native_pts": 14132,
+          "native_frame_index": 6238,
+          "category": "demo_edit",
+          "description": "The for header becomes complete, starting at index one and continuing while the index is less than argc."
+        },
+        {
+          "timestamp": 945.4,
+          "source_timestamp": 945.4,
+          "native_pts": 14181,
+          "native_frame_index": 6272,
+          "category": "demo_edit",
+          "description": "The newly braced empty loop body makes the subsequent return statement separate from the loop."
+        },
+        {
+          "timestamp": 1006.1333333333333,
+          "source_timestamp": 1006.1333333333333,
+          "native_pts": 15092,
+          "native_frame_index": 6797,
+          "category": "demo_edit",
+          "description": "A completed printf inside the loop uses i and argv[i] to display each parameter."
+        },
+        {
+          "timestamp": 1016.7333333333333,
+          "source_timestamp": 1016.7333333333333,
+          "native_pts": 15251,
+          "native_frame_index": 6874,
+          "category": "demo_result",
+          "description": "Emacs confirms the updated hello.c file was written."
+        },
+        {
+          "timestamp": 1041.4666666666667,
+          "source_timestamp": 1041.4666666666667,
+          "native_pts": 15622,
+          "native_frame_index": 7071,
+          "category": "demo_result",
+          "description": "The rm hello shell command finishes with the success message and no output."
+        },
+        {
+          "timestamp": 1058.4,
+          "source_timestamp": 1058.4,
+          "native_pts": 15876,
+          "native_frame_index": 7233,
+          "category": "demo_result",
+          "description": "Recompiling the revised program finishes successfully in the compilation pane."
+        },
+        {
+          "timestamp": 1089.9333333333334,
+          "source_timestamp": 1089.9333333333334,
+          "native_pts": 16349,
+          "native_frame_index": 7503,
+          "category": "demo_result",
+          "description": "A new run of ./hello displays three argument values, das, sind and parameter."
+        },
+        {
+          "timestamp": 1214.7333333333333,
+          "source_timestamp": 1214.7333333333333,
+          "native_pts": 18221,
+          "native_frame_index": 8324,
+          "category": "return",
+          "description": "Exiting Emacs returns to the ordinary terminal containing the earlier installation log."
+        },
+        {
+          "timestamp": 1220.9333333333334,
+          "source_timestamp": 1220.9333333333334,
+          "native_pts": 18314,
+          "native_frame_index": 8403,
+          "category": "demo_result",
+          "description": "The final ls lists the executable, source, backup and makefile."
+        },
+        {
+          "timestamp": 1231.4,
+          "source_timestamp": 1231.4,
+          "native_pts": 18471,
+          "native_frame_index": 8532,
+          "category": "demo_result",
+          "description": "Running ./hello mit parametern in the ordinary terminal prints the greeting and both supplied parameters."
+        }
+      ],
+      "ocr": [
+        {
+          "timestamp": 183.46666666666667,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.15202702702702703,
+            0.7025,
+            0.1233108108108108
+          ],
+          "text": "No command 'was' found, did you mean:\n Command 'cas' from package 'amule-adunanza-utils' (universe)\n Command 'cas' from package 'amule-utils' (universe)\n Command 'as' from package 'binutils' (main)",
+          "crop_id": "r03-c06",
+          "native_pts": 2752,
+          "native_frame_index": 1144,
+          "source_timestamp": 183.46666666666667,
+          "reference_sha256": "5b44b49511f59e765295becf5606fa3ac84aee3e6dfd90272fc5038f65ff41a5"
+        },
+        {
+          "timestamp": 309.46666666666664,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.7010135135135135,
+            0.67875,
+            0.21114864864864868
+          ],
+          "text": "The program 'emacs' can be found in the following packages:\n * emacs23\n * emacs23-nox\n * e3\n * emacs23-lucid\n * jove\nTry: sudo apt-get install <selected package>",
+          "crop_id": "r03-c07",
+          "native_pts": 4642,
+          "native_frame_index": 2116,
+          "source_timestamp": 309.46666666666664,
+          "reference_sha256": "0c6baae685541e5301171b8f2518340ee9730e21fbe2fd2a1694e0a1680c58ee"
+        },
+        {
+          "timestamp": 678.4,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.15371621621621623,
+            0.82125,
+            0.1875
+          ],
+          "text": "#include <stdio.h>\n\nint main(int argc, char** argv){\n  printf(\"\\nHallo ich bin ein Computerprogramm und heiss: %s\\n\",argv[0]);\n  return 0;\n}",
+          "crop_id": "r03-c08",
+          "native_pts": 10176,
+          "native_frame_index": 4565,
+          "source_timestamp": 678.4,
+          "reference_sha256": "1c93b0fe7757ce43b310836bbbd8e6c87980587747d0b04fe5bb1a60a41b393a"
+        },
+        {
+          "timestamp": 792.6666666666666,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.15371621621621623,
+            0.33375,
+            0.0625
+          ],
+          "text": "hello:hello.c\n\tgcc hello.c -o hello",
+          "crop_id": "r03-c09",
+          "native_pts": 11890,
+          "native_frame_index": 5162,
+          "source_timestamp": 792.6666666666666,
+          "reference_sha256": "843836660e83f6404abe20907d5236ea58cd40cf7ffa52060b0b9222a96aaeda"
+        },
+        {
+          "timestamp": 857.6,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.6385135135135135,
+            0.0825,
+            0.03209459459459463
+          ],
+          "text": "make -k",
+          "crop_id": "r03-c10a",
+          "native_pts": 12864,
+          "native_frame_index": 5650,
+          "source_timestamp": 857.6,
+          "reference_sha256": "15460c09c6d894b5009a0c93389f09293ff450121afed10d6505d9657125dc2e"
+        },
+        {
+          "timestamp": 857.6,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.731418918918919,
+            0.22875,
+            0.03209459459459452
+          ],
+          "text": "Compilation finished",
+          "crop_id": "r03-c10b",
+          "native_pts": 12864,
+          "native_frame_index": 5650,
+          "source_timestamp": 857.6,
+          "reference_sha256": "1879004e7171ec9a5a30aebf7d83742ac1fc5d373f49a43008cf3004d53a8399"
+        },
+        {
+          "timestamp": 1035.0,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.27533783783783783,
+            0.65,
+            0.1233108108108108
+          ],
+          "text": "  int i;\n  for(i=1;i<argc;i++){\n    printf(\"parameter nummer %d lautet: %s\\n\",i,argv[i]);\n}",
+          "crop_id": "r03-c11",
+          "native_pts": 15525,
+          "native_frame_index": 7014,
+          "source_timestamp": 1035.0,
+          "reference_sha256": "905e0373516c8fa8f7114200af5ee782dc5012553e93087ed15cdc1c90b02f9c"
+        },
+        {
+          "timestamp": 1191.0,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.8175675675675675,
+            0.61375,
+            0.1317567567567568
+          ],
+          "text": "Hallo ich bin ein Computerprogramm und heiss: ./hello\nparameter nummer 1 lautet: das\nparameter nummer 2 lautet: sind\nparameter nummer 3 lautet: parameter",
+          "crop_id": "r03-c12",
+          "native_pts": 17865,
+          "native_frame_index": 8119,
+          "source_timestamp": 1191.0,
+          "reference_sha256": "9b7905181cff74891cef79c65511db29772b2bb63a3d4d56a11d4eb2dcbcf9ac"
+        },
+        {
+          "timestamp": 1236.2666666666667,
+          "kind": "code",
+          "roi": [
+            0.63625,
+            0.7584459459459459,
+            0.27,
+            0.038851351351351315
+          ],
+          "text": "./hello mit parametern",
+          "crop_id": "r03-c13",
+          "native_pts": 18544,
+          "native_frame_index": 8581,
+          "source_timestamp": 1236.2666666666667,
+          "reference_sha256": "79e8ab294b0fc2aedb59eec2444c3d2b60d632e1a0feef704eb9b58db55f2193"
+        }
+      ]
+    },
+    "r03-a04": {
+      "reviewed": true,
+      "review_start": 0,
+      "review_end": 1286.354341,
+      "input_sha256": "c4b268ff4889fa20c3d726240a090f7627068c0d0e47cda5676785ff648bb85c",
+      "slide_changes": [
+        7.333333333333333,
+        16.791666666666668,
+        38.375,
+        89.70833333333333,
+        94.20833333333333,
+        106.25,
+        123.83333333333333,
+        132.95833333333334,
+        145.875,
+        156.95833333333334,
+        177.04166666666666,
+        199.75,
+        216.29166666666666,
+        236.41666666666666,
+        240.91666666666666,
+        305.125,
+        334.8333333333333,
+        365.25,
+        367.7916666666667,
+        368.2083333333333,
+        397.2083333333333,
+        414.4166666666667,
+        433.0833333333333,
+        436.875,
+        460.7083333333333,
+        472.0416666666667,
+        496.875,
+        499.5833333333333,
+        538.875,
+        554.8333333333334,
+        557.4166666666666,
+        568.3333333333334,
+        570.5416666666666,
+        586.8333333333334,
+        619.8333333333334,
+        642.125,
+        652.7083333333334,
+        654.5416666666666,
+        663.75,
+        692.875,
+        696.5416666666666,
+        705.625,
+        723.125,
+        753.5833333333334,
+        760.7083333333334,
+        776.1666666666666,
+        782.4583333333334,
+        784.2083333333334,
+        822.7083333333334,
+        832.75,
+        851.375,
+        855.9583333333334,
+        893.2916666666666,
+        933.875,
+        962.2916666666666,
+        964.875,
+        993.4583333333334,
+        1048.2083333333333,
+        1097.1666666666667,
+        1099.4583333333333,
+        1118.6666666666667,
+        1138.3333333333333,
+        1152.7083333333333,
+        1173.0416666666667,
+        1177.2916666666667,
+        1187.0,
+        1215.1666666666667,
+        1239.2083333333333,
+        1260.5833333333333
+      ],
+      "boundary_evidence": [
+        {
+          "timestamp": 7.333333333333333,
+          "source_timestamp": 7.354341145833334,
+          "native_pts": 91132,
+          "native_frame_index": 176,
+          "category": "slide",
+          "description": "Distributing LibreOffice as AppImage appears as a readable title in the top-right inset over the filmed room."
+        },
+        {
+          "timestamp": 16.791666666666668,
+          "source_timestamp": 16.812674479166667,
+          "native_pts": 207356,
+          "native_frame_index": 403,
+          "category": "slide",
+          "description": "The inset changes to the Agenda, with the AppImage overview, use cases, TDF/ESC position, community effort and feedback."
+        },
+        {
+          "timestamp": 38.375,
+          "source_timestamp": 38.3960078125,
+          "native_pts": 472572,
+          "native_frame_index": 921,
+          "category": "slide",
+          "description": "About me introduces the presenter’s system administration and FLOSS volunteer background."
+        },
+        {
+          "timestamp": 89.70833333333333,
+          "source_timestamp": 89.72934114583333,
+          "native_pts": 1103356,
+          "native_frame_index": 2153,
+          "category": "slide",
+          "description": "What is an AppImage? appears with its body empty."
+        },
+        {
+          "timestamp": 94.20833333333333,
+          "source_timestamp": 94.22934114583333,
+          "native_pts": 1158652,
+          "native_frame_index": 2261,
+          "category": "build_addition",
+          "description": "AppImage is introduced as a packaging format for GNU/Linux."
+        },
+        {
+          "timestamp": 106.25,
+          "source_timestamp": 106.2710078125,
+          "native_pts": 1306620,
+          "native_frame_index": 2550,
+          "category": "build_addition",
+          "description": "Distribution as a single file made executable by the end user is added."
+        },
+        {
+          "timestamp": 123.83333333333333,
+          "source_timestamp": 123.85434114583333,
+          "native_pts": 1522684,
+          "native_frame_index": 2972,
+          "category": "build_addition",
+          "description": "A bullet adds that the same file runs on many distributions."
+        },
+        {
+          "timestamp": 132.95833333333334,
+          "source_timestamp": 132.97934114583333,
+          "native_pts": 1634812,
+          "native_frame_index": 3191,
+          "category": "build_addition",
+          "description": "A bullet identifies FUSE and squashfs as the underlying technologies."
+        },
+        {
+          "timestamp": 145.875,
+          "source_timestamp": 145.8960078125,
+          "native_pts": 1793532,
+          "native_frame_index": 3501,
+          "category": "build_addition",
+          "description": "A bullet adds self-containment and the LibreOffice exception."
+        },
+        {
+          "timestamp": 156.95833333333334,
+          "source_timestamp": 156.97934114583333,
+          "native_pts": 1929724,
+          "native_frame_index": 3767,
+          "category": "build_addition",
+          "description": "Version updates and zsync2 binary deltas are added."
+        },
+        {
+          "timestamp": 177.04166666666666,
+          "source_timestamp": 177.06267447916667,
+          "native_pts": 2176508,
+          "native_frame_index": 4249,
+          "category": "build_addition",
+          "description": "Package management is described as optional."
+        },
+        {
+          "timestamp": 199.75,
+          "source_timestamp": 199.7710078125,
+          "native_pts": 2455548,
+          "native_frame_index": 4794,
+          "category": "build_addition",
+          "description": "The slide adds that AppImages are easy to create with available tooling."
+        },
+        {
+          "timestamp": 216.29166666666666,
+          "source_timestamp": 216.31267447916667,
+          "native_pts": 2658812,
+          "native_frame_index": 5191,
+          "category": "build_addition",
+          "description": "No sandboxing is added."
+        },
+        {
+          "timestamp": 236.41666666666666,
+          "source_timestamp": 236.43767447916667,
+          "native_pts": 2906108,
+          "native_frame_index": 5674,
+          "category": "slide",
+          "description": "Actual use{ful,} cases appears with its body empty."
+        },
+        {
+          "timestamp": 240.91666666666666,
+          "source_timestamp": 240.93767447916667,
+          "native_pts": 2961404,
+          "native_frame_index": 5782,
+          "category": "build_addition",
+          "description": "A single reveal adds Q&A uses including portable builds, different configurations and side-by-side versions."
+        },
+        {
+          "timestamp": 305.125,
+          "source_timestamp": 305.1460078125,
+          "native_pts": 3750396,
+          "native_frame_index": 7323,
+          "category": "build_addition",
+          "description": "A Chromebook use case is added."
+        },
+        {
+          "timestamp": 334.8333333333333,
+          "source_timestamp": 334.85434114583336,
+          "native_pts": 4115452,
+          "native_frame_index": 8036,
+          "category": "build_addition",
+          "description": "Collabora Online Built-in CODE Server in Nextcloud is added with its advantages and drawbacks caveat."
+        },
+        {
+          "timestamp": 365.25,
+          "source_timestamp": 365.2710078125,
+          "native_pts": 4489212,
+          "native_frame_index": 8766,
+          "category": "slide",
+          "description": "Official TDF/ESC position appears with its body empty."
+        },
+        {
+          "timestamp": 367.7916666666667,
+          "source_timestamp": 367.8126744791667,
+          "native_pts": 4520444,
+          "native_frame_index": 8827,
+          "category": "build_addition",
+          "description": "The slide adds an introduction to what official maintenance would require from TDF."
+        },
+        {
+          "timestamp": 368.2083333333333,
+          "source_timestamp": 368.22934114583336,
+          "native_pts": 4525564,
+          "native_frame_index": 8837,
+          "category": "build_addition",
+          "description": "A second reveal adds the Q&A and security bullets together."
+        },
+        {
+          "timestamp": 397.2083333333333,
+          "source_timestamp": 397.22934114583336,
+          "native_pts": 4881916,
+          "native_frame_index": 9533,
+          "category": "build_addition",
+          "description": "A paragraph adds that resources are unavailable for another less-used format and mentions Flatpak."
+        },
+        {
+          "timestamp": 414.4166666666667,
+          "source_timestamp": 414.4376744791667,
+          "native_pts": 5093372,
+          "native_frame_index": 9946,
+          "category": "build_addition",
+          "description": "The slide adds that AppImage would be handled as a community project instead of an official format."
+        },
+        {
+          "timestamp": 433.0833333333333,
+          "source_timestamp": 433.10434114583336,
+          "native_pts": 5322748,
+          "native_frame_index": 10394,
+          "category": "slide",
+          "description": "Community: history appears with its body empty."
+        },
+        {
+          "timestamp": 436.875,
+          "source_timestamp": 436.8960078125,
+          "native_pts": 5369340,
+          "native_frame_index": 10485,
+          "category": "build_addition",
+          "description": "The history adds Faccioli’s AppImage builds from August 2017, the project website and Bash script reference."
+        },
+        {
+          "timestamp": 460.7083333333333,
+          "source_timestamp": 460.72934114583336,
+          "native_pts": 5662204,
+          "native_frame_index": 11057,
+          "category": "build_addition",
+          "description": "A sentence adds that Antonio gradually stopped contributing."
+        },
+        {
+          "timestamp": 472.0416666666667,
+          "source_timestamp": 472.0626744791667,
+          "native_pts": 5801468,
+          "native_frame_index": 11329,
+          "category": "build_addition",
+          "description": "A paragraph adds the March 2022 Python port and the goal of timely automated builds."
+        },
+        {
+          "timestamp": 496.875,
+          "source_timestamp": 496.8960078125,
+          "native_pts": 6106620,
+          "native_frame_index": 11925,
+          "category": "slide",
+          "description": "The status-quo: loaih appears with QR codes."
+        },
+        {
+          "timestamp": 499.5833333333333,
+          "source_timestamp": 499.60434114583336,
+          "native_pts": 6139900,
+          "native_frame_index": 11990,
+          "category": "build_addition",
+          "description": "The reveal defines LibreOffice AppImage Helper and lists two locations for its sources."
+        },
+        {
+          "timestamp": 538.875,
+          "source_timestamp": 538.8960078125,
+          "native_pts": 6622716,
+          "native_frame_index": 12933,
+          "category": "build_addition",
+          "description": "The package’s listing on PyPI and quick updates for users are added."
+        },
+        {
+          "timestamp": 554.8333333333334,
+          "source_timestamp": 554.8543411458334,
+          "native_pts": 6818812,
+          "native_frame_index": 13316,
+          "category": "build_addition",
+          "description": "The user documentation and wiki address are added."
+        },
+        {
+          "timestamp": 557.4166666666666,
+          "source_timestamp": 557.4376744791666,
+          "native_pts": 6850556,
+          "native_frame_index": 13378,
+          "category": "build_addition",
+          "description": "The issue tracker and address are added."
+        },
+        {
+          "timestamp": 568.3333333333334,
+          "source_timestamp": 568.3543411458334,
+          "native_pts": 6984700,
+          "native_frame_index": 13640,
+          "category": "slide",
+          "description": "More than a script... appears with its body empty."
+        },
+        {
+          "timestamp": 570.5416666666666,
+          "source_timestamp": 570.5626744791666,
+          "native_pts": 7011836,
+          "native_frame_index": 13693,
+          "category": "build_addition",
+          "description": "A paragraph adds the Python package’s batch command for automation."
+        },
+        {
+          "timestamp": 586.8333333333334,
+          "source_timestamp": 586.8543411458334,
+          "native_pts": 7212028,
+          "native_frame_index": 14084,
+          "category": "build_addition",
+          "description": "The slide adds the shift from RunDeck to a cron job in an LXC container."
+        },
+        {
+          "timestamp": 619.8333333333334,
+          "source_timestamp": 619.8543411458334,
+          "native_pts": 7617532,
+          "native_frame_index": 14876,
+          "category": "build_addition",
+          "description": "A paragraph adds the links from the official website since 2023 and LibreItalia’s rented hosting."
+        },
+        {
+          "timestamp": 642.125,
+          "source_timestamp": 642.1460078125,
+          "native_pts": 7891452,
+          "native_frame_index": 15411,
+          "category": "slide",
+          "description": "Is it worth the effort? appears with its body empty."
+        },
+        {
+          "timestamp": 652.7083333333334,
+          "source_timestamp": 652.7293411458334,
+          "native_pts": 8021500,
+          "native_frame_index": 15665,
+          "category": "build_addition",
+          "description": "The statistics lead-in Since 2023 appears."
+        },
+        {
+          "timestamp": 654.5416666666666,
+          "source_timestamp": 654.5626744791666,
+          "native_pts": 8044028,
+          "native_frame_index": 15709,
+          "category": "build_addition",
+          "description": "The count of 4,624 unique AppImage downloads is added."
+        },
+        {
+          "timestamp": 663.75,
+          "source_timestamp": 663.7710078125,
+          "native_pts": 8157180,
+          "native_frame_index": 15930,
+          "category": "build_addition",
+          "description": "A single reveal adds 7,916 visits, the busiest month and the five-country breakdown."
+        },
+        {
+          "timestamp": 692.875,
+          "source_timestamp": 692.8960078125,
+          "native_pts": 8515068,
+          "native_frame_index": 16629,
+          "category": "slide",
+          "description": "LO AppImages pipeline – 1 appears with its body empty."
+        },
+        {
+          "timestamp": 696.5416666666666,
+          "source_timestamp": 696.5626744791666,
+          "native_pts": 8560124,
+          "native_frame_index": 16717,
+          "category": "build_addition",
+          "description": "The first pipeline step is the official TDF LibreOffice release."
+        },
+        {
+          "timestamp": 705.625,
+          "source_timestamp": 705.6460078125,
+          "native_pts": 8671740,
+          "native_frame_index": 16935,
+          "category": "build_addition",
+          "description": "An hourly cron job detects the new version on its next run."
+        },
+        {
+          "timestamp": 723.125,
+          "source_timestamp": 723.1460078125,
+          "native_pts": 8886780,
+          "native_frame_index": 17355,
+          "category": "build_addition",
+          "description": "The automation checks whether that version is already built on the hosting service."
+        },
+        {
+          "timestamp": 753.5833333333334,
+          "source_timestamp": 753.6043411458334,
+          "native_pts": 9261052,
+          "native_frame_index": 18086,
+          "category": "build_addition",
+          "description": "The automation starts the build, which takes about one hour."
+        },
+        {
+          "timestamp": 760.7083333333334,
+          "source_timestamp": 760.7293411458334,
+          "native_pts": 9348604,
+          "native_frame_index": 18257,
+          "category": "build_addition",
+          "description": "The pipeline makes an MD5 checksum for each output file."
+        },
+        {
+          "timestamp": 776.1666666666666,
+          "source_timestamp": 776.1876744791666,
+          "native_pts": 9538556,
+          "native_frame_index": 18628,
+          "category": "build_addition",
+          "description": "The pipeline generates .zsync2 files."
+        },
+        {
+          "timestamp": 782.4583333333334,
+          "source_timestamp": 782.4793411458334,
+          "native_pts": 9615868,
+          "native_frame_index": 18779,
+          "category": "slide",
+          "description": "LO AppImages pipeline – 2 appears with its body empty."
+        },
+        {
+          "timestamp": 784.2083333333334,
+          "source_timestamp": 784.2293411458334,
+          "native_pts": 9637372,
+          "native_frame_index": 18821,
+          "category": "build_addition",
+          "description": "The automation generates generic Latest, Previous and major-version links for a stable download interface."
+        },
+        {
+          "timestamp": 822.7083333333334,
+          "source_timestamp": 822.7293411458334,
+          "native_pts": 10110460,
+          "native_frame_index": 19745,
+          "category": "build_addition",
+          "description": "The automation uploads files to the host for users."
+        },
+        {
+          "timestamp": 832.75,
+          "source_timestamp": 832.7710078125,
+          "native_pts": 10233852,
+          "native_frame_index": 19986,
+          "category": "build_addition",
+          "description": "Versioned and portable builds are available in plain directories at the LibreItalia site."
+        },
+        {
+          "timestamp": 851.375,
+          "source_timestamp": 851.3960078125,
+          "native_pts": 10462716,
+          "native_frame_index": 20433,
+          "category": "slide",
+          "description": "Packaging challenges appears with its body empty."
+        },
+        {
+          "timestamp": 855.9583333333334,
+          "source_timestamp": 855.9793411458334,
+          "native_pts": 10519036,
+          "native_frame_index": 20543,
+          "category": "build_addition",
+          "description": "The first challenge describes libfuse2 tooling and the lack of a direct libfuse3 replacement."
+        },
+        {
+          "timestamp": 893.2916666666666,
+          "source_timestamp": 893.3126744791666,
+          "native_pts": 10977788,
+          "native_frame_index": 21439,
+          "category": "build_addition",
+          "description": "Incomplete self-containment and two library-related examples are added together."
+        },
+        {
+          "timestamp": 933.875,
+          "source_timestamp": 933.8960078125,
+          "native_pts": 11476476,
+          "native_frame_index": 22413,
+          "category": "build_addition",
+          "description": "A bullet adds the lack of an integrated updating system and users’ expectations."
+        },
+        {
+          "timestamp": 962.2916666666666,
+          "source_timestamp": 962.3126744791666,
+          "native_pts": 11825660,
+          "native_frame_index": 23095,
+          "category": "slide",
+          "description": "User perspective challenges appears with its body empty."
+        },
+        {
+          "timestamp": 964.875,
+          "source_timestamp": 964.8960078125,
+          "native_pts": 11857404,
+          "native_frame_index": 23157,
+          "category": "build_addition",
+          "description": "The slide adds that users file AppImage bugs in Bugzilla because the builds are linked from the official site."
+        },
+        {
+          "timestamp": 993.4583333333334,
+          "source_timestamp": 993.4793411458334,
+          "native_pts": 12208636,
+          "native_frame_index": 23843,
+          "category": "build_addition",
+          "description": "A reveal adds complaints about absent version links on the official site and points to versioned downloads in the repository."
+        },
+        {
+          "timestamp": 1048.2083333333333,
+          "source_timestamp": 1048.2293411458334,
+          "native_pts": 12881404,
+          "native_frame_index": 25157,
+          "category": "build_addition",
+          "description": "A bullet adds the integration difficulty of launching specific suite applications from a single AppImage entry point."
+        },
+        {
+          "timestamp": 1097.1666666666667,
+          "source_timestamp": 1097.1876744791666,
+          "native_pts": 13483004,
+          "native_frame_index": 26332,
+          "category": "slide",
+          "description": "Contribution challenges appears with its body empty."
+        },
+        {
+          "timestamp": 1099.4583333333333,
+          "source_timestamp": 1099.4793411458334,
+          "native_pts": 13511164,
+          "native_frame_index": 26387,
+          "category": "build_addition",
+          "description": "The slide adds that the official loaih repository is broken because its infrastructure needs replacing."
+        },
+        {
+          "timestamp": 1118.6666666666667,
+          "source_timestamp": 1118.6876744791666,
+          "native_pts": 13747196,
+          "native_frame_index": 26848,
+          "category": "build_addition",
+          "description": "The slide adds that public code contributions require LibreItalia membership."
+        },
+        {
+          "timestamp": 1138.3333333333333,
+          "source_timestamp": 1138.3543411458334,
+          "native_pts": 13988860,
+          "native_frame_index": 27320,
+          "category": "build_addition",
+          "description": "The slide adds the closed issue submission workflow and copying issues back from Bugzilla."
+        },
+        {
+          "timestamp": 1152.7083333333333,
+          "source_timestamp": 1152.7293411458334,
+          "native_pts": 14165500,
+          "native_frame_index": 27665,
+          "category": "build_addition",
+          "description": "The slide adds a question about how to share the repository and code more openly."
+        },
+        {
+          "timestamp": 1173.0416666666667,
+          "source_timestamp": 1173.0626744791666,
+          "native_pts": 14415356,
+          "native_frame_index": 28153,
+          "category": "slide",
+          "description": "Hosting challenges appears with its body empty."
+        },
+        {
+          "timestamp": 1177.2916666666667,
+          "source_timestamp": 1177.3126744791666,
+          "native_pts": 14467580,
+          "native_frame_index": 28255,
+          "category": "build_addition",
+          "description": "The introduction says LibreItalia hosts the AppImages for the community."
+        },
+        {
+          "timestamp": 1187.0,
+          "source_timestamp": 1187.0210078125,
+          "native_pts": 14586876,
+          "native_frame_index": 28488,
+          "category": "build_addition",
+          "description": "Storage limits and the clearing of older downloadable versions are added."
+        },
+        {
+          "timestamp": 1215.1666666666667,
+          "source_timestamp": 1215.1876744791666,
+          "native_pts": 14932988,
+          "native_frame_index": 29164,
+          "category": "build_addition",
+          "description": "A bullet adds unannounced attempts to mirror the repository using tools such as Transmission."
+        },
+        {
+          "timestamp": 1239.2083333333333,
+          "source_timestamp": 1239.2293411458334,
+          "native_pts": 15228412,
+          "native_frame_index": 29741,
+          "category": "build_addition",
+          "description": "A bullet adds the bandwidth cap after throughput was curtailed."
+        },
+        {
+          "timestamp": 1260.5833333333333,
+          "source_timestamp": 1260.6043411458334,
+          "native_pts": 15491068,
+          "native_frame_index": 30254,
+          "category": "slide",
+          "description": "How to make the community effort right? invites the audience to brainstorm and raise their hands."
+        }
+      ],
+      "ocr": []
+    }
+  }
+}

@@ -1,0 +1,314 @@
+{
+  "39c3-2154": [
+    {
+      "time": 60,
+      "baseline": 1,
+      "units": 29,
+      "errors": {
+        "2.0": 0
+      }
+    }
+  ],
+  "39c3-2274": [
+    {
+      "time": 112,
+      "baseline": 8,
+      "units": 76,
+      "errors": {
+        "2.0": 8
+      }
+    }
+  ],
+  "39c3-1317": [
+    {
+      "time": 4,
+      "baseline": 2,
+      "units": 42,
+      "errors": {
+        "2.0": 2
+      }
+    },
+    {
+      "time": 68,
+      "baseline": 0,
+      "units": 118,
+      "errors": {
+        "2.0": 3
+      }
+    }
+  ],
+  "39c3-1989": [
+    {
+      "time": 5,
+      "baseline": 13,
+      "units": 126,
+      "errors": {
+        "2.0": 13
+      }
+    }
+  ],
+  "39c3-1508": [
+    {
+      "time": 3,
+      "baseline": 4,
+      "units": 76,
+      "errors": {
+        "2.0": 3
+      }
+    },
+    {
+      "time": 32,
+      "baseline": 57,
+      "units": 126,
+      "errors": {
+        "2.0": 24
+      }
+    }
+  ],
+  "enthusiasticon-shell": [
+    {
+      "time": 100,
+      "baseline": 12,
+      "units": 159,
+      "errors": {
+        "2.0": 8
+      }
+    },
+    {
+      "time": 100,
+      "baseline": 6,
+      "units": 92,
+      "errors": {
+        "2.0": 4
+      }
+    },
+    {
+      "time": 205,
+      "baseline": 6,
+      "units": 210,
+      "errors": {
+        "2.0": 2
+      }
+    },
+    {
+      "time": 245,
+      "baseline": 0,
+      "units": 59,
+      "errors": {
+        "2.0": 0
+      }
+    },
+    {
+      "time": 245,
+      "baseline": 5,
+      "units": 142,
+      "errors": {
+        "2.0": 1
+      }
+    },
+    {
+      "time": 270,
+      "baseline": 87,
+      "units": 297,
+      "errors": {
+        "2.0": 28
+      }
+    },
+    {
+      "time": 270,
+      "baseline": 97,
+      "units": 248,
+      "errors": {
+        "2.0": 46
+      }
+    },
+    {
+      "time": 450,
+      "baseline": 5,
+      "units": 107,
+      "errors": {
+        "2.0": 3
+      }
+    },
+    {
+      "time": 450,
+      "baseline": 5,
+      "units": 98,
+      "errors": {
+        "2.0": 2
+      }
+    },
+    {
+      "time": 615,
+      "baseline": 4,
+      "units": 111,
+      "errors": {
+        "2.0": 5
+      }
+    },
+    {
+      "time": 615,
+      "baseline": 2,
+      "units": 99,
+      "errors": {
+        "2.0": 2
+      }
+    },
+    {
+      "time": 750,
+      "baseline": 8,
+      "units": 144,
+      "errors": {
+        "2.0": 3
+      }
+    },
+    {
+      "time": 750,
+      "baseline": 16,
+      "units": 154,
+      "errors": {
+        "2.0": 8
+      }
+    },
+    {
+      "time": 790,
+      "baseline": 25,
+      "units": 268,
+      "errors": {
+        "2.0": 26
+      }
+    },
+    {
+      "time": 790,
+      "baseline": 4,
+      "units": 110,
+      "errors": {
+        "2.0": 2
+      }
+    }
+  ],
+  "fosdem2026-synctest": [
+    {
+      "time": 150,
+      "baseline": 1,
+      "units": 91,
+      "errors": {
+        "2.0": 1
+      }
+    },
+    {
+      "time": 195,
+      "baseline": 2,
+      "units": 108,
+      "errors": {
+        "2.0": 2
+      }
+    },
+    {
+      "time": 380,
+      "baseline": 3,
+      "units": 120,
+      "errors": {
+        "2.0": 3
+      }
+    },
+    {
+      "time": 400,
+      "baseline": 7,
+      "units": 373,
+      "errors": {
+        "2.0": 7
+      }
+    },
+    {
+      "time": 650,
+      "baseline": 1,
+      "units": 158,
+      "errors": {
+        "2.0": 1
+      }
+    },
+    {
+      "time": 790,
+      "baseline": 18,
+      "units": 240,
+      "errors": {
+        "2.0": 18
+      }
+    },
+    {
+      "time": 1030,
+      "baseline": 1,
+      "units": 219,
+      "errors": {
+        "2.0": 1
+      }
+    },
+    {
+      "time": 1160,
+      "baseline": 9,
+      "units": 279,
+      "errors": {
+        "2.0": 9
+      }
+    }
+  ],
+  "pycontw2024-observability": [
+    {
+      "time": 800,
+      "baseline": 43,
+      "units": 494,
+      "errors": {
+        "2.0": 43
+      }
+    },
+    {
+      "time": 860,
+      "baseline": 268,
+      "units": 662,
+      "errors": {
+        "2.0": 268
+      }
+    },
+    {
+      "time": 860,
+      "baseline": 17,
+      "units": 236,
+      "errors": {
+        "2.0": 17
+      }
+    },
+    {
+      "time": 1490,
+      "baseline": 30,
+      "units": 204,
+      "errors": {
+        "2.0": 30
+      }
+    },
+    {
+      "time": 1490,
+      "baseline": 19,
+      "units": 163,
+      "errors": {
+        "2.0": 19
+      }
+    },
+    {
+      "time": 1520,
+      "baseline": 47,
+      "units": 289,
+      "errors": {
+        "2.0": 47
+      }
+    },
+    {
+      "time": 1575,
+      "baseline": 83,
+      "units": 529,
+      "errors": {
+        "2.0": 83
+      }
+    }
+  ]
+}

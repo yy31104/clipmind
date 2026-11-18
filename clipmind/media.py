@@ -3,7 +3,9 @@ from __future__ import annotations
 
 import shutil
 import re
+from bisect import bisect_left
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
@@ -54,6 +56,9 @@ class Frame:
     content_hint: str = "visual"
     change_kind: str = "uncertain"
     change_reason: str = ""
+    source_stream_index: int | None = None
+    # Optional rank decision derived from the completed canonical timeline.
+    information_boundary: bool | None = None
 
 
 async def _ffmpeg(args: list[str]) -> bytes:
@@ -104,8 +109,11 @@ async def sample_frames(
     times = [float(value) for value in re.findall(rb"\bn:\s*\d+.*?\bpts_time:([0-9.eE+-]+)", diagnostics or b"")]
     if diagnostics and len(times) != len(files):
         raise MediaError("FFmpeg image timestamps do not match its sampled frames")
+    mappings = set(re.findall(rb"(?m)^[ \t]+Stream #0:(\d+) -> #0:\d+", diagnostics or b""))
+    stream = int(mappings.pop()) if len(mappings) == 1 else None
     return [Frame(index=i, timestamp=times[i] if times else i / fps, path=p,
-                  source_timestamp=times[i] if times else None) for i, p in enumerate(files)]
+                  source_timestamp=times[i] if times else None,
+                  source_stream_index=stream) for i, p in enumerate(files)]
 
 
 async def extract_still(video: Path, timestamp: float, dest: Path) -> Path:
@@ -118,7 +126,7 @@ async def extract_still(video: Path, timestamp: float, dest: Path) -> Path:
 
 # Identifies how canonical membership was decided, so a later evaluation can
 # tell "the algorithm changed" apart from "the source bytes changed".
-DEDUPE_ALGORITHM = "dhash-stationary-strokes-settle-v5"
+DEDUPE_ALGORITHM = "dhash-stationary-strokes-native-onset-v7"
 
 
 def _detail_signature(path: Path) -> np.ndarray:
@@ -161,9 +169,146 @@ def hamming(a: int, b: int) -> int:
     return bin(a ^ b).count("1")
 
 
+def _clamp_stable_durations(kept: list[Frame]) -> None:
+    for current, following in zip(kept, kept[1:]):
+        current.stable_duration = min(current.stable_duration, max(0.0, following.timestamp - current.timestamp))
+
+
+def _restore_fade_onsets(samples: list[tuple[float, Path]], kept: list[Frame]) -> None:
+    """Time a persistent reveal from its visible lead-in and keep the settled still."""
+    positions = {time: index for index, (time, _) in enumerate(samples)}
+    if len(positions) != len(samples):
+        return
+
+    @lru_cache(maxsize=10)
+    def detail(position: int) -> np.ndarray:
+        return _detail_signature(samples[position][1])
+
+    previous = previous_capture = -1.0
+    for frame in kept:
+        position = positions[frame.timestamp]
+        original_onset = frame.timestamp
+        anchor = position - 4
+        if (not frame.dedupe_warning and anchor >= 0 and position + 2 < len(samples)
+                and previous < samples[anchor][0] < original_onset
+                and original_onset - samples[anchor][0] <= 2.3):
+            try:
+                before, settled = detail(anchor), detail(position + 2)
+                difference = settled - before
+                region = (np.abs(difference) >= 30) & (np.abs(settled - detail(position)) <= 8)
+                if anchor:
+                    region &= np.abs(before - detail(anchor - 1)) <= 8
+                if np.count_nonzero(region) >= 60:
+                    expected = difference[region]
+                    candidate = None
+                    previous_blend = 0.0
+                    for earlier in range(anchor + 1, position):
+                        progress = (detail(earlier)[region] - before[region]) / expected
+                        blend = float(np.median(progress))
+                        coherent = (np.abs(progress - blend) <= 0.22) & (progress >= 0.12) & (progress <= 1.15)
+                        if not (0.22 <= blend <= 1.10 and np.mean(coherent) >= 0.74):
+                            candidate, previous_blend = None, 0.0
+                            continue
+                        if blend < previous_blend - 0.12:
+                            candidate = None
+                        if candidate is None and samples[earlier][0] > previous_capture:
+                            candidate = samples[earlier][0]
+                        previous_blend = blend
+                    if candidate is not None:
+                        frame.timestamp = candidate
+            except (OSError, ValueError):
+                # Keep the original timestamp if there are no readable witnesses.
+                pass
+        previous = original_onset
+        previous_capture = max(original_onset, frame.source_timestamp or original_onset)
+
+
+def _time_ranges(ranges: list[tuple[float, float]]) -> str:
+    """Match short, ordered decoder windows without scanning every window per frame."""
+    if len(ranges) == 1:
+        start, end = ranges[0]
+        return f"between(t,{start:.9f},{end:.9f})"
+    split = len(ranges) // 2
+    return f"if(lt(t,{ranges[split][0]:.9f}),{_time_ranges(ranges[:split])},{_time_ranges(ranges[split:])})"
+
+
+async def refine_native_onsets(
+    video: Path, samples: list[tuple[float, Path]], kept: list[Frame], dest: Path,
+) -> None:
+    """Check source frames just before a sampled change without replacing its screenshot."""
+    if len(kept) < 2:
+        return
+    streams = {frame.source_stream_index for frame in kept}
+    if len(streams) != 1 or None in streams:
+        return
+    stream = streams.pop()
+    positions = {time: index for index, (time, _) in enumerate(samples)}
+    windows = []
+    for previous, frame in zip(kept, kept[1:]):
+        start = frame.timestamp
+        previous_capture = max(previous.timestamp, previous.source_timestamp or previous.timestamp)
+        lower = max(previous_capture + 1e-8, start - 0.151)
+        if lower < start - 1e-7 and start in positions and positions[start] and not frame.dedupe_warning:
+            windows.append((lower, start - 1e-7, frame, positions[start]))
+    if not windows:
+        return
+    graph = dest / "select.txt"
+    source = ["-loglevel", "info", "-i", str(video)]
+    capture = [str(graph), "-map", "[lead]", "-fps_mode", "vfr", "-q:v", "4", str(dest / "n_%06d.jpg")]
+    try:
+        dest.mkdir(parents=True, exist_ok=True)
+        graph.write_text(
+            f"[0:{stream}]setpts=PTS-STARTPTS,select='"
+            + _time_ranges([(lower, upper) for lower, upper, _, _ in windows])
+            + "',scale=640:-2,showinfo[lead]\n", encoding="ascii",
+        )
+        try:
+            diagnostics = await _ffmpeg([*source, "-/filter_complex", *capture])
+        except MediaError as error:
+            if "Unrecognized option '/filter_complex'" not in str(error):
+                raise
+            diagnostics = await _ffmpeg([*source, "-filter_complex_script", *capture])
+    except (MediaError, OSError):
+        # Decoder refinements are optional. Matching selection still uses the coarse samples.
+        return
+    base = re.search(rb"config in time_base:\s*(\d+)/(\d+)", diagnostics)
+    pts = re.findall(rb"\bn:\s*\d+\s+pts:\s*(-?\d+)", diagnostics)
+    files = sorted(dest.glob("n_*.jpg"))
+    if not base or not int(base[2]) or len(pts) != len(files):
+        return
+    numerator, denominator = map(int, base.groups())
+    lead_times = [int(value) * numerator / denominator for value in pts]
+    if lead_times != sorted(lead_times):
+        return
+
+    for lower, upper, frame, position in windows:
+        first = bisect_left(lead_times, lower)
+        stop = bisect_left(lead_times, upper)
+        if first == stop:
+            continue
+        try:
+            before = _detail_signature(samples[position - 1][1])
+            after = _detail_signature(samples[position][1])
+            changed = np.abs(after - before) >= 30
+            if np.count_nonzero(changed) < 50:
+                continue
+            confirmed = frame.timestamp
+            for prior in range(stop - 1, first - 1, -1):
+                error = np.abs(_detail_signature(files[prior]) - after)
+                if (confirmed - lead_times[prior] > 0.082 or np.mean(error[changed] <= 16) < 0.88
+                        or np.mean(error > 30) > 0.028):
+                    break
+                confirmed = lead_times[prior]
+            frame.timestamp = round(confirmed, 9)
+        except (OSError, ValueError):
+            continue
+    _clamp_stable_durations(kept)
+
+
 def dedupe(frames: list[Frame], threshold: int | None = None) -> list[Frame]:
     """Drop near-duplicates; retain and mark frames that cannot be compared."""
     threshold = settings.dedupe_threshold if threshold is None else threshold
+    samples = [(frame.timestamp, frame.path) for frame in frames]
     kept: list[Frame] = []
     last_hash: int | None = None
     last_detail: np.ndarray | None = None
@@ -234,4 +379,6 @@ def dedupe(frames: list[Frame], threshold: int | None = None) -> list[Frame]:
         last_hash = frame.phash
         last_detail = detail
         representative_detail = detail
+    _restore_fade_onsets(samples, kept)
+    _clamp_stable_durations(kept)
     return kept

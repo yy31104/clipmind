@@ -12,6 +12,56 @@ from clipmind.media import Frame
 
 
 class IncrementalScreenTests(unittest.TestCase):
+    @unittest.skipUnless(shutil.which('ffmpeg'), 'FFmpeg required to verify decoder timestamps')
+    def test_native_onset_uses_a_confirmed_source_frame_between_sample_times(self):
+        async def check(work: Path):
+            video = work / 'source.mp4'
+            subprocess.run([
+                'ffmpeg', '-nostdin', '-v', 'error', '-f', 'lavfi',
+                '-i', 'color=black:s=640x360:r=30:d=3',
+                '-vf', "drawbox=70:100:360:100:white:fill:enable='eq(n,42)+gte(n,44)'",
+                '-c:v', 'libx264', '-threads', '2', str(video),
+            ], check=True, capture_output=True)
+            frames = await media.sample_frames(video, work / 'samples', fps=2, width=640)
+            samples = [(frame.timestamp, frame.path) for frame in frames]
+            kept = media.dedupe(frames)
+            self.assertEqual([frame.timestamp for frame in kept], [0, 1.5])
+            settled_path = kept[1].path
+            blocked = work / 'blocked'
+            blocked.write_bytes(b'existing file')
+            await media.refine_native_onsets(video, samples, kept, blocked)
+            self.assertEqual(kept[1].timestamp, 1.5)
+            self.assertEqual(blocked.read_bytes(), b'existing file')
+            await media.refine_native_onsets(video, samples, kept, work / 'native')
+            self.assertEqual(kept[1].timestamp, 1.466666667)
+            self.assertEqual(kept[1].source_timestamp, 1.5)
+            self.assertEqual(kept[1].path, settled_path)
+
+        with tempfile.TemporaryDirectory() as directory:
+            asyncio.run(check(Path(directory)))
+
+    @unittest.skipUnless(shutil.which('ffmpeg'), 'FFmpeg required to verify stream selection')
+    def test_native_onset_cannot_use_an_alternate_video_track(self):
+        async def check(work: Path):
+            video = work / 'two-tracks.mp4'
+            subprocess.run([
+                'ffmpeg', '-nostdin', '-v', 'error', '-f', 'lavfi', '-i',
+                "color=black:s=320x180:r=30:d=3,drawbox=35:50:180:50:white:fill:enable='gte(n,43)'",
+                '-f', 'lavfi', '-i',
+                "color=black:s=640x360:r=30:d=3,drawbox=70:100:360:100:white:fill:enable='gte(n,45)'",
+                '-map', '0:v', '-map', '1:v', '-disposition:v:0', '0',
+                '-disposition:v:1', 'default', '-c:v', 'libx264', '-threads', '2', str(video),
+            ], check=True, capture_output=True)
+            frames = await media.sample_frames(video, work / 'samples', fps=2, width=640)
+            self.assertTrue(all(frame.source_stream_index == 1 for frame in frames))
+            samples = [(frame.timestamp, frame.path) for frame in frames]
+            kept = media.dedupe(frames)
+            await media.refine_native_onsets(video, samples, kept, work / 'native')
+            self.assertEqual([frame.timestamp for frame in kept], [0, 1.5])
+
+        with tempfile.TemporaryDirectory() as directory:
+            asyncio.run(check(Path(directory)))
+
     def test_settled_image_keeps_interval_onset_and_its_own_capture_time(self):
         with tempfile.TemporaryDirectory() as directory:
             frames = []
@@ -128,6 +178,32 @@ class IncrementalScreenTests(unittest.TestCase):
                 image.save(path)
                 frames.append(Frame(index, index / 2, path))
             self.assertEqual(len(media.dedupe(frames)), 1)
+
+    def test_fade_uses_a_visible_onset_and_preserves_the_settled_capture(self):
+        before = Image.new('RGB', (640, 360), '#181818')
+        ImageDraw.Draw(before).text((35, 25), 'Sending a message', fill='white')
+        settled = before.copy()
+        draw = ImageDraw.Draw(settled)
+        for line in range(5):
+            draw.text((35, 130 + line * 18), f'send_message(connection, {line}, data);', fill='white')
+        examples = (
+            ('fade', (0, 0, 0, 0, .28, .53, 1, 1, 1, 1, 1), 2.5, 3.0),
+            ('hard cut', (0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1), 3.0, 3.0),
+            ('flash', (0, 0, 0, 0, .30, 0, 0, 1, 1, 1, 1), 3.5, 3.5),
+        )
+        for name, opacities, onset, capture in examples:
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                frames = []
+                for index, opacity in enumerate(opacities):
+                    path = Path(directory) / f'{index}.png'
+                    Image.blend(before, settled, opacity).save(path)
+                    frames.append(Frame(index, index / 2, path, source_timestamp=index / 2))
+                kept = media.dedupe(frames)
+                self.assertEqual(len(kept), 2)
+                self.assertEqual(kept[1].timestamp, onset)
+                self.assertEqual(kept[1].source_timestamp, capture)
+                self.assertLess(kept[0].source_timestamp, onset)
+                self.assertEqual(kept[1].path, Path(directory) / f'{round(capture * 2)}.png')
 
 
 if __name__ == '__main__':

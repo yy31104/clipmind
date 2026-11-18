@@ -1,0 +1,90 @@
+{
+  "split": "holdout",
+  "cases": [
+    {
+      "case_id": "r02-a01",
+      "title": "Towards an Open Repository for Research Data",
+      "authors": [
+        "Cheng-Jen Lee (李承錱)"
+      ],
+      "publisher": "Academia Sinica, Research Data Management Workshop 2021",
+      "page_url": "https://m.odw.tw/u/odw/m/rdmw2021-4-5/",
+      "video_url": "https://m.odw.tw/mgoblin_media/media_entries/541/session_4-5_-_HD_720p.720p.webm",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "license_proof_url": "https://m.odw.tw/u/odw/m/rdmw2021-4-5/",
+      "sample_start_seconds": 0,
+      "sample_end_seconds": 753.366667,
+      "ocr_languages": [
+        "zh-Hant",
+        "en-US"
+      ],
+      "tesseract_languages": "chi_tra+eng",
+      "captions_available": false,
+      "captions_reason": "No publisher speech caption track accompanies these bytes."
+    },
+    {
+      "case_id": "r02-a02",
+      "title": "Adapting Legacy Code with Boost.Geometry: A Hydrographic Perspective",
+      "authors": [
+        "Weston Renoud"
+      ],
+      "publisher": "OSGeo, FOSS4G Europe 2025",
+      "page_url": "https://talks.osgeo.org/foss4g-europe-2025/talk/C8EMH7/",
+      "video_url": "https://video.osgeo.org/static/streaming-playlists/hls/27d7f4af-032b-4d69-a232-7c33bd935d01/9936b78e-e14b-40e5-a222-ea8b0abd5227-720-fragmented.mp4",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "license_proof_url": "https://talks.osgeo.org/foss4g-europe-2025/talk/C8EMH7/",
+      "sample_start_seconds": 0,
+      "sample_end_seconds": 1084.971667,
+      "ocr_languages": [
+        "en-US"
+      ],
+      "tesseract_languages": "eng",
+      "captions_available": false,
+      "captions_reason": "No publisher speech caption track accompanies these bytes."
+    },
+    {
+      "case_id": "r02-a03",
+      "title": "DuckDB with Geodata",
+      "authors": [
+        "Jakob Miksch"
+      ],
+      "publisher": "OSGeo, FOSS4G Europe 2024",
+      "page_url": "https://av.tib.eu/media/68453",
+      "video_url": "https://video.osgeo.org/static/streaming-playlists/hls/818a7bfb-728e-4918-aa00-f509a693d3c2/c658f1c4-d70e-4739-9e20-f11be7f9950b-720-fragmented.mp4",
+      "license": "CC BY 3.0 Unported",
+      "license_url": "https://creativecommons.org/licenses/by/3.0/",
+      "license_proof_url": "https://av.tib.eu/media/68453",
+      "sample_start_seconds": 0,
+      "sample_end_seconds": 1534.955667,
+      "ocr_languages": [
+        "en-US"
+      ],
+      "tesseract_languages": "eng",
+      "captions_available": false,
+      "captions_reason": "No publisher speech caption track accompanies these bytes."
+    },
+    {
+      "case_id": "r02-a04",
+      "title": "maplibre-gl-terradraw - new drawing plugin for maplibre-gl-js",
+      "authors": [
+        "Jin Igarashi"
+      ],
+      "publisher": "OSGeo, FOSS4G Europe 2025",
+      "page_url": "https://talks.osgeo.org/foss4g-europe-2025/talk/UTUW8Z/",
+      "video_url": "https://video.osgeo.org/static/streaming-playlists/hls/86b5c33f-62eb-4ddc-b274-93b1e1914af1/b9275722-0a75-4ad1-95f5-03a95477ad7e-720-fragmented.mp4",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "license_proof_url": "https://talks.osgeo.org/foss4g-europe-2025/talk/UTUW8Z/",
+      "sample_start_seconds": 0,
+      "sample_end_seconds": 1172.779667,
+      "ocr_languages": [
+        "en-US"
+      ],
+      "tesseract_languages": "eng",
+      "captions_available": false,
+      "captions_reason": "No publisher speech caption track accompanies these bytes."
+    }
+  ]
+}

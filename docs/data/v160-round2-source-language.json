@@ -1,0 +1,61 @@
+{
+  "model": "mlx-community/whisper-large-v3-turbo",
+  "mode": "source-audio language identification only",
+  "input_sha256": "a850348583c8919fa35b6ca1029abc2b4d4249297cb274899c1aadc0e8f93380",
+  "windows": [
+    {
+      "start_seconds": 110,
+      "length_seconds": 20,
+      "top_languages": [
+        [
+          "zh",
+          0.8117591142654419
+        ],
+        [
+          "en",
+          0.16109852492809296
+        ],
+        [
+          "ja",
+          0.009827074594795704
+        ]
+      ]
+    },
+    {
+      "start_seconds": 380,
+      "length_seconds": 20,
+      "top_languages": [
+        [
+          "zh",
+          0.9598686695098877
+        ],
+        [
+          "en",
+          0.03336213156580925
+        ],
+        [
+          "ja",
+          0.002803472336381674
+        ]
+      ]
+    },
+    {
+      "start_seconds": 655,
+      "length_seconds": 20,
+      "top_languages": [
+        [
+          "zh",
+          0.9475261569023132
+        ],
+        [
+          "en",
+          0.04295291379094124
+        ],
+        [
+          "ja",
+          0.003964152652770281
+        ]
+      ]
+    }
+  ]
+}

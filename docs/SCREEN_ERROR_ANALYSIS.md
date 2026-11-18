@@ -1,6 +1,6 @@
 # Development-set screen errors
 
-AI-assisted annotations; human review pending.
+The original benchmark used AI-assisted annotations.
 
 An unchanged v1.3.0 run on the ten development excerpts reproduces 44 matches out of 60 source changes and 159 predicted boundaries in the seven slide-sequence windows. All 16 missed changes and 115 extra boundaries have a source-frame pair and an individual attribution in [the inventory](data/v140-development-attribution.json). The original v1.3 report and source labels remain unchanged.
 

@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "description": "Text corrections for three DuckDB code regions. Path redaction replaced URL path segments in the original Docker report after scoring. Recorded scores and the original report remain as published.",
+  "original_report": "v160-round2-docker-results.json",
+  "original_report_sha256": "2c4a1fe6ee0f6e640a34429b8a7d671689e991d8afe27f25f4c5eae33e6e4e05",
+  "frozen_labels": "v160-round2-labels.json",
+  "frozen_labels_sha256": "84cc77f2270b5997eb39d7c7cd8f816c8591661b484100d0fdf723e04c98874e",
+  "method": "The source text and normalized reference come from the frozen labels. The hypothesis was rebuilt from saved OCR blocks whose centers lie inside the reference region on the retained frame. Levenshtein edits and reference lengths were independently checked for each correction.",
+  "corrections": [
+    {
+      "case_id": "r02-a03",
+      "code_region_ordinal": 11,
+      "report_row_json_pointer": "/cases/2/ocr_references/10",
+      "timestamp_seconds": 1200.48,
+      "visual_state_id": "visual-00412",
+      "text": "Remote Parquet Scans:\n  SELECT count(*) FROM 'https://shell.duckdb.org/data/tpch/0_01/parquet/lineitem.parquet';\n  SELECT count(*) FROM 'https://shell.duckdb.org/data/tpch/0_01/parquet/customer.parquet';\n  SELECT avg(c_acctbal) FROM 'https://shell.duckdb.org/data/tpch/0_01/parquet/customer.parquet';\n  SELECT * FROM 'https://shell.duckdb.org/data/tpch/0_01/parquet/orders.parquet' LIMIT 10;",
+      "reference": "RemoteParquetScans:SELECTcount(*)FROM'https://shell.duckdb.org/data/tpch/0_01/parquet/lineitem.parquet';SELECTcount(*)FROM'https://shell.duckdb.org/data/tpch/0_01/parquet/customer.parquet';SELECTavg(c_acctbal)FROM'https://shell.duckdb.org/data/tpch/0_01/parquet/customer.parquet';SELECT*FROM'https://shell.duckdb.org/data/tpch/0_01/parquet/orders.parquet'LIMIT10;",
+      "hypothesis": "RemoteParquetScansSELECTcount{*)FROM‘https://shell.duckdb.org/date/tpcoh/@_01/parquet/lineitem.parquet‘;|SELECTcount{*)FROM‘https://shell.duckdb.org/data/tpch/@_01/parquet/customer.parquetSELECTavg(c_acethbal)FROM\"https;//shell.duckdb.org/data/tpch/0_01/parquet/customerparquetSELECT*FROM‘https://shell.duckdb.org/data/tpch/@_81/parquet/orders.parquet'LIMIT14",
+      "errors": 25,
+      "reference_units": 363
+    },
+    {
+      "case_id": "r02-a03",
+      "code_region_ordinal": 12,
+      "report_row_json_pointer": "/cases/2/ocr_references/11",
+      "timestamp_seconds": 1218.48,
+      "visual_state_id": "visual-00421",
+      "text": "SELECT n_name, count(*)\nFROM 'https://shell.duckdb.org/data/tpch/0_01/parquet/customer.parquet',\n     'https://shell.duckdb.org/data/tpch/0_01/parquet/nation.parquet'\nWHERE c_nationkey = n_nationkey GROUP BY n_name;",
+      "reference": "SELECTn_name,count(*)FROM'https://shell.duckdb.org/data/tpch/0_01/parquet/customer.parquet','https://shell.duckdb.org/data/tpch/0_01/parquet/nation.parquet'WHEREc_nationkey=n_nationkeyGROUPBYn_name;",
+      "hypothesis": "SELECTn_name,count(*)FROM'https://shell.duckdb.org/data/tpch/@_81/parquet/customer.parquet’,‘https://shell.duckdb.org/data/tpch/8_61/parquet/nation.parquet'WHEREc_nationkey=n_nationkeyGROUPBYn_name;",
+      "errors": 6,
+      "reference_units": 198
+    },
+    {
+      "case_id": "r02-a03",
+      "code_region_ordinal": 13,
+      "report_row_json_pointer": "/cases/2/ocr_references/12",
+      "timestamp_seconds": 1218.48,
+      "visual_state_id": "visual-00421",
+      "text": "SELECT count(*) FROM 'https://shell.duckdb.org/data/tpch/0_01/parquet/customer.parquet';",
+      "reference": "SELECTcount(*)FROM'https://shell.duckdb.org/data/tpch/0_01/parquet/customer.parquet';",
+      "hypothesis": "duckdh>SELECTcount(*)FROM‘nttps://shell.duckdt.org/data/tpch/6_81/parquet‘customer.parquet';",
+      "errors": 13,
+      "reference_units": 85
+    }
+  ]
+}

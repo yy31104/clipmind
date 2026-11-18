@@ -1,0 +1,258 @@
+{
+  "lock_sha256": "df1013a6ad995a87cd9a362f9d66a96c9f74e1c9313a85a7718d361681b5a399",
+  "backends": {
+    "mac": {
+      "status": "measured",
+      "mode": "run",
+      "extraction_code_revision": "b8982c4c708e585b3f19faf6cf61b57716ab1632",
+      "runtime_sha256": "52e494afac13d6f3896c2f5fbc920686ffbbdff89d330bbe333befaf5b76dc2a",
+      "source_sha256": "54233a1bd6ccf3d3866eb3f91ccc3985698672ffaedc719142071b0e8a4dce45",
+      "labels_sha256": "8a21223c50151107991b2a0c53a30a8e5e9733c33179efdc4ffc8d587c7b1cd2",
+      "totals": {
+        "matched": 168,
+        "references": 211,
+        "predictions": 894,
+        "canonical_predictions": 1779,
+        "canonical_matched": 181,
+        "code_errors": 1445,
+        "code_characters": 3734,
+        "ocr_failures": 0
+      },
+      "values": {
+        "recall": 0.7962085308056872,
+        "precision": 0.18791946308724833,
+        "code_cer": 0.38698446705945366
+      },
+      "reaches_targets": {
+        "recall": false,
+        "precision": false,
+        "code_cer": false
+      },
+      "all_recordings_measured": true,
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "b01",
+          "status": "measured",
+          "matched": 52,
+          "references": 53,
+          "predictions": 274,
+          "recall": 0.9811320754716981,
+          "precision": 0.1897810218978102,
+          "canonical_matched": 53,
+          "canonical_predictions": 640,
+          "code_errors": 0,
+          "code_characters": 0,
+          "ocr_failures": 0,
+          "cleanup_leftovers": {},
+          "wall_seconds": 151.466,
+          "timings": {
+            "acquisition_seconds": 0.145,
+            "asr_seconds": 42.953,
+            "ocr_seconds": 102.566,
+            "preview_seconds": 35.106,
+            "sampling_seconds": 10.854
+          }
+        },
+        {
+          "case_id": "b02",
+          "status": "measured",
+          "matched": 57,
+          "references": 75,
+          "predictions": 419,
+          "recall": 0.76,
+          "precision": 0.1360381861575179,
+          "canonical_matched": 65,
+          "canonical_predictions": 817,
+          "code_errors": 1287,
+          "code_characters": 3286,
+          "ocr_failures": 0,
+          "cleanup_leftovers": {},
+          "wall_seconds": 196.597,
+          "timings": {
+            "acquisition_seconds": 0.128,
+            "asr_seconds": 98.266,
+            "ocr_seconds": 142.854,
+            "preview_seconds": 40.949,
+            "sampling_seconds": 12.161
+          }
+        },
+        {
+          "case_id": "b03",
+          "status": "measured",
+          "matched": 27,
+          "references": 48,
+          "predictions": 44,
+          "recall": 0.5625,
+          "precision": 0.6136363636363636,
+          "canonical_matched": 29,
+          "canonical_predictions": 53,
+          "code_errors": 0,
+          "code_characters": 0,
+          "ocr_failures": 0,
+          "cleanup_leftovers": {},
+          "wall_seconds": 67.566,
+          "timings": {
+            "acquisition_seconds": 0.126,
+            "asr_seconds": 49.889,
+            "ocr_seconds": 6.835,
+            "preview_seconds": 4.351,
+            "sampling_seconds": 12.966
+          }
+        },
+        {
+          "case_id": "b04",
+          "status": "measured",
+          "matched": 32,
+          "references": 35,
+          "predictions": 157,
+          "recall": 0.9142857142857143,
+          "precision": 0.20382165605095542,
+          "canonical_matched": 34,
+          "canonical_predictions": 269,
+          "code_errors": 158,
+          "code_characters": 448,
+          "ocr_failures": 0,
+          "cleanup_leftovers": {},
+          "wall_seconds": 76.841,
+          "timings": {
+            "acquisition_seconds": 0.137,
+            "asr_seconds": 48.092,
+            "ocr_seconds": 44.124,
+            "preview_seconds": 15.672,
+            "sampling_seconds": 12.682
+          }
+        }
+      ],
+      "report_sha256": "7e60a2708fc771eef09e2a8d731c8c3ce37e831ebaadd2fada0af7c2144fb484",
+      "once_token_sha256": "1f37ba345429a643649b61ebce0b137c8ed422da790094950bd38b18c118dbec"
+    },
+    "docker": {
+      "status": "measured",
+      "mode": "run",
+      "extraction_code_revision": "b8982c4c708e585b3f19faf6cf61b57716ab1632",
+      "runtime_sha256": "52e494afac13d6f3896c2f5fbc920686ffbbdff89d330bbe333befaf5b76dc2a",
+      "source_sha256": "54233a1bd6ccf3d3866eb3f91ccc3985698672ffaedc719142071b0e8a4dce45",
+      "labels_sha256": "8a21223c50151107991b2a0c53a30a8e5e9733c33179efdc4ffc8d587c7b1cd2",
+      "totals": {
+        "matched": 162,
+        "references": 211,
+        "predictions": 931,
+        "canonical_predictions": 1777,
+        "canonical_matched": 183,
+        "code_errors": 1576,
+        "code_characters": 3734,
+        "ocr_failures": 0
+      },
+      "values": {
+        "recall": 0.7677725118483413,
+        "precision": 0.17400644468313642,
+        "code_cer": 0.4220674879485806
+      },
+      "reaches_targets": {
+        "recall": false,
+        "precision": false,
+        "code_cer": false
+      },
+      "all_recordings_measured": true,
+      "passed": false,
+      "cases": [
+        {
+          "case_id": "b01",
+          "status": "measured",
+          "matched": 44,
+          "references": 53,
+          "predictions": 298,
+          "recall": 0.8301886792452831,
+          "precision": 0.1476510067114094,
+          "canonical_matched": 53,
+          "canonical_predictions": 638,
+          "code_errors": 0,
+          "code_characters": 0,
+          "ocr_failures": 0,
+          "cleanup_leftovers": {},
+          "wall_seconds": 245.393,
+          "timings": {
+            "acquisition_seconds": 0.836,
+            "asr_seconds": 172.775,
+            "ocr_seconds": 142.757,
+            "preview_seconds": 51.366,
+            "sampling_seconds": 19.772
+          }
+        },
+        {
+          "case_id": "b02",
+          "status": "measured",
+          "matched": 61,
+          "references": 75,
+          "predictions": 454,
+          "recall": 0.8133333333333334,
+          "precision": 0.1343612334801762,
+          "canonical_matched": 67,
+          "canonical_predictions": 819,
+          "code_errors": 1371,
+          "code_characters": 3286,
+          "ocr_failures": 0,
+          "cleanup_leftovers": {},
+          "wall_seconds": 467.225,
+          "timings": {
+            "acquisition_seconds": 0.357,
+            "asr_seconds": 7.268,
+            "ocr_seconds": 392.006,
+            "preview_seconds": 54.528,
+            "sampling_seconds": 19.255
+          }
+        },
+        {
+          "case_id": "b03",
+          "status": "measured",
+          "matched": 25,
+          "references": 48,
+          "predictions": 40,
+          "recall": 0.5208333333333334,
+          "precision": 0.625,
+          "canonical_matched": 29,
+          "canonical_predictions": 53,
+          "code_errors": 0,
+          "code_characters": 0,
+          "ocr_failures": 0,
+          "cleanup_leftovers": {},
+          "wall_seconds": 195.015,
+          "timings": {
+            "acquisition_seconds": 0.261,
+            "asr_seconds": 167.285,
+            "ocr_seconds": 51.155,
+            "preview_seconds": 6.06,
+            "sampling_seconds": 20.726
+          }
+        },
+        {
+          "case_id": "b04",
+          "status": "measured",
+          "matched": 32,
+          "references": 35,
+          "predictions": 139,
+          "recall": 0.9142857142857143,
+          "precision": 0.2302158273381295,
+          "canonical_matched": 34,
+          "canonical_predictions": 267,
+          "code_errors": 205,
+          "code_characters": 448,
+          "ocr_failures": 0,
+          "cleanup_leftovers": {},
+          "wall_seconds": 220.427,
+          "timings": {
+            "acquisition_seconds": 0.349,
+            "asr_seconds": 182.511,
+            "ocr_seconds": 100.565,
+            "preview_seconds": 19.885,
+            "sampling_seconds": 16.954
+          }
+        }
+      ],
+      "report_sha256": "5d0c43f158e73ad837c060efe932e7e0701635fac6688c7b5c1c4ceee1811a63",
+      "once_token_sha256": "3e8f863f37dec063d3eff27ec322a10775a199e416c8c39ae2590d35a844d28c"
+    }
+  },
+  "passed": false
+}

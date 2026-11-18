@@ -1,6 +1,6 @@
 # v1.3.0 development benchmark
 
-See [v1.4.0 screen quality](SCREEN_QUALITY.md) for newer results. These historical measurements remain unchanged.
+See [v1.4.0 screen quality](https://github.com/yy31104/clipmind/blob/v1.4.0/docs/SCREEN_QUALITY.md) for newer results. These historical measurements remain unchanged.
 
 Run: **2026-11-16**, M4 Pro / 24 GB, macOS, Python 3.12, local MLX Whisper
 large-v3-turbo (English) and Apple Vision. All ten excerpts finished with complete

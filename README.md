@@ -11,22 +11,16 @@ Personal project. Built with AI assistance.
 
 [Run locally](#run-locally) · [Measured quality](docs/SCREEN_QUALITY.md) · [Agent demo](docs/REAL_TALK_DEMO.md#a-real-agent-used-the-mcp-tools) · [Docs](#docs)
 
-v1.5.0 was measured on a new holdout of three complete public talks (69 minutes,
-English and Mandarin, three publishers), frozen before any code change and run once per backend:
+v1.6.0 met all three screen-quality targets on a fresh holdout of four complete
+public recordings (70 minutes, English, Mandarin and German). Each backend ran once.
 
-| Set | Backend | Change recall | Boundary precision | Code character error rate |
-| --- | --- | ---: | ---: | ---: |
-| Holdout | Mac: MLX + Vision | 169/182 (92.86%) | 33.87% | 22.45% |
-| Holdout | Docker CPU: faster-whisper + Tesseract | 173/182 (95.05%) | 24.96% | 13.18% |
-| Development | Mac: MLX + Vision | 99.28% → 94.20% | 23.42% → 41.27% | 15.95% → 10.20% |
-| Development | Docker CPU: faster-whisper + Tesseract | 99.28% → 94.20% | 23.46% → 34.48% | 17.40% → 12.69% |
+| Backend | Change recall | Boundary precision | Code character error rate |
+| --- | ---: | ---: | ---: |
+| Mac: MLX + Vision | 154/174 (88.51%) | 154/274 (56.20%) | 171/1675 (10.21%) |
+| Docker CPU: faster-whisper + Tesseract | 154/174 (88.51%) | 154/271 (56.83%) | 131/1675 (7.82%) |
 
-Targets are 85% recall, 50% precision and 15% code CER. On the holdout, recall
-meets the target on both backends and Docker code CER meets it; precision misses on
-both, and Mac code CER misses because Vision skips lines in dark code windows on
-light slides. Holdout code covers 15 regions in an English and a Mandarin talk.
-AI-assisted annotations; human review pending.
-[Results, per-change measurements, raw records and the review package](docs/SCREEN_QUALITY.md).
+The scores pool all four recordings. Inkscape and C/Make still produced extra
+boundaries. [Per-recording results and earlier rounds](docs/SCREEN_QUALITY.md).
 
 ![Search a real Xous talk and jump to the corresponding code slide](docs/images/real-talk-search.gif)
 
@@ -35,10 +29,8 @@ This recording uses a complete public 39-minute talk, not a generated fixture.
 An agent also answered a question using the saved transcript, timeline and images
 through MCP. [Source, attribution, captured calls and reproduction](docs/REAL_TALK_DEMO.md).
 
-Development data is the ten 39C3 excerpts plus the three complete talks of the
-v1.4.0 holdout, which was used once and then moved to development. `complete`
-means the pipeline finished, not perfect recall. Speaker, camera and animation
-states stay saved even when they are not counted as new information.
+In **Frames**, choose **Information changes** to browse the marked changes.
+All retained frames stay available, and search still uses their recognized text.
 
 ## How it works
 
@@ -67,7 +59,7 @@ With Docker installed, one command starts the app with FFmpeg, Tesseract and
 portable speech recognition included:
 
 ```bash
-docker run --rm -p 127.0.0.1:8420:8420 -v clipmind-data:/data ghcr.io/yy31104/clipmind:v1.5.0
+docker run --rm -p 127.0.0.1:8420:8420 -v clipmind-data:/data ghcr.io/yy31104/clipmind:v1.6.0
 ```
 
 Open [127.0.0.1:8420](http://127.0.0.1:8420), paste a link or upload a local
@@ -80,7 +72,7 @@ For native Apple Silicon acceleration, or an existing Python setup, install
 Tesseract), then run:
 
 ```bash
-uv tool install --python 3.12 git+https://github.com/yy31104/clipmind.git@v1.5.0
+uv tool install --python 3.12 git+https://github.com/yy31104/clipmind.git@v1.6.0
 ```
 
 Start with `clipmind doctor`, then `clipmind serve`. Speech language is detected
@@ -132,10 +124,10 @@ Evidence Pack files are the source of truth. The search index can be rebuilt, an
 - [CLI, SDK, REST, and MCP usage](docs/USAGE.md)
 - [Real talk demo and MCP question answering](docs/REAL_TALK_DEMO.md)
 - [Screen quality: development and holdout results](docs/SCREEN_QUALITY.md)
-- [v1.5.0 holdout protocol](docs/HOLDOUT_V150_PROTOCOL.md)
+- [v1.6.0 holdout protocol](docs/SCREEN_V160_ROUND3.md)
 - [Default-tool comparison](docs/TOOL_COMPARISON.md)
 - [v1.4.0 review packages and facts](docs/V140_FACTS.md)
-- [v1.5.0 release notes](docs/releases/v1.5.0.md)
+- [v1.6.0 release notes](docs/releases/v1.6.0.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Evidence Pack format](docs/EVIDENCE_PACK.md)
 - [Privacy](docs/PRIVACY.md)

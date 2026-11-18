@@ -1,0 +1,220 @@
+{
+  "method": "NFKC, whitespace removed, case preserved, fixed source-only crops",
+  "manifest_sha256": "3f0c6411ce73ac3bf92e6a85065f62d95cc0726e37e1234aab80f0c610aaee57",
+  "a_labels_sha256": "df5f286c3489615aaa2195660f221eedf48e7c630d5f5623f621693d886d8751",
+  "b_labels_sha256": "9a96e500dc2a692795a9777d22796d85d7128095462424821902ccfb50f5e5d9",
+  "rows": [
+    {
+      "id": "c01",
+      "reference_characters_a": 122,
+      "reference_characters_b": 122,
+      "a_to_b": {
+        "insertions": 0,
+        "deletions": 0,
+        "substitutions": 0
+      },
+      "b_to_a": {
+        "insertions": 0,
+        "deletions": 0,
+        "substitutions": 0
+      },
+      "ambiguities_a": [
+        "The first three letters of the final identifier segment read as ses in the low-resolution crop."
+      ],
+      "ambiguities_b": []
+    },
+    {
+      "id": "c02",
+      "reference_characters_a": 147,
+      "reference_characters_b": 147,
+      "a_to_b": {
+        "insertions": 0,
+        "deletions": 0,
+        "substitutions": 0
+      },
+      "b_to_a": {
+        "insertions": 0,
+        "deletions": 0,
+        "substitutions": 0
+      },
+      "ambiguities_a": [],
+      "ambiguities_b": []
+    },
+    {
+      "id": "c03",
+      "reference_characters_a": 79,
+      "reference_characters_b": 79,
+      "a_to_b": {
+        "insertions": 0,
+        "deletions": 0,
+        "substitutions": 0
+      },
+      "b_to_a": {
+        "insertions": 0,
+        "deletions": 0,
+        "substitutions": 0
+      },
+      "ambiguities_a": [],
+      "ambiguities_b": [
+        "The last line reaches the right crop edge at the closing parenthesis."
+      ]
+    },
+    {
+      "id": "c04",
+      "reference_characters_a": 188,
+      "reference_characters_b": 188,
+      "a_to_b": {
+        "insertions": 0,
+        "deletions": 0,
+        "substitutions": 0
+      },
+      "b_to_a": {
+        "insertions": 0,
+        "deletions": 0,
+        "substitutions": 0
+      },
+      "ambiguities_a": [],
+      "ambiguities_b": []
+    },
+    {
+      "id": "c05",
+      "reference_characters_a": 111,
+      "reference_characters_b": 111,
+      "a_to_b": {
+        "insertions": 0,
+        "deletions": 0,
+        "substitutions": 0
+      },
+      "b_to_a": {
+        "insertions": 0,
+        "deletions": 0,
+        "substitutions": 0
+      },
+      "ambiguities_a": [],
+      "ambiguities_b": []
+    },
+    {
+      "id": "c06",
+      "reference_characters_a": 33,
+      "reference_characters_b": 33,
+      "a_to_b": {
+        "insertions": 0,
+        "deletions": 0,
+        "substitutions": 0
+      },
+      "b_to_a": {
+        "insertions": 0,
+        "deletions": 0,
+        "substitutions": 0
+      },
+      "ambiguities_a": [],
+      "ambiguities_b": []
+    },
+    {
+      "id": "c07",
+      "reference_characters_a": 86,
+      "reference_characters_b": 86,
+      "a_to_b": {
+        "insertions": 0,
+        "deletions": 0,
+        "substitutions": 0
+      },
+      "b_to_a": {
+        "insertions": 0,
+        "deletions": 0,
+        "substitutions": 0
+      },
+      "ambiguities_a": [],
+      "ambiguities_b": []
+    },
+    {
+      "id": "c08",
+      "reference_characters_a": 363,
+      "reference_characters_b": 363,
+      "a_to_b": {
+        "insertions": 0,
+        "deletions": 0,
+        "substitutions": 0
+      },
+      "b_to_a": {
+        "insertions": 0,
+        "deletions": 0,
+        "substitutions": 0
+      },
+      "ambiguities_a": [],
+      "ambiguities_b": []
+    },
+    {
+      "id": "c09",
+      "reference_characters_a": 16,
+      "reference_characters_b": 16,
+      "a_to_b": {
+        "insertions": 0,
+        "deletions": 0,
+        "substitutions": 0
+      },
+      "b_to_a": {
+        "insertions": 0,
+        "deletions": 0,
+        "substitutions": 0
+      },
+      "ambiguities_a": [],
+      "ambiguities_b": []
+    },
+    {
+      "id": "c10",
+      "reference_characters_a": 209,
+      "reference_characters_b": 209,
+      "a_to_b": {
+        "insertions": 0,
+        "deletions": 0,
+        "substitutions": 0
+      },
+      "b_to_a": {
+        "insertions": 0,
+        "deletions": 0,
+        "substitutions": 0
+      },
+      "ambiguities_a": [
+        "Line 3 ends at the right crop boundary just after the visible closing quote."
+      ],
+      "ambiguities_b": [
+        "Line 3 reaches the right crop edge at the closing quote."
+      ]
+    },
+    {
+      "id": "c11",
+      "reference_characters_a": 269,
+      "reference_characters_b": 269,
+      "a_to_b": {
+        "insertions": 0,
+        "deletions": 0,
+        "substitutions": 0
+      },
+      "b_to_a": {
+        "insertions": 0,
+        "deletions": 0,
+        "substitutions": 0
+      },
+      "ambiguities_a": [],
+      "ambiguities_b": []
+    },
+    {
+      "id": "c12",
+      "reference_characters_a": 397,
+      "reference_characters_b": 397,
+      "a_to_b": {
+        "insertions": 0,
+        "deletions": 0,
+        "substitutions": 0
+      },
+      "b_to_a": {
+        "insertions": 0,
+        "deletions": 0,
+        "substitutions": 0
+      },
+      "ambiguities_a": [],
+      "ambiguities_b": []
+    }
+  ]
+}

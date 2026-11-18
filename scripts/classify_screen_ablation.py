@@ -11,8 +11,19 @@ import time
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from clipmind.media import Frame
 from clipmind.visual_states import INFORMATION_BOUNDARY_ALGORITHM, annotate_change_kinds
-from evaluate_real_talks import runtime_code_fingerprint
-from screen_evaluation import boundary_inventory, reserve_record, resolve_pack_path, sha256
+from scripts.evaluate_real_talks import runtime_code_fingerprint
+from scripts.screen_evaluation import boundary_inventory, reserve_record, resolve_pack_path, sha256
+
+
+def _legacy_timeline(states: list[dict], frames: list[Frame]) -> list[dict]:
+    typed = []
+    for state, frame in zip(states, frames, strict=True):
+        legacy = dict(state, change_kind=frame.change_kind, change_reason=frame.change_reason)
+        legacy.pop("information_boundary", None)
+        if frame.ocr_warning:
+            legacy["ocr_warning"] = frame.ocr_warning
+        typed.append(legacy)
+    return typed
 
 
 def main():
@@ -44,11 +55,12 @@ def main():
                                 ocr_layout=tuple(text.get('layout', ())),
                                 stable_duration=state.get('stable_duration_seconds', 0),
                                 observed_sample_count=state.get('observed_sample_count', 1),
-                                ocr_warning=text.get('warning'), dedupe_warning=state.get('dedupe_warning')))
+                                source_timestamp=state.get('source_timestamp'),
+                                ocr_warning=text.get('error') or text.get('warning'),
+                                dedupe_warning=state.get('dedupe_warning')))
         started = time.perf_counter()
         annotate_change_kinds(frames)
-        typed = [dict(state, change_kind=frame.change_kind, change_reason=frame.change_reason)
-                 for state, frame in zip(states, frames)]
+        typed = _legacy_timeline(states, frames)
         label = labels['cases'][row['case_id']]
         result = {'case_id': row['case_id'], 'typing_seconds': round(time.perf_counter()-started, 3),
                   'states': typed, 'slide_metric_applicable': label.get('slide_metric_applicable', True)}

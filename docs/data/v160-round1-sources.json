@@ -1,0 +1,317 @@
+{
+  "scope": "Source-only eligibility and licensing. No extraction was run on these recordings.",
+  "thumbnail_rule": "Six fixed source thumbnails at (i+0.5)/6 of the full duration for i=0..5. Source-video metadata and publisher pages supplement the visual observations.",
+  "selected": [
+    {
+      "file": "blender-lighting.webm",
+      "title": "Realistic Lighting Hacks in Blender",
+      "speaker": "Gleb Alexandrov",
+      "publisher": "Blender Foundation / Blender Conference 2016",
+      "duration_seconds": 1104.767,
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "bytes": 112576691,
+      "sha256": "841690055fc10076ff707005957f4f970a63d48c3fce25efb019d4f2fc40d7db",
+      "license": "CC BY 3.0",
+      "license_url": "https://creativecommons.org/licenses/by/3.0/",
+      "license_evidence": "https://commons.wikimedia.org/wiki/File:Realistic_Lighting_Hacks_in_Blender.webm",
+      "source_url": "https://www.youtube.com/watch?v=TooIqZ1SS24",
+      "download_url": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Realistic_Lighting_Hacks_in_Blender.webm",
+      "observed": "A projected screen, presenter, large audience, camera angles and room footage alternate with slides and rendered artwork. The six thumbnails contain no legible code.",
+      "case_id": "b01",
+      "normalized_bytes": 138630118,
+      "normalized_sha256": "21ac6f74e89e709853d4bf9a0d71f397e1a964582d9686cc152f9ea212f0a04e",
+      "normalized_duration": 1104.759021
+    },
+    {
+      "file": "emacsconf-graphics.webm",
+      "title": "Modern Emacs/Elisp hardware/software accelerated graphics",
+      "speaker": "Emanuel Berg",
+      "publisher": "EmacsConf 2025",
+      "duration_seconds": 1335.777,
+      "dimensions": [
+        1280,
+        720
+      ],
+      "bytes": 58899810,
+      "sha256": "987afc0ebee7f9d16dbd9b3b68a58af4465d4ea6b78904453654932a803426a2",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "license_evidence": "https://emacsconf.org/2025/submit/",
+      "source_url": "https://emacsconf.org/2025/talks/graphics/",
+      "download_url": "https://media.emacsconf.org/2025/emacsconf-2025-graphics--modern-emacselisp-hardwaresoftware-accelerated-graphics--emanuel-berg--main.webm",
+      "observed": "Screen capture shows legible Elisp, terminal output, changing rendered graphics, closing credits, and a post-credits signature. The publisher offers Q&A separately.",
+      "duration_verification": {
+        "publisher_page_label": "22:15",
+        "direct_http_content_length": 58899810,
+        "direct_http_etag": "6936e7bc-382bd62",
+        "direct_http_last_modified_utc": "2025-12-08T14:59:08Z",
+        "container_duration_field_kind": "End of embedded WebVTT track",
+        "video_packet_end_seconds": 1200.0,
+        "audio_packet_end_seconds": 1216.376,
+        "caption_packet_end_seconds": 1335.777,
+        "video_packet_count": 36000,
+        "first_and_final_chapters_seconds": [
+          5,
+          1105
+        ],
+        "tail_evidence": [
+          "contact-sheets/emacsconf-tail/emacsconf-graphics-1180.jpg",
+          "contact-sheets/emacsconf-tail/emacsconf-graphics-1199.jpg",
+          "contact-sheets/emacsconf-tail/emacsconf-graphics-toobnix-1199.jpg"
+        ],
+        "tail_observation": "Closing credits visible at 1180 s. At 1199 s the native views of both official encodes show the same completed post-credits signature.",
+        "youtube_mirror": "https://www.youtube.com/watch?v=RVoGcLNalJw",
+        "youtube_license_evidence": "The organizer's public video description declares CC BY-SA 4.0.",
+        "youtube_duration_index_evidence": [
+          "https://emacs.tv/?autoplay=1",
+          "https://lists.gnu.org/archive/html/info-gnu-emacs/2025-12/msg00002.html"
+        ],
+        "toobnix_mirror": "https://toobnix.org/videos/watch/be8c63a5-56da-44b7-a308-77ad85885c6e",
+        "toobnix_metadata_url": "https://toobnix.org/api/v1/videos/be8c63a5-56da-44b7-a308-77ad85885c6e",
+        "toobnix_download": "https://toobnix.org/download/streaming-playlists/hls/videos/be8c63a5-56da-44b7-a308-77ad85885c6e-720-fragmented.mp4",
+        "toobnix_file": "emacsconf-graphics-toobnix.mp4",
+        "toobnix_bytes": 78947262,
+        "toobnix_sha256": "16d0a8b3dc06f73fa224c82441924de1ec1c57939ed1e066c07fc099a2bf75ac",
+        "toobnix_catalog_duration_seconds": 1336,
+        "toobnix_media_duration_seconds": 1216.395333,
+        "toobnix_video_stream_duration_seconds": 1200.0,
+        "toobnix_video_packet_count": 36000,
+        "conclusion": "Local direct download matches exact origin Content-Length. Independently encoded official mirror preserves the same 36,000 picture frames, audio length, and visual ending. 22:15 is a container/caption duration rather than the length of the video track. No later picture content was found in the publisher versions.",
+        "video_final_pts_seconds": 1199.967,
+        "normalized_input_decision": "Retain the staged normalization from the direct official source. Treat the portion after the last video packet through the audio endpoint as audio-only when labeling. The late caption packet extends the WebM header beyond both media tracks.",
+        "audio_only_interval_seconds": [
+          1200.0,
+          1216.376
+        ],
+        "toobnix_local_copy_status": "Removed the superseded duplicate raw MP4 after verifying byte count and SHA-256. Official download URL, metadata, and comparative tail images are retained. Direct WebM and staged normalized input remain available."
+      },
+      "case_id": "b02",
+      "normalized_bytes": 60946579,
+      "normalized_sha256": "c9206b00969eb36af26417f18410b974e106899092b014ebcfa19a5236d58186",
+      "normalized_duration": 1216.373854
+    },
+    {
+      "file": "wordcamp-jaclyn.mp4",
+      "title": "Managing WordPress On the Go / 隨時隨地的部落格管理",
+      "speaker": "Jaclyn Chen / 陳奕如",
+      "publisher": "WordCamp Taipei 2019 / WordPress.tv",
+      "producer_credit": "yuli-yang",
+      "duration_seconds": 1230.03,
+      "dimensions": [
+        640,
+        360
+      ],
+      "bytes": 107381730,
+      "sha256": "76ea8fb47821eaf0b2f3bf1c895906cbed67da399e3bb4913ecfaee544c24c7f",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "source_url": "https://wordpress.tv/2020/06/08/jaclyn-chen-%E9%9A%A8%E6%99%82%E9%9A%A8%E5%9C%B0%E7%9A%84%E9%83%A8%E8%90%BD%E6%A0%BC%E7%AE%A1%E7%90%86-wordpress-app-%E4%BD%BF%E7%94%A8-%E9%96%8B%E7%99%BC%E7%B6%93%E9%A9%97%E5%88%86/",
+      "download_url": "https://videos.files.wordpress.com/o5juAPQJ/video-e3a03dced3_dvd.mp4",
+      "observed": "Traditional Chinese publisher language label and bilingual slides. Filmed presenter and projection in room inset. Public contact and blog link on closing slide. The six thumbnails contain no legible code or visible credentials.",
+      "case_id": "b03",
+      "normalized_bytes": 63235122,
+      "normalized_sha256": "711f5d2c4cc78f0095b5483eb83915500814196f2ca2fce1027666369474e390",
+      "normalized_duration": 1230.03
+    },
+    {
+      "file": "debconf-virtme.webm",
+      "title": "virtme-ng: quickly test a kernel from Debian",
+      "speaker": "Helen Koike",
+      "publisher": "DebConf25 / Debian",
+      "source_url": "https://debconf25.debconf.org/talks/56-virtme-ng-quickly-test-a-kernel-from-debian/",
+      "download_url": "https://meetings-archive.debian.net/pub/debian-meetings/2025/DebConf25/debconf25-299-virtme-ng-quickly-test-a-kernel-from-debian.av1.webm",
+      "license": "MIT/Expat (DebConf recording license)",
+      "license_url": "https://opensource.org/license/mit",
+      "license_evidence": "https://debconf25.debconf.org/cfp/#video-coverage",
+      "bytes": 69938457,
+      "sha256": "dba8ec1d8e12d6013a720ff5db1cef28fd2e4a75f524003ed9a56ba63f7d78bc",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "duration_seconds": 1259.687,
+      "observed": "The full talk includes slide diagrams, terminal commands on slides, a live terminal demo, and the closing discussion. The source review identified this producer independently of EmacsConf and found legible commands in slide and terminal frames.",
+      "case_id": "b04",
+      "normalized_bytes": 57294303,
+      "normalized_sha256": "66b9f41181cf052f890625fc5cc76ef581296f7685dfdad8356f988f9bcfcece",
+      "normalized_duration": 1259.68
+    }
+  ],
+  "excluded": [
+    {
+      "file": "wordcamp-ansible.mp4",
+      "title": "Using Ansible for Auto-deployment of WordPress Development",
+      "speaker": "Chris Lin",
+      "publisher": "WordCamp Taipei 2019 / WordPress.tv",
+      "source_url": "https://wordpress.tv/2020/06/17/chris-lin-%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E7%B5%84%E6%85%8B%E5%B7%A5%E5%85%B7-ansible-%E8%87%AA%E5%8B%95%E9%83%A8%E7%BD%B2-wordpress-%E7%92%B0%E5%A2%83-using-ansible-for-auto-deployment-of-wor/",
+      "download_url": "https://videos.files.wordpress.com/dFwj5o4v/video-11f402a3bd_dvd.mp4",
+      "bytes": 114103981,
+      "duration_seconds": 1697.402,
+      "dimensions": [
+        640,
+        360
+      ],
+      "license": "CC BY-SA 4.0",
+      "reason": "Public companion slides contain sample credentials for local demo hosts. The medium video shows legible shell command text and a terminal view with small body text.",
+      "sha256": "a4782d31b8dd5b1b1d796d9292fbe6ac9703b8b8f1f6d151c85d8a72ec102562"
+    },
+    {
+      "file": "wordcamp-nathan.mp4",
+      "title": "How to use AI agents to click, configure and care for Your WordPress site",
+      "speaker": "Nathan Onn",
+      "publisher": "WordCamp Taiwan 2025 / WordPress.tv",
+      "source_url": "https://wordpress.tv/2025/12/24/how-to-use-ai-agents-to-click-configure-and-care-for-your-wordpress-site/",
+      "download_url": "https://videos.files.wordpress.com/vnGRq4mZ/video-a45a1c6c0e_mov_std.mp4",
+      "bytes": 63660938,
+      "duration_seconds": 2357.822133,
+      "dimensions": [
+        398,
+        224
+      ],
+      "license": "CC BY-SA 4.0",
+      "reason": "Longer than preferred and low-resolution. The preview includes a promotional guide/contact QR and payment setup.",
+      "sha256": "eb56b3fafd79af2a46daba995431afdbe9ddfddc9703c5f3106e1e01f302fc4a"
+    },
+    {
+      "file": "wordcamp-hsu.mp4",
+      "title": "不只能架官網！用 WordPress 玩出企業內部超能力",
+      "speaker": "Hsu Yu Lun / 許育綸",
+      "publisher": "WordCamp Taiwan 2025 / WordPress.tv",
+      "source_url": "https://wordpress.tv/2025/12/24/不只能架官網！用-wordpress-玩出企業內部超能力/",
+      "download_url": "https://videos.files.wordpress.com/w1F81WFZ/video-d527a08c6c_mp4_std.mp4",
+      "bytes": 65769212,
+      "duration_seconds": 2038.336,
+      "dimensions": [
+        398,
+        224
+      ],
+      "license": "CC BY-SA 4.0",
+      "reason": "Longer than preferred and low-resolution. A slide shows an account-management table. The review did not establish whether it exclusively uses sample data.",
+      "sha256": "48850dfdd30b34bb96d75f76f52ef4a06b807fedabed8131e2407e4df882fff2"
+    },
+    {
+      "title": "I vibe-coded a co-working space business – here is how!",
+      "speaker": "Arturs Vancans and Xavier Wang",
+      "publisher": "WordCamp Taiwan 2025 / WordPress.tv",
+      "source_url": "https://wordpress.tv/2025/12/24/來看看我怎麼使用-vibe-coding-經營共同工作空間！i-vibe-coded-a-co-working-space-bu/",
+      "download_url": "https://videos.files.wordpress.com/QPkHSX0c/video-491ca53f8e_mp4_std.mp4",
+      "bytes": 71384270,
+      "license": "CC BY-SA 4.0",
+      "reason": "Available backup from the same producer family. The WordCamp Taipei 2019 Mandarin selection has a verified 20:30 runtime and source previews."
+    },
+    {
+      "title": "簡化流程，就別讓他進後台 – 前端發文外掛分享 WP User Frontend",
+      "publisher": "WordCamp Taiwan 2021 / WordPress.tv",
+      "source_url": "https://wordpress.tv/2021/10/08/簡化流程，就別讓他進後台-前端發文外掛分享-wp-user/",
+      "download_url": "https://videos.files.wordpress.com/U4jv4zbI/video-7df242d056_mp4_std.mp4",
+      "bytes": 28179028,
+      "duration_seconds": 1744.618,
+      "dimensions": [
+        398,
+        224
+      ],
+      "license": "CC BY-SA 4.0",
+      "reason": "Available backup from the same producer family, at a lower resolution."
+    },
+    {
+      "file": "libreplanet-webber.webm",
+      "title": "Federation and GNU",
+      "speaker": "Christopher Webber",
+      "publisher": "Free Software Foundation / LibrePlanet 2015",
+      "source_url": "https://media.libreplanet.org/u/libreplanet/m/christopher-webber-federation-and-gnu-2b47/",
+      "download_url": "https://media.libreplanet.org/mgoblin_media/media_entries/100/chris-webber-fed-gnu.medium.webm",
+      "bytes": 104699160,
+      "duration_seconds": 2729.433333,
+      "dimensions": [
+        640,
+        276
+      ],
+      "license": "CC BY-SA 4.0",
+      "reason": "45:29 is longer than preferred. The official description advertises a demo, but the six thumbnails show only the podium camera.",
+      "sha256": "dd505a9099712fd0976a2367ccc6a8809739112e7b858374fbaa43880d54f3e1"
+    },
+    {
+      "title": "Free software praxis: Removing limitations",
+      "publisher": "Free Software Foundation / LibrePlanet 2024",
+      "source_url": "https://media.libreplanet.org/u/libreplanet/m/free-software-praxis-removing-limitations/",
+      "download_url": "https://media.libreplanet.org/mgoblin_media/media_entries/3465/jupiter-sun-1600-audience.webm",
+      "bytes": 159686951,
+      "duration_seconds": 2707.975,
+      "dimensions": [
+        1280,
+        720
+      ],
+      "license": "CC BY-SA 4.0",
+      "reason": "45:08 is longer than preferred."
+    },
+    {
+      "title": "Getting Started with Scripting in Python",
+      "speaker": "Mike Shah",
+      "publisher": "Blender Foundation / Blender Conference 2023",
+      "source_url": "https://conference.blender.org/2023/presentations/1866/",
+      "license_evidence": "https://video.blender.org/api/v1/videos/037094e5-8a7d-4613-b2c6-0d6c8044fb55",
+      "download_url": "https://video.blender.org/download/web-videos/037094e5-8a7d-4613-b2c6-0d6c8044fb55-720.mp4",
+      "bytes": 213060510,
+      "duration_seconds": 2963,
+      "license": "CC Attribution per publisher video metadata",
+      "reason": "49:23 is longer than preferred."
+    },
+    {
+      "title": "Scanning the Moon!... lab",
+      "publisher": "Poly Haven / Blender Conference 2023 lightning talk",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Scanning_the_Moon!..._lab_-_-bcon23_lightning_talk.webm",
+      "download_url": "https://upload.wikimedia.org/wikipedia/commons/5/57/Scanning_the_Moon%21..._lab_-_-bcon23_lightning_talk.webm",
+      "bytes": 34827157,
+      "duration_seconds": 251,
+      "license": "Listed as CC BY 3.0, pending Wikimedia license review",
+      "reason": "External license had not been independently confirmed, and duration is below the preferred range."
+    },
+    {
+      "title": "Building CDviz: Lessons from Creating CI/CD Observability Tooling",
+      "speaker": "David Bernard",
+      "publisher": "FOSDEM 2026",
+      "source_url": "https://archive.fosdem.org/2026/schedule/event/ATTMUV-building_cdviz_lessons_from_creating_cicd_observability_tooling/",
+      "download_url": "https://video.fosdem.org/2026/h2213/ATTMUV-building_cdviz_lessons_from_creating_cicd_observability_tooling.av1.webm",
+      "bytes": 78232172,
+      "license": "CC BY 4.0 on program page",
+      "reason": "Producer family already occurs in earlier corpora."
+    },
+    {
+      "title": "Implement Bopomofo Layout with OpenType feature",
+      "publisher": "DebConf18",
+      "source_url": "https://debconf18.debconf.org/talks/161-opentype-implement-bopomofo-layout-with-opentype-feature/",
+      "download_url": "https://meetings-archive.debian.net/pub/debian-meetings/2018/DebConf18/2018-07-28/opentype-implement-bopomofo-layout-with-.webm",
+      "license": "MIT/Expat per recording rules",
+      "license_evidence": "https://debconf18.debconf.org/cfp/",
+      "reason": "Recording license is outside the requested CC BY / CC BY-SA selection."
+    },
+    {
+      "title": "Designing in a 3D Playground Unlocking Low-Code Add-on Development for Engineers",
+      "publisher": "Blender Foundation / Blender Conference 2025",
+      "source_url": "https://conference.blender.org/2025/presentations/4005/",
+      "license_evidence": "https://video.blender.org/api/v1/videos/a7904739-730c-457d-858c-dc99348cff08",
+      "download_url": "https://video.blender.org/download/web-videos/a7904739-730c-457d-858c-dc99348cff08-1080.mp4",
+      "bytes": 112739235,
+      "duration_seconds": 1587,
+      "license": "Unknown in publisher video metadata",
+      "reason": "Per-recording rights were unconfirmed."
+    }
+  ],
+  "limits": "The corpus covers four producers and includes commands and code from two. The EmacsConf narration-free demo has no speech reference. The source timestamp and code reference geometry are bound to each normalized file.",
+  "selection_amendment": {
+    "included": "debconf-virtme.webm",
+    "reason": "A fourth independent producer with a complete talk adds visible code and terminal references beyond the EmacsConf demo.",
+    "screening": "Unscored source-video contact sheets. No extraction output or annotation labels were used.",
+    "source_shortlist": [
+      "https://debconf25.debconf.org/talks/56-virtme-ng-quickly-test-a-kernel-from-debian/",
+      "https://debconf25.debconf.org/talks/215-how-embedded-cc-toolchains-work/",
+      "https://emacsconf.org/2025/talks/org-babel/"
+    ],
+    "other_candidates": "The Embedded C/C++ talk is scheduled at twice the length. Org-Babel would repeat the existing EmacsConf producer. Neither other recording was evaluated.",
+    "license_scope": "The first shortlist preferred CC BY and CC BY-SA. The frozen rule accepts openly licensed recordings with clear attribution. DebConf25 explicitly distributes this recording under its MIT/Expat video policy.",
+    "retained_exclusion": "DebConf18 was not part of this pre-run shortlist amendment. The original screening record and reasons remain available."
+  }
+}

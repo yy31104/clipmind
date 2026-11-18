@@ -40,7 +40,9 @@ jobs:
     # checks cannot catch unreadable generated slides.
     # Keep the OCR fixture gate on a fixed LTS; other Linux jobs track latest.
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    # The Ubuntu mirror can take more than 15 minutes to install FFmpeg's
+    # dependencies on a fresh runner.
+    timeout-minutes: 30
     env:
       PYTHON_DOTENV_DISABLED: "1"
       CLIPMIND_OCR_PROVIDER: tesseract

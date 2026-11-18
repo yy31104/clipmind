@@ -1,0 +1,862 @@
+{
+  "schema_version": 1,
+  "annotation_protocol": "docs/SCREEN_LABEL_PROTOCOL_V160.md",
+  "labels_method": "Two blind GPT-6.2 Sol source passes and a separate source-only adjudication.",
+  "cases": {
+    "b01": {
+      "reviewed": true,
+      "review_start": 0,
+      "review_end": 1104.759021,
+      "input_sha256": "21ac6f74e89e709853d4bf9a0d71f397e1a964582d9686cc152f9ea212f0a04e",
+      "slide_changes": [
+        5,
+        91,
+        144,
+        191,
+        225,
+        227,
+        279,
+        308,
+        316,
+        332,
+        340,
+        354,
+        389,
+        411,
+        427,
+        443,
+        475,
+        478,
+        481,
+        491,
+        526,
+        562,
+        566,
+        568,
+        576,
+        609,
+        620,
+        630,
+        639,
+        661,
+        684,
+        688,
+        695,
+        718,
+        735,
+        745,
+        776,
+        790,
+        807,
+        818,
+        827,
+        857,
+        893,
+        899,
+        912,
+        918,
+        939.56,
+        940.68,
+        984,
+        997,
+        1008,
+        1065,
+        1095
+      ],
+      "ocr": [],
+      "build_groups": [],
+      "source_record_sha256": "0090166ba4216968f128665f367b0f6c41eb789f16dbdfcca5876bb55746b843"
+    },
+    "b02": {
+      "reviewed": true,
+      "review_start": 0,
+      "review_end": 1216.373854,
+      "input_sha256": "c9206b00969eb36af26417f18410b974e106899092b014ebcfa19a5236d58186",
+      "slide_changes": [
+        3,
+        6,
+        33,
+        39,
+        119,
+        125,
+        127,
+        144,
+        156,
+        165,
+        200,
+        206,
+        223,
+        230,
+        269,
+        274,
+        278,
+        279,
+        284,
+        287,
+        288,
+        296,
+        331,
+        343,
+        344,
+        346,
+        347,
+        348,
+        352,
+        354,
+        363,
+        372,
+        493,
+        507,
+        539,
+        557,
+        580,
+        586,
+        589,
+        721,
+        729,
+        735,
+        745,
+        746,
+        778,
+        788,
+        795,
+        799,
+        802,
+        813,
+        819,
+        847,
+        872,
+        884,
+        901,
+        910,
+        917,
+        922,
+        924,
+        928,
+        930,
+        933,
+        937,
+        946,
+        952,
+        955,
+        975,
+        984,
+        1122,
+        1123,
+        1131,
+        1139,
+        1141,
+        1184,
+        1197
+      ],
+      "ocr": [
+        {
+          "timestamp": 4,
+          "kind": "code",
+          "roi": [
+            0.2421875,
+            0.0,
+            0.103125,
+            0.03055556
+          ],
+          "text": "make solar",
+          "evidence_image_ids": [
+            "frames/00003.jpg",
+            "frames/00004.jpg"
+          ]
+        },
+        {
+          "timestamp": 119,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.03194444,
+            0.52734375,
+            0.36666667
+          ],
+          "text": "[ thread 140419747870400 ] I made 313 surfaces\n[ thread 140419739477696 ] I made 385 surfaces\n     700 textures created\n     700 -------- destroyed\n     698 surfaces created (6.1% of worst-case 11520)\n     698 -------- destroyed\n      32 -------- collisions\n     360 frames\n       0 -------- skipped as identical (0.0%)\n       0 -------- not drawn as timeout (0.0%)\nsleep: 0.004 s/frame",
+          "evidence_image_ids": [
+            "frames/00119.jpg",
+            "frames/00120.jpg"
+          ]
+        },
+        {
+          "timestamp": 200,
+          "kind": "code",
+          "roi": [
+            0.15625,
+            0.05277778,
+            0.10390625,
+            0.02916667
+          ],
+          "text": "make snake",
+          "evidence_image_ids": [
+            "frames/00200.jpg"
+          ]
+        },
+        {
+          "timestamp": 269,
+          "kind": "code",
+          "roi": [
+            0.0453125,
+            0.01944444,
+            0.48828125,
+            0.25138889
+          ],
+          "text": "1134 textures created\n1134 -------- destroyed\n1132 surfaces created (7.9% of worst-case 14400)\n1132 -------- destroyed\n  71 -------- collisions\n 450 frames\n   0 -------- skipped as identical (0.0%)\n   0 -------- not drawn as timeout (0.0%)",
+          "evidence_image_ids": [
+            "frames/00269.jpg",
+            "frames/00270.jpg"
+          ]
+        },
+        {
+          "timestamp": 281,
+          "kind": "code",
+          "roi": [
+            0.00390625,
+            0.14722222,
+            0.2765625,
+            0.19444444
+          ],
+          "text": "[ELC ELN] bad-alpha.el\n[ELC ELN] bad-ascii.el\n[ELC ELN] bad-box.el\n[ELC ELN] bad-color.el\n[ELC ELN] bad-color-norm.el\n[ELC ELN] bad-demos.el",
+          "evidence_image_ids": [
+            "frames/00279.jpg",
+            "frames/00281.jpg"
+          ]
+        },
+        {
+          "timestamp": 288,
+          "kind": "code",
+          "roi": [
+            0.00390625,
+            0.88333333,
+            0.846875,
+            0.02916667
+          ],
+          "text": "Makefile  bad-sdl3.c  bad-sdl3.el  bad-sdl3.h  bad-sdl3.o  solar.png@  bad-sdl3.so*",
+          "evidence_image_ids": [
+            "frames/00288.jpg",
+            "frames/00289.jpg"
+          ]
+        },
+        {
+          "timestamp": 344,
+          "kind": "code",
+          "roi": [
+            0.05,
+            0.0,
+            0.315625,
+            0.03333333
+          ],
+          "text": "echo hello GNU Emacs people :\\)",
+          "evidence_image_ids": [
+            "frames/00343.jpg",
+            "frames/00344.jpg",
+            "frames/00345.jpg"
+          ]
+        },
+        {
+          "timestamp": 352,
+          "kind": "code",
+          "roi": [
+            0.15078125,
+            0.93888889,
+            0.103125,
+            0.03888889
+          ],
+          "text": "make space",
+          "evidence_image_ids": [
+            "frames/00352.jpg",
+            "frames/00363.jpg"
+          ]
+        },
+        {
+          "timestamp": 580,
+          "kind": "code",
+          "roi": [
+            0.15703125,
+            0.02222222,
+            0.1140625,
+            0.02916667
+          ],
+          "text": "make studio",
+          "evidence_image_ids": [
+            "frames/00580.jpg",
+            "frames/00581.jpg",
+            "frames/00582.jpg"
+          ]
+        },
+        {
+          "timestamp": 587,
+          "kind": "code",
+          "roi": [
+            0.16640625,
+            0.01527778,
+            0.08984375,
+            0.03611111
+          ],
+          "text": "make fps",
+          "evidence_image_ids": [
+            "frames/00586.jpg",
+            "frames/00587.jpg",
+            "frames/00588.jpg"
+          ]
+        },
+        {
+          "timestamp": 721,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.0,
+            0.7203125,
+            0.53194444
+          ],
+          "text": "const char* vert_shader_src =\n  \"#version 460 core                                               \\n\"\n  \"layout (location = 0) in vec3 aPos;                             \\n\"\n  \"layout (location = 1) in vec3 aCol;                             \\n\"\n  \"out vec3 vCol;                                                  \\n\"\n  \"uniform vec3  uScale;                                           \\n\"\n  \"uniform float uAngle;                                           \\n\"\n  \"void main () {                                                  \\n\"\n  \"  mat3 R = mat3(                                                \\n\"\n  \"    uScale.x * cos (uAngle), uScale.y * -sin (uAngle), 0.0,     \\n\"\n  \"    uScale.x * sin (uAngle), uScale.y *  cos (uAngle), 0.0,     \\n\"\n  \"    0.0,                     0.0,                      uScale.z \\n\"\n  \"  );                                                            \\n\"\n  \"  gl_Position = vec4 (aPos * R, 1.0);                           \\n\"\n  \"  vCol = aCol;                                                  \\n\"\n  \"}                                                               \\n\";",
+          "evidence_image_ids": [
+            "frames/00721.jpg",
+            "frames/00722.jpg",
+            "frames/00737.jpg"
+          ]
+        },
+        {
+          "timestamp": 728,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.69861111,
+            0.3953125,
+            0.23333333
+          ],
+          "text": "const char* frag_shader_src =\n  \"#version 460 core               \\n\"\n  \"in  vec3 vCol;                  \\n\"\n  \"out vec4 FragColor;             \\n\"\n  \"void main () {                  \\n\"\n  \"  FragColor = vec4 (vCol, 1.0); \\n\"\n  \"}                               \\n\";",
+          "evidence_image_ids": [
+            "frames/00724.jpg",
+            "frames/00728.jpg"
+          ]
+        },
+        {
+          "timestamp": 737,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.0,
+            0.3390625,
+            0.14444444
+          ],
+          "text": "static SDL_GLContext  ctx;\nstatic GLuint         VAO  = 0;\nstatic GLuint         VBO  = 0;\nstatic GLuint         prog = 0;",
+          "evidence_image_ids": [
+            "frames/00737.jpg",
+            "frames/00738.jpg"
+          ]
+        },
+        {
+          "timestamp": 778,
+          "kind": "code",
+          "roi": [
+            0.003125,
+            0.05277778,
+            0.47109375,
+            0.30833333
+          ],
+          "text": "OpenGL version .... 4.6\nshader compile .... ok\nshader compile .... ok\nlinking ........... ok\ninit .............. ok\nversion used ...... 4.6.0 NVIDIA 550.163.01\nframes drawn ...... 2048\nerrors ............ none",
+          "evidence_image_ids": [
+            "frames/00778.jpg",
+            "frames/00785.jpg"
+          ]
+        },
+        {
+          "timestamp": 799,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.36666667,
+            0.51796875,
+            0.33472222
+          ],
+          "text": ";; 01. (progn (eval-buffer) (bad-demo-ansi-cubes ))\n;; 02. (progn (eval-buffer) (bad-demo-icac       ))\n;; 03. (progn (eval-buffer) (bad-demo-uxu        ))\n;; 04. (progn (eval-buffer) (bad-demo-fonts t    ))\n;;\n;;; Code:\n\n(require 'cl-lib)\n(cl-pushnew \"..\" load-path :test #'string=)\n(require 'luki-lisp)",
+          "evidence_image_ids": [
+            "frames/00799.jpg"
+          ]
+        },
+        {
+          "timestamp": 819,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.16666667,
+            0.6703125,
+            0.4375
+          ],
+          "text": "(cl-defmethod bad-grad-colors ((e elem) (beg string) (end string))\n  (cl-loop\n   initially (goto-char (pos-bol))\n   with a = (bad-color-decimal beg)\n   with o = (bad-color-decimal end)\n   with w = (@ e w)\n   with h = (@ e h)\n   with n = (* w h)\n   for (r g b) in (color-gradient a o n)\n   for bgc = (color-rgb-to-hex r g b)\n   for fgc = (color-complement bgc)\n   for prp = (list :background bgc :foreground fgc)\n   collect prp into props finally",
+          "evidence_image_ids": [
+            "frames/00819.jpg",
+            "frames/00840.jpg"
+          ]
+        },
+        {
+          "timestamp": 840,
+          "kind": "code",
+          "roi": [
+            0.03828125,
+            0.73472222,
+            0.40859375,
+            0.13472222
+          ],
+          "text": "for p in props do\n(@i c)\n(put-text-property pnt (1+ pnt) 'face p)\n(& (z (m m w)) (@i 10)))))",
+          "evidence_image_ids": [
+            "frames/00840.jpg"
+          ]
+        },
+        {
+          "timestamp": 924,
+          "kind": "code",
+          "roi": [
+            0.00234375,
+            0.20833333,
+            0.98671875,
+            0.07222222
+          ],
+          "text": "Linux ebchw-eight 6.12.57+deb13-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.57-1 (2025-11-05)\nx86_64 GNU/Linux",
+          "evidence_image_ids": [
+            "frames/00924.jpg",
+            "frames/00925.jpg"
+          ]
+        },
+        {
+          "timestamp": 928,
+          "kind": "code",
+          "roi": [
+            0.00234375,
+            0.325,
+            0.8015625,
+            0.07361111
+          ],
+          "text": "GNU Emacs 31.0.50\nDevelopment version 5ee1e205e166 on master branch; build date 2025-10-05.",
+          "evidence_image_ids": [
+            "frames/00928.jpg",
+            "frames/00929.jpg"
+          ]
+        },
+        {
+          "timestamp": 952,
+          "kind": "code",
+          "roi": [
+            0.0890625,
+            0.94722222,
+            0.36171875,
+            0.03888889
+          ],
+          "text": "pl --loop ehrnebeat--what-for.mp4",
+          "evidence_image_ids": [
+            "frames/00951.jpg",
+            "frames/00952.jpg",
+            "frames/00953.jpg"
+          ]
+        },
+        {
+          "timestamp": 984,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.26111111,
+            0.27734375,
+            0.20833333
+          ],
+          "text": "(defvar ecs-circles    nil)\n(defvar ecs-components nil)\n(defvar ecs-debug      nil)\n(defvar ecs-entities   nil)\n(defvar ecs-overview   t)\n(defvar ecs-triangles  nil)",
+          "evidence_image_ids": [
+            "frames/00984.jpg"
+          ]
+        },
+        {
+          "timestamp": 1047,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.39583333,
+            0.75625,
+            0.09861111
+          ],
+          "text": "(cl-defmethod v+v ((a vector) (b vector)) (seq--into-vector (cl-mapcar #'+ a b)))\n(cl-defmethod v-v ((a vector) (b vector)) (seq--into-vector (cl-mapcar #'- a b)))\n(cl-defmethod k*v ((k number) (v vector)) (seq--into-vector (mapcar (L (e) (* k e)) v)))",
+          "evidence_image_ids": [
+            "frames/01047.jpg"
+          ]
+        },
+        {
+          "timestamp": 1061,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.03472222,
+            0.69609375,
+            0.21111111
+          ],
+          "text": "(cl-defmethod ecs-set-component ((id symbol) (cmp symbol) val)\n  (setf (alist-get cmp (gethash id ecs-components)) val))\n\n(cl-defmethod ecs-set-component-vector ((id symbol) (cmp symbol) &optional x y z)\n  (& x (aset (alist-get cmp (gethash id ecs-components)) 0 x))\n  (& y (aset (alist-get cmp (gethash id ecs-components)) 1 y))\n  (& z (aset (alist-get cmp (gethash id ecs-components)) 2 z)))",
+          "evidence_image_ids": [
+            "frames/01061.jpg"
+          ]
+        },
+        {
+          "timestamp": 1126,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.0,
+            0.2421875,
+            0.275
+          ],
+          "text": "(defun bad-sdl-3d () (i)\n  (cl-loop\n   with dist     = (** 2 11)\n   with beg      = (** 2  2)\n   with end      = (** 2  5)\n   with stp      = (** 2 -5)\n   with k        = 64\n   with pyramid  = (ecs-ld4)\n   with cube     = (ecs-ld6)",
+          "evidence_image_ids": [
+            "frames/01123.jpg",
+            "frames/01124.jpg",
+            "frames/01125.jpg",
+            "frames/01126.jpg"
+          ]
+        },
+        {
+          "timestamp": 1197,
+          "kind": "code",
+          "roi": [
+            0.02421875,
+            0.79027778,
+            0.775,
+            0.03333333
+          ],
+          "text": "finally (sdl_draw_quit))) ; (eval-buffer) (bad-sdl-3d) *bows* /incal and rave dave GLHF :)",
+          "evidence_image_ids": [
+            "frames/01140.jpg",
+            "frames/01196.jpg",
+            "frames/01197.jpg",
+            "frames/01198.jpg"
+          ]
+        }
+      ],
+      "build_groups": [],
+      "source_record_sha256": "24bd182841e72aa2b0e38a5df12c78551341c5c3568058633725224f31d2844c"
+    },
+    "b03": {
+      "reviewed": true,
+      "review_start": 0,
+      "review_end": 1230.03,
+      "input_sha256": "711f5d2c4cc78f0095b5483eb83915500814196f2ca2fce1027666369474e390",
+      "slide_changes": [
+        16,
+        61,
+        65,
+        129,
+        173,
+        206,
+        258,
+        310,
+        316,
+        364,
+        432,
+        466,
+        503,
+        581,
+        611,
+        635,
+        645,
+        698,
+        772,
+        779,
+        795,
+        803,
+        810,
+        819,
+        826,
+        834,
+        842,
+        862,
+        868,
+        874,
+        887,
+        896,
+        923,
+        934,
+        965,
+        970,
+        984,
+        993,
+        1003,
+        1052,
+        1076,
+        1079,
+        1082,
+        1085,
+        1091,
+        1104,
+        1109,
+        1124
+      ],
+      "ocr": [],
+      "build_groups": [],
+      "source_record_sha256": "96be31ebee13280668276aba8625c79e75d2f10b55eb3c3027ad0c092079a0bc"
+    },
+    "b04": {
+      "reviewed": true,
+      "review_start": 0,
+      "review_end": 1259.68,
+      "input_sha256": "66b9f41181cf052f890625fc5cc76ef581296f7685dfdad8356f988f9bcfcece",
+      "slide_changes": [
+        27,
+        52,
+        93,
+        197,
+        235,
+        239,
+        251,
+        312,
+        353,
+        426,
+        485,
+        534,
+        554,
+        598,
+        609,
+        629,
+        662,
+        673,
+        688,
+        694,
+        695,
+        706,
+        741,
+        765,
+        795,
+        798,
+        804,
+        829,
+        885,
+        917,
+        948,
+        951,
+        1110,
+        1132,
+        1255
+      ],
+      "ocr": [
+        {
+          "timestamp": 353,
+          "kind": "code",
+          "roi": [
+            0.14453125,
+            0.25833333,
+            0.378125,
+            0.02777778
+          ],
+          "text": "qemu-system-x86_64 -kernel bzImage -initrd initrd.img",
+          "evidence_image_ids": [
+            "frames/00353.jpg",
+            "frames/00383.jpg"
+          ]
+        },
+        {
+          "timestamp": 629,
+          "kind": "code",
+          "roi": [
+            0.16015625,
+            0.325,
+            0.08125,
+            0.05833333
+          ],
+          "text": "cd linux\nvng --build",
+          "evidence_image_ids": [
+            "frames/00629.jpg"
+          ]
+        },
+        {
+          "timestamp": 629,
+          "kind": "code",
+          "roi": [
+            0.16015625,
+            0.53194444,
+            0.02578125,
+            0.02916667
+          ],
+          "text": "vng",
+          "evidence_image_ids": [
+            "frames/00629.jpg"
+          ]
+        },
+        {
+          "timestamp": 688,
+          "kind": "code",
+          "roi": [
+            0.00234375,
+            0.2125,
+            0.253125,
+            0.0375
+          ],
+          "text": "6.15.4-200.fc42.x86_64",
+          "evidence_image_ids": [
+            "frames/00688.jpg"
+          ]
+        },
+        {
+          "timestamp": 688,
+          "kind": "code",
+          "roi": [
+            0.5625,
+            0.16944444,
+            0.0953125,
+            0.03888889
+          ],
+          "text": "uname -r",
+          "evidence_image_ids": [
+            "frames/00688.jpg"
+          ]
+        },
+        {
+          "timestamp": 694,
+          "kind": "code",
+          "roi": [
+            0.5625,
+            0.25416667,
+            0.15390625,
+            0.04027778
+          ],
+          "text": "vng --verbose",
+          "evidence_image_ids": [
+            "frames/00694.jpg",
+            "frames/00695.jpg"
+          ]
+        },
+        {
+          "timestamp": 695,
+          "kind": "code",
+          "roi": [
+            0.00234375,
+            0.3,
+            0.98828125,
+            0.07777778
+          ],
+          "text": "warning: `file` is not installed in the system, virtme-ng may fail to detect kernel ve\nrsion",
+          "evidence_image_ids": [
+            "frames/00695.jpg",
+            "frames/00696.jpg"
+          ]
+        },
+        {
+          "timestamp": 706,
+          "kind": "code",
+          "roi": [
+            0.00234375,
+            0.73472222,
+            0.81640625,
+            0.08055556
+          ],
+          "text": "[    4.287068] Kernel panic - not syncing: Fatal exception in interrupt\n[    7.008423] Shutting down cpus with NMI",
+          "evidence_image_ids": [
+            "frames/00706.jpg",
+            "frames/00707.jpg"
+          ]
+        },
+        {
+          "timestamp": 765,
+          "kind": "code",
+          "roi": [
+            0.16015625,
+            0.37638889,
+            0.215625,
+            0.02916667
+          ],
+          "text": "vng --root=/path/to/rootfs-dir",
+          "evidence_image_ids": [
+            "frames/00765.jpg",
+            "frames/00785.jpg"
+          ]
+        },
+        {
+          "timestamp": 765,
+          "kind": "code",
+          "roi": [
+            0.16015625,
+            0.55138889,
+            0.30859375,
+            0.02916667
+          ],
+          "text": "vng --arch=arm64 --root=/path/to/rootfs-dir",
+          "evidence_image_ids": [
+            "frames/00765.jpg",
+            "frames/00785.jpg"
+          ]
+        },
+        {
+          "timestamp": 885,
+          "kind": "code",
+          "roi": [
+            0.16015625,
+            0.39583333,
+            0.24296875,
+            0.03055556
+          ],
+          "text": "dpkg -x linux-image-*.deb extract/",
+          "evidence_image_ids": [
+            "frames/00885.jpg"
+          ]
+        },
+        {
+          "timestamp": 885,
+          "kind": "code",
+          "roi": [
+            0.16015625,
+            0.56944444,
+            0.26484375,
+            0.02916667
+          ],
+          "text": "vng -r extract/boot/vmlinuz-<version>",
+          "evidence_image_ids": [
+            "frames/00885.jpg"
+          ]
+        },
+        {
+          "timestamp": 917,
+          "kind": "code",
+          "roi": [
+            0.146875,
+            0.34722222,
+            0.10234375,
+            0.03333333
+          ],
+          "text": "vng -r v6.6",
+          "evidence_image_ids": [
+            "frames/00917.jpg"
+          ]
+        },
+        {
+          "timestamp": 958,
+          "kind": "code",
+          "roi": [
+            0.2140625,
+            0.31388889,
+            0.19609375,
+            0.04166667
+          ],
+          "text": "vng -r <url.deb>",
+          "evidence_image_ids": [
+            "frames/00951.jpg",
+            "frames/00958.jpg",
+            "frames/00961.jpg"
+          ]
+        },
+        {
+          "timestamp": 958,
+          "kind": "code",
+          "roi": [
+            0.3046875,
+            0.60138889,
+            0.14765625,
+            0.04444444
+          ],
+          "text": "apt download",
+          "evidence_image_ids": [
+            "frames/00951.jpg",
+            "frames/00958.jpg",
+            "frames/00961.jpg"
+          ]
+        }
+      ],
+      "build_groups": [],
+      "source_record_sha256": "17bc47988ba5c84dd843a665c99f8bc9515903c1763be737c07578c095535e89"
+    }
+  }
+}

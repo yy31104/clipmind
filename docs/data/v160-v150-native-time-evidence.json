@@ -1,0 +1,324 @@
+{
+  "input_labels_sha256": "ad9e5e7d18ea6ee2a90ce39d69c66e587ea267408366ce2ad5c097e426e28d00",
+  "revised_labels_sha256": "4c94f6f214da960294f3393fe6adefe42c74d1b3a0e2634cb416683f4360e06c",
+  "cases": {
+    "fosdem2026-synctest": [
+      {
+        "sample": "frames/00121.jpg",
+        "native_frame_index": 3614,
+        "native_timestamp": 121.466666667,
+        "native_pts": "1822/15",
+        "sample_sha256": "698a83f087adb13743bf08e8b2bd31ee0cae57ab2fd85bf28ded7d6d313adced",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00184.jpg",
+        "native_frame_index": 5504,
+        "native_timestamp": 184.466666667,
+        "native_pts": "2767/15",
+        "sample_sha256": "f00b15c0c1d0157037a4efd89b5d648124abbb6d6676d9b5f8b117b457095865",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00207.jpg",
+        "native_frame_index": 6194,
+        "native_timestamp": 207.466666667,
+        "native_pts": "3112/15",
+        "sample_sha256": "449a8ba04ec20f84434d5825f394398e462f41df826480ab30e1bf537289634c",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00225.jpg",
+        "native_frame_index": 6734,
+        "native_timestamp": 225.466666667,
+        "native_pts": "3382/15",
+        "sample_sha256": "680781d9241df48be6ffa31dfbd98eff0b9f95d6cafc9ec0822bbd9071bb8afe",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00246.jpg",
+        "native_frame_index": 7363,
+        "native_timestamp": 246.466666667,
+        "native_pts": "3697/15",
+        "sample_sha256": "6b8f190c869796b8eed3685372d2b1381dcb499ab55c80b9fdf2b9ba887e3b2f",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00264.jpg",
+        "native_frame_index": 7903,
+        "native_timestamp": 264.466666667,
+        "native_pts": "3967/15",
+        "sample_sha256": "2c7e82df12d96f938a9677d1b5ff4f396107f65242ef5a569f6080fb925fb3b6",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00365.jpg",
+        "native_frame_index": 10933,
+        "native_timestamp": 365.466666667,
+        "native_pts": "5482/15",
+        "sample_sha256": "5d7b282d596e2ab1bfd538978a050fd936a2f6c0214b5d33e6ccc715b3be736e",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00394.jpg",
+        "native_frame_index": 11803,
+        "native_timestamp": 394.466666667,
+        "native_pts": "5917/15",
+        "sample_sha256": "b84ac90527bd0a65ccf6ab2bce408837efbc3b0da0780d80d917f04ffe800ed8",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00632.jpg",
+        "native_frame_index": 18943,
+        "native_timestamp": 632.466666667,
+        "native_pts": "9487/15",
+        "sample_sha256": "8646ee906059762ac6fdae3bd8484c8384f72b7218675f8bd820fa8b57ad4fb5",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00669.jpg",
+        "native_frame_index": 20053,
+        "native_timestamp": 669.466666667,
+        "native_pts": "10042/15",
+        "sample_sha256": "b1e991dc82ef889bd0bb8cd9e60d679b4bd2115c04a0c3d95c5d746ff8efe363",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00688.jpg",
+        "native_frame_index": 20623,
+        "native_timestamp": 688.466666667,
+        "native_pts": "10327/15",
+        "sample_sha256": "2bc2c44fda3a62b52b7b30e036186c7583b5fc7ffa093c51159a65bea98ce030",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00774.jpg",
+        "native_frame_index": 23203,
+        "native_timestamp": 774.466666667,
+        "native_pts": "11617/15",
+        "sample_sha256": "58fc56ddecaec01c35f8cad16edeb3be25a168eafa5b74db2f8c6aee3d236296",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00884.jpg",
+        "native_frame_index": 26503,
+        "native_timestamp": 884.466666667,
+        "native_pts": "13267/15",
+        "sample_sha256": "93f0bae3d4f5b99a3548015e5cd2fb7d2c79ca101c6d81abb5306cb63c46500f",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00926.jpg",
+        "native_frame_index": 27763,
+        "native_timestamp": 926.466666667,
+        "native_pts": "13897/15",
+        "sample_sha256": "214c034781a4a4165088e40c1f02028179476244be8a4e0785102a8feab27629",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00990.jpg",
+        "native_frame_index": 29683,
+        "native_timestamp": 990.466666667,
+        "native_pts": "14857/15",
+        "sample_sha256": "9267516933de783ecbbe2730b1d57207541721425bfb1f58812d876148d2d3f8",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/01008.jpg",
+        "native_frame_index": 30223,
+        "native_timestamp": 1008.466666667,
+        "native_pts": "15127/15",
+        "sample_sha256": "d09cdc05b7c807c234b8cd47bd64c4a047f618166a0bbb5007abeeed3b9c5552",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/01058.jpg",
+        "native_frame_index": 31723,
+        "native_timestamp": 1058.466666667,
+        "native_pts": "15877/15",
+        "sample_sha256": "097330c74ec57d83b3fc1f706126e175dad6788729348517c57aa41f302b4e33",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/01087.jpg",
+        "native_frame_index": 32593,
+        "native_timestamp": 1087.466666667,
+        "native_pts": "16312/15",
+        "sample_sha256": "98d1cf454a52839d8bec7487c6d7c9bda3579bc4d1b529818763031a4d05b79b",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/01136.jpg",
+        "native_frame_index": 34063,
+        "native_timestamp": 1136.466666667,
+        "native_pts": "17047/15",
+        "sample_sha256": "375fe640dd87b52bc34a8a923e9ddcfbfd6c630d4d00ffe37ef24aa892d9560b",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/01172.jpg",
+        "native_frame_index": 35142,
+        "native_timestamp": 1172.466666667,
+        "native_pts": "17587/15",
+        "sample_sha256": "7b2d4dfe523300ef4bd4c5cca087d0234cd5de7a00033f10b4f8fb0bbd3b7c05",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/01336.jpg",
+        "native_frame_index": 40062,
+        "native_timestamp": 1336.466666667,
+        "native_pts": "20047/15",
+        "sample_sha256": "0332b99d02070450503bfa5e1d4b38079ae38d2e3c930bdf239f496384159613",
+        "exact_jpeg_bytes": true
+      }
+    ],
+    "pycontw2024-observability": [
+      {
+        "sample": "frames/00650.jpg",
+        "native_frame_index": 19495,
+        "native_timestamp": 650.483166667,
+        "native_pts": "3902899/6000",
+        "sample_sha256": "fe2012f4f60891f0ca6b2a429b38ac485b9c54fe81165334a2e50d8729474eaa",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00752.jpg",
+        "native_frame_index": 22552,
+        "native_timestamp": 752.485066667,
+        "native_pts": "2821819/3750",
+        "sample_sha256": "d94a34fcb94f421c15ae2b2dd02f80968bd2f6e6b717564282411ff0c7493f7f",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00800.jpg",
+        "native_frame_index": 23991,
+        "native_timestamp": 800.4997,
+        "native_pts": "8004997/10000",
+        "sample_sha256": "3bea7c2ec9683c4596ed13a6b254a1902409eab38a5254e417e0900eda1f5702",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/00849.jpg",
+        "native_frame_index": 25459,
+        "native_timestamp": 849.481966667,
+        "native_pts": "25484459/30000",
+        "sample_sha256": "4840aad365bbe431ef7a53f7fc8342d949fbbeb93cbc05937404cc972685bdec",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/01033.jpg",
+        "native_frame_index": 30974,
+        "native_timestamp": 1033.499133333,
+        "native_pts": "15502487/15000",
+        "sample_sha256": "2abc3ae6a37feba8d574a4d2ca13f68a63094fca33678b73dd336e54b47285eb",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/01317.jpg",
+        "native_frame_index": 39485,
+        "native_timestamp": 1317.482833333,
+        "native_pts": "7904897/6000",
+        "sample_sha256": "170217d2bb666e4f1eaad3667a9b3d26c36b84e97fe4253ab70688ef4c52059d",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/01324.jpg",
+        "native_frame_index": 39695,
+        "native_timestamp": 1324.489833333,
+        "native_pts": "7946939/6000",
+        "sample_sha256": "df15823cf0f5d5fc5f4757f3672db27b1419a7366bb630de240aa347ff880886",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/01355.jpg",
+        "native_frame_index": 40624,
+        "native_timestamp": 1355.487466667,
+        "native_pts": "2541539/1875",
+        "sample_sha256": "89593a364d3dd8f0f4a71b744915b747fc518f474c44c83590e4fbc019c1a13e",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/01481.jpg",
+        "native_frame_index": 44400,
+        "native_timestamp": 1481.48,
+        "native_pts": "37037/25",
+        "sample_sha256": "fa4e178e7999c7d990dd5fdf074ac8ea90823c3f9f4792f5aad0e5f60d3332f3",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/01521.jpg",
+        "native_frame_index": 45599,
+        "native_timestamp": 1521.486633333,
+        "native_pts": "45644599/30000",
+        "sample_sha256": "01ce0b52c62c1d0ab8b93c58a4c259f19861a41789f775690a895e0b19618e89",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/01546.jpg",
+        "native_frame_index": 46348,
+        "native_timestamp": 1546.478266667,
+        "native_pts": "11598587/7500",
+        "sample_sha256": "1206181a0ae69dacb527c8b5749aedf8f17dc65c80540e68d42af3a63295a964",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/01549.jpg",
+        "native_frame_index": 46438,
+        "native_timestamp": 1549.481266667,
+        "native_pts": "23242219/15000",
+        "sample_sha256": "509315a83790812605dbdbe4e1fda686e76862d9def455af3e3d477ebd42c438",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/01568.jpg",
+        "native_frame_index": 47007,
+        "native_timestamp": 1568.4669,
+        "native_pts": "15684669/10000",
+        "sample_sha256": "72bcef6df5accb13bd97215e664cd2d383c3453bf25b410852b216a6f2f29918",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/01590.jpg",
+        "native_frame_index": 47667,
+        "native_timestamp": 1590.4889,
+        "native_pts": "15904889/10000",
+        "sample_sha256": "2e0657baaf034c9ee358f0439b6de0ff7d7186be0b16b1cddcb47eee1f488f06",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/01599.jpg",
+        "native_frame_index": 47937,
+        "native_timestamp": 1599.4979,
+        "native_pts": "15994979/10000",
+        "sample_sha256": "2cfef7b59b9895c64b8e393e4f32d9bb37b45212dcd6313bf288f0ed96f61204",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/01632.jpg",
+        "native_frame_index": 48926,
+        "native_timestamp": 1632.497533333,
+        "native_pts": "24487463/15000",
+        "sample_sha256": "def1479c9e60a355d95416e93cc161620d0d16fb73919097ed629df57c18fb0b",
+        "exact_jpeg_bytes": true
+      },
+      {
+        "sample": "frames/01684.jpg",
+        "native_frame_index": 50484,
+        "native_timestamp": 1684.4828,
+        "native_pts": "4211207/2500",
+        "sample_sha256": "34476cae53b69dc966fdfe9fdef4af01156065361357624a3f93fe33a89c612f",
+        "exact_jpeg_bytes": true
+      }
+    ],
+    "coscup2022-govdata": [
+      {
+        "sample": "frames/00645.jpg",
+        "native_frame_index": 38729,
+        "native_timestamp": 645.483333333,
+        "native_pts": "38729/60",
+        "sample_sha256": "f5f1f56a26dd8f37975314aec8d07369003120c33b002b992bccdd544652caae",
+        "exact_jpeg_bytes": true
+      }
+    ]
+  }
+}

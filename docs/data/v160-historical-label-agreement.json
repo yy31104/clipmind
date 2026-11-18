@@ -1,0 +1,1681 @@
+{
+  "cases": {
+    "a01": {
+      "source_sha256": "f048f03dc1d874079ab0e659b4020f3c36de4d4503fb3dffe4723398ff864c25",
+      "boundaries": {
+        "reference_count": 23,
+        "prediction_count": 23,
+        "matched": 23,
+        "matches": [
+          [
+            42.0,
+            42.0
+          ],
+          [
+            67.0,
+            67.0
+          ],
+          [
+            184.0,
+            184.0
+          ],
+          [
+            222.0,
+            222.0
+          ],
+          [
+            236.0,
+            235.0
+          ],
+          [
+            257.0,
+            257.0
+          ],
+          [
+            282.0,
+            282.0
+          ],
+          [
+            301.0,
+            301.0
+          ],
+          [
+            324.0,
+            324.0
+          ],
+          [
+            351.0,
+            351.0
+          ],
+          [
+            388.0,
+            388.0
+          ],
+          [
+            402.0,
+            402.0
+          ],
+          [
+            427.0,
+            427.0
+          ],
+          [
+            439.0,
+            439.0
+          ],
+          [
+            449.0,
+            449.0
+          ],
+          [
+            490.0,
+            489.0
+          ],
+          [
+            522.0,
+            522.0
+          ],
+          [
+            580.0,
+            580.0
+          ],
+          [
+            600.0,
+            600.0
+          ],
+          [
+            667.0,
+            667.0
+          ],
+          [
+            708.0,
+            708.0
+          ],
+          [
+            733.0,
+            733.0
+          ],
+          [
+            870.0,
+            870.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "f1": 1.0
+      },
+      "shared_code": [],
+      "independent_regions": {
+        "pairs": [],
+        "first_unmatched": 1,
+        "second_unmatched": 1
+      }
+    },
+    "a02": {
+      "source_sha256": "47781f495823dd355a5aba279aa17b28417c567f885dd7ff977f92f5f456d651",
+      "boundaries": {
+        "reference_count": 32,
+        "prediction_count": 30,
+        "matched": 30,
+        "matches": [
+          [
+            7.0,
+            7.0
+          ],
+          [
+            15.0,
+            15.0
+          ],
+          [
+            26.0,
+            26.0
+          ],
+          [
+            86.0,
+            86.0
+          ],
+          [
+            164.0,
+            164.0
+          ],
+          [
+            166.0,
+            166.0
+          ],
+          [
+            190.0,
+            190.0
+          ],
+          [
+            228.0,
+            228.0
+          ],
+          [
+            249.0,
+            249.0
+          ],
+          [
+            381.0,
+            381.0
+          ],
+          [
+            398.0,
+            398.0
+          ],
+          [
+            451.0,
+            451.0
+          ],
+          [
+            466.0,
+            466.0
+          ],
+          [
+            472.0,
+            472.0
+          ],
+          [
+            498.0,
+            498.0
+          ],
+          [
+            600.0,
+            600.0
+          ],
+          [
+            725.0,
+            725.0
+          ],
+          [
+            737.0,
+            737.0
+          ],
+          [
+            771.0,
+            771.0
+          ],
+          [
+            847.0,
+            847.0
+          ],
+          [
+            880.0,
+            880.0
+          ],
+          [
+            896.0,
+            896.0
+          ],
+          [
+            917.0,
+            917.0
+          ],
+          [
+            928.0,
+            928.0
+          ],
+          [
+            938.0,
+            938.0
+          ],
+          [
+            942.0,
+            942.0
+          ],
+          [
+            945.0,
+            945.0
+          ],
+          [
+            947.0,
+            947.0
+          ],
+          [
+            975.0,
+            975.0
+          ],
+          [
+            983.0,
+            983.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 0.9375,
+        "precision": 1.0,
+        "f1": 0.967741935483871
+      },
+      "shared_code": [
+        {
+          "crop_id": "a02-shared-01",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 205,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "#include<stdlib.h>#include<stdio.h>#include<unistd.h>intmain(intargc,charconst*argv[]){printf(\"Hithere\\n\");//executinganlscommandchar*argv2[]={\"ls\",\"-la\",NULL};execvp(argv2[0],argv2);printf(\"..anddone!\");}",
+            "hypothesis": "#include<stdlib.h>#include<stdio.h>#include<unistd.h>intmain(intargc,charconst*argv[]){printf(\"Hithere\\n\");//executinganlscommandchar*argv2[]={\"ls\",\"-la\",NULL};execvp(argv2[0],argv2);printf(\"..anddone!\");}"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 205,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "#include<stdlib.h>#include<stdio.h>#include<unistd.h>intmain(intargc,charconst*argv[]){printf(\"Hithere\\n\");//executinganlscommandchar*argv2[]={\"ls\",\"-la\",NULL};execvp(argv2[0],argv2);printf(\"..anddone!\");}",
+            "hypothesis": "#include<stdlib.h>#include<stdio.h>#include<unistd.h>intmain(intargc,charconst*argv[]){printf(\"Hithere\\n\");//executinganlscommandchar*argv2[]={\"ls\",\"-la\",NULL};execvp(argv2[0],argv2);printf(\"..anddone!\");}"
+          }
+        },
+        {
+          "crop_id": "a02-shared-02",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 377,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "voidrunSystemCommand(structcommand*cmd,intbg){pid_tchildPid;//FORK!!!if((childPid=fork())<0)error(\"fork()error\");elseif(childPid==0){//I'mthechildandcouldrunacommand//EXECVP!!!!if(execvp(cmd->argv[0],cmd->argv)<0){printf(\"%s:Commandnotfound\\n\",cmd->argv[0]);exit();}}else{//I'mtheparent.Shellcontinueshere.if(bg)printf(\"Childinbackground[%d]\\n\",childPid);elsewait(&childPid);}}",
+            "hypothesis": "voidrunSystemCommand(structcommand*cmd,intbg){pid_tchildPid;//FORK!!!if((childPid=fork())<0)error(\"fork()error\");elseif(childPid==0){//I'mthechildandcouldrunacommand//EXECVP!!!!if(execvp(cmd->argv[0],cmd->argv)<0){printf(\"%s:Commandnotfound\\n\",cmd->argv[0]);exit();}}else{//I'mtheparent.Shellcontinueshere.if(bg)printf(\"Childinbackground[%d]\\n\",childPid);elsewait(&childPid);}}"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 377,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "voidrunSystemCommand(structcommand*cmd,intbg){pid_tchildPid;//FORK!!!if((childPid=fork())<0)error(\"fork()error\");elseif(childPid==0){//I'mthechildandcouldrunacommand//EXECVP!!!!if(execvp(cmd->argv[0],cmd->argv)<0){printf(\"%s:Commandnotfound\\n\",cmd->argv[0]);exit();}}else{//I'mtheparent.Shellcontinueshere.if(bg)printf(\"Childinbackground[%d]\\n\",childPid);elsewait(&childPid);}}",
+            "hypothesis": "voidrunSystemCommand(structcommand*cmd,intbg){pid_tchildPid;//FORK!!!if((childPid=fork())<0)error(\"fork()error\");elseif(childPid==0){//I'mthechildandcouldrunacommand//EXECVP!!!!if(execvp(cmd->argv[0],cmd->argv)<0){printf(\"%s:Commandnotfound\\n\",cmd->argv[0]);exit();}}else{//I'mtheparent.Shellcontinueshere.if(bg)printf(\"Childinbackground[%d]\\n\",childPid);elsewait(&childPid);}}"
+          }
+        }
+      ],
+      "independent_regions": {
+        "pairs": [
+          {
+            "first_index": 0,
+            "second_index": 1,
+            "region_iou": 0.556793543141443,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.5087336244541485,
+              "reference_units": 458,
+              "errors": 233,
+              "substitutions": 0,
+              "deletions": 233,
+              "insertions": 0,
+              "reference": "#include<stdio.h>//printf#include<string.h>//strlen#include<stdlib.h>//exit#include<unistd.h>//syscallsintMAXLINE=1024;charprompt[]=\"lnsh>\";//commandlinepromptintmain(intargc,char**argv){charcmdline[MAXLINE];//bufferforfgetswhile(1){printf(\"%s\",prompt);if((fgets(cmdline,MAXLINE,stdin)==NULL)&&ferror(stdin))error(\"fgetserror\");if(feof(stdin)){printf(\"\\n\");exit(0);}//removetrailingnewlinecmdline[strlen(cmdline)-1]='\\0';//evaluatecommandlineeval(cmdline);}}",
+              "hypothesis": "printf(\"%s\",prompt);if((fgets(cmdline,MAXLINE,stdin)==NULL)&&ferror(stdin))error(\"fgetserror\");if(feof(stdin)){printf(\"\\n\");exit(0);}//removetrailingnewlinecmdline[strlen(cmdline)-1]='\\0';//evaluatecommandlineeval(cmdline);}}"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 1.0355555555555556,
+              "reference_units": 225,
+              "errors": 233,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 233,
+              "reference": "printf(\"%s\",prompt);if((fgets(cmdline,MAXLINE,stdin)==NULL)&&ferror(stdin))error(\"fgetserror\");if(feof(stdin)){printf(\"\\n\");exit(0);}//removetrailingnewlinecmdline[strlen(cmdline)-1]='\\0';//evaluatecommandlineeval(cmdline);}}",
+              "hypothesis": "#include<stdio.h>//printf#include<string.h>//strlen#include<stdlib.h>//exit#include<unistd.h>//syscallsintMAXLINE=1024;charprompt[]=\"lnsh>\";//commandlinepromptintmain(intargc,char**argv){charcmdline[MAXLINE];//bufferforfgetswhile(1){printf(\"%s\",prompt);if((fgets(cmdline,MAXLINE,stdin)==NULL)&&ferror(stdin))error(\"fgetserror\");if(feof(stdin)){printf(\"\\n\");exit(0);}//removetrailingnewlinecmdline[strlen(cmdline)-1]='\\0';//evaluatecommandlineeval(cmdline);}}"
+            }
+          },
+          {
+            "first_index": 1,
+            "second_index": 3,
+            "region_iou": 0.9930162179710069,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 201,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "//maxargsinstructcan'tbevariable,usedefine#defineMAXARGS128structcommand{intargc;//numberofargschar*argv[MAXARGS];//argumentslistenumbuiltin_t{//isargv[0]abuiltincommand?NONE,QUIT,JOBS,BG,FG}builtin;};",
+              "hypothesis": "//maxargsinstructcan'tbevariable,usedefine#defineMAXARGS128structcommand{intargc;//numberofargschar*argv[MAXARGS];//argumentslistenumbuiltin_t{//isargv[0]abuiltincommand?NONE,QUIT,JOBS,BG,FG}builtin;};"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 201,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "//maxargsinstructcan'tbevariable,usedefine#defineMAXARGS128structcommand{intargc;//numberofargschar*argv[MAXARGS];//argumentslistenumbuiltin_t{//isargv[0]abuiltincommand?NONE,QUIT,JOBS,BG,FG}builtin;};",
+              "hypothesis": "//maxargsinstructcan'tbevariable,usedefine#defineMAXARGS128structcommand{intargc;//numberofargschar*argv[MAXARGS];//argumentslistenumbuiltin_t{//isargv[0]abuiltincommand?NONE,QUIT,JOBS,BG,FG}builtin;};"
+            }
+          },
+          {
+            "first_index": 2,
+            "second_index": 5,
+            "region_iou": 0.979321520406051,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 152,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "intmain(intargc,charconst*argv[]){printf(\"Hithere\\n\");//executinganlscommandchar*argv2[]={\"ls\",\"-la\",NULL};execvp(argv2[0],argv2);printf(\"..anddone!\");}",
+              "hypothesis": "intmain(intargc,charconst*argv[]){printf(\"Hithere\\n\");//executinganlscommandchar*argv2[]={\"ls\",\"-la\",NULL};execvp(argv2[0],argv2);printf(\"..anddone!\");}"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 152,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "intmain(intargc,charconst*argv[]){printf(\"Hithere\\n\");//executinganlscommandchar*argv2[]={\"ls\",\"-la\",NULL};execvp(argv2[0],argv2);printf(\"..anddone!\");}",
+              "hypothesis": "intmain(intargc,charconst*argv[]){printf(\"Hithere\\n\");//executinganlscommandchar*argv2[]={\"ls\",\"-la\",NULL};execvp(argv2[0],argv2);printf(\"..anddone!\");}"
+            }
+          },
+          {
+            "first_index": 3,
+            "second_index": 7,
+            "region_iou": 0.9851310608224569,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 298,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "//updated!!!voideval(char*cmdline){intbg;structcommandcmd;printf(\"Evaluating'%s'\\n\",cmdline);//parselineintocommandstructbg=parse(cmdline,&cmd);//parseerrorif(bg==-1)return;//emptyline-ignoreif(cmd.argv[0]==NULL)return;if(cmd.builtin==NONE)runSystemCommand(&cmd,bg);elserunBuiltinCommand(&cmd,bg);}",
+              "hypothesis": "//updated!!!voideval(char*cmdline){intbg;structcommandcmd;printf(\"Evaluating'%s'\\n\",cmdline);//parselineintocommandstructbg=parse(cmdline,&cmd);//parseerrorif(bg==-1)return;//emptyline-ignoreif(cmd.argv[0]==NULL)return;if(cmd.builtin==NONE)runSystemCommand(&cmd,bg);elserunBuiltinCommand(&cmd,bg);}"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 298,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "//updated!!!voideval(char*cmdline){intbg;structcommandcmd;printf(\"Evaluating'%s'\\n\",cmdline);//parselineintocommandstructbg=parse(cmdline,&cmd);//parseerrorif(bg==-1)return;//emptyline-ignoreif(cmd.argv[0]==NULL)return;if(cmd.builtin==NONE)runSystemCommand(&cmd,bg);elserunBuiltinCommand(&cmd,bg);}",
+              "hypothesis": "//updated!!!voideval(char*cmdline){intbg;structcommandcmd;printf(\"Evaluating'%s'\\n\",cmdline);//parselineintocommandstructbg=parse(cmdline,&cmd);//parseerrorif(bg==-1)return;//emptyline-ignoreif(cmd.argv[0]==NULL)return;if(cmd.builtin==NONE)runSystemCommand(&cmd,bg);elserunBuiltinCommand(&cmd,bg);}"
+            }
+          },
+          {
+            "first_index": 5,
+            "second_index": 11,
+            "region_iou": 0.6424024286719863,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.3023255813953488,
+              "reference_units": 43,
+              "errors": 13,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 13,
+              "reference": "Evaluating'./slow&'Childinbackground[37783]",
+              "hypothesis": "linsh>./slow&Evaluating'./slow&'Childinbackground[37783]"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.23214285714285715,
+              "reference_units": 56,
+              "errors": 13,
+              "substitutions": 0,
+              "deletions": 13,
+              "insertions": 0,
+              "reference": "linsh>./slow&Evaluating'./slow&'Childinbackground[37783]",
+              "hypothesis": "Evaluating'./slow&'Childinbackground[37783]"
+            }
+          }
+        ],
+        "first_unmatched": 1,
+        "second_unmatched": 9
+      }
+    },
+    "a03": {
+      "source_sha256": "f6debc728ad29a377ed9580e824294839d40952bad8318c5613d5ad5e6b2818e",
+      "boundaries": {
+        "reference_count": 19,
+        "prediction_count": 19,
+        "matched": 19,
+        "matches": [
+          [
+            1.0,
+            1.0
+          ],
+          [
+            24.0,
+            24.0
+          ],
+          [
+            44.0,
+            44.0
+          ],
+          [
+            92.0,
+            92.0
+          ],
+          [
+            102.0,
+            102.0
+          ],
+          [
+            125.0,
+            125.0
+          ],
+          [
+            142.0,
+            142.0
+          ],
+          [
+            150.0,
+            150.0
+          ],
+          [
+            162.0,
+            162.0
+          ],
+          [
+            204.0,
+            204.0
+          ],
+          [
+            254.0,
+            254.0
+          ],
+          [
+            295.0,
+            295.0
+          ],
+          [
+            318.0,
+            318.0
+          ],
+          [
+            333.0,
+            333.0
+          ],
+          [
+            345.0,
+            345.0
+          ],
+          [
+            375.0,
+            375.0
+          ],
+          [
+            383.0,
+            383.0
+          ],
+          [
+            394.0,
+            394.0
+          ],
+          [
+            410.0,
+            410.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "f1": 1.0
+      },
+      "shared_code": [],
+      "independent_regions": {
+        "pairs": [],
+        "first_unmatched": 0,
+        "second_unmatched": 0
+      }
+    },
+    "a04": {
+      "source_sha256": "e35588f979a4a1eede67e41e59f9ded1169e6ee06f2e92280857be7413962649",
+      "boundaries": {
+        "reference_count": 49,
+        "prediction_count": 49,
+        "matched": 49,
+        "matches": [
+          [
+            2.0,
+            2.0
+          ],
+          [
+            27.0,
+            27.0
+          ],
+          [
+            33.0,
+            33.0
+          ],
+          [
+            52.0,
+            52.0
+          ],
+          [
+            69.0,
+            69.0
+          ],
+          [
+            84.0,
+            84.0
+          ],
+          [
+            90.0,
+            90.0
+          ],
+          [
+            126.0,
+            126.0
+          ],
+          [
+            133.0,
+            133.0
+          ],
+          [
+            139.0,
+            139.0
+          ],
+          [
+            153.0,
+            152.0
+          ],
+          [
+            158.0,
+            158.0
+          ],
+          [
+            172.0,
+            172.0
+          ],
+          [
+            195.0,
+            195.0
+          ],
+          [
+            230.0,
+            230.0
+          ],
+          [
+            241.0,
+            241.0
+          ],
+          [
+            269.0,
+            269.0
+          ],
+          [
+            279.0,
+            279.0
+          ],
+          [
+            286.0,
+            285.0
+          ],
+          [
+            308.0,
+            307.0
+          ],
+          [
+            314.0,
+            314.0
+          ],
+          [
+            326.0,
+            326.0
+          ],
+          [
+            333.0,
+            333.0
+          ],
+          [
+            336.0,
+            336.0
+          ],
+          [
+            378.0,
+            378.0
+          ],
+          [
+            397.0,
+            396.0
+          ],
+          [
+            403.0,
+            403.0
+          ],
+          [
+            450.0,
+            450.0
+          ],
+          [
+            467.0,
+            467.0
+          ],
+          [
+            480.0,
+            480.0
+          ],
+          [
+            488.0,
+            488.0
+          ],
+          [
+            501.0,
+            501.0
+          ],
+          [
+            520.0,
+            520.0
+          ],
+          [
+            537.0,
+            537.0
+          ],
+          [
+            566.0,
+            566.0
+          ],
+          [
+            576.0,
+            576.0
+          ],
+          [
+            597.0,
+            597.0
+          ],
+          [
+            618.0,
+            618.0
+          ],
+          [
+            638.0,
+            638.0
+          ],
+          [
+            641.0,
+            641.0
+          ],
+          [
+            652.0,
+            652.0
+          ],
+          [
+            657.0,
+            657.0
+          ],
+          [
+            670.0,
+            670.0
+          ],
+          [
+            700.0,
+            700.0
+          ],
+          [
+            702.0,
+            702.0
+          ],
+          [
+            719.0,
+            719.0
+          ],
+          [
+            773.0,
+            773.0
+          ],
+          [
+            949.0,
+            949.0
+          ],
+          [
+            954.0,
+            954.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "f1": 1.0
+      },
+      "shared_code": [],
+      "independent_regions": {
+        "pairs": [],
+        "first_unmatched": 1,
+        "second_unmatched": 0
+      }
+    },
+    "a05": {
+      "source_sha256": "b2508d82e88bcc07d356ca74a924049cd672738fe28247f15d497cc6055e3fbd",
+      "boundaries": {
+        "reference_count": 44,
+        "prediction_count": 44,
+        "matched": 44,
+        "matches": [
+          [
+            6.0,
+            6.0
+          ],
+          [
+            52.0,
+            52.0
+          ],
+          [
+            66.0,
+            66.0
+          ],
+          [
+            91.0,
+            91.0
+          ],
+          [
+            121.0,
+            121.0
+          ],
+          [
+            184.0,
+            184.0
+          ],
+          [
+            207.0,
+            207.0
+          ],
+          [
+            225.0,
+            225.0
+          ],
+          [
+            239.0,
+            239.0
+          ],
+          [
+            246.0,
+            246.0
+          ],
+          [
+            264.0,
+            264.0
+          ],
+          [
+            274.0,
+            274.0
+          ],
+          [
+            305.0,
+            305.0
+          ],
+          [
+            313.0,
+            313.0
+          ],
+          [
+            318.0,
+            318.0
+          ],
+          [
+            365.0,
+            365.0
+          ],
+          [
+            394.0,
+            394.0
+          ],
+          [
+            469.0,
+            469.0
+          ],
+          [
+            492.0,
+            492.0
+          ],
+          [
+            559.0,
+            559.0
+          ],
+          [
+            632.0,
+            632.0
+          ],
+          [
+            669.0,
+            669.0
+          ],
+          [
+            688.0,
+            688.0
+          ],
+          [
+            745.0,
+            745.0
+          ],
+          [
+            760.0,
+            760.0
+          ],
+          [
+            884.0,
+            884.0
+          ],
+          [
+            891.0,
+            891.0
+          ],
+          [
+            926.0,
+            926.0
+          ],
+          [
+            958.0,
+            958.0
+          ],
+          [
+            1008.0,
+            1008.0
+          ],
+          [
+            1058.0,
+            1058.0
+          ],
+          [
+            1087.0,
+            1087.0
+          ],
+          [
+            1091.0,
+            1091.0
+          ],
+          [
+            1122.0,
+            1122.0
+          ],
+          [
+            1136.0,
+            1136.0
+          ],
+          [
+            1143.0,
+            1143.0
+          ],
+          [
+            1146.0,
+            1146.0
+          ],
+          [
+            1172.0,
+            1172.0
+          ],
+          [
+            1182.0,
+            1182.0
+          ],
+          [
+            1295.0,
+            1295.0
+          ],
+          [
+            1329.0,
+            1329.0
+          ],
+          [
+            1333.0,
+            1333.0
+          ],
+          [
+            1336.0,
+            1336.0
+          ],
+          [
+            1351.0,
+            1351.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 1.0,
+        "precision": 1.0,
+        "f1": 1.0
+      },
+      "shared_code": [
+        {
+          "crop_id": "a05-shared-01",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 263,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": ">gotest-runTestBubbleTime-v-timeout=100ms===RUNTestBubbleTimebubble_test.go:63:2000-01-0101:00:02+0100CETbubble_test.go:63:2000-01-0101:00:03+0100CETbubble_test.go:63:2000-01-0101:00:04+0100CET---PASS:TestBubbleTime(0.00s)PASSokgithub.com/ronna-s/fosdem20260.182s",
+            "hypothesis": ">gotest-runTestBubbleTime-v-timeout=100ms===RUNTestBubbleTimebubble_test.go:63:2000-01-0101:00:02+0100CETbubble_test.go:63:2000-01-0101:00:03+0100CETbubble_test.go:63:2000-01-0101:00:04+0100CET---PASS:TestBubbleTime(0.00s)PASSokgithub.com/ronna-s/fosdem20260.182s"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 263,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": ">gotest-runTestBubbleTime-v-timeout=100ms===RUNTestBubbleTimebubble_test.go:63:2000-01-0101:00:02+0100CETbubble_test.go:63:2000-01-0101:00:03+0100CETbubble_test.go:63:2000-01-0101:00:04+0100CET---PASS:TestBubbleTime(0.00s)PASSokgithub.com/ronna-s/fosdem20260.182s",
+            "hypothesis": ">gotest-runTestBubbleTime-v-timeout=100ms===RUNTestBubbleTimebubble_test.go:63:2000-01-0101:00:02+0100CETbubble_test.go:63:2000-01-0101:00:03+0100CETbubble_test.go:63:2000-01-0101:00:04+0100CET---PASS:TestBubbleTime(0.00s)PASSokgithub.com/ronna-s/fosdem20260.182s"
+          }
+        }
+      ],
+      "independent_regions": {
+        "pairs": [
+          {
+            "first_index": 3,
+            "second_index": 10,
+            "region_iou": 0.991982682835862,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 158,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "funcTestListenAndServe(t*testing.T){synctest.Test(t,func(t*testing.T){gohttp.ListenAndServe(\":8080\",nil)})}//Willhangbecausehttp.ListenAndServeiswaitingonI/O.",
+              "hypothesis": "funcTestListenAndServe(t*testing.T){synctest.Test(t,func(t*testing.T){gohttp.ListenAndServe(\":8080\",nil)})}//Willhangbecausehttp.ListenAndServeiswaitingonI/O."
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 158,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "funcTestListenAndServe(t*testing.T){synctest.Test(t,func(t*testing.T){gohttp.ListenAndServe(\":8080\",nil)})}//Willhangbecausehttp.ListenAndServeiswaitingonI/O.",
+              "hypothesis": "funcTestListenAndServe(t*testing.T){synctest.Test(t,func(t*testing.T){gohttp.ListenAndServe(\":8080\",nil)})}//Willhangbecausehttp.ListenAndServeiswaitingonI/O."
+            }
+          }
+        ],
+        "first_unmatched": 6,
+        "second_unmatched": 24
+      }
+    },
+    "a06": {
+      "source_sha256": "58e3cdee8a608d4388e4097cb017f382df7f2962cf7da0c35cd5194658c7f7f6",
+      "boundaries": {
+        "reference_count": 91,
+        "prediction_count": 85,
+        "matched": 84,
+        "matches": [
+          [
+            52.0,
+            52.0
+          ],
+          [
+            82.0,
+            82.0
+          ],
+          [
+            125.0,
+            125.0
+          ],
+          [
+            148.0,
+            148.0
+          ],
+          [
+            211.0,
+            211.0
+          ],
+          [
+            223.0,
+            223.0
+          ],
+          [
+            238.0,
+            238.0
+          ],
+          [
+            345.0,
+            345.0
+          ],
+          [
+            398.0,
+            398.0
+          ],
+          [
+            493.0,
+            493.0
+          ],
+          [
+            543.0,
+            543.0
+          ],
+          [
+            572.0,
+            572.0
+          ],
+          [
+            586.0,
+            586.0
+          ],
+          [
+            589.0,
+            589.0
+          ],
+          [
+            594.0,
+            594.0
+          ],
+          [
+            601.0,
+            601.0
+          ],
+          [
+            611.0,
+            611.0
+          ],
+          [
+            638.0,
+            638.0
+          ],
+          [
+            648.0,
+            648.0
+          ],
+          [
+            650.0,
+            650.0
+          ],
+          [
+            685.0,
+            685.0
+          ],
+          [
+            752.0,
+            752.0
+          ],
+          [
+            789.0,
+            789.0
+          ],
+          [
+            849.0,
+            849.0
+          ],
+          [
+            884.0,
+            884.0
+          ],
+          [
+            896.0,
+            896.0
+          ],
+          [
+            911.0,
+            911.0
+          ],
+          [
+            914.0,
+            914.0
+          ],
+          [
+            951.0,
+            951.0
+          ],
+          [
+            1033.0,
+            1033.0
+          ],
+          [
+            1047.0,
+            1047.0
+          ],
+          [
+            1074.0,
+            1074.0
+          ],
+          [
+            1077.0,
+            1077.0
+          ],
+          [
+            1135.0,
+            1135.0
+          ],
+          [
+            1206.0,
+            1206.0
+          ],
+          [
+            1305.0,
+            1305.0
+          ],
+          [
+            1317.0,
+            1317.0
+          ],
+          [
+            1324.0,
+            1324.0
+          ],
+          [
+            1355.0,
+            1355.0
+          ],
+          [
+            1390.0,
+            1390.0
+          ],
+          [
+            1405.0,
+            1405.0
+          ],
+          [
+            1415.0,
+            1415.0
+          ],
+          [
+            1428.0,
+            1428.0
+          ],
+          [
+            1430.0,
+            1430.0
+          ],
+          [
+            1432.0,
+            1432.0
+          ],
+          [
+            1451.0,
+            1451.0
+          ],
+          [
+            1469.0,
+            1469.0
+          ],
+          [
+            1481.0,
+            1481.0
+          ],
+          [
+            1509.0,
+            1509.0
+          ],
+          [
+            1531.0,
+            1531.0
+          ],
+          [
+            1546.0,
+            1546.0
+          ],
+          [
+            1549.0,
+            1549.0
+          ],
+          [
+            1554.0,
+            1554.0
+          ],
+          [
+            1568.0,
+            1568.0
+          ],
+          [
+            1582.0,
+            1582.0
+          ],
+          [
+            1584.0,
+            1584.0
+          ],
+          [
+            1588.0,
+            1588.0
+          ],
+          [
+            1590.0,
+            1590.0
+          ],
+          [
+            1599.0,
+            1599.0
+          ],
+          [
+            1602.0,
+            1602.0
+          ],
+          [
+            1608.0,
+            1608.0
+          ],
+          [
+            1616.0,
+            1616.0
+          ],
+          [
+            1620.0,
+            1620.0
+          ],
+          [
+            1622.0,
+            1623.0
+          ],
+          [
+            1632.0,
+            1632.0
+          ],
+          [
+            1633.0,
+            1633.0
+          ],
+          [
+            1635.0,
+            1635.0
+          ],
+          [
+            1643.0,
+            1643.0
+          ],
+          [
+            1645.0,
+            1645.0
+          ],
+          [
+            1647.0,
+            1647.0
+          ],
+          [
+            1648.0,
+            1649.0
+          ],
+          [
+            1654.0,
+            1654.0
+          ],
+          [
+            1657.0,
+            1657.0
+          ],
+          [
+            1672.0,
+            1672.0
+          ],
+          [
+            1684.0,
+            1684.0
+          ],
+          [
+            1698.0,
+            1698.0
+          ],
+          [
+            1702.0,
+            1702.0
+          ],
+          [
+            1713.0,
+            1713.0
+          ],
+          [
+            1716.0,
+            1716.0
+          ],
+          [
+            1721.0,
+            1721.0
+          ],
+          [
+            1726.0,
+            1727.0
+          ],
+          [
+            1777.0,
+            1777.0
+          ],
+          [
+            1787.0,
+            1787.0
+          ],
+          [
+            1809.0,
+            1809.0
+          ]
+        ],
+        "tolerance_seconds": 1.0,
+        "recall": 0.9230769230769231,
+        "precision": 0.9882352941176471,
+        "f1": 0.9545454545454546
+      },
+      "shared_code": [
+        {
+          "crop_id": "a06-shared-01",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 494,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "fromfastapiimportFastAPI,Requestfromprometheus_clientimportCounter,Gauge,Histogram,make_asgi_appREQUEST_TIME=Histogram(\"request_processing_seconds\",\"Timespentprocessingrequest\")REQUEST_IN_PROCESSING=Gauge(\"request_in_processing\",\"Requestsinprogress\")REQUEST_COUNT=Counter(\"requests_count\",\"Totalcountofrequests\")@app.get(\"/\")asyncdefroot(request:Request):REQUEST_IN_PROCESSING.inc()REQUEST_COUNT.inc()withREQUEST_TIME.time():awaitrandom_sleep()REQUEST_IN_PROCESSING.dec()return{\"Hello\":\"World\"}",
+            "hypothesis": "fromfastapiimportFastAPI,Requestfromprometheus_clientimportCounter,Gauge,Histogram,make_asgi_appREQUEST_TIME=Histogram(\"request_processing_seconds\",\"Timespentprocessingrequest\")REQUEST_IN_PROCESSING=Gauge(\"request_in_processing\",\"Requestsinprogress\")REQUEST_COUNT=Counter(\"requests_count\",\"Totalcountofrequests\")@app.get(\"/\")asyncdefroot(request:Request):REQUEST_IN_PROCESSING.inc()REQUEST_COUNT.inc()withREQUEST_TIME.time():awaitrandom_sleep()REQUEST_IN_PROCESSING.dec()return{\"Hello\":\"World\"}"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 494,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "fromfastapiimportFastAPI,Requestfromprometheus_clientimportCounter,Gauge,Histogram,make_asgi_appREQUEST_TIME=Histogram(\"request_processing_seconds\",\"Timespentprocessingrequest\")REQUEST_IN_PROCESSING=Gauge(\"request_in_processing\",\"Requestsinprogress\")REQUEST_COUNT=Counter(\"requests_count\",\"Totalcountofrequests\")@app.get(\"/\")asyncdefroot(request:Request):REQUEST_IN_PROCESSING.inc()REQUEST_COUNT.inc()withREQUEST_TIME.time():awaitrandom_sleep()REQUEST_IN_PROCESSING.dec()return{\"Hello\":\"World\"}",
+            "hypothesis": "fromfastapiimportFastAPI,Requestfromprometheus_clientimportCounter,Gauge,Histogram,make_asgi_appREQUEST_TIME=Histogram(\"request_processing_seconds\",\"Timespentprocessingrequest\")REQUEST_IN_PROCESSING=Gauge(\"request_in_processing\",\"Requestsinprogress\")REQUEST_COUNT=Counter(\"requests_count\",\"Totalcountofrequests\")@app.get(\"/\")asyncdefroot(request:Request):REQUEST_IN_PROCESSING.inc()REQUEST_COUNT.inc()withREQUEST_TIME.time():awaitrandom_sleep()REQUEST_IN_PROCESSING.dec()return{\"Hello\":\"World\"}"
+          }
+        },
+        {
+          "crop_id": "a06-shared-02",
+          "status": "paired",
+          "first_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 289,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "fromopentelemetryimporttrace#retrievetraceidforexemplarspan=trace.get_current_span()trace_id=trace.format_trace_id(span.get_span_context().trace_id)REQUESTS_PROCESSING_TIME.labels(method=method,path=path,app_name=self.app_name).observe(after_time-before_time,exemplar={\"TraceID\":trace_id})",
+            "hypothesis": "fromopentelemetryimporttrace#retrievetraceidforexemplarspan=trace.get_current_span()trace_id=trace.format_trace_id(span.get_span_context().trace_id)REQUESTS_PROCESSING_TIME.labels(method=method,path=path,app_name=self.app_name).observe(after_time-before_time,exemplar={\"TraceID\":trace_id})"
+          },
+          "second_as_reference": {
+            "status": "measured",
+            "value": 0.0,
+            "reference_units": 289,
+            "errors": 0,
+            "substitutions": 0,
+            "deletions": 0,
+            "insertions": 0,
+            "reference": "fromopentelemetryimporttrace#retrievetraceidforexemplarspan=trace.get_current_span()trace_id=trace.format_trace_id(span.get_span_context().trace_id)REQUESTS_PROCESSING_TIME.labels(method=method,path=path,app_name=self.app_name).observe(after_time-before_time,exemplar={\"TraceID\":trace_id})",
+            "hypothesis": "fromopentelemetryimporttrace#retrievetraceidforexemplarspan=trace.get_current_span()trace_id=trace.format_trace_id(span.get_span_context().trace_id)REQUESTS_PROCESSING_TIME.labels(method=method,path=path,app_name=self.app_name).observe(after_time-before_time,exemplar={\"TraceID\":trace_id})"
+          }
+        }
+      ],
+      "independent_regions": {
+        "pairs": [
+          {
+            "first_index": 4,
+            "second_index": 6,
+            "region_iou": 0.943784992059556,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.01694915254237288,
+              "reference_units": 118,
+              "errors": 2,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 2,
+              "reference": "INSERTINTOtodo_items(title,description,completed)VALUES(%(title)s,%(description)s,%(completed)s)RETURNINGtodo_items.id",
+              "hypothesis": "\"INSERTINTOtodo_items(title,description,completed)VALUES(%(title)s,%(description)s,%(completed)s)RETURNINGtodo_items.id\""
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.016666666666666666,
+              "reference_units": 120,
+              "errors": 2,
+              "substitutions": 0,
+              "deletions": 2,
+              "insertions": 0,
+              "reference": "\"INSERTINTOtodo_items(title,description,completed)VALUES(%(title)s,%(description)s,%(completed)s)RETURNINGtodo_items.id\"",
+              "hypothesis": "INSERTINTOtodo_items(title,description,completed)VALUES(%(title)s,%(description)s,%(completed)s)RETURNINGtodo_items.id"
+            }
+          },
+          {
+            "first_index": 5,
+            "second_index": 7,
+            "region_iou": 0.9270902934869665,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 144,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "#根據已安裝的Package列出可用的InstrumentationPackage清單opentelemetry-bootstrap-arequirements#直接安裝可用的InstrumentationPackage清單opentelemetry-bootstrap-ainstall",
+              "hypothesis": "#根據已安裝的Package列出可用的InstrumentationPackage清單opentelemetry-bootstrap-arequirements#直接安裝可用的InstrumentationPackage清單opentelemetry-bootstrap-ainstall"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 144,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "#根據已安裝的Package列出可用的InstrumentationPackage清單opentelemetry-bootstrap-arequirements#直接安裝可用的InstrumentationPackage清單opentelemetry-bootstrap-ainstall",
+              "hypothesis": "#根據已安裝的Package列出可用的InstrumentationPackage清單opentelemetry-bootstrap-arequirements#直接安裝可用的InstrumentationPackage清單opentelemetry-bootstrap-ainstall"
+            }
+          },
+          {
+            "first_index": 6,
+            "second_index": 8,
+            "region_iou": 0.9375333353589381,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 37,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "opentelemetry-instrumentpythonmain.py",
+              "hypothesis": "opentelemetry-instrumentpythonmain.py"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 37,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "opentelemetry-instrumentpythonmain.py",
+              "hypothesis": "opentelemetry-instrumentpythonmain.py"
+            }
+          },
+          {
+            "first_index": 7,
+            "second_index": 9,
+            "region_iou": 0.9705839975896813,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 174,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "app:image:fastapi-appenvironment:-OTEL_TRACES_EXPORTER=otlp-OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317-OTEL_SERVICE_NAME=basiccommand:opentelemetry-instrumentpythonmain.py",
+              "hypothesis": "app:image:fastapi-appenvironment:-OTEL_TRACES_EXPORTER=otlp-OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317-OTEL_SERVICE_NAME=basiccommand:opentelemetry-instrumentpythonmain.py"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 174,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "app:image:fastapi-appenvironment:-OTEL_TRACES_EXPORTER=otlp-OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317-OTEL_SERVICE_NAME=basiccommand:opentelemetry-instrumentpythonmain.py",
+              "hypothesis": "app:image:fastapi-appenvironment:-OTEL_TRACES_EXPORTER=otlp-OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317-OTEL_SERVICE_NAME=basiccommand:opentelemetry-instrumentpythonmain.py"
+            }
+          },
+          {
+            "first_index": 8,
+            "second_index": 10,
+            "region_iou": 0.8888800000000016,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 81,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "OTEL_PYTHON_LOG_CORRELATION_LOG_FORMAT=trueopentelemetry-instrumentpythonbasic.py",
+              "hypothesis": "OTEL_PYTHON_LOG_CORRELATION_LOG_FORMAT=trueopentelemetry-instrumentpythonbasic.py"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 81,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "OTEL_PYTHON_LOG_CORRELATION_LOG_FORMAT=trueopentelemetry-instrumentpythonbasic.py",
+              "hypothesis": "OTEL_PYTHON_LOG_CORRELATION_LOG_FORMAT=trueopentelemetry-instrumentpythonbasic.py"
+            }
+          },
+          {
+            "first_index": 9,
+            "second_index": 11,
+            "region_iou": 0.9982052413387397,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 123,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "fromopentelemetry.instrumentation.loggingimportLoggingInstrumentorLoggingInstrumentor().instrument(set_logging_format=True)",
+              "hypothesis": "fromopentelemetry.instrumentation.loggingimportLoggingInstrumentorLoggingInstrumentor().instrument(set_logging_format=True)"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 123,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "fromopentelemetry.instrumentation.loggingimportLoggingInstrumentorLoggingInstrumentor().instrument(set_logging_format=True)",
+              "hypothesis": "fromopentelemetry.instrumentation.loggingimportLoggingInstrumentorLoggingInstrumentor().instrument(set_logging_format=True)"
+            }
+          },
+          {
+            "first_index": 10,
+            "second_index": 12,
+            "region_iou": 0.9867924121748334,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 289,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "fromopentelemetryimporttrace#retrievetraceidforexemplarspan=trace.get_current_span()trace_id=trace.format_trace_id(span.get_span_context().trace_id)REQUESTS_PROCESSING_TIME.labels(method=method,path=path,app_name=self.app_name).observe(after_time-before_time,exemplar={\"TraceID\":trace_id})",
+              "hypothesis": "fromopentelemetryimporttrace#retrievetraceidforexemplarspan=trace.get_current_span()trace_id=trace.format_trace_id(span.get_span_context().trace_id)REQUESTS_PROCESSING_TIME.labels(method=method,path=path,app_name=self.app_name).observe(after_time-before_time,exemplar={\"TraceID\":trace_id})"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 289,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "fromopentelemetryimporttrace#retrievetraceidforexemplarspan=trace.get_current_span()trace_id=trace.format_trace_id(span.get_span_context().trace_id)REQUESTS_PROCESSING_TIME.labels(method=method,path=path,app_name=self.app_name).observe(after_time-before_time,exemplar={\"TraceID\":trace_id})",
+              "hypothesis": "fromopentelemetryimporttrace#retrievetraceidforexemplarspan=trace.get_current_span()trace_id=trace.format_trace_id(span.get_span_context().trace_id)REQUESTS_PROCESSING_TIME.labels(method=method,path=path,app_name=self.app_name).observe(after_time-before_time,exemplar={\"TraceID\":trace_id})"
+            }
+          },
+          {
+            "first_index": 11,
+            "second_index": 13,
+            "region_iou": 0.8827679935422501,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 38,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "k6run--vus5--duration3000sk6-script.js",
+              "hypothesis": "k6run--vus5--duration3000sk6-script.js"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 38,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "k6run--vus5--duration3000sk6-script.js",
+              "hypothesis": "k6run--vus5--duration3000sk6-script.js"
+            }
+          },
+          {
+            "first_index": 14,
+            "second_index": 16,
+            "region_iou": 0.7832427412480909,
+            "first_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 51,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "{resource.service.name=\"basic\"&&name=\"GET/request\"}",
+              "hypothesis": "{resource.service.name=\"basic\"&&name=\"GET/request\"}"
+            },
+            "second_as_reference": {
+              "status": "measured",
+              "value": 0.0,
+              "reference_units": 51,
+              "errors": 0,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "reference": "{resource.service.name=\"basic\"&&name=\"GET/request\"}",
+              "hypothesis": "{resource.service.name=\"basic\"&&name=\"GET/request\"}"
+            }
+          }
+        ],
+        "first_unmatched": 6,
+        "second_unmatched": 9
+      }
+    }
+  },
+  "boundary_totals": {
+    "first_count": 258,
+    "second_count": 250,
+    "matched": 249,
+    "f1": 0.9803149606299213
+  },
+  "shared_code_totals": {
+    "first_as_reference": {
+      "paired_crops": 5,
+      "errors": 0,
+      "reference_units": 1628,
+      "cer": 0.0
+    },
+    "second_as_reference": {
+      "paired_crops": 5,
+      "errors": 0,
+      "reference_units": 1628,
+      "cer": 0.0
+    }
+  }
+}

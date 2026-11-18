@@ -1,0 +1,1977 @@
+{
+  "protocol": "Screen reference protocol, v1.6 prospective round 2",
+  "status": "complete",
+  "boundary_match_rule": "Sorted, earliest eligible, one-to-one matching at inclusive ±1 second. Agreement uses untouched independent label timestamps.",
+  "roi_match_rule": "Maximum cardinality one-to-one pairing at inclusive ±1 second and IoU ≥0.5. Ties favor greater summed IoU and smaller summed absolute time difference. Indexes are one-based in the original files.",
+  "transcription_match_rule": "Directional Levenshtein counts over geometrically matched independent regions. Normalize NFKC, remove all whitespace and preserve case. Counts include any visible text scope mismatch between the chosen boxes.",
+  "preselected_shared_crop_agreement": {
+    "status": "awaiting_independent_transcriptions",
+    "crop_count": 12,
+    "crop_manifest": "../reserve-shared/spec.json",
+    "crop_manifest_sha256": "3f0c6411ce73ac3bf92e6a85065f62d95cc0726e37e1234aab80f0c610aaee57",
+    "reason": "Separate shared-crop transcriptions do not appear in the original independent annotation files. The shared source-only set is frozen for independent transcription before inference."
+  },
+  "source_timing": "Timestamps are the first relevant observed frame at native inspection cadence of one sample per second. Within-second ordering and a one-sample exposure duration are unresolved.",
+  "cases": {
+    "r02-a01": {
+      "source_sha256": "a850348583c8919fa35b6ca1029abc2b4d4249297cb274899c1aadc0e8f93380",
+      "independent_label_sha256": {
+        "A": "5e22c0fedb3277961343332ebb31d73a8332d48bd962176d3edd76c59a2ab442",
+        "B": "a8899329a6d5ed3f203df2aa105f0362225bddfbb1dd8a13da78bf702e9d9735"
+      },
+      "boundaries": {
+        "a_count": 23,
+        "b_count": 23,
+        "matched": 23,
+        "a_reference_b_misses": 0,
+        "a_reference_b_extras": 0,
+        "a_covered_by_b": 1.0,
+        "b_covered_by_a": 1.0,
+        "f1": 1.0,
+        "exact_timestamp_matches": 23,
+        "match_pairs": [
+          {
+            "a_index": 1,
+            "a_timestamp": 4,
+            "b_index": 1,
+            "b_timestamp": 4
+          },
+          {
+            "a_index": 2,
+            "a_timestamp": 60,
+            "b_index": 2,
+            "b_timestamp": 60
+          },
+          {
+            "a_index": 3,
+            "a_timestamp": 127,
+            "b_index": 3,
+            "b_timestamp": 127
+          },
+          {
+            "a_index": 4,
+            "a_timestamp": 172,
+            "b_index": 4,
+            "b_timestamp": 172
+          },
+          {
+            "a_index": 5,
+            "a_timestamp": 187,
+            "b_index": 5,
+            "b_timestamp": 187
+          },
+          {
+            "a_index": 6,
+            "a_timestamp": 253,
+            "b_index": 6,
+            "b_timestamp": 253
+          },
+          {
+            "a_index": 7,
+            "a_timestamp": 277,
+            "b_index": 7,
+            "b_timestamp": 277
+          },
+          {
+            "a_index": 8,
+            "a_timestamp": 302,
+            "b_index": 8,
+            "b_timestamp": 302
+          },
+          {
+            "a_index": 9,
+            "a_timestamp": 329,
+            "b_index": 9,
+            "b_timestamp": 329
+          },
+          {
+            "a_index": 10,
+            "a_timestamp": 363,
+            "b_index": 10,
+            "b_timestamp": 363
+          },
+          {
+            "a_index": 11,
+            "a_timestamp": 401,
+            "b_index": 11,
+            "b_timestamp": 401
+          },
+          {
+            "a_index": 12,
+            "a_timestamp": 438,
+            "b_index": 12,
+            "b_timestamp": 438
+          },
+          {
+            "a_index": 13,
+            "a_timestamp": 502,
+            "b_index": 13,
+            "b_timestamp": 502
+          },
+          {
+            "a_index": 14,
+            "a_timestamp": 516,
+            "b_index": 14,
+            "b_timestamp": 516
+          },
+          {
+            "a_index": 15,
+            "a_timestamp": 537,
+            "b_index": 15,
+            "b_timestamp": 537
+          },
+          {
+            "a_index": 16,
+            "a_timestamp": 558,
+            "b_index": 16,
+            "b_timestamp": 558
+          },
+          {
+            "a_index": 17,
+            "a_timestamp": 576,
+            "b_index": 17,
+            "b_timestamp": 576
+          },
+          {
+            "a_index": 18,
+            "a_timestamp": 627,
+            "b_index": 18,
+            "b_timestamp": 627
+          },
+          {
+            "a_index": 19,
+            "a_timestamp": 639,
+            "b_index": 19,
+            "b_timestamp": 639
+          },
+          {
+            "a_index": 20,
+            "a_timestamp": 655,
+            "b_index": 20,
+            "b_timestamp": 655
+          },
+          {
+            "a_index": 21,
+            "a_timestamp": 678,
+            "b_index": 21,
+            "b_timestamp": 678
+          },
+          {
+            "a_index": 22,
+            "a_timestamp": 697,
+            "b_index": 22,
+            "b_timestamp": 697
+          },
+          {
+            "a_index": 23,
+            "a_timestamp": 751,
+            "b_index": 23,
+            "b_timestamp": 751
+          }
+        ],
+        "a_only": [],
+        "b_only": []
+      },
+      "code_regions": {
+        "a_count": 2,
+        "b_count": 2,
+        "matched": 1,
+        "a_reference_b_misses": 1,
+        "a_reference_b_extras": 1,
+        "a_covered_by_b": 0.5,
+        "b_covered_by_a": 0.5,
+        "f1": 0.5,
+        "matched_region_pairs": [
+          {
+            "a_index": 1,
+            "a_timestamp": 438,
+            "b_index": 1,
+            "b_timestamp": 438,
+            "iou": 0.9956896085183968,
+            "absolute_time_delta_seconds": 0,
+            "a_reference": {
+              "reference_chars": 122,
+              "observed_chars": 122,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            },
+            "b_reference": {
+              "reference_chars": 122,
+              "observed_chars": 122,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            }
+          }
+        ],
+        "a_only": [
+          {
+            "label_index": 2,
+            "timestamp": 464,
+            "roi": {
+              "x": 0.37265625,
+              "y": 0.7347222222222223,
+              "w": 0.1234375,
+              "h": 0.11527777777777778
+            }
+          }
+        ],
+        "b_only": [
+          {
+            "label_index": 2,
+            "timestamp": 438,
+            "roi": {
+              "x": 0.37265625,
+              "y": 0.73611111,
+              "w": 0.1234375,
+              "h": 0.1125
+            }
+          }
+        ],
+        "a_reference": {
+          "reference_chars": 122,
+          "observed_chars": 122,
+          "substitutions": 0,
+          "deletions": 0,
+          "insertions": 0,
+          "edit_distance": 0,
+          "cer": 0.0
+        },
+        "b_reference": {
+          "reference_chars": 122,
+          "observed_chars": 122,
+          "substitutions": 0,
+          "deletions": 0,
+          "insertions": 0,
+          "edit_distance": 0,
+          "cer": 0.0
+        }
+      },
+      "adjudicated": {
+        "boundaries": 23,
+        "code_regions": 2,
+        "normalized_code_chars": 269,
+        "label_sha256": "8ae86472557a2f8164ec04ab193e8b5cf65b7c1833a64c1343eec10e2e2057b3"
+      }
+    },
+    "r02-a02": {
+      "source_sha256": "51ac214e3691745e90a022a1177d517ac6ee6acee0cdc31637ff2f63256f20e4",
+      "independent_label_sha256": {
+        "A": "a1846f22180924da7accfe3d186acb25745312468ec4a7b4e959fd28ad480259",
+        "B": "f3588f095334156e930177938c1783f1311409e80ed51eba750c3eecf1e219a4"
+      },
+      "boundaries": {
+        "a_count": 22,
+        "b_count": 22,
+        "matched": 22,
+        "a_reference_b_misses": 0,
+        "a_reference_b_extras": 0,
+        "a_covered_by_b": 1.0,
+        "b_covered_by_a": 1.0,
+        "f1": 1.0,
+        "exact_timestamp_matches": 22,
+        "match_pairs": [
+          {
+            "a_index": 1,
+            "a_timestamp": 3,
+            "b_index": 1,
+            "b_timestamp": 3
+          },
+          {
+            "a_index": 2,
+            "a_timestamp": 8,
+            "b_index": 2,
+            "b_timestamp": 8
+          },
+          {
+            "a_index": 3,
+            "a_timestamp": 60,
+            "b_index": 3,
+            "b_timestamp": 60
+          },
+          {
+            "a_index": 4,
+            "a_timestamp": 133,
+            "b_index": 4,
+            "b_timestamp": 133
+          },
+          {
+            "a_index": 5,
+            "a_timestamp": 163,
+            "b_index": 5,
+            "b_timestamp": 163
+          },
+          {
+            "a_index": 6,
+            "a_timestamp": 213,
+            "b_index": 6,
+            "b_timestamp": 213
+          },
+          {
+            "a_index": 7,
+            "a_timestamp": 334,
+            "b_index": 7,
+            "b_timestamp": 334
+          },
+          {
+            "a_index": 8,
+            "a_timestamp": 409,
+            "b_index": 8,
+            "b_timestamp": 409
+          },
+          {
+            "a_index": 9,
+            "a_timestamp": 447,
+            "b_index": 9,
+            "b_timestamp": 447
+          },
+          {
+            "a_index": 10,
+            "a_timestamp": 506,
+            "b_index": 10,
+            "b_timestamp": 506
+          },
+          {
+            "a_index": 11,
+            "a_timestamp": 541,
+            "b_index": 11,
+            "b_timestamp": 541
+          },
+          {
+            "a_index": 12,
+            "a_timestamp": 588,
+            "b_index": 12,
+            "b_timestamp": 588
+          },
+          {
+            "a_index": 13,
+            "a_timestamp": 670,
+            "b_index": 13,
+            "b_timestamp": 670
+          },
+          {
+            "a_index": 14,
+            "a_timestamp": 713,
+            "b_index": 14,
+            "b_timestamp": 713
+          },
+          {
+            "a_index": 15,
+            "a_timestamp": 778,
+            "b_index": 15,
+            "b_timestamp": 778
+          },
+          {
+            "a_index": 16,
+            "a_timestamp": 817,
+            "b_index": 16,
+            "b_timestamp": 817
+          },
+          {
+            "a_index": 17,
+            "a_timestamp": 922,
+            "b_index": 17,
+            "b_timestamp": 922
+          },
+          {
+            "a_index": 18,
+            "a_timestamp": 1011,
+            "b_index": 18,
+            "b_timestamp": 1011
+          },
+          {
+            "a_index": 19,
+            "a_timestamp": 1029,
+            "b_index": 19,
+            "b_timestamp": 1029
+          },
+          {
+            "a_index": 20,
+            "a_timestamp": 1074,
+            "b_index": 20,
+            "b_timestamp": 1074
+          },
+          {
+            "a_index": 21,
+            "a_timestamp": 1077,
+            "b_index": 21,
+            "b_timestamp": 1077
+          },
+          {
+            "a_index": 22,
+            "a_timestamp": 1082,
+            "b_index": 22,
+            "b_timestamp": 1082
+          }
+        ],
+        "a_only": [],
+        "b_only": []
+      },
+      "code_regions": {
+        "a_count": 9,
+        "b_count": 7,
+        "matched": 7,
+        "a_reference_b_misses": 2,
+        "a_reference_b_extras": 0,
+        "a_covered_by_b": 0.7777777777777778,
+        "b_covered_by_a": 1.0,
+        "f1": 0.875,
+        "matched_region_pairs": [
+          {
+            "a_index": 1,
+            "a_timestamp": 541,
+            "b_index": 1,
+            "b_timestamp": 541,
+            "iou": 0.9990583804143118,
+            "absolute_time_delta_seconds": 0,
+            "a_reference": {
+              "reference_chars": 200,
+              "observed_chars": 200,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            },
+            "b_reference": {
+              "reference_chars": 200,
+              "observed_chars": 200,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            }
+          },
+          {
+            "a_index": 2,
+            "a_timestamp": 541,
+            "b_index": 2,
+            "b_timestamp": 541,
+            "iou": 0.990751957957241,
+            "absolute_time_delta_seconds": 0,
+            "a_reference": {
+              "reference_chars": 79,
+              "observed_chars": 79,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            },
+            "b_reference": {
+              "reference_chars": 79,
+              "observed_chars": 79,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            }
+          },
+          {
+            "a_index": 3,
+            "a_timestamp": 713,
+            "b_index": 3,
+            "b_timestamp": 713,
+            "iou": 0.9905573699611636,
+            "absolute_time_delta_seconds": 0,
+            "a_reference": {
+              "reference_chars": 285,
+              "observed_chars": 285,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            },
+            "b_reference": {
+              "reference_chars": 285,
+              "observed_chars": 285,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            }
+          },
+          {
+            "a_index": 4,
+            "a_timestamp": 713,
+            "b_index": 4,
+            "b_timestamp": 713,
+            "iou": 0.9830862777321279,
+            "absolute_time_delta_seconds": 0,
+            "a_reference": {
+              "reference_chars": 188,
+              "observed_chars": 188,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            },
+            "b_reference": {
+              "reference_chars": 188,
+              "observed_chars": 188,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            }
+          },
+          {
+            "a_index": 5,
+            "a_timestamp": 778,
+            "b_index": 5,
+            "b_timestamp": 778,
+            "iou": 0.9926019810709908,
+            "absolute_time_delta_seconds": 0,
+            "a_reference": {
+              "reference_chars": 263,
+              "observed_chars": 263,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            },
+            "b_reference": {
+              "reference_chars": 263,
+              "observed_chars": 263,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            }
+          },
+          {
+            "a_index": 6,
+            "a_timestamp": 778,
+            "b_index": 6,
+            "b_timestamp": 778,
+            "iou": 0.9806472521876023,
+            "absolute_time_delta_seconds": 0,
+            "a_reference": {
+              "reference_chars": 87,
+              "observed_chars": 87,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            },
+            "b_reference": {
+              "reference_chars": 87,
+              "observed_chars": 87,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            }
+          },
+          {
+            "a_index": 7,
+            "a_timestamp": 817,
+            "b_index": 7,
+            "b_timestamp": 817,
+            "iou": 0.5847882906429692,
+            "absolute_time_delta_seconds": 0,
+            "a_reference": {
+              "reference_chars": 224,
+              "observed_chars": 335,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 111,
+              "edit_distance": 111,
+              "cer": 0.4955357142857143
+            },
+            "b_reference": {
+              "reference_chars": 335,
+              "observed_chars": 224,
+              "substitutions": 0,
+              "deletions": 111,
+              "insertions": 0,
+              "edit_distance": 111,
+              "cer": 0.33134328358208953
+            }
+          }
+        ],
+        "a_only": [
+          {
+            "label_index": 8,
+            "timestamp": 817,
+            "roi": {
+              "x": 0.0390625,
+              "y": 0.5611111111111111,
+              "w": 0.6328125,
+              "h": 0.1625
+            }
+          },
+          {
+            "label_index": 9,
+            "timestamp": 817,
+            "roi": {
+              "x": 0.0390625,
+              "y": 0.7597222222222222,
+              "w": 0.53984375,
+              "h": 0.08055555555555556
+            }
+          }
+        ],
+        "b_only": [],
+        "a_reference": {
+          "reference_chars": 1326,
+          "observed_chars": 1437,
+          "substitutions": 0,
+          "deletions": 0,
+          "insertions": 111,
+          "edit_distance": 111,
+          "cer": 0.083710407239819
+        },
+        "b_reference": {
+          "reference_chars": 1437,
+          "observed_chars": 1326,
+          "substitutions": 0,
+          "deletions": 111,
+          "insertions": 0,
+          "edit_distance": 111,
+          "cer": 0.07724425887265135
+        }
+      },
+      "adjudicated": {
+        "boundaries": 22,
+        "code_regions": 8,
+        "normalized_code_chars": 1503,
+        "label_sha256": "b11d644ae69566bc44e005b426efdfc5d61d1d6e244ff259cec036680d498829"
+      }
+    },
+    "r02-a03": {
+      "source_sha256": "607d52d3340bfd46b768d06eac8b0c58af0a4f0de6905ec178ba9ec46ab4f177",
+      "independent_label_sha256": {
+        "A": "74ca9116d891d0d1287d4d4adb12077ec0a224de80d41913e98d192ac92b29e0",
+        "B": "11a9f067b285e5517497d5def5ac477264951639b9452bd397dd6dd8dd5e88d3"
+      },
+      "boundaries": {
+        "a_count": 27,
+        "b_count": 27,
+        "matched": 27,
+        "a_reference_b_misses": 0,
+        "a_reference_b_extras": 0,
+        "a_covered_by_b": 1.0,
+        "b_covered_by_a": 1.0,
+        "f1": 1.0,
+        "exact_timestamp_matches": 27,
+        "match_pairs": [
+          {
+            "a_index": 1,
+            "a_timestamp": 22,
+            "b_index": 1,
+            "b_timestamp": 22
+          },
+          {
+            "a_index": 2,
+            "a_timestamp": 36,
+            "b_index": 2,
+            "b_timestamp": 36
+          },
+          {
+            "a_index": 3,
+            "a_timestamp": 153,
+            "b_index": 3,
+            "b_timestamp": 153
+          },
+          {
+            "a_index": 4,
+            "a_timestamp": 223,
+            "b_index": 4,
+            "b_timestamp": 223
+          },
+          {
+            "a_index": 5,
+            "a_timestamp": 350,
+            "b_index": 5,
+            "b_timestamp": 350
+          },
+          {
+            "a_index": 6,
+            "a_timestamp": 437,
+            "b_index": 6,
+            "b_timestamp": 437
+          },
+          {
+            "a_index": 7,
+            "a_timestamp": 519,
+            "b_index": 7,
+            "b_timestamp": 519
+          },
+          {
+            "a_index": 8,
+            "a_timestamp": 569,
+            "b_index": 8,
+            "b_timestamp": 569
+          },
+          {
+            "a_index": 9,
+            "a_timestamp": 629,
+            "b_index": 9,
+            "b_timestamp": 629
+          },
+          {
+            "a_index": 10,
+            "a_timestamp": 653,
+            "b_index": 10,
+            "b_timestamp": 653
+          },
+          {
+            "a_index": 11,
+            "a_timestamp": 758,
+            "b_index": 11,
+            "b_timestamp": 758
+          },
+          {
+            "a_index": 12,
+            "a_timestamp": 801,
+            "b_index": 12,
+            "b_timestamp": 801
+          },
+          {
+            "a_index": 13,
+            "a_timestamp": 851,
+            "b_index": 13,
+            "b_timestamp": 851
+          },
+          {
+            "a_index": 14,
+            "a_timestamp": 859,
+            "b_index": 14,
+            "b_timestamp": 859
+          },
+          {
+            "a_index": 15,
+            "a_timestamp": 947,
+            "b_index": 15,
+            "b_timestamp": 947
+          },
+          {
+            "a_index": 16,
+            "a_timestamp": 966,
+            "b_index": 16,
+            "b_timestamp": 966
+          },
+          {
+            "a_index": 17,
+            "a_timestamp": 1027,
+            "b_index": 17,
+            "b_timestamp": 1027
+          },
+          {
+            "a_index": 18,
+            "a_timestamp": 1045,
+            "b_index": 18,
+            "b_timestamp": 1045
+          },
+          {
+            "a_index": 19,
+            "a_timestamp": 1147,
+            "b_index": 19,
+            "b_timestamp": 1147
+          },
+          {
+            "a_index": 20,
+            "a_timestamp": 1156,
+            "b_index": 20,
+            "b_timestamp": 1156
+          },
+          {
+            "a_index": 21,
+            "a_timestamp": 1176,
+            "b_index": 21,
+            "b_timestamp": 1176
+          },
+          {
+            "a_index": 22,
+            "a_timestamp": 1183,
+            "b_index": 22,
+            "b_timestamp": 1183
+          },
+          {
+            "a_index": 23,
+            "a_timestamp": 1192,
+            "b_index": 23,
+            "b_timestamp": 1192
+          },
+          {
+            "a_index": 24,
+            "a_timestamp": 1197,
+            "b_index": 24,
+            "b_timestamp": 1197
+          },
+          {
+            "a_index": 25,
+            "a_timestamp": 1218,
+            "b_index": 25,
+            "b_timestamp": 1218
+          },
+          {
+            "a_index": 26,
+            "a_timestamp": 1520,
+            "b_index": 26,
+            "b_timestamp": 1520
+          },
+          {
+            "a_index": 27,
+            "a_timestamp": 1529,
+            "b_index": 27,
+            "b_timestamp": 1529
+          }
+        ],
+        "a_only": [],
+        "b_only": []
+      },
+      "code_regions": {
+        "a_count": 14,
+        "b_count": 9,
+        "matched": 8,
+        "a_reference_b_misses": 6,
+        "a_reference_b_extras": 1,
+        "a_covered_by_b": 0.5714285714285714,
+        "b_covered_by_a": 0.8888888888888888,
+        "f1": 0.6956521739130435,
+        "matched_region_pairs": [
+          {
+            "a_index": 1,
+            "a_timestamp": 653,
+            "b_index": 1,
+            "b_timestamp": 653,
+            "iou": 0.9623195497920236,
+            "absolute_time_delta_seconds": 0,
+            "a_reference": {
+              "reference_chars": 33,
+              "observed_chars": 33,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            },
+            "b_reference": {
+              "reference_chars": 33,
+              "observed_chars": 33,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            }
+          },
+          {
+            "a_index": 5,
+            "a_timestamp": 758,
+            "b_index": 2,
+            "b_timestamp": 758,
+            "iou": 0.9138135228251502,
+            "absolute_time_delta_seconds": 0,
+            "a_reference": {
+              "reference_chars": 25,
+              "observed_chars": 25,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            },
+            "b_reference": {
+              "reference_chars": 25,
+              "observed_chars": 25,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            }
+          },
+          {
+            "a_index": 6,
+            "a_timestamp": 851,
+            "b_index": 3,
+            "b_timestamp": 851,
+            "iou": 0.9390620612187589,
+            "absolute_time_delta_seconds": 0,
+            "a_reference": {
+              "reference_chars": 21,
+              "observed_chars": 21,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            },
+            "b_reference": {
+              "reference_chars": 21,
+              "observed_chars": 21,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            }
+          },
+          {
+            "a_index": 7,
+            "a_timestamp": 947,
+            "b_index": 4,
+            "b_timestamp": 947,
+            "iou": 0.9018567639257301,
+            "absolute_time_delta_seconds": 0,
+            "a_reference": {
+              "reference_chars": 24,
+              "observed_chars": 24,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            },
+            "b_reference": {
+              "reference_chars": 24,
+              "observed_chars": 24,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            }
+          },
+          {
+            "a_index": 8,
+            "a_timestamp": 1046,
+            "b_index": 5,
+            "b_timestamp": 1046,
+            "iou": 0.996625421822272,
+            "absolute_time_delta_seconds": 0,
+            "a_reference": {
+              "reference_chars": 303,
+              "observed_chars": 303,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            },
+            "b_reference": {
+              "reference_chars": 303,
+              "observed_chars": 303,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            }
+          },
+          {
+            "a_index": 9,
+            "a_timestamp": 1046,
+            "b_index": 6,
+            "b_timestamp": 1046,
+            "iou": 0.8740450408556426,
+            "absolute_time_delta_seconds": 0,
+            "a_reference": {
+              "reference_chars": 86,
+              "observed_chars": 89,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 3,
+              "edit_distance": 3,
+              "cer": 0.03488372093023256
+            },
+            "b_reference": {
+              "reference_chars": 89,
+              "observed_chars": 86,
+              "substitutions": 0,
+              "deletions": 3,
+              "insertions": 0,
+              "edit_distance": 3,
+              "cer": 0.033707865168539325
+            }
+          },
+          {
+            "a_index": 10,
+            "a_timestamp": 1192,
+            "b_index": 7,
+            "b_timestamp": 1192,
+            "iou": 0.9930253666459652,
+            "absolute_time_delta_seconds": 0,
+            "a_reference": {
+              "reference_chars": 418,
+              "observed_chars": 418,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            },
+            "b_reference": {
+              "reference_chars": 418,
+              "observed_chars": 418,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            }
+          },
+          {
+            "a_index": 14,
+            "a_timestamp": 1441,
+            "b_index": 9,
+            "b_timestamp": 1442,
+            "iou": 0.9291598023064245,
+            "absolute_time_delta_seconds": 1,
+            "a_reference": {
+              "reference_chars": 16,
+              "observed_chars": 16,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            },
+            "b_reference": {
+              "reference_chars": 16,
+              "observed_chars": 16,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            }
+          }
+        ],
+        "a_only": [
+          {
+            "label_index": 2,
+            "timestamp": 653,
+            "roi": {
+              "x": 0.28671875,
+              "y": 0.4791666666666667,
+              "w": 0.2453125,
+              "h": 0.044444444444444446
+            }
+          },
+          {
+            "label_index": 3,
+            "timestamp": 653,
+            "roi": {
+              "x": 0.22109375,
+              "y": 0.6513888888888889,
+              "w": 0.53125,
+              "h": 0.044444444444444446
+            }
+          },
+          {
+            "label_index": 4,
+            "timestamp": 653,
+            "roi": {
+              "x": 0.1890625,
+              "y": 0.825,
+              "w": 0.66484375,
+              "h": 0.044444444444444446
+            }
+          },
+          {
+            "label_index": 11,
+            "timestamp": 1199,
+            "roi": {
+              "x": 0.06640625,
+              "y": 0.6763888888888889,
+              "w": 0.49375,
+              "h": 0.0625
+            }
+          },
+          {
+            "label_index": 12,
+            "timestamp": 1218,
+            "roi": {
+              "x": 0.06640625,
+              "y": 0.5527777777777778,
+              "w": 0.3765625,
+              "h": 0.09166666666666666
+            }
+          },
+          {
+            "label_index": 13,
+            "timestamp": 1218,
+            "roi": {
+              "x": 0.10234375,
+              "y": 0.6583333333333333,
+              "w": 0.46328125,
+              "h": 0.029166666666666667
+            }
+          }
+        ],
+        "b_only": [
+          {
+            "label_index": 8,
+            "timestamp": 1200,
+            "roi": {
+              "x": 0.05546875,
+              "y": 0.5291666666666667,
+              "w": 0.5046875,
+              "h": 0.10972222222222222
+            }
+          }
+        ],
+        "a_reference": {
+          "reference_chars": 926,
+          "observed_chars": 929,
+          "substitutions": 0,
+          "deletions": 0,
+          "insertions": 3,
+          "edit_distance": 3,
+          "cer": 0.0032397408207343412
+        },
+        "b_reference": {
+          "reference_chars": 929,
+          "observed_chars": 926,
+          "substitutions": 0,
+          "deletions": 3,
+          "insertions": 0,
+          "edit_distance": 3,
+          "cer": 0.0032292787944025836
+        }
+      },
+      "adjudicated": {
+        "boundaries": 27,
+        "code_regions": 14,
+        "normalized_code_chars": 1665,
+        "label_sha256": "6f296c2288b5e2091d693e4b457fafd343fa5f9b253da527b875f02fdeae0dc6"
+      }
+    },
+    "r02-a04": {
+      "source_sha256": "3049513dbfc70e91efa760303b62e17cff5c165a2142e57780c844aecb6c2c82",
+      "independent_label_sha256": {
+        "A": "9469c7a29a7061e5c18d9a856f8e4e31d2411659d451d89404a864a8b940d7b4",
+        "B": "144ef482ad55bc6db3396c6db5a2937a79031dde9fb45223f79e7f5bbffcb442"
+      },
+      "boundaries": {
+        "a_count": 67,
+        "b_count": 64,
+        "matched": 60,
+        "a_reference_b_misses": 7,
+        "a_reference_b_extras": 4,
+        "a_covered_by_b": 0.8955223880597015,
+        "b_covered_by_a": 0.9375,
+        "f1": 0.916030534351145,
+        "exact_timestamp_matches": 55,
+        "match_pairs": [
+          {
+            "a_index": 1,
+            "a_timestamp": 3,
+            "b_index": 1,
+            "b_timestamp": 3
+          },
+          {
+            "a_index": 2,
+            "a_timestamp": 20,
+            "b_index": 3,
+            "b_timestamp": 20
+          },
+          {
+            "a_index": 3,
+            "a_timestamp": 79,
+            "b_index": 4,
+            "b_timestamp": 79
+          },
+          {
+            "a_index": 4,
+            "a_timestamp": 114,
+            "b_index": 5,
+            "b_timestamp": 114
+          },
+          {
+            "a_index": 5,
+            "a_timestamp": 168,
+            "b_index": 6,
+            "b_timestamp": 168
+          },
+          {
+            "a_index": 6,
+            "a_timestamp": 193,
+            "b_index": 7,
+            "b_timestamp": 193
+          },
+          {
+            "a_index": 7,
+            "a_timestamp": 207,
+            "b_index": 8,
+            "b_timestamp": 207
+          },
+          {
+            "a_index": 8,
+            "a_timestamp": 246,
+            "b_index": 9,
+            "b_timestamp": 246
+          },
+          {
+            "a_index": 9,
+            "a_timestamp": 295,
+            "b_index": 10,
+            "b_timestamp": 295
+          },
+          {
+            "a_index": 10,
+            "a_timestamp": 346,
+            "b_index": 11,
+            "b_timestamp": 346
+          },
+          {
+            "a_index": 11,
+            "a_timestamp": 367,
+            "b_index": 12,
+            "b_timestamp": 367
+          },
+          {
+            "a_index": 12,
+            "a_timestamp": 392,
+            "b_index": 13,
+            "b_timestamp": 392
+          },
+          {
+            "a_index": 13,
+            "a_timestamp": 400,
+            "b_index": 14,
+            "b_timestamp": 400
+          },
+          {
+            "a_index": 14,
+            "a_timestamp": 410,
+            "b_index": 15,
+            "b_timestamp": 410
+          },
+          {
+            "a_index": 15,
+            "a_timestamp": 420,
+            "b_index": 16,
+            "b_timestamp": 420
+          },
+          {
+            "a_index": 16,
+            "a_timestamp": 424,
+            "b_index": 17,
+            "b_timestamp": 424
+          },
+          {
+            "a_index": 17,
+            "a_timestamp": 440,
+            "b_index": 18,
+            "b_timestamp": 440
+          },
+          {
+            "a_index": 18,
+            "a_timestamp": 464,
+            "b_index": 19,
+            "b_timestamp": 464
+          },
+          {
+            "a_index": 19,
+            "a_timestamp": 508,
+            "b_index": 20,
+            "b_timestamp": 508
+          },
+          {
+            "a_index": 20,
+            "a_timestamp": 530,
+            "b_index": 21,
+            "b_timestamp": 530
+          },
+          {
+            "a_index": 21,
+            "a_timestamp": 576,
+            "b_index": 22,
+            "b_timestamp": 576
+          },
+          {
+            "a_index": 22,
+            "a_timestamp": 604,
+            "b_index": 23,
+            "b_timestamp": 604
+          },
+          {
+            "a_index": 23,
+            "a_timestamp": 623,
+            "b_index": 24,
+            "b_timestamp": 623
+          },
+          {
+            "a_index": 24,
+            "a_timestamp": 637,
+            "b_index": 25,
+            "b_timestamp": 637
+          },
+          {
+            "a_index": 25,
+            "a_timestamp": 647,
+            "b_index": 26,
+            "b_timestamp": 646
+          },
+          {
+            "a_index": 26,
+            "a_timestamp": 660,
+            "b_index": 27,
+            "b_timestamp": 659
+          },
+          {
+            "a_index": 27,
+            "a_timestamp": 672,
+            "b_index": 28,
+            "b_timestamp": 672
+          },
+          {
+            "a_index": 30,
+            "a_timestamp": 694,
+            "b_index": 30,
+            "b_timestamp": 694
+          },
+          {
+            "a_index": 31,
+            "a_timestamp": 705,
+            "b_index": 31,
+            "b_timestamp": 705
+          },
+          {
+            "a_index": 32,
+            "a_timestamp": 715,
+            "b_index": 32,
+            "b_timestamp": 715
+          },
+          {
+            "a_index": 35,
+            "a_timestamp": 762,
+            "b_index": 34,
+            "b_timestamp": 762
+          },
+          {
+            "a_index": 36,
+            "a_timestamp": 770,
+            "b_index": 35,
+            "b_timestamp": 770
+          },
+          {
+            "a_index": 37,
+            "a_timestamp": 772,
+            "b_index": 36,
+            "b_timestamp": 772
+          },
+          {
+            "a_index": 40,
+            "a_timestamp": 788,
+            "b_index": 37,
+            "b_timestamp": 788
+          },
+          {
+            "a_index": 41,
+            "a_timestamp": 791,
+            "b_index": 38,
+            "b_timestamp": 791
+          },
+          {
+            "a_index": 42,
+            "a_timestamp": 797,
+            "b_index": 39,
+            "b_timestamp": 797
+          },
+          {
+            "a_index": 43,
+            "a_timestamp": 825,
+            "b_index": 40,
+            "b_timestamp": 825
+          },
+          {
+            "a_index": 44,
+            "a_timestamp": 831,
+            "b_index": 41,
+            "b_timestamp": 831
+          },
+          {
+            "a_index": 45,
+            "a_timestamp": 837,
+            "b_index": 42,
+            "b_timestamp": 836
+          },
+          {
+            "a_index": 46,
+            "a_timestamp": 841,
+            "b_index": 43,
+            "b_timestamp": 841
+          },
+          {
+            "a_index": 47,
+            "a_timestamp": 846,
+            "b_index": 44,
+            "b_timestamp": 846
+          },
+          {
+            "a_index": 48,
+            "a_timestamp": 850,
+            "b_index": 45,
+            "b_timestamp": 849
+          },
+          {
+            "a_index": 49,
+            "a_timestamp": 853,
+            "b_index": 46,
+            "b_timestamp": 853
+          },
+          {
+            "a_index": 50,
+            "a_timestamp": 859,
+            "b_index": 47,
+            "b_timestamp": 859
+          },
+          {
+            "a_index": 51,
+            "a_timestamp": 874,
+            "b_index": 48,
+            "b_timestamp": 874
+          },
+          {
+            "a_index": 52,
+            "a_timestamp": 876,
+            "b_index": 49,
+            "b_timestamp": 876
+          },
+          {
+            "a_index": 53,
+            "a_timestamp": 885,
+            "b_index": 50,
+            "b_timestamp": 885
+          },
+          {
+            "a_index": 54,
+            "a_timestamp": 968,
+            "b_index": 51,
+            "b_timestamp": 968
+          },
+          {
+            "a_index": 55,
+            "a_timestamp": 995,
+            "b_index": 52,
+            "b_timestamp": 995
+          },
+          {
+            "a_index": 56,
+            "a_timestamp": 1009,
+            "b_index": 53,
+            "b_timestamp": 1009
+          },
+          {
+            "a_index": 57,
+            "a_timestamp": 1022,
+            "b_index": 54,
+            "b_timestamp": 1022
+          },
+          {
+            "a_index": 58,
+            "a_timestamp": 1037,
+            "b_index": 55,
+            "b_timestamp": 1037
+          },
+          {
+            "a_index": 59,
+            "a_timestamp": 1050,
+            "b_index": 56,
+            "b_timestamp": 1050
+          },
+          {
+            "a_index": 60,
+            "a_timestamp": 1088,
+            "b_index": 57,
+            "b_timestamp": 1088
+          },
+          {
+            "a_index": 62,
+            "a_timestamp": 1120,
+            "b_index": 59,
+            "b_timestamp": 1120
+          },
+          {
+            "a_index": 63,
+            "a_timestamp": 1122,
+            "b_index": 60,
+            "b_timestamp": 1122
+          },
+          {
+            "a_index": 64,
+            "a_timestamp": 1150,
+            "b_index": 61,
+            "b_timestamp": 1149
+          },
+          {
+            "a_index": 65,
+            "a_timestamp": 1162,
+            "b_index": 62,
+            "b_timestamp": 1162
+          },
+          {
+            "a_index": 66,
+            "a_timestamp": 1165,
+            "b_index": 63,
+            "b_timestamp": 1165
+          },
+          {
+            "a_index": 67,
+            "a_timestamp": 1170,
+            "b_index": 64,
+            "b_timestamp": 1170
+          }
+        ],
+        "a_only": [
+          {
+            "label_index": 28,
+            "timestamp": 685,
+            "description": "A newly drawn polygon over Central and South Asia displays its settled area measurement."
+          },
+          {
+            "label_index": 29,
+            "timestamp": 687,
+            "description": "Delete all removes every drawn geometry from the measurement map."
+          },
+          {
+            "label_index": 33,
+            "timestamp": 733,
+            "description": "A rotated rectangle settles over Kazakhstan and nearby areas before its area is computed."
+          },
+          {
+            "label_index": 34,
+            "timestamp": 749,
+            "description": "The rotated rectangle’s final area readout settles after the adjustment."
+          },
+          {
+            "label_index": 38,
+            "timestamp": 781,
+            "description": "The selected circle settles after being repositioned, with a changed area and outline."
+          },
+          {
+            "label_index": 39,
+            "timestamp": 784,
+            "description": "Dragging a vertex leaves a pointed extension on the circle and a changed area."
+          },
+          {
+            "label_index": 61,
+            "timestamp": 1101,
+            "description": "Returns from the custom-font example to the home page and settles on the Examples gallery."
+          }
+        ],
+        "b_only": [
+          {
+            "label_index": 2,
+            "timestamp": 8,
+            "description": "The presentation begins with its dedicated title slide on maplibre-gl-terradraw."
+          },
+          {
+            "label_index": 29,
+            "timestamp": 690,
+            "description": "Clears the sample geometries and their measurement labels from the map."
+          },
+          {
+            "label_index": 33,
+            "timestamp": 746,
+            "description": "The angled rectangle over Central Asia finishes changing and shows its final area."
+          },
+          {
+            "label_index": 58,
+            "timestamp": 1098,
+            "description": "Returns to the main Terra Draw page after the custom-font example and scrolls toward the gallery."
+          }
+        ]
+      },
+      "code_regions": {
+        "a_count": 16,
+        "b_count": 9,
+        "matched": 7,
+        "a_reference_b_misses": 9,
+        "a_reference_b_extras": 2,
+        "a_covered_by_b": 0.4375,
+        "b_covered_by_a": 0.7777777777777778,
+        "f1": 0.56,
+        "matched_region_pairs": [
+          {
+            "a_index": 1,
+            "a_timestamp": 367,
+            "b_index": 1,
+            "b_timestamp": 367,
+            "iou": 0.9633079830382811,
+            "absolute_time_delta_seconds": 0,
+            "a_reference": {
+              "reference_chars": 209,
+              "observed_chars": 209,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            },
+            "b_reference": {
+              "reference_chars": 209,
+              "observed_chars": 209,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            }
+          },
+          {
+            "a_index": 2,
+            "a_timestamp": 367,
+            "b_index": 2,
+            "b_timestamp": 367,
+            "iou": 0.652408530583225,
+            "absolute_time_delta_seconds": 0,
+            "a_reference": {
+              "reference_chars": 106,
+              "observed_chars": 192,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 86,
+              "edit_distance": 86,
+              "cer": 0.8113207547169812
+            },
+            "b_reference": {
+              "reference_chars": 192,
+              "observed_chars": 106,
+              "substitutions": 0,
+              "deletions": 86,
+              "insertions": 0,
+              "edit_distance": 86,
+              "cer": 0.4479166666666667
+            }
+          },
+          {
+            "a_index": 3,
+            "a_timestamp": 410,
+            "b_index": 3,
+            "b_timestamp": 410,
+            "iou": 0.9919005553034171,
+            "absolute_time_delta_seconds": 0,
+            "a_reference": {
+              "reference_chars": 279,
+              "observed_chars": 279,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            },
+            "b_reference": {
+              "reference_chars": 279,
+              "observed_chars": 279,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            }
+          },
+          {
+            "a_index": 5,
+            "a_timestamp": 508,
+            "b_index": 4,
+            "b_timestamp": 508,
+            "iou": 0.580220371153417,
+            "absolute_time_delta_seconds": 0,
+            "a_reference": {
+              "reference_chars": 198,
+              "observed_chars": 381,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 183,
+              "edit_distance": 183,
+              "cer": 0.9242424242424242
+            },
+            "b_reference": {
+              "reference_chars": 381,
+              "observed_chars": 198,
+              "substitutions": 0,
+              "deletions": 183,
+              "insertions": 0,
+              "edit_distance": 183,
+              "cer": 0.48031496062992124
+            }
+          },
+          {
+            "a_index": 7,
+            "a_timestamp": 530,
+            "b_index": 5,
+            "b_timestamp": 530,
+            "iou": 0.5455767006121177,
+            "absolute_time_delta_seconds": 0,
+            "a_reference": {
+              "reference_chars": 236,
+              "observed_chars": 363,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 127,
+              "edit_distance": 127,
+              "cer": 0.538135593220339
+            },
+            "b_reference": {
+              "reference_chars": 363,
+              "observed_chars": 236,
+              "substitutions": 0,
+              "deletions": 127,
+              "insertions": 0,
+              "edit_distance": 127,
+              "cer": 0.349862258953168
+            }
+          },
+          {
+            "a_index": 11,
+            "a_timestamp": 887,
+            "b_index": 7,
+            "b_timestamp": 886,
+            "iou": 0.6966998582250998,
+            "absolute_time_delta_seconds": 1,
+            "a_reference": {
+              "reference_chars": 48,
+              "observed_chars": 48,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            },
+            "b_reference": {
+              "reference_chars": 48,
+              "observed_chars": 48,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 0,
+              "edit_distance": 0,
+              "cer": 0.0
+            }
+          },
+          {
+            "a_index": 13,
+            "a_timestamp": 976,
+            "b_index": 8,
+            "b_timestamp": 976,
+            "iou": 0.7751052227850501,
+            "absolute_time_delta_seconds": 0,
+            "a_reference": {
+              "reference_chars": 290,
+              "observed_chars": 238,
+              "substitutions": 0,
+              "deletions": 52,
+              "insertions": 0,
+              "edit_distance": 52,
+              "cer": 0.1793103448275862
+            },
+            "b_reference": {
+              "reference_chars": 238,
+              "observed_chars": 290,
+              "substitutions": 0,
+              "deletions": 0,
+              "insertions": 52,
+              "edit_distance": 52,
+              "cer": 0.2184873949579832
+            }
+          }
+        ],
+        "a_only": [
+          {
+            "label_index": 4,
+            "timestamp": 508,
+            "roi": {
+              "x": 0.009375,
+              "y": 0.325,
+              "w": 0.48671875,
+              "h": 0.14166666666666666
+            }
+          },
+          {
+            "label_index": 6,
+            "timestamp": 530,
+            "roi": {
+              "x": 0.57265625,
+              "y": 0.21805555555555556,
+              "w": 0.35078125,
+              "h": 0.125
+            }
+          },
+          {
+            "label_index": 8,
+            "timestamp": 772,
+            "roi": {
+              "x": 0.040625,
+              "y": 0.6430555555555556,
+              "w": 0.10625,
+              "h": 0.08472222222222223
+            }
+          },
+          {
+            "label_index": 9,
+            "timestamp": 860,
+            "roi": {
+              "x": 0.0140625,
+              "y": 0.7402777777777778,
+              "w": 0.25390625,
+              "h": 0.02361111111111111
+            }
+          },
+          {
+            "label_index": 10,
+            "timestamp": 874,
+            "roi": {
+              "x": 0.053125,
+              "y": 0.7444444444444445,
+              "w": 0.5984375,
+              "h": 0.0625
+            }
+          },
+          {
+            "label_index": 12,
+            "timestamp": 917,
+            "roi": {
+              "x": 0.0140625,
+              "y": 0.6583333333333333,
+              "w": 0.5296875,
+              "h": 0.17916666666666667
+            }
+          },
+          {
+            "label_index": 14,
+            "timestamp": 990,
+            "roi": {
+              "x": 0.10546875,
+              "y": 0.6486111111111111,
+              "w": 0.27890625,
+              "h": 0.15138888888888888
+            }
+          },
+          {
+            "label_index": 15,
+            "timestamp": 1034,
+            "roi": {
+              "x": 0.06953125,
+              "y": 0.6680555555555555,
+              "w": 0.28984375,
+              "h": 0.19722222222222222
+            }
+          },
+          {
+            "label_index": 16,
+            "timestamp": 1075,
+            "roi": {
+              "x": 0.06953125,
+              "y": 0.5972222222222222,
+              "w": 0.51484375,
+              "h": 0.2152777777777778
+            }
+          }
+        ],
+        "b_only": [
+          {
+            "label_index": 6,
+            "timestamp": 874,
+            "roi": {
+              "x": 0.015625,
+              "y": 0.277778,
+              "w": 0.419531,
+              "h": 0.438889
+            }
+          },
+          {
+            "label_index": 9,
+            "timestamp": 1069,
+            "roi": {
+              "x": 0.069531,
+              "y": 0.593056,
+              "w": 0.5125,
+              "h": 0.220833
+            }
+          }
+        ],
+        "a_reference": {
+          "reference_chars": 1366,
+          "observed_chars": 1710,
+          "substitutions": 0,
+          "deletions": 52,
+          "insertions": 396,
+          "edit_distance": 448,
+          "cer": 0.3279648609077599
+        },
+        "b_reference": {
+          "reference_chars": 1710,
+          "observed_chars": 1366,
+          "substitutions": 0,
+          "deletions": 396,
+          "insertions": 52,
+          "edit_distance": 448,
+          "cer": 0.26198830409356727
+        }
+      },
+      "adjudicated": {
+        "boundaries": 67,
+        "code_regions": 15,
+        "normalized_code_chars": 3543,
+        "label_sha256": "fad6361e52d9cf1f30f7c92d81ca3f19c9f1dc5ff7b15fca101a6dd9bb9d2fc7"
+      }
+    }
+  },
+  "aggregate": {
+    "boundaries": {
+      "a_count": 139,
+      "b_count": 136,
+      "matched": 132,
+      "a_reference_b_misses": 7,
+      "a_reference_b_extras": 4,
+      "a_covered_by_b": 0.9496402877697842,
+      "b_covered_by_a": 0.9705882352941176,
+      "f1": 0.96,
+      "exact_timestamp_matches": 127
+    },
+    "code_regions": {
+      "a_count": 41,
+      "b_count": 27,
+      "matched": 23,
+      "a_reference_b_misses": 18,
+      "a_reference_b_extras": 4,
+      "a_covered_by_b": 0.5609756097560976,
+      "b_covered_by_a": 0.8518518518518519,
+      "f1": 0.6764705882352942,
+      "a_reference": {
+        "reference_chars": 3740,
+        "observed_chars": 4198,
+        "substitutions": 0,
+        "deletions": 52,
+        "insertions": 510,
+        "edit_distance": 562,
+        "cer": 0.15026737967914439
+      },
+      "b_reference": {
+        "reference_chars": 4198,
+        "observed_chars": 3740,
+        "substitutions": 0,
+        "deletions": 510,
+        "insertions": 52,
+        "edit_distance": 562,
+        "cer": 0.13387327298713672
+      }
+    },
+    "adjudicated": {
+      "boundaries": 139,
+      "code_regions": 39,
+      "normalized_code_chars": 6980
+    }
+  }
+}

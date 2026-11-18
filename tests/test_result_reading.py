@@ -193,6 +193,31 @@ class ResultReadingTests(unittest.TestCase):
   assert.match(element('pane-frames').innerHTML, /View all frames \(2\)/);
 """)
 
+    def test_classified_results_filter_to_information_changes_without_hiding_search_hits(self) -> None:
+        self.run_app(r"""
+  run(`state.detail = ${DETAIL}; renderDetailFrames();`);
+  assert.doesNotMatch(element('pane-frames').innerHTML, /Information changes/);
+
+  run(`
+    state.detail.states[0].information_boundary = false;
+    state.detail.states[1].information_boundary = true;
+    renderDetailFrames();
+  `);
+  assert.match(element('pane-frames').innerHTML, /aria-pressed="false">Information changes \(1\)/);
+  element('toggle-information-frames').onclick();
+  const filtered = element('pane-frames').innerHTML;
+  assert.match(filtered, /Showing information changes \(1\)/);
+  assert.match(filtered, /aria-pressed="true"/);
+  assert.match(filtered, /visual_states\/all\/03-38\.jpg/);
+  assert.doesNotMatch(filtered, /visual_states\/all\/01-40\.jpg/);
+
+  run(`showEvidenceAt('ocr', 100);`);
+  const all = element('pane-frames').innerHTML;
+  assert.match(all, /Showing all frames \(2\)/);
+  assert.match(all, /visual_states\/all\/01-40\.jpg/);
+  assert.equal(element('frame-dialog').open, true);
+""")
+
     def test_incomplete_ocr_is_prominently_disclosed(self) -> None:
         self.run_app(r"""
   const job = {

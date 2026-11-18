@@ -133,7 +133,7 @@ def evaluate_case(
     # sync with what a strategy actually writes.
     temp_leftovers = [
         name
-        for name in ("samples", "evidence_samples", "audio.wav", "source.mp4", "source.webm")
+        for name in (*pipeline.TEMPORARY_FRAME_DIRECTORIES, "audio.wav", "source.mp4", "source.webm")
         if (workdir / name).exists()
     ] + acquisition.leftovers(workdir)
     exact_count_check = (

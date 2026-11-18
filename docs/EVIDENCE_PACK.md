@@ -171,12 +171,16 @@ Additive measurements include:
 - content hint (`visual`, text-rich document/code/UI categories, and related
   heuristic labels);
 - scene ID, boundary flag, change score, and boundary reason;
+- optional `information_boundary` flag for the information changes view;
 - progressive-build group, position, and size;
 - scroll group, position, and size;
 - dHash/comparison warning;
 - OCR character count, transcript novelty count, and overlap ratio.
 
-All of these describe a retained state. None controls canonical membership.
+All of these describe a retained state. The information flag is available
+after offline boundary ranking succeeds. The manifest records which
+boundary algorithm ran. The full pack keeps every retained frame.
+Search indexes the text recognized in those frames.
 
 ### `evidence.md`
 

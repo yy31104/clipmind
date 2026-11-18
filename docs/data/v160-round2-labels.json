@@ -1,0 +1,2984 @@
+{
+  "schema_version": 1,
+  "annotation_protocol": "screen-evidence-v1",
+  "protocol": "screen-evidence-v1",
+  "annotation_method": "Independent source-only GPT-6.2 Sol sessions and source-only adjudication.",
+  "source_roi_timestamp_method": "Video-relative native frame presentation timestamp.",
+  "cases": {
+    "r02-a01": {
+      "reviewed": true,
+      "review_start": 0,
+      "review_end": 753.366667,
+      "input_sha256": "a850348583c8919fa35b6ca1029abc2b4d4249297cb274899c1aadc0e8f93380",
+      "slide_changes": [
+        4,
+        60,
+        127,
+        172,
+        187,
+        253,
+        277,
+        302,
+        329,
+        363,
+        401,
+        438,
+        502,
+        516,
+        537,
+        558,
+        576,
+        627,
+        639,
+        655,
+        678,
+        697,
+        751
+      ],
+      "boundary_evidence": [
+        {
+          "timestamp": 4,
+          "description": "Presentation title slide adds the English title, the workshop date, and the speaker’s English name.",
+          "category": "introduction",
+          "evidence_image_ids": [
+            "frames/00003.jpg",
+            "frames/00004.jpg"
+          ]
+        },
+        {
+          "timestamp": 60,
+          "description": "Depositar overview introduces the CKAN-based repository and FAIR data principles.",
+          "category": "slide",
+          "evidence_image_ids": [
+            "frames/00059.jpg",
+            "frames/00060.jpg"
+          ]
+        },
+        {
+          "timestamp": 127,
+          "description": "Research data lifecycle diagram connects planning, collecting, processing, publication, preservation, and reuse to FAIR assessment scenarios.",
+          "category": "slide",
+          "evidence_image_ids": [
+            "frames/00126.jpg",
+            "frames/00127.jpg"
+          ]
+        },
+        {
+          "timestamp": 172,
+          "description": "Depositar site overview shows the repository URL and screenshots of the home, dataset, and project pages.",
+          "category": "slide",
+          "evidence_image_ids": [
+            "frames/00171.jpg",
+            "frames/00172.jpg"
+          ]
+        },
+        {
+          "timestamp": 187,
+          "description": "Dataset feature tour annotates the coral reef soundscapes record with metadata, search, citation, licensing, and machine-access options.",
+          "category": "slide",
+          "evidence_image_ids": [
+            "frames/00186.jpg",
+            "frames/00187.jpg"
+          ]
+        },
+        {
+          "timestamp": 253,
+          "description": "Part 1 of the coral reef soundscapes example shows the associated project, dataset description, recording locations, and equipment.",
+          "category": "slide",
+          "evidence_image_ids": [
+            "frames/00252.jpg",
+            "frames/00253.jpg"
+          ]
+        },
+        {
+          "timestamp": 277,
+          "description": "Part 2 of the coral reef soundscapes example shows the license, citation tool, processing notes, associated publication, and data resources.",
+          "category": "slide",
+          "evidence_image_ids": [
+            "frames/00276.jpg",
+            "frames/00277.jpg"
+          ]
+        },
+        {
+          "timestamp": 302,
+          "description": "Part 3 of the coral reef soundscapes example shows the English metadata view with tags, map extent, access formats, and spatiotemporal information.",
+          "category": "slide",
+          "evidence_image_ids": [
+            "frames/00301.jpg",
+            "frames/00302.jpg"
+          ]
+        },
+        {
+          "timestamp": 329,
+          "description": "The localized part 3 slide replaces the English metadata labels and Wikidata keywords with Chinese text.",
+          "category": "slide",
+          "evidence_image_ids": [
+            "frames/00328.jpg",
+            "frames/00329.jpg"
+          ]
+        },
+        {
+          "timestamp": 363,
+          "description": "Biological Conservation article screenshots include an enlarged data availability statement linking to the repository.",
+          "category": "slide",
+          "evidence_image_ids": [
+            "frames/00362.jpg",
+            "frames/00363.jpg"
+          ]
+        },
+        {
+          "timestamp": 401,
+          "description": "JSON Data API slide shows the CKAN API dialog and a tree view of the Place Name resource response.",
+          "category": "slide",
+          "evidence_image_ids": [
+            "frames/00400.jpg",
+            "frames/00401.jpg"
+          ]
+        },
+        {
+          "timestamp": 438,
+          "description": "RDF Serializations slide places the human-readable metadata beside the corresponding JSON-LD linked-data output.",
+          "category": "slide",
+          "evidence_image_ids": [
+            "frames/00437.jpg",
+            "frames/00438.jpg"
+          ]
+        },
+        {
+          "timestamp": 502,
+          "description": "A mixed-format dataset example lists KML, orthophoto tiles, panoramic imagery, and other attached resources.",
+          "category": "slide",
+          "evidence_image_ids": [
+            "frames/00501.jpg",
+            "frames/00502.jpg"
+          ]
+        },
+        {
+          "timestamp": 516,
+          "description": "A KML flight-planning centerline appears in a map viewer screenshot.",
+          "category": "slide",
+          "evidence_image_ids": [
+            "frames/00515.jpg",
+            "frames/00516.jpg"
+          ]
+        },
+        {
+          "timestamp": 537,
+          "description": "An Open Aerial Map screenshot shows the orthophoto over the map and the resource details.",
+          "category": "slide",
+          "evidence_image_ids": [
+            "frames/00536.jpg",
+            "frames/00537.jpg"
+          ]
+        },
+        {
+          "timestamp": 558,
+          "description": "A Google Street View slide shows a 360-degree aerial panorama and its link.",
+          "category": "slide",
+          "evidence_image_ids": [
+            "frames/00557.jpg",
+            "frames/00558.jpg"
+          ]
+        },
+        {
+          "timestamp": 576,
+          "description": "Depositar recent updates lists Google Dataset Search, the citation tool, outreach, policy, and workshop activities.",
+          "category": "slide",
+          "evidence_image_ids": [
+            "frames/00575.jpg",
+            "frames/00576.jpg"
+          ]
+        },
+        {
+          "timestamp": 627,
+          "description": "Google Dataset Search results show the coral reef soundscapes dataset and its Depositar link.",
+          "category": "slide",
+          "evidence_image_ids": [
+            "frames/00626.jpg",
+            "frames/00627.jpg"
+          ]
+        },
+        {
+          "timestamp": 639,
+          "description": "FAIRness of Research Data on depositar introduces F-UJI and its automated FAIR assessment.",
+          "category": "slide",
+          "evidence_image_ids": [
+            "frames/00638.jpg",
+            "frames/00639.jpg"
+          ]
+        },
+        {
+          "timestamp": 655,
+          "description": "A F-UJI assessment summary presents the selected river dataset, its 47 percent score, and the four FAIR dimension scores.",
+          "category": "slide",
+          "evidence_image_ids": [
+            "frames/00654.jpg",
+            "frames/00655.jpg"
+          ]
+        },
+        {
+          "timestamp": 678,
+          "description": "The detailed F-UJI Findable report lists individual metrics and highlights the persistent identifier criterion.",
+          "category": "slide",
+          "evidence_image_ids": [
+            "frames/00677.jpg",
+            "frames/00678.jpg"
+          ]
+        },
+        {
+          "timestamp": 697,
+          "description": "Depositar’s work in progress includes ARK identifiers, homepage design, CoreTrustSeal, and audiovisual uploads.",
+          "category": "slide",
+          "evidence_image_ids": [
+            "frames/00696.jpg",
+            "frames/00697.jpg"
+          ]
+        },
+        {
+          "timestamp": 751,
+          "description": "The closing slide shows the repository, documentation and source links, the contact address, and project acknowledgments.",
+          "category": "credits",
+          "evidence_image_ids": [
+            "frames/00750.jpg",
+            "frames/00751.jpg",
+            "frames/00752.jpg"
+          ]
+        }
+      ],
+      "ocr": [
+        {
+          "timestamp": 438.466666667,
+          "roi": [
+            0.37265625,
+            0.4625,
+            0.18046875,
+            0.07083333333333333
+          ],
+          "text": "\"dct:description\": \"\",\n\"dct:identifier\": \"coral-reef-sesoko\",\n\"dct:language\": {\n    \"@id\": \"http://www.lexvo.org/page/iso639-3/eng\"\n},",
+          "evidence_image_ids": [
+            "frames/00438.jpg",
+            "frames/00464.jpg"
+          ],
+          "timestamp_sample": 438,
+          "source_capture": {
+            "sample": "frames/00438.jpg",
+            "sample_timestamp": 438,
+            "native_frame_index": 13154,
+            "video_time_base": "1/15360",
+            "media_pts_ticks": 6734848,
+            "media_pts_seconds_exact": "6577/15",
+            "media_timestamp": 438.466666666667,
+            "local_pts_ticks": 6734848,
+            "local_pts_seconds_exact": "6577/15",
+            "local_timestamp": 438.466666666667,
+            "renderer_input_pts_ticks": 6734848,
+            "renderer_output_pts_ticks": 438,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "1019c29aa07a1f01dfeaed687eeaf7c37369a14a937b06e273ccf8ebb71f1b8a",
+            "replayed_jpeg_sha256": "1019c29aa07a1f01dfeaed687eeaf7c37369a14a937b06e273ccf8ebb71f1b8a",
+            "native_reencoded_jpeg_sha256": "1019c29aa07a1f01dfeaed687eeaf7c37369a14a937b06e273ccf8ebb71f1b8a",
+            "native_decoded_frame_sha256": "1ebfcdcf5313dcf8a18ec00dcf46f17967cac3b1a64cb6502e5b01f4b5183070",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 438.466666667,
+          "roi": [
+            0.37265625,
+            0.7361111111111112,
+            0.1234375,
+            0.1125
+          ],
+          "text": "\"schema:endDate\": {\n    \"@type\": \"xsd:dateTime\",\n    \"@value\": \"2018-07-01T00:00:00\"\n},\n\"schema:startDate\": {\n    \"@type\": \"xsd:dateTime\",\n    \"@value\": \"2017-05-01T00:00:00\"\n}",
+          "evidence_image_ids": [
+            "frames/00438.jpg",
+            "frames/00464.jpg"
+          ],
+          "timestamp_sample": 438,
+          "source_capture": {
+            "sample": "frames/00438.jpg",
+            "sample_timestamp": 438,
+            "native_frame_index": 13154,
+            "video_time_base": "1/15360",
+            "media_pts_ticks": 6734848,
+            "media_pts_seconds_exact": "6577/15",
+            "media_timestamp": 438.466666666667,
+            "local_pts_ticks": 6734848,
+            "local_pts_seconds_exact": "6577/15",
+            "local_timestamp": 438.466666666667,
+            "renderer_input_pts_ticks": 6734848,
+            "renderer_output_pts_ticks": 438,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "1019c29aa07a1f01dfeaed687eeaf7c37369a14a937b06e273ccf8ebb71f1b8a",
+            "replayed_jpeg_sha256": "1019c29aa07a1f01dfeaed687eeaf7c37369a14a937b06e273ccf8ebb71f1b8a",
+            "native_reencoded_jpeg_sha256": "1019c29aa07a1f01dfeaed687eeaf7c37369a14a937b06e273ccf8ebb71f1b8a",
+            "native_decoded_frame_sha256": "1ebfcdcf5313dcf8a18ec00dcf46f17967cac3b1a64cb6502e5b01f4b5183070",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        }
+      ]
+    },
+    "r02-a02": {
+      "reviewed": true,
+      "review_start": 0,
+      "review_end": 1084.971667,
+      "input_sha256": "51ac214e3691745e90a022a1177d517ac6ee6acee0cdc31637ff2f63256f20e4",
+      "slide_changes": [
+        3,
+        8,
+        60,
+        133,
+        163,
+        213,
+        334,
+        409,
+        447,
+        506,
+        541,
+        588,
+        670,
+        713,
+        778,
+        817,
+        922,
+        1011,
+        1029,
+        1074,
+        1077,
+        1082
+      ],
+      "boundary_evidence": [
+        {
+          "timestamp": 3,
+          "category": "introduction",
+          "description": "Conference introduction adds the full talk title, speaker, and date.",
+          "evidence_image_ids": [
+            "frames/00002.jpg",
+            "frames/00003.jpg"
+          ]
+        },
+        {
+          "timestamp": 8,
+          "category": "slide",
+          "description": "Speaker title slide identifies QPS BV and the FOSS4G Europe Mostar venue.",
+          "evidence_image_ids": [
+            "frames/00007.jpg",
+            "frames/00008.jpg"
+          ]
+        },
+        {
+          "timestamp": 60,
+          "category": "slide",
+          "description": "Takeaway slide contrasts hydrographic and terrestrial data and introduces Boost.Geometry for adapting legacy code.",
+          "evidence_image_ids": [
+            "frames/00059.jpg",
+            "frames/00060.jpg"
+          ]
+        },
+        {
+          "timestamp": 133,
+          "category": "slide",
+          "description": "Agenda lists hydrographic data, adapting existing C++ types, and a demonstration.",
+          "evidence_image_ids": [
+            "frames/00132.jpg",
+            "frames/00133.jpg"
+          ]
+        },
+        {
+          "timestamp": 163,
+          "category": "slide",
+          "description": "Bathymetry slide explains multibeam echo soundings and shows a vessel measuring the seabed.",
+          "evidence_image_ids": [
+            "frames/00162.jpg",
+            "frames/00163.jpg"
+          ]
+        },
+        {
+          "timestamp": 213,
+          "category": "slide",
+          "description": "Hydrographic error-model slide covers sound-speed and positioning errors and nuisance signals, with beam geometry diagrams.",
+          "evidence_image_ids": [
+            "frames/00212.jpg",
+            "frames/00213.jpg"
+          ]
+        },
+        {
+          "timestamp": 334,
+          "category": "slide",
+          "description": "Hydrographic data volume tables compare points per second and points per square meter at three depths.",
+          "evidence_image_ids": [
+            "frames/00333.jpg",
+            "frames/00334.jpg"
+          ]
+        },
+        {
+          "timestamp": 409,
+          "category": "slide",
+          "description": "Legacy codebase slide gives the approximate code size and age and its C++, C, and C# mix.",
+          "evidence_image_ids": [
+            "frames/00408.jpg",
+            "frames/00409.jpg"
+          ]
+        },
+        {
+          "timestamp": 447,
+          "category": "slide",
+          "description": "Boost.Geometry slide introduces provided adapters, concepts, and custom adapters.",
+          "evidence_image_ids": [
+            "frames/00446.jpg",
+            "frames/00447.jpg"
+          ]
+        },
+        {
+          "timestamp": 506,
+          "category": "slide",
+          "description": "Concepts slide lists supported geometries and illustrates Point, Linestring, and Ring/Polygon.",
+          "evidence_image_ids": [
+            "frames/00505.jpg",
+            "frames/00506.jpg"
+          ]
+        },
+        {
+          "timestamp": 541,
+          "category": "slide",
+          "description": "Macro adaptation slide shows C++ structs and Boost.Geometry registration macros for a point and box.",
+          "evidence_image_ids": [
+            "frames/00540.jpg",
+            "frames/00541.jpg"
+          ]
+        },
+        {
+          "timestamp": 588,
+          "category": "slide",
+          "description": "Hydrographic point storage slide describes keeping pings grouped and replacing bespoke quad-tree lookups with a Boost.Geometry R-tree.",
+          "evidence_image_ids": [
+            "frames/00587.jpg",
+            "frames/00588.jpg"
+          ]
+        },
+        {
+          "timestamp": 670,
+          "category": "slide",
+          "description": "Keeping pings coherent slide illustrates oriented bounding boxes and explains adapting the box concept.",
+          "evidence_image_ids": [
+            "frames/00669.jpg",
+            "frames/00670.jpg"
+          ]
+        },
+        {
+          "timestamp": 713,
+          "category": "slide",
+          "description": "The concepts implementation slide shows C++ trait specializations and indexed access for an oriented bounding box.",
+          "evidence_image_ids": [
+            "frames/00712.jpg",
+            "frames/00713.jpg"
+          ]
+        },
+        {
+          "timestamp": 778,
+          "category": "slide",
+          "description": "Specializing algorithms slide shows an indexability trait and a custom intersection specialization.",
+          "evidence_image_ids": [
+            "frames/00777.jpg",
+            "frames/00778.jpg"
+          ]
+        },
+        {
+          "timestamp": 817,
+          "category": "slide",
+          "description": "Building and querying an index slide shows the R-tree declaration, population, and intersection query.",
+          "evidence_image_ids": [
+            "frames/00816.jpg",
+            "frames/00817.jpg"
+          ]
+        },
+        {
+          "timestamp": 922,
+          "category": "return",
+          "description": "The presentation returns to the Takeaway content for the conclusion.",
+          "evidence_image_ids": [
+            "frames/00921.jpg",
+            "frames/00922.jpg"
+          ]
+        },
+        {
+          "timestamp": 1011,
+          "category": "slide",
+          "description": "Future Work slide proposes an oriented bounding box concept and asks for mentorship.",
+          "evidence_image_ids": [
+            "frames/01010.jpg",
+            "frames/01011.jpg"
+          ]
+        },
+        {
+          "timestamp": 1029,
+          "category": "slide",
+          "description": "State of Ocean Mapping slide shows the Seabed 2030 update and its 27.3 percent coverage figure.",
+          "evidence_image_ids": [
+            "frames/01028.jpg",
+            "frames/01029.jpg"
+          ]
+        },
+        {
+          "timestamp": 1074,
+          "category": "credits",
+          "description": "QPS closing slide shows the company’s closing message against an aerial ocean image.",
+          "evidence_image_ids": [
+            "frames/01073.jpg",
+            "frames/01074.jpg"
+          ]
+        },
+        {
+          "timestamp": 1077,
+          "category": "return",
+          "description": "The conference card returns with the talk title, speaker, date, and livestream sponsor.",
+          "evidence_image_ids": [
+            "frames/01076.jpg",
+            "frames/01077.jpg"
+          ]
+        },
+        {
+          "timestamp": 1082,
+          "category": "return",
+          "description": "The opening-style FOSS4G conference and Powered by OSGeo credit card returns.",
+          "evidence_image_ids": [
+            "frames/01081.jpg",
+            "frames/01082.jpg"
+          ]
+        }
+      ],
+      "ocr": [
+        {
+          "timestamp": 541.466666667,
+          "roi": [
+            0.04765625,
+            0.2388888888888889,
+            0.82890625,
+            0.32083333333333336
+          ],
+          "text": "#include <boost/geometry/geometries/register/point.hpp>\n#include <boost/geometry/geometries/register/box.hpp>\n\nstruct my_point\n{\n    double x, y;\n};\nBOOST_GEOMETRY_REGISTER_POINT_2D(my_point, double, cs::cartesian, x, y)",
+          "evidence_image_ids": [
+            "frames/00541.jpg",
+            "frames/00542.jpg"
+          ],
+          "timestamp_sample": 541,
+          "source_capture": {
+            "sample": "frames/00541.jpg",
+            "sample_timestamp": 541,
+            "native_frame_index": 16244,
+            "video_time_base": "1/15360",
+            "media_pts_ticks": 8317942,
+            "media_pts_seconds_exact": "4158971/7680",
+            "media_timestamp": 541.532682291667,
+            "local_pts_ticks": 8316928,
+            "local_pts_seconds_exact": "8122/15",
+            "local_timestamp": 541.466666666667,
+            "renderer_input_pts_ticks": 8317251,
+            "renderer_output_pts_ticks": 541,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "7f4726a69531351db81fe9a967746e75dde4ec3e065e64338e05716c0e72128d",
+            "replayed_jpeg_sha256": "7f4726a69531351db81fe9a967746e75dde4ec3e065e64338e05716c0e72128d",
+            "native_reencoded_jpeg_sha256": "7f4726a69531351db81fe9a967746e75dde4ec3e065e64338e05716c0e72128d",
+            "native_decoded_frame_sha256": "330d02eda581641df335f9c054bc765319bb738f82f68e08fb47d8fdf022d0ef",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 541.466666667,
+          "roi": [
+            0.04765625,
+            0.5944444444444444,
+            0.6171875,
+            0.20555555555555555
+          ],
+          "text": "struct my_box\n{\n    my_point ll, ur;\n};\nBOOST_GEOMETRY_REGISTER_BOX(my_box, my_point, ll, ur)",
+          "evidence_image_ids": [
+            "frames/00541.jpg",
+            "frames/00542.jpg"
+          ],
+          "timestamp_sample": 541,
+          "source_capture": {
+            "sample": "frames/00541.jpg",
+            "sample_timestamp": 541,
+            "native_frame_index": 16244,
+            "video_time_base": "1/15360",
+            "media_pts_ticks": 8317942,
+            "media_pts_seconds_exact": "4158971/7680",
+            "media_timestamp": 541.532682291667,
+            "local_pts_ticks": 8316928,
+            "local_pts_seconds_exact": "8122/15",
+            "local_timestamp": 541.466666666667,
+            "renderer_input_pts_ticks": 8317251,
+            "renderer_output_pts_ticks": 541,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "7f4726a69531351db81fe9a967746e75dde4ec3e065e64338e05716c0e72128d",
+            "replayed_jpeg_sha256": "7f4726a69531351db81fe9a967746e75dde4ec3e065e64338e05716c0e72128d",
+            "native_reencoded_jpeg_sha256": "7f4726a69531351db81fe9a967746e75dde4ec3e065e64338e05716c0e72128d",
+            "native_decoded_frame_sha256": "330d02eda581641df335f9c054bc765319bb738f82f68e08fb47d8fdf022d0ef",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 713.466666667,
+          "roi": [
+            0.03984375,
+            0.24722222222222223,
+            0.8640625,
+            0.32222222222222224
+          ],
+          "text": "struct legacy_point;\nstruct obb;\n\nnamespace boost::geometry::traits {\ntemplate <> struct tag<obb>                  { using type = box_tag; };\ntemplate <> struct coordinate_type<obb>      { using type = double; };\ntemplate <> struct coordinate_system<obb>    { using type = cs::cartesian; };\ntemplate <> struct point_type<obb>           { using type = legacy_point; };",
+          "evidence_image_ids": [
+            "frames/00713.jpg",
+            "frames/00777.jpg"
+          ],
+          "timestamp_sample": 713,
+          "source_capture": {
+            "sample": "frames/00713.jpg",
+            "sample_timestamp": 713,
+            "native_frame_index": 21404,
+            "video_time_base": "1/15360",
+            "media_pts_ticks": 10959862,
+            "media_pts_seconds_exact": "5479931/7680",
+            "media_timestamp": 713.532682291667,
+            "local_pts_ticks": 10958848,
+            "local_pts_seconds_exact": "10702/15",
+            "local_timestamp": 713.466666666667,
+            "renderer_input_pts_ticks": 10959171,
+            "renderer_output_pts_ticks": 713,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "8daaf23a588606ea24f82abacdd2786dafa0e7cf565598cd54be49c3b5290aa8",
+            "replayed_jpeg_sha256": "8daaf23a588606ea24f82abacdd2786dafa0e7cf565598cd54be49c3b5290aa8",
+            "native_reencoded_jpeg_sha256": "8daaf23a588606ea24f82abacdd2786dafa0e7cf565598cd54be49c3b5290aa8",
+            "native_decoded_frame_sha256": "409e19c82f5d55c064d0747714a9a2e8393d50e6e199c7836af6a32bcacea85e",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 713.466666667,
+          "roi": [
+            0.03984375,
+            0.6013888888888889,
+            0.56171875,
+            0.29305555555555557
+          ],
+          "text": "template <int Corner, std::size_t Dimension>\nstruct indexed_access<obb, Corner, Dimension>\n{\n    using coordinate_type = double;\n    static coordinate_type get(const obb&) {...}\n};\n} // namespace boost::geometry::traits",
+          "evidence_image_ids": [
+            "frames/00713.jpg",
+            "frames/00777.jpg"
+          ],
+          "timestamp_sample": 713,
+          "source_capture": {
+            "sample": "frames/00713.jpg",
+            "sample_timestamp": 713,
+            "native_frame_index": 21404,
+            "video_time_base": "1/15360",
+            "media_pts_ticks": 10959862,
+            "media_pts_seconds_exact": "5479931/7680",
+            "media_timestamp": 713.532682291667,
+            "local_pts_ticks": 10958848,
+            "local_pts_seconds_exact": "10702/15",
+            "local_timestamp": 713.466666666667,
+            "renderer_input_pts_ticks": 10959171,
+            "renderer_output_pts_ticks": 713,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "8daaf23a588606ea24f82abacdd2786dafa0e7cf565598cd54be49c3b5290aa8",
+            "replayed_jpeg_sha256": "8daaf23a588606ea24f82abacdd2786dafa0e7cf565598cd54be49c3b5290aa8",
+            "native_reencoded_jpeg_sha256": "8daaf23a588606ea24f82abacdd2786dafa0e7cf565598cd54be49c3b5290aa8",
+            "native_decoded_frame_sha256": "409e19c82f5d55c064d0747714a9a2e8393d50e6e199c7836af6a32bcacea85e",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 778.466666667,
+          "roi": [
+            0.03984375,
+            0.24722222222222223,
+            0.64453125,
+            0.36527777777777776
+          ],
+          "text": "#include <boost/geometry/algorithms/intersects.hpp>\n#include <boost/geometry/index/detail/is_indexable.hpp>\n\nnamespace boost::geometry::index::detail {\ntemplate <> struct is_indexable<obb, tag<obb>::type>\n{\n    static const bool value = true;\n};\n} // namespace boost::geometry::index::detail",
+          "evidence_image_ids": [
+            "frames/00778.jpg",
+            "frames/00816.jpg"
+          ],
+          "timestamp_sample": 778,
+          "source_capture": {
+            "sample": "frames/00778.jpg",
+            "sample_timestamp": 778,
+            "native_frame_index": 23354,
+            "video_time_base": "1/15360",
+            "media_pts_ticks": 11958262,
+            "media_pts_seconds_exact": "5979131/7680",
+            "media_timestamp": 778.532682291667,
+            "local_pts_ticks": 11957248,
+            "local_pts_seconds_exact": "11677/15",
+            "local_timestamp": 778.466666666667,
+            "renderer_input_pts_ticks": 11957571,
+            "renderer_output_pts_ticks": 778,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "c31996ffd69f2606a7d9906169396079988f03c911b526fba3129e45610f39f7",
+            "replayed_jpeg_sha256": "c31996ffd69f2606a7d9906169396079988f03c911b526fba3129e45610f39f7",
+            "native_reencoded_jpeg_sha256": "c31996ffd69f2606a7d9906169396079988f03c911b526fba3129e45610f39f7",
+            "native_decoded_frame_sha256": "3732336b586ec7b44713ec3a4452f3e2a391b744a730cb01eb2adc752d79a433",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 778.466666667,
+          "roi": [
+            0.03984375,
+            0.6458333333333334,
+            0.84296875,
+            0.08333333333333333
+          ],
+          "text": "namespace boost::geometry {\ntemplate <> inline bool intersects(const obb& lhs, const obb& rhs) {...}",
+          "evidence_image_ids": [
+            "frames/00778.jpg",
+            "frames/00816.jpg"
+          ],
+          "timestamp_sample": 778,
+          "source_capture": {
+            "sample": "frames/00778.jpg",
+            "sample_timestamp": 778,
+            "native_frame_index": 23354,
+            "video_time_base": "1/15360",
+            "media_pts_ticks": 11958262,
+            "media_pts_seconds_exact": "5979131/7680",
+            "media_timestamp": 778.532682291667,
+            "local_pts_ticks": 11957248,
+            "local_pts_seconds_exact": "11677/15",
+            "local_timestamp": 778.466666666667,
+            "renderer_input_pts_ticks": 11957571,
+            "renderer_output_pts_ticks": 778,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "c31996ffd69f2606a7d9906169396079988f03c911b526fba3129e45610f39f7",
+            "replayed_jpeg_sha256": "c31996ffd69f2606a7d9906169396079988f03c911b526fba3129e45610f39f7",
+            "native_reencoded_jpeg_sha256": "c31996ffd69f2606a7d9906169396079988f03c911b526fba3129e45610f39f7",
+            "native_decoded_frame_sha256": "3732336b586ec7b44713ec3a4452f3e2a391b744a730cb01eb2adc752d79a433",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 817.466666667,
+          "roi": [
+            0.03984375,
+            0.25416666666666665,
+            0.79453125,
+            0.46944444444444444
+          ],
+          "text": "#include <boost/geometry/index/rtree.hpp>\n#include <boost/geometry/strategies/strategies.hpp>\n\nusing namespace bg = boost::geometry;\n\nusing value_t = std::pair<obb, PingInfo>;\nusing index_t = bg::index::rtree<value_t, bg::index::quadratic<64>>;\n\n// populate the index from `pings`\nindex_t index;\nfor (auto& ping : pings)\n    index.insert(std::make_pair(ping.obb, ping.info));",
+          "evidence_image_ids": [
+            "frames/00817.jpg",
+            "frames/00921.jpg"
+          ],
+          "timestamp_sample": 817,
+          "source_capture": {
+            "sample": "frames/00817.jpg",
+            "sample_timestamp": 817,
+            "native_frame_index": 24524,
+            "video_time_base": "1/15360",
+            "media_pts_ticks": 12557302,
+            "media_pts_seconds_exact": "6278651/7680",
+            "media_timestamp": 817.532682291667,
+            "local_pts_ticks": 12556288,
+            "local_pts_seconds_exact": "12262/15",
+            "local_timestamp": 817.466666666667,
+            "renderer_input_pts_ticks": 12556611,
+            "renderer_output_pts_ticks": 817,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "dd15e5076ae32b56556273e1072bae96fec8abf6445bba8181a725859443aef5",
+            "replayed_jpeg_sha256": "dd15e5076ae32b56556273e1072bae96fec8abf6445bba8181a725859443aef5",
+            "native_reencoded_jpeg_sha256": "dd15e5076ae32b56556273e1072bae96fec8abf6445bba8181a725859443aef5",
+            "native_decoded_frame_sha256": "02b21487ae2158a09aa2bef4421b626edd79e7af27cfc9c8bb0ac96802559b76",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 817.466666667,
+          "roi": [
+            0.0390625,
+            0.7597222222222222,
+            0.53984375,
+            0.08055555555555556
+          ],
+          "text": "// query the index for intersection with `box`\nstd::vector<value_t> result;",
+          "evidence_image_ids": [
+            "frames/00817.jpg"
+          ],
+          "timestamp_sample": 817,
+          "source_capture": {
+            "sample": "frames/00817.jpg",
+            "sample_timestamp": 817,
+            "native_frame_index": 24524,
+            "video_time_base": "1/15360",
+            "media_pts_ticks": 12557302,
+            "media_pts_seconds_exact": "6278651/7680",
+            "media_timestamp": 817.532682291667,
+            "local_pts_ticks": 12556288,
+            "local_pts_seconds_exact": "12262/15",
+            "local_timestamp": 817.466666666667,
+            "renderer_input_pts_ticks": 12556611,
+            "renderer_output_pts_ticks": 817,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "dd15e5076ae32b56556273e1072bae96fec8abf6445bba8181a725859443aef5",
+            "replayed_jpeg_sha256": "dd15e5076ae32b56556273e1072bae96fec8abf6445bba8181a725859443aef5",
+            "native_reencoded_jpeg_sha256": "dd15e5076ae32b56556273e1072bae96fec8abf6445bba8181a725859443aef5",
+            "native_decoded_frame_sha256": "02b21487ae2158a09aa2bef4421b626edd79e7af27cfc9c8bb0ac96802559b76",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        }
+      ]
+    },
+    "r02-a03": {
+      "reviewed": true,
+      "review_start": 0,
+      "review_end": 1534.955667,
+      "input_sha256": "607d52d3340bfd46b768d06eac8b0c58af0a4f0de6905ec178ba9ec46ab4f177",
+      "slide_changes": [
+        22,
+        36,
+        153,
+        223,
+        350,
+        437,
+        519,
+        569,
+        629,
+        653,
+        758,
+        801,
+        851,
+        859,
+        947,
+        966,
+        1027,
+        1045,
+        1147,
+        1156,
+        1176,
+        1183,
+        1192,
+        1197,
+        1218,
+        1520,
+        1529
+      ],
+      "boundary_evidence": [
+        {
+          "timestamp": 22,
+          "category": "slide",
+          "description": "SITICOM introduction shows the company’s transformation and network service areas.",
+          "evidence_image_ids": [
+            "frames/00021.jpg",
+            "frames/00022.jpg"
+          ]
+        },
+        {
+          "timestamp": 36,
+          "category": "slide",
+          "description": "Agenda introduces DuckDB, comparisons, data retrieval, input and export, the spatial extension, an example, and QGIS.",
+          "evidence_image_ids": [
+            "frames/00035.jpg",
+            "frames/00036.jpg"
+          ]
+        },
+        {
+          "timestamp": 153,
+          "category": "slide",
+          "description": "DuckDB usage slide lists installation, CLI and language integrations, browser execution, extensions, and single-file storage.",
+          "evidence_image_ids": [
+            "frames/00152.jpg",
+            "frames/00153.jpg"
+          ]
+        },
+        {
+          "timestamp": 223,
+          "category": "slide",
+          "description": "DuckDB details slide describes an in-process, column-oriented analytical database, multithreading, and local or remote data.",
+          "evidence_image_ids": [
+            "frames/00222.jpg",
+            "frames/00223.jpg"
+          ]
+        },
+        {
+          "timestamp": 350,
+          "category": "slide",
+          "description": "Database comparison places SQLite, DuckDB, PostgreSQL, and ClickHouse on in-process versus client/server and OLTP versus OLAP axes.",
+          "evidence_image_ids": [
+            "frames/00349.jpg",
+            "frames/00350.jpg"
+          ]
+        },
+        {
+          "timestamp": 437,
+          "category": "slide",
+          "description": "PostgreSQL/PostGIS comparison covers its client/server, multiuser, and permissions model and established geospatial integrations.",
+          "evidence_image_ids": [
+            "frames/00436.jpg",
+            "frames/00437.jpg"
+          ]
+        },
+        {
+          "timestamp": 519,
+          "category": "slide",
+          "description": "OGR2OGR comparison describes GDAL’s raster and vector support, format conversion, and filtering.",
+          "evidence_image_ids": [
+            "frames/00518.jpg",
+            "frames/00519.jpg"
+          ]
+        },
+        {
+          "timestamp": 569,
+          "category": "slide",
+          "description": "SQLite/GeoPackage comparison covers file-based storage, transactions, and GeoPackage support.",
+          "evidence_image_ids": [
+            "frames/00568.jpg",
+            "frames/00569.jpg"
+          ]
+        },
+        {
+          "timestamp": 629,
+          "category": "slide",
+          "description": "Dataframes comparison discusses R, pandas, GeoPandas, and in-process DuckDB integrations.",
+          "evidence_image_ids": [
+            "frames/00628.jpg",
+            "frames/00629.jpg"
+          ]
+        },
+        {
+          "timestamp": 653,
+          "category": "slide",
+          "description": "Modern SQL slide shows alternative SELECT syntax, DESCRIBE, EXCLUDE, and reading a CSV during table creation.",
+          "evidence_image_ids": [
+            "frames/00652.jpg",
+            "frames/00653.jpg"
+          ]
+        },
+        {
+          "timestamp": 758,
+          "category": "slide",
+          "description": "Database creation slide shows the DuckDB CLI invocation and explains persisted tables and remote views.",
+          "evidence_image_ids": [
+            "frames/00757.jpg",
+            "frames/00758.jpg"
+          ]
+        },
+        {
+          "timestamp": 801,
+          "category": "slide",
+          "description": "Input Data slide lists file formats, databases, text files, and spatial inputs.",
+          "evidence_image_ids": [
+            "frames/00800.jpg",
+            "frames/00801.jpg"
+          ]
+        },
+        {
+          "timestamp": 851,
+          "category": "slide",
+          "description": "CSV slide shows a direct SQL read, type and column-name inference, and a sample CSV.",
+          "evidence_image_ids": [
+            "frames/00850.jpg",
+            "frames/00851.jpg"
+          ]
+        },
+        {
+          "timestamp": 859,
+          "category": "slide",
+          "description": "Parquet slide compares columnar storage, compression, and HTTP range reads and mentions GeoParquet.",
+          "evidence_image_ids": [
+            "frames/00858.jpg",
+            "frames/00859.jpg"
+          ]
+        },
+        {
+          "timestamp": 947,
+          "category": "slide",
+          "description": "Data Export slide shows a SQL COPY example above a photo of ducks on the water.",
+          "evidence_image_ids": [
+            "frames/00946.jpg",
+            "frames/00947.jpg"
+          ]
+        },
+        {
+          "timestamp": 966,
+          "category": "slide",
+          "description": "DuckDB Spatial introduction gives the release context, supported libraries, and spatial limitations.",
+          "evidence_image_ids": [
+            "frames/00965.jpg",
+            "frames/00966.jpg"
+          ]
+        },
+        {
+          "timestamp": 1027,
+          "category": "slide",
+          "description": "Airport example introduces the number-of-airports-per-country question with a map of airport points.",
+          "evidence_image_ids": [
+            "frames/01026.jpg",
+            "frames/01027.jpg"
+          ]
+        },
+        {
+          "timestamp": 1045,
+          "category": "slide",
+          "description": "Example Query slide shows the spatial join, count query, and literal CSV result.",
+          "evidence_image_ids": [
+            "frames/01044.jpg",
+            "frames/01045.jpg",
+            "frames/01046.jpg"
+          ]
+        },
+        {
+          "timestamp": 1147,
+          "category": "slide",
+          "description": "QGIS Plugin slide introduces QDuckDB and its DuckDB read support.",
+          "evidence_image_ids": [
+            "frames/01146.jpg",
+            "frames/01147.jpg"
+          ]
+        },
+        {
+          "timestamp": 1156,
+          "category": "slide",
+          "description": "Conclusion highlights DuckDB’s installation, analysis and conversion use cases, multiuser limitations, and ecosystem.",
+          "evidence_image_ids": [
+            "frames/01155.jpg",
+            "frames/01156.jpg"
+          ]
+        },
+        {
+          "timestamp": 1176,
+          "category": "slide",
+          "description": "Links slide collects DuckDB, DuckDB Spatial, playground, and reference links.",
+          "evidence_image_ids": [
+            "frames/01175.jpg",
+            "frames/01176.jpg"
+          ]
+        },
+        {
+          "timestamp": 1183,
+          "category": "task_screen",
+          "description": "The browser-based DuckDB shell opens to a ready prompt and an in-memory database.",
+          "evidence_image_ids": [
+            "frames/01182.jpg",
+            "frames/01183.jpg"
+          ]
+        },
+        {
+          "timestamp": 1192,
+          "category": "result",
+          "description": "The .help command prints the DuckDB web shell command list and related links.",
+          "evidence_image_ids": [
+            "frames/01191.jpg",
+            "frames/01192.jpg"
+          ]
+        },
+        {
+          "timestamp": 1197,
+          "category": "result",
+          "description": "The .examples command prints remote Parquet scan and join examples. The first rows appear beside the camera inset and the later scroll exposes the full example.",
+          "evidence_image_ids": [
+            "frames/01196.jpg",
+            "frames/01197.jpg",
+            "frames/01198.jpg",
+            "frames/01199.jpg",
+            "frames/01218.jpg"
+          ]
+        },
+        {
+          "timestamp": 1218,
+          "category": "result",
+          "description": "The remote customer Parquet count query finishes and its result table appears. The camera inset initially covers the value, which is visible later.",
+          "evidence_image_ids": [
+            "frames/01217.jpg",
+            "frames/01218.jpg",
+            "frames/01219.jpg",
+            "frames/01441.jpg"
+          ]
+        },
+        {
+          "timestamp": 1520,
+          "category": "return",
+          "description": "The feed returns to the Links slide in the browser PDF viewer after the DuckDB shell demonstration.",
+          "evidence_image_ids": [
+            "frames/01519.jpg",
+            "frames/01520.jpg"
+          ]
+        },
+        {
+          "timestamp": 1529,
+          "category": "credits",
+          "description": "Conference end card thanks its sponsors and displays their names and logos.",
+          "evidence_image_ids": [
+            "frames/01528.jpg",
+            "frames/01529.jpg"
+          ]
+        }
+      ],
+      "ocr": [
+        {
+          "timestamp": 653.48,
+          "roi": [
+            0.28671875,
+            0.23194444444444445,
+            0.3125,
+            0.09722222222222222
+          ],
+          "text": "SELECT * FROM my_table;\nFROM my_table;",
+          "evidence_image_ids": [
+            "frames/00653.jpg"
+          ],
+          "timestamp_sample": 653,
+          "source_capture": {
+            "sample": "frames/00653.jpg",
+            "sample_timestamp": 653,
+            "native_frame_index": 32674,
+            "video_time_base": "1/12800",
+            "media_pts_ticks": 8365056,
+            "media_pts_seconds_exact": "16338/25",
+            "media_timestamp": 653.52,
+            "local_pts_ticks": 8364544,
+            "local_pts_seconds_exact": "16337/25",
+            "local_timestamp": 653.48,
+            "renderer_input_pts_ticks": 8364544,
+            "renderer_output_pts_ticks": 653,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "cee34e5b3ca73b867c1e699d9bd2604dc8ebaea90bb013e8940f24e22ce6771b",
+            "replayed_jpeg_sha256": "cee34e5b3ca73b867c1e699d9bd2604dc8ebaea90bb013e8940f24e22ce6771b",
+            "native_reencoded_jpeg_sha256": "cee34e5b3ca73b867c1e699d9bd2604dc8ebaea90bb013e8940f24e22ce6771b",
+            "native_decoded_frame_sha256": "63675d60466e7d2ff73f85cc667444ea64c951aa89d9fb48b07b0288b43b2a9a",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 653.48,
+          "roi": [
+            0.28671875,
+            0.4791666666666667,
+            0.2453125,
+            0.044444444444444446
+          ],
+          "text": "DESCRIBE my_table;",
+          "evidence_image_ids": [
+            "frames/00653.jpg"
+          ],
+          "timestamp_sample": 653,
+          "source_capture": {
+            "sample": "frames/00653.jpg",
+            "sample_timestamp": 653,
+            "native_frame_index": 32674,
+            "video_time_base": "1/12800",
+            "media_pts_ticks": 8365056,
+            "media_pts_seconds_exact": "16338/25",
+            "media_timestamp": 653.52,
+            "local_pts_ticks": 8364544,
+            "local_pts_seconds_exact": "16337/25",
+            "local_timestamp": 653.48,
+            "renderer_input_pts_ticks": 8364544,
+            "renderer_output_pts_ticks": 653,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "cee34e5b3ca73b867c1e699d9bd2604dc8ebaea90bb013e8940f24e22ce6771b",
+            "replayed_jpeg_sha256": "cee34e5b3ca73b867c1e699d9bd2604dc8ebaea90bb013e8940f24e22ce6771b",
+            "native_reencoded_jpeg_sha256": "cee34e5b3ca73b867c1e699d9bd2604dc8ebaea90bb013e8940f24e22ce6771b",
+            "native_decoded_frame_sha256": "63675d60466e7d2ff73f85cc667444ea64c951aa89d9fb48b07b0288b43b2a9a",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 653.48,
+          "roi": [
+            0.22109375,
+            0.6513888888888889,
+            0.53125,
+            0.044444444444444446
+          ],
+          "text": "SELECT * EXCLUDE (city) FROM addresses;",
+          "evidence_image_ids": [
+            "frames/00653.jpg"
+          ],
+          "timestamp_sample": 653,
+          "source_capture": {
+            "sample": "frames/00653.jpg",
+            "sample_timestamp": 653,
+            "native_frame_index": 32674,
+            "video_time_base": "1/12800",
+            "media_pts_ticks": 8365056,
+            "media_pts_seconds_exact": "16338/25",
+            "media_timestamp": 653.52,
+            "local_pts_ticks": 8364544,
+            "local_pts_seconds_exact": "16337/25",
+            "local_timestamp": 653.48,
+            "renderer_input_pts_ticks": 8364544,
+            "renderer_output_pts_ticks": 653,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "cee34e5b3ca73b867c1e699d9bd2604dc8ebaea90bb013e8940f24e22ce6771b",
+            "replayed_jpeg_sha256": "cee34e5b3ca73b867c1e699d9bd2604dc8ebaea90bb013e8940f24e22ce6771b",
+            "native_reencoded_jpeg_sha256": "cee34e5b3ca73b867c1e699d9bd2604dc8ebaea90bb013e8940f24e22ce6771b",
+            "native_decoded_frame_sha256": "63675d60466e7d2ff73f85cc667444ea64c951aa89d9fb48b07b0288b43b2a9a",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 653.48,
+          "roi": [
+            0.1890625,
+            0.825,
+            0.66484375,
+            0.044444444444444446
+          ],
+          "text": "CREATE TABLE my_table AS SELECT * FROM 'demo.csv'",
+          "evidence_image_ids": [
+            "frames/00653.jpg"
+          ],
+          "timestamp_sample": 653,
+          "source_capture": {
+            "sample": "frames/00653.jpg",
+            "sample_timestamp": 653,
+            "native_frame_index": 32674,
+            "video_time_base": "1/12800",
+            "media_pts_ticks": 8365056,
+            "media_pts_seconds_exact": "16338/25",
+            "media_timestamp": 653.52,
+            "local_pts_ticks": 8364544,
+            "local_pts_seconds_exact": "16337/25",
+            "local_timestamp": 653.48,
+            "renderer_input_pts_ticks": 8364544,
+            "renderer_output_pts_ticks": 653,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "cee34e5b3ca73b867c1e699d9bd2604dc8ebaea90bb013e8940f24e22ce6771b",
+            "replayed_jpeg_sha256": "cee34e5b3ca73b867c1e699d9bd2604dc8ebaea90bb013e8940f24e22ce6771b",
+            "native_reencoded_jpeg_sha256": "cee34e5b3ca73b867c1e699d9bd2604dc8ebaea90bb013e8940f24e22ce6771b",
+            "native_decoded_frame_sha256": "63675d60466e7d2ff73f85cc667444ea64c951aa89d9fb48b07b0288b43b2a9a",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 758.48,
+          "roi": [
+            0.240625,
+            0.2847222222222222,
+            0.38046875,
+            0.05138888888888889
+          ],
+          "text": "duckdb my_datenbank.duckdb",
+          "evidence_image_ids": [
+            "frames/00758.jpg"
+          ],
+          "timestamp_sample": 758,
+          "source_capture": {
+            "sample": "frames/00758.jpg",
+            "sample_timestamp": 758,
+            "native_frame_index": 37924,
+            "video_time_base": "1/12800",
+            "media_pts_ticks": 9709056,
+            "media_pts_seconds_exact": "18963/25",
+            "media_timestamp": 758.52,
+            "local_pts_ticks": 9708544,
+            "local_pts_seconds_exact": "18962/25",
+            "local_timestamp": 758.48,
+            "renderer_input_pts_ticks": 9708544,
+            "renderer_output_pts_ticks": 758,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "9dbdef5e1f76b1f213342393187830454e0fcce2ab68caabb30a684d5d53dc2a",
+            "replayed_jpeg_sha256": "9dbdef5e1f76b1f213342393187830454e0fcce2ab68caabb30a684d5d53dc2a",
+            "native_reencoded_jpeg_sha256": "9dbdef5e1f76b1f213342393187830454e0fcce2ab68caabb30a684d5d53dc2a",
+            "native_decoded_frame_sha256": "e0701a9598dd8e2bc96f59537bb30570285fb9556220f593b22743b287424fba",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 851.48,
+          "roi": [
+            0.12890625,
+            0.2375,
+            0.3265625,
+            0.04722222222222222
+          ],
+          "text": "SELECT * FROM 'demo.csv'",
+          "evidence_image_ids": [
+            "frames/00851.jpg"
+          ],
+          "timestamp_sample": 851,
+          "source_capture": {
+            "sample": "frames/00851.jpg",
+            "sample_timestamp": 851,
+            "native_frame_index": 42574,
+            "video_time_base": "1/12800",
+            "media_pts_ticks": 10899456,
+            "media_pts_seconds_exact": "21288/25",
+            "media_timestamp": 851.52,
+            "local_pts_ticks": 10898944,
+            "local_pts_seconds_exact": "21287/25",
+            "local_timestamp": 851.48,
+            "renderer_input_pts_ticks": 10898944,
+            "renderer_output_pts_ticks": 851,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "83eb2ad41d34061c8a8d34808e815411656d9de1786751c5f1778eb36911866e",
+            "replayed_jpeg_sha256": "83eb2ad41d34061c8a8d34808e815411656d9de1786751c5f1778eb36911866e",
+            "native_reencoded_jpeg_sha256": "83eb2ad41d34061c8a8d34808e815411656d9de1786751c5f1778eb36911866e",
+            "native_decoded_frame_sha256": "47239791fb0a54ca3d5a130c1e0a43deda0a077780fcd3e18a40a84318892776",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 947.48,
+          "roi": [
+            0.65234375,
+            0.3625,
+            0.1875,
+            0.029166666666666667
+          ],
+          "text": "COPY places TO 'places.csv'",
+          "evidence_image_ids": [
+            "frames/00947.jpg"
+          ],
+          "timestamp_sample": 947,
+          "source_capture": {
+            "sample": "frames/00947.jpg",
+            "sample_timestamp": 947,
+            "native_frame_index": 47374,
+            "video_time_base": "1/12800",
+            "media_pts_ticks": 12128256,
+            "media_pts_seconds_exact": "23688/25",
+            "media_timestamp": 947.52,
+            "local_pts_ticks": 12127744,
+            "local_pts_seconds_exact": "23687/25",
+            "local_timestamp": 947.48,
+            "renderer_input_pts_ticks": 12127744,
+            "renderer_output_pts_ticks": 947,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "ea49ddb9dcfea90c7db928b5add2dcf7ac5baaa2cce1132f4f476e4816baa527",
+            "replayed_jpeg_sha256": "ea49ddb9dcfea90c7db928b5add2dcf7ac5baaa2cce1132f4f476e4816baa527",
+            "native_reencoded_jpeg_sha256": "ea49ddb9dcfea90c7db928b5add2dcf7ac5baaa2cce1132f4f476e4816baa527",
+            "native_decoded_frame_sha256": "ceee54992cbc6b3c680ff898163801629d48bc6172935d8335edace058914ee7",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 1046.48,
+          "roi": [
+            0.009375,
+            0.15,
+            0.69453125,
+            0.7666666666666667
+          ],
+          "text": "COPY (\n    SELECT\n        country_name,\n        count(*) AS count\n    FROM\n        (\n            SELECT\n                a.name AS airport_name,\n                c.name AS country_name\n            FROM\n                ST_Read (\n                    'data/natural_earth_vector.gpkg',\n                    layer = 'ne_10m_airports'\n                ) AS a\n            JOIN ST_Read ('data/countries/ne_10m_admin_0_countries.shp') AS c\n            ON st_within(a.geom, c.geom)\n        )\n    GROUP BY\n        country_name\n    ORDER BY\n        count DESC\n) TO 'results.csv';",
+          "evidence_image_ids": [
+            "frames/01046.jpg"
+          ],
+          "timestamp_sample": 1046,
+          "source_capture": {
+            "sample": "frames/01046.jpg",
+            "sample_timestamp": 1046,
+            "native_frame_index": 52324,
+            "video_time_base": "1/12800",
+            "media_pts_ticks": 13395456,
+            "media_pts_seconds_exact": "26163/25",
+            "media_timestamp": 1046.52,
+            "local_pts_ticks": 13394944,
+            "local_pts_seconds_exact": "26162/25",
+            "local_timestamp": 1046.48,
+            "renderer_input_pts_ticks": 13394944,
+            "renderer_output_pts_ticks": 1046,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "b4c27177213b2cfd15e5613159475e496cd4e61cf07df50cee71c6c0db1476b1",
+            "replayed_jpeg_sha256": "b4c27177213b2cfd15e5613159475e496cd4e61cf07df50cee71c6c0db1476b1",
+            "native_reencoded_jpeg_sha256": "b4c27177213b2cfd15e5613159475e496cd4e61cf07df50cee71c6c0db1476b1",
+            "native_decoded_frame_sha256": "93bc130a40601e396d3942118dd8a062bde6669d5575b2fa2e76c448d62cb379",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 1046.48,
+          "roi": [
+            0.7703125,
+            0.32222222222222224,
+            0.184375,
+            0.3111111111111111
+          ],
+          "text": "country_name,count\nUnited States of\nAmerica,133\nIndia,50\nCanada,45\nChina,39\nMexico,39\nBrazil,30",
+          "evidence_image_ids": [
+            "frames/01046.jpg"
+          ],
+          "timestamp_sample": 1046,
+          "source_capture": {
+            "sample": "frames/01046.jpg",
+            "sample_timestamp": 1046,
+            "native_frame_index": 52324,
+            "video_time_base": "1/12800",
+            "media_pts_ticks": 13395456,
+            "media_pts_seconds_exact": "26163/25",
+            "media_timestamp": 1046.52,
+            "local_pts_ticks": 13394944,
+            "local_pts_seconds_exact": "26162/25",
+            "local_timestamp": 1046.48,
+            "renderer_input_pts_ticks": 13394944,
+            "renderer_output_pts_ticks": 1046,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "b4c27177213b2cfd15e5613159475e496cd4e61cf07df50cee71c6c0db1476b1",
+            "replayed_jpeg_sha256": "b4c27177213b2cfd15e5613159475e496cd4e61cf07df50cee71c6c0db1476b1",
+            "native_reencoded_jpeg_sha256": "b4c27177213b2cfd15e5613159475e496cd4e61cf07df50cee71c6c0db1476b1",
+            "native_decoded_frame_sha256": "93bc130a40601e396d3942118dd8a062bde6669d5575b2fa2e76c448d62cb379",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 1192.48,
+          "roi": [
+            0.05546875,
+            0.2916666666666667,
+            0.26484375,
+            0.3416666666666667
+          ],
+          "text": "Commands:\n.clear                 Clear the shell.\n.examples              Example queries.\n.features              Shell features.\n.files list            List all files.\n.files add             Add files.\n.files download $FILE  Download a file.\n.files drop            Drop all files.\n.files drop $FILE      Drop a single file.\n.files track $FILE     Collect file statistics.\n.files paging $FILE    Show file paging.\n.files reads $FILE     Show file reads.\n.open $FILE            Open database file.\n.reset                 Reset the shell.\n.timer on|off          Turn query timer on or off.\n.output on|off         Print results on or off.",
+          "evidence_image_ids": [
+            "frames/01192.jpg"
+          ],
+          "timestamp_sample": 1192,
+          "source_capture": {
+            "sample": "frames/01192.jpg",
+            "sample_timestamp": 1192,
+            "native_frame_index": 59624,
+            "video_time_base": "1/12800",
+            "media_pts_ticks": 15264256,
+            "media_pts_seconds_exact": "29813/25",
+            "media_timestamp": 1192.52,
+            "local_pts_ticks": 15263744,
+            "local_pts_seconds_exact": "29812/25",
+            "local_timestamp": 1192.48,
+            "renderer_input_pts_ticks": 15263744,
+            "renderer_output_pts_ticks": 1192,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "3853fad45a5868ccf994bd507ea2b6b4759c706d903c7959f024fbbd7bb1013a",
+            "replayed_jpeg_sha256": "3853fad45a5868ccf994bd507ea2b6b4759c706d903c7959f024fbbd7bb1013a",
+            "native_reencoded_jpeg_sha256": "3853fad45a5868ccf994bd507ea2b6b4759c706d903c7959f024fbbd7bb1013a",
+            "native_decoded_frame_sha256": "4ab8452cbab8a63a94a9a6f6f4cf87e1e917726b3b37bd2d5e4aa0958e1e7bde",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 1200.48,
+          "roi": [
+            0.05546875,
+            0.5291666666666667,
+            0.5046875,
+            0.10972222222222222
+          ],
+          "text": "Remote Parquet Scans:\n  SELECT count(*) FROM 'https://shell.duckdb.org/data/tpch/0_01/parquet/lineitem.parquet';\n  SELECT count(*) FROM 'https://shell.duckdb.org/data/tpch/0_01/parquet/customer.parquet';\n  SELECT avg(c_acctbal) FROM 'https://shell.duckdb.org/data/tpch/0_01/parquet/customer.parquet';\n  SELECT * FROM 'https://shell.duckdb.org/data/tpch/0_01/parquet/orders.parquet' LIMIT 10;",
+          "evidence_image_ids": [
+            "frames/01200.jpg",
+            "frames/01201.jpg"
+          ],
+          "timestamp_sample": 1200,
+          "source_capture": {
+            "sample": "frames/01200.jpg",
+            "sample_timestamp": 1200,
+            "native_frame_index": 60024,
+            "video_time_base": "1/12800",
+            "media_pts_ticks": 15366656,
+            "media_pts_seconds_exact": "30013/25",
+            "media_timestamp": 1200.52,
+            "local_pts_ticks": 15366144,
+            "local_pts_seconds_exact": "30012/25",
+            "local_timestamp": 1200.48,
+            "renderer_input_pts_ticks": 15366144,
+            "renderer_output_pts_ticks": 1200,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "c29ecca6471348f8c2aeadfbabd95204a8ba36c27a0418e87f0867645798eb00",
+            "replayed_jpeg_sha256": "c29ecca6471348f8c2aeadfbabd95204a8ba36c27a0418e87f0867645798eb00",
+            "native_reencoded_jpeg_sha256": "c29ecca6471348f8c2aeadfbabd95204a8ba36c27a0418e87f0867645798eb00",
+            "native_decoded_frame_sha256": "a8426d941639dd83f80f3f6749c37c2ea1e3fdb6254f2bf4f657e97727fec456",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 1218.48,
+          "roi": [
+            0.06640625,
+            0.5527777777777778,
+            0.3765625,
+            0.09166666666666666
+          ],
+          "text": "SELECT n_name, count(*)\nFROM 'https://shell.duckdb.org/data/tpch/0_01/parquet/customer.parquet',\n     'https://shell.duckdb.org/data/tpch/0_01/parquet/nation.parquet'\nWHERE c_nationkey = n_nationkey GROUP BY n_name;",
+          "evidence_image_ids": [
+            "frames/01218.jpg"
+          ],
+          "timestamp_sample": 1218,
+          "source_capture": {
+            "sample": "frames/01218.jpg",
+            "sample_timestamp": 1218,
+            "native_frame_index": 60924,
+            "video_time_base": "1/12800",
+            "media_pts_ticks": 15597056,
+            "media_pts_seconds_exact": "30463/25",
+            "media_timestamp": 1218.52,
+            "local_pts_ticks": 15596544,
+            "local_pts_seconds_exact": "30462/25",
+            "local_timestamp": 1218.48,
+            "renderer_input_pts_ticks": 15596544,
+            "renderer_output_pts_ticks": 1218,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "ab7cf1cf22f204358bf05f3c675ea98fd5dda591f4ca0af2c52d8ee2ee31575c",
+            "replayed_jpeg_sha256": "ab7cf1cf22f204358bf05f3c675ea98fd5dda591f4ca0af2c52d8ee2ee31575c",
+            "native_reencoded_jpeg_sha256": "ab7cf1cf22f204358bf05f3c675ea98fd5dda591f4ca0af2c52d8ee2ee31575c",
+            "native_decoded_frame_sha256": "7cb0201fcf971bf599d8f4fb65df5aa58402f20d9e3d71684ffa8fdb01db69c0",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 1218.48,
+          "roi": [
+            0.10234375,
+            0.6583333333333333,
+            0.46328125,
+            0.029166666666666667
+          ],
+          "text": "SELECT count(*) FROM 'https://shell.duckdb.org/data/tpch/0_01/parquet/customer.parquet';",
+          "evidence_image_ids": [
+            "frames/01218.jpg"
+          ],
+          "timestamp_sample": 1218,
+          "source_capture": {
+            "sample": "frames/01218.jpg",
+            "sample_timestamp": 1218,
+            "native_frame_index": 60924,
+            "video_time_base": "1/12800",
+            "media_pts_ticks": 15597056,
+            "media_pts_seconds_exact": "30463/25",
+            "media_timestamp": 1218.52,
+            "local_pts_ticks": 15596544,
+            "local_pts_seconds_exact": "30462/25",
+            "local_timestamp": 1218.48,
+            "renderer_input_pts_ticks": 15596544,
+            "renderer_output_pts_ticks": 1218,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "ab7cf1cf22f204358bf05f3c675ea98fd5dda591f4ca0af2c52d8ee2ee31575c",
+            "replayed_jpeg_sha256": "ab7cf1cf22f204358bf05f3c675ea98fd5dda591f4ca0af2c52d8ee2ee31575c",
+            "native_reencoded_jpeg_sha256": "ab7cf1cf22f204358bf05f3c675ea98fd5dda591f4ca0af2c52d8ee2ee31575c",
+            "native_decoded_frame_sha256": "7cb0201fcf971bf599d8f4fb65df5aa58402f20d9e3d71684ffa8fdb01db69c0",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 1441.48,
+          "roi": [
+            0.06640625,
+            0.6361111111111111,
+            0.065625,
+            0.06666666666666667
+          ],
+          "text": "count_star()\n1500",
+          "evidence_image_ids": [
+            "frames/01441.jpg",
+            "frames/01442.jpg"
+          ],
+          "timestamp_sample": 1441,
+          "source_capture": {
+            "sample": "frames/01441.jpg",
+            "sample_timestamp": 1441,
+            "native_frame_index": 72074,
+            "video_time_base": "1/12800",
+            "media_pts_ticks": 18451456,
+            "media_pts_seconds_exact": "36038/25",
+            "media_timestamp": 1441.52,
+            "local_pts_ticks": 18450944,
+            "local_pts_seconds_exact": "36037/25",
+            "local_timestamp": 1441.48,
+            "renderer_input_pts_ticks": 18450944,
+            "renderer_output_pts_ticks": 1441,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "739367465de1230ed58539634c09da3b70c075aeec4aa3160428eaf30d31bf8b",
+            "replayed_jpeg_sha256": "739367465de1230ed58539634c09da3b70c075aeec4aa3160428eaf30d31bf8b",
+            "native_reencoded_jpeg_sha256": "739367465de1230ed58539634c09da3b70c075aeec4aa3160428eaf30d31bf8b",
+            "native_decoded_frame_sha256": "f36600334ecaa327ac8218e00af262f31e43fa62999ac7c1548d3fec85a94395",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        }
+      ]
+    },
+    "r02-a04": {
+      "reviewed": true,
+      "review_start": 0,
+      "review_end": 1172.779667,
+      "input_sha256": "3049513dbfc70e91efa760303b62e17cff5c165a2142e57780c844aecb6c2c82",
+      "slide_changes": [
+        3,
+        20,
+        79,
+        114,
+        168,
+        193,
+        207,
+        246,
+        295,
+        346,
+        367,
+        392,
+        400,
+        410,
+        420,
+        424,
+        440,
+        464,
+        508,
+        530,
+        576,
+        604,
+        623,
+        637,
+        647,
+        660,
+        672,
+        685,
+        690,
+        694,
+        705,
+        715,
+        733,
+        749,
+        762,
+        770,
+        772,
+        781,
+        784,
+        788,
+        791,
+        797,
+        825,
+        831,
+        837,
+        841,
+        846,
+        850,
+        853,
+        859,
+        874,
+        876,
+        885,
+        968,
+        995,
+        1009,
+        1022,
+        1037,
+        1050,
+        1088,
+        1101,
+        1120,
+        1122,
+        1150,
+        1162,
+        1165,
+        1170
+      ],
+      "boundary_evidence": [
+        {
+          "timestamp": 3,
+          "category": "introduction",
+          "description": "Conference title card adds the talk title, Jin Igarashi, July 18, 2025, and the GeoCat livestream sponsor.",
+          "evidence_image_ids": [
+            "frames/00002.jpg",
+            "frames/00003.jpg"
+          ]
+        },
+        {
+          "timestamp": 20,
+          "category": "slide",
+          "description": "Jin Igarashi bio with his UNDP role, University of Leeds degree, GIS for Water and UNDP GeoHub projects.",
+          "evidence_image_ids": [
+            "frames/00019.jpg",
+            "frames/00020.jpg"
+          ]
+        },
+        {
+          "timestamp": 79,
+          "category": "slide",
+          "description": "mapbox-gl-draw slide explains its use for drawing in Mapbox and MapLibre and documents issues with MapLibre.",
+          "evidence_image_ids": [
+            "frames/00078.jpg",
+            "frames/00079.jpg"
+          ]
+        },
+        {
+          "timestamp": 114,
+          "category": "slide",
+          "description": "Terra Draw diagram shows the unified drawing API and adapters for six map libraries.",
+          "evidence_image_ids": [
+            "frames/00113.jpg",
+            "frames/00114.jpg"
+          ]
+        },
+        {
+          "timestamp": 168,
+          "category": "slide",
+          "description": "More details about Terra Draw slide links to James Milner’s conference talk and shows its event listing.",
+          "evidence_image_ids": [
+            "frames/00167.jpg",
+            "frames/00168.jpg"
+          ]
+        },
+        {
+          "timestamp": 193,
+          "category": "slide",
+          "description": "What is maplibre-gl-terradraw? section opener.",
+          "evidence_image_ids": [
+            "frames/00192.jpg",
+            "frames/00193.jpg"
+          ]
+        },
+        {
+          "timestamp": 207,
+          "category": "slide",
+          "description": "What controls are available? diagram presents the drawing and measurement controls with their roles.",
+          "evidence_image_ids": [
+            "frames/00206.jpg",
+            "frames/00207.jpg"
+          ]
+        },
+        {
+          "timestamp": 246,
+          "category": "slide",
+          "description": "What features are available? table lists drawing and editing modes and marks the plugin’s own modes.",
+          "evidence_image_ids": [
+            "frames/00245.jpg",
+            "frames/00246.jpg"
+          ]
+        },
+        {
+          "timestamp": 295,
+          "category": "slide",
+          "description": "Motivation to develop the plugin slide lists the integration work for buttons, icons and map-library support.",
+          "evidence_image_ids": [
+            "frames/00294.jpg",
+            "frames/00295.jpg"
+          ]
+        },
+        {
+          "timestamp": 346,
+          "category": "slide",
+          "description": "Get yourself started slide shows where to choose a control and its modes.",
+          "evidence_image_ids": [
+            "frames/00345.jpg",
+            "frames/00346.jpg"
+          ]
+        },
+        {
+          "timestamp": 367,
+          "category": "slide",
+          "description": "Simple installation slide shows JavaScript imports, map setup and the call that adds the drawing control.",
+          "evidence_image_ids": [
+            "frames/00366.jpg",
+            "frames/00367.jpg"
+          ]
+        },
+        {
+          "timestamp": 392,
+          "category": "slide",
+          "description": "Map screenshot points out the plugin’s preconfigured toolbar icons and buttons.",
+          "evidence_image_ids": [
+            "frames/00391.jpg",
+            "frames/00392.jpg"
+          ]
+        },
+        {
+          "timestamp": 400,
+          "category": "slide",
+          "description": "Measuring distance, area and elevation section opener.",
+          "evidence_image_ids": [
+            "frames/00399.jpg",
+            "frames/00400.jpg"
+          ]
+        },
+        {
+          "timestamp": 410,
+          "category": "slide",
+          "description": "Measure control slide shows JavaScript configuring the measurement control, units, precision and elevation.",
+          "evidence_image_ids": [
+            "frames/00409.jpg",
+            "frames/00410.jpg"
+          ]
+        },
+        {
+          "timestamp": 420,
+          "category": "return",
+          "description": "Returns to the Simple installation JavaScript slide.",
+          "evidence_image_ids": [
+            "frames/00419.jpg",
+            "frames/00420.jpg"
+          ]
+        },
+        {
+          "timestamp": 424,
+          "category": "return",
+          "description": "Returns to the Measure control JavaScript slide after the brief map-slide flash.",
+          "evidence_image_ids": [
+            "frames/00422.jpg",
+            "frames/00423.jpg",
+            "frames/00424.jpg",
+            "frames/00425.jpg"
+          ]
+        },
+        {
+          "timestamp": 440,
+          "category": "slide",
+          "description": "Example map shows point elevation, line distance and elevation, polygon area, and measurement settings.",
+          "evidence_image_ids": [
+            "frames/00439.jpg",
+            "frames/00440.jpg"
+          ]
+        },
+        {
+          "timestamp": 464,
+          "category": "slide",
+          "description": "Dynamic altitude diagram connects the plugin, @watergis/terrain-rgb and raster DEM tiles, with an AWS Terrain Tiles example.",
+          "evidence_image_ids": [
+            "frames/00463.jpg",
+            "frames/00464.jpg"
+          ]
+        },
+        {
+          "timestamp": 508,
+          "category": "slide",
+          "description": "Bring your own raster-dem shows a custom TerrainRGB tile configuration and a Rwanda elevation map.",
+          "evidence_image_ids": [
+            "frames/00507.jpg",
+            "frames/00508.jpg"
+          ]
+        },
+        {
+          "timestamp": 530,
+          "category": "slide",
+          "description": "Access to Terra Draw API shows getTerraDrawInstance() and how to supply a GeoJSON feature.",
+          "evidence_image_ids": [
+            "frames/00529.jpg",
+            "frames/00530.jpg"
+          ]
+        },
+        {
+          "timestamp": 576,
+          "category": "slide",
+          "description": "Terra Draw API documentation index and list of available modules.",
+          "evidence_image_ids": [
+            "frames/00575.jpg",
+            "frames/00576.jpg"
+          ]
+        },
+        {
+          "timestamp": 604,
+          "category": "slide",
+          "description": "Examples slide shows the gallery of sample maps and use cases.",
+          "evidence_image_ids": [
+            "frames/00603.jpg",
+            "frames/00604.jpg"
+          ]
+        },
+        {
+          "timestamp": 623,
+          "category": "slide",
+          "description": "Live demo slide supplies the demo URL and QR code.",
+          "evidence_image_ids": [
+            "frames/00622.jpg",
+            "frames/00623.jpg"
+          ]
+        },
+        {
+          "timestamp": 637,
+          "category": "task_screen",
+          "description": "The live demo settles on Default Control with the drawing toolbar and blue sample shapes.",
+          "evidence_image_ids": [
+            "frames/00635.jpg",
+            "frames/00636.jpg",
+            "frames/00637.jpg",
+            "frames/00638.jpg"
+          ]
+        },
+        {
+          "timestamp": 647,
+          "category": "task_screen",
+          "description": "Measure Control is active and the sample map shows readable distance, elevation and area measurements.",
+          "evidence_image_ids": [
+            "frames/00645.jpg",
+            "frames/00646.jpg",
+            "frames/00647.jpg",
+            "frames/00648.jpg"
+          ]
+        },
+        {
+          "timestamp": 660,
+          "category": "result",
+          "description": "A newly placed point in Ireland displays its altitude beside the existing point.",
+          "evidence_image_ids": [
+            "frames/00658.jpg",
+            "frames/00659.jpg",
+            "frames/00660.jpg",
+            "frames/00661.jpg"
+          ]
+        },
+        {
+          "timestamp": 672,
+          "category": "result",
+          "description": "The new multisegment line across Central Asia has its final shape, distance and vertex elevations.",
+          "evidence_image_ids": [
+            "frames/00670.jpg",
+            "frames/00671.jpg",
+            "frames/00672.jpg",
+            "frames/00673.jpg"
+          ]
+        },
+        {
+          "timestamp": 685,
+          "category": "result",
+          "description": "A newly drawn polygon over Central and South Asia displays its settled area measurement.",
+          "evidence_image_ids": [
+            "frames/00683.jpg",
+            "frames/00684.jpg",
+            "frames/00685.jpg",
+            "frames/00686.jpg",
+            "frames/00687.jpg"
+          ]
+        },
+        {
+          "timestamp": 690,
+          "category": "result",
+          "description": "Delete all leaves the measurement map clear of geometry and measurement labels.",
+          "evidence_image_ids": [
+            "frames/00686.jpg",
+            "frames/00687.jpg",
+            "frames/00688.jpg",
+            "frames/00689.jpg",
+            "frames/00690.jpg",
+            "frames/00691.jpg"
+          ]
+        },
+        {
+          "timestamp": 694,
+          "category": "result",
+          "description": "The new rectangle over central and eastern Europe settles with its area label.",
+          "evidence_image_ids": [
+            "frames/00692.jpg",
+            "frames/00693.jpg",
+            "frames/00694.jpg",
+            "frames/00695.jpg",
+            "frames/00696.jpg"
+          ]
+        },
+        {
+          "timestamp": 705,
+          "category": "result",
+          "description": "The newly drawn circle over north-central Africa settles with its area label.",
+          "evidence_image_ids": [
+            "frames/00703.jpg",
+            "frames/00704.jpg",
+            "frames/00705.jpg",
+            "frames/00706.jpg"
+          ]
+        },
+        {
+          "timestamp": 715,
+          "category": "result",
+          "description": "The closed polygon covering part of the Arabian Peninsula and Iran settles with an area label.",
+          "evidence_image_ids": [
+            "frames/00713.jpg",
+            "frames/00714.jpg",
+            "frames/00715.jpg",
+            "frames/00716.jpg"
+          ]
+        },
+        {
+          "timestamp": 733,
+          "category": "geometry",
+          "description": "The angled rectangle over Central Asia remains in place after its drawing cursor leaves the corner. The result is visible before area labels begin appearing.",
+          "evidence_image_ids": [
+            "frames/00731.jpg",
+            "frames/00732.jpg",
+            "frames/00733.jpg",
+            "frames/00734.jpg",
+            "frames/00735.jpg",
+            "frames/00741.jpg"
+          ],
+          "bracket_seconds": [
+            732,
+            733
+          ]
+        },
+        {
+          "timestamp": 749,
+          "category": "result",
+          "description": "The placed angled rectangle gains its final area readout, 1751745.35 km².",
+          "evidence_image_ids": [
+            "frames/00745.jpg",
+            "frames/00746.jpg",
+            "frames/00747.jpg",
+            "frames/00748.jpg",
+            "frames/00749.jpg",
+            "frames/00750.jpg",
+            "frames/00772.jpg"
+          ]
+        },
+        {
+          "timestamp": 762,
+          "category": "result",
+          "description": "The sensor-shaped sector off northwestern Africa settles with its area measurement.",
+          "evidence_image_ids": [
+            "frames/00755.jpg",
+            "frames/00760.jpg",
+            "frames/00761.jpg",
+            "frames/00762.jpg",
+            "frames/00763.jpg"
+          ]
+        },
+        {
+          "timestamp": 770,
+          "category": "result",
+          "description": "The drawn sector over northern India settles with its final area label.",
+          "evidence_image_ids": [
+            "frames/00765.jpg",
+            "frames/00767.jpg",
+            "frames/00768.jpg",
+            "frames/00769.jpg",
+            "frames/00770.jpg"
+          ]
+        },
+        {
+          "timestamp": 772,
+          "category": "result",
+          "description": "Selecting the circle reveals its editing handles and readable selected-feature GeoJSON.",
+          "evidence_image_ids": [
+            "frames/00770.jpg",
+            "frames/00771.jpg",
+            "frames/00772.jpg",
+            "frames/00773.jpg"
+          ]
+        },
+        {
+          "timestamp": 781,
+          "category": "result",
+          "description": "The selected circle settles in its new position and displays a revised area.",
+          "evidence_image_ids": [
+            "frames/00778.jpg",
+            "frames/00779.jpg",
+            "frames/00780.jpg",
+            "frames/00781.jpg",
+            "frames/00782.jpg",
+            "frames/00783.jpg"
+          ]
+        },
+        {
+          "timestamp": 784,
+          "category": "result",
+          "description": "The vertex edit leaves a persistent pointed extension on the circle’s upper-right edge and changes its displayed area.",
+          "evidence_image_ids": [
+            "frames/00782.jpg",
+            "frames/00783.jpg",
+            "frames/00784.jpg",
+            "frames/00785.jpg",
+            "frames/00787.jpg"
+          ]
+        },
+        {
+          "timestamp": 788,
+          "category": "result",
+          "description": "Selecting the edited circle displays updated GeoJSON coordinates.",
+          "evidence_image_ids": [
+            "frames/00787.jpg",
+            "frames/00788.jpg",
+            "frames/00789.jpg"
+          ]
+        },
+        {
+          "timestamp": 791,
+          "category": "result",
+          "description": "Delete selection removes the edited circle while the other features remain.",
+          "evidence_image_ids": [
+            "frames/00789.jpg",
+            "frames/00790.jpg",
+            "frames/00791.jpg",
+            "frames/00792.jpg",
+            "frames/00796.jpg"
+          ]
+        },
+        {
+          "timestamp": 797,
+          "category": "result",
+          "description": "Delete all clears the other measured features from the map.",
+          "evidence_image_ids": [
+            "frames/00796.jpg",
+            "frames/00797.jpg",
+            "frames/00798.jpg"
+          ]
+        },
+        {
+          "timestamp": 825,
+          "category": "task_screen",
+          "description": "Mode Selection opens the persistent configuration panel with the active modes and bulk actions.",
+          "evidence_image_ids": [
+            "frames/00824.jpg",
+            "frames/00825.jpg",
+            "frames/00826.jpg"
+          ]
+        },
+        {
+          "timestamp": 831,
+          "category": "result",
+          "description": "Deleting all enabled modes removes the drawing toolbar and leaves the empty selection configuration.",
+          "evidence_image_ids": [
+            "frames/00830.jpg",
+            "frames/00831.jpg",
+            "frames/00832.jpg"
+          ]
+        },
+        {
+          "timestamp": 837,
+          "category": "result",
+          "description": "Adding all modes restores the full toolbar and labeled sample geometries.",
+          "evidence_image_ids": [
+            "frames/00835.jpg",
+            "frames/00836.jpg",
+            "frames/00837.jpg",
+            "frames/00838.jpg"
+          ]
+        },
+        {
+          "timestamp": 841,
+          "category": "result",
+          "description": "Clearing the mode selection again leaves an unannotated map without drawing tools.",
+          "evidence_image_ids": [
+            "frames/00839.jpg",
+            "frames/00840.jpg",
+            "frames/00841.jpg",
+            "frames/00842.jpg"
+          ]
+        },
+        {
+          "timestamp": 846,
+          "category": "result",
+          "description": "The polygon-only configuration shows the polygon button and its sample geometries.",
+          "evidence_image_ids": [
+            "frames/00844.jpg",
+            "frames/00845.jpg",
+            "frames/00846.jpg",
+            "frames/00847.jpg"
+          ]
+        },
+        {
+          "timestamp": 850,
+          "category": "result",
+          "description": "The selected polygon, linestring and point modes produce a three-button toolbar and their sample geometry.",
+          "evidence_image_ids": [
+            "frames/00847.jpg",
+            "frames/00848.jpg",
+            "frames/00849.jpg",
+            "frames/00850.jpg",
+            "frames/00851.jpg"
+          ]
+        },
+        {
+          "timestamp": 853,
+          "category": "result",
+          "description": "Adding delete creates a four-mode configuration with a delete button and reloaded sample geometries.",
+          "evidence_image_ids": [
+            "frames/00851.jpg",
+            "frames/00852.jpg",
+            "frames/00853.jpg",
+            "frames/00854.jpg"
+          ]
+        },
+        {
+          "timestamp": 859,
+          "category": "task_screen",
+          "description": "The Getting Started button leads to the install command and generated usage for the active configuration.",
+          "evidence_image_ids": [
+            "frames/00856.jpg",
+            "frames/00857.jpg",
+            "frames/00858.jpg",
+            "frames/00859.jpg",
+            "frames/00860.jpg",
+            "frames/00861.jpg"
+          ]
+        },
+        {
+          "timestamp": 874,
+          "category": "result",
+          "description": "The CDN tab displays a different generated usage example in HTML.",
+          "evidence_image_ids": [
+            "frames/00872.jpg",
+            "frames/00873.jpg",
+            "frames/00874.jpg",
+            "frames/00875.jpg"
+          ]
+        },
+        {
+          "timestamp": 876,
+          "category": "return",
+          "description": "The NPM tab restores the package-manager install command and JavaScript usage.",
+          "evidence_image_ids": [
+            "frames/00874.jpg",
+            "frames/00875.jpg",
+            "frames/00876.jpg",
+            "frames/00877.jpg"
+          ]
+        },
+        {
+          "timestamp": 885,
+          "category": "result",
+          "description": "Selecting pnpm changes the generated install command to pnpm add.",
+          "evidence_image_ids": [
+            "frames/00884.jpg",
+            "frames/00885.jpg",
+            "frames/00886.jpg",
+            "frames/00887.jpg"
+          ]
+        },
+        {
+          "timestamp": 968,
+          "category": "task_screen",
+          "description": "The custom-style GeoJSON example settles with a world map, a red sample rectangle and the example source.",
+          "evidence_image_ids": [
+            "frames/00966.jpg",
+            "frames/00967.jpg",
+            "frames/00968.jpg",
+            "frames/00969.jpg"
+          ]
+        },
+        {
+          "timestamp": 995,
+          "category": "return",
+          "description": "Returns from the custom-style example to the home page with Default Control and the default blue sample features.",
+          "evidence_image_ids": [
+            "frames/00994.jpg",
+            "frames/00995.jpg",
+            "frames/00996.jpg"
+          ]
+        },
+        {
+          "timestamp": 1009,
+          "category": "task_screen",
+          "description": "The TerrainRGB elevation example opens with its fully loaded satellite map, measuring tools and source code.",
+          "evidence_image_ids": [
+            "frames/01007.jpg",
+            "frames/01008.jpg",
+            "frames/01009.jpg",
+            "frames/01010.jpg"
+          ]
+        },
+        {
+          "timestamp": 1022,
+          "category": "result",
+          "description": "The completed multi-vertex line on the TerrainRGB map gains its stable distance and elevation labels.",
+          "evidence_image_ids": [
+            "frames/01017.jpg",
+            "frames/01021.jpg",
+            "frames/01022.jpg",
+            "frames/01023.jpg"
+          ]
+        },
+        {
+          "timestamp": 1037,
+          "category": "return",
+          "description": "Returns from the terrain example to the home page’s Default Control sample map.",
+          "evidence_image_ids": [
+            "frames/01036.jpg",
+            "frames/01037.jpg",
+            "frames/01038.jpg"
+          ]
+        },
+        {
+          "timestamp": 1050,
+          "category": "task_screen",
+          "description": "The custom-font measurement example settles with its pale world map, drawing tools and source code.",
+          "evidence_image_ids": [
+            "frames/01048.jpg",
+            "frames/01049.jpg",
+            "frames/01050.jpg",
+            "frames/01051.jpg"
+          ]
+        },
+        {
+          "timestamp": 1088,
+          "category": "result",
+          "description": "The completed line across Africa and Asia displays distance and altitude using the example’s custom font.",
+          "evidence_image_ids": [
+            "frames/01086.jpg",
+            "frames/01087.jpg",
+            "frames/01088.jpg",
+            "frames/01089.jpg"
+          ]
+        },
+        {
+          "timestamp": 1101,
+          "category": "return",
+          "description": "Returns from the custom-font example to the home page and settles on the Examples gallery.",
+          "evidence_image_ids": [
+            "frames/01096.jpg",
+            "frames/01097.jpg",
+            "frames/01098.jpg",
+            "frames/01099.jpg",
+            "frames/01100.jpg",
+            "frames/01101.jpg",
+            "frames/01102.jpg"
+          ]
+        },
+        {
+          "timestamp": 1120,
+          "category": "return",
+          "description": "Returns from the browser to the Live demo slide with the demo QR code.",
+          "evidence_image_ids": [
+            "frames/01119.jpg",
+            "frames/01120.jpg",
+            "frames/01121.jpg"
+          ]
+        },
+        {
+          "timestamp": 1122,
+          "category": "slide",
+          "description": "Thank-you slide introduces the GitHub repository URL and QR code.",
+          "evidence_image_ids": [
+            "frames/01121.jpg",
+            "frames/01122.jpg"
+          ]
+        },
+        {
+          "timestamp": 1150,
+          "category": "task_screen",
+          "description": "The GitHub repository settles with its file list, commit details, description, and release information.",
+          "evidence_image_ids": [
+            "frames/01148.jpg",
+            "frames/01149.jpg",
+            "frames/01150.jpg",
+            "frames/01151.jpg"
+          ]
+        },
+        {
+          "timestamp": 1162,
+          "category": "return",
+          "description": "Returns from GitHub to the thank-you slide.",
+          "evidence_image_ids": [
+            "frames/01161.jpg",
+            "frames/01162.jpg"
+          ]
+        },
+        {
+          "timestamp": 1165,
+          "category": "return",
+          "description": "The conference title card returns with the session details and GeoCat livestream sponsorship.",
+          "evidence_image_ids": [
+            "frames/00007.jpg",
+            "frames/01164.jpg",
+            "frames/01165.jpg"
+          ]
+        },
+        {
+          "timestamp": 1170,
+          "category": "return",
+          "description": "The opening conference attribution card returns with the Powered by OSGeo credit.",
+          "evidence_image_ids": [
+            "frames/00000.jpg",
+            "frames/01169.jpg",
+            "frames/01170.jpg",
+            "frames/01171.jpg"
+          ]
+        }
+      ],
+      "ocr": [
+        {
+          "timestamp": 367.466666667,
+          "roi": [
+            0.08046875,
+            0.23194444444444445,
+            0.5484375,
+            0.12777777777777777
+          ],
+          "text": "import { Map } from 'maplibre-gl';\nimport 'maplibre-gl/dist/maplibre-gl.css';\nimport { MaplibreTerradrawControl } from '@watergis/maplibre-gl-terradraw'\nimport '@watergis/maplibre-gl-terradraw/dist/maplibre-gl-terradraw.css'",
+          "evidence_image_ids": [
+            "frames/00367.jpg",
+            "frames/00368.jpg"
+          ],
+          "timestamp_sample": 367,
+          "source_capture": {
+            "sample": "frames/00367.jpg",
+            "sample_timestamp": 367,
+            "native_frame_index": 11024,
+            "video_time_base": "1/15360",
+            "media_pts_ticks": 5645302,
+            "media_pts_seconds_exact": "2822651/7680",
+            "media_timestamp": 367.532682291667,
+            "local_pts_ticks": 5644288,
+            "local_pts_seconds_exact": "5512/15",
+            "local_timestamp": 367.466666666667,
+            "renderer_input_pts_ticks": 5644611,
+            "renderer_output_pts_ticks": 367,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "79c1092f4c254669a734b803120320121b41ecbf776cc299cecc19e3ff9ac054",
+            "replayed_jpeg_sha256": "79c1092f4c254669a734b803120320121b41ecbf776cc299cecc19e3ff9ac054",
+            "native_reencoded_jpeg_sha256": "79c1092f4c254669a734b803120320121b41ecbf776cc299cecc19e3ff9ac054",
+            "native_decoded_frame_sha256": "cdd8e1e0ab3121f927717b02309949cb64bea077c7707482574ecc445d43f3d3",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 367.466666667,
+          "roi": [
+            0.08125,
+            0.39861111111111114,
+            0.46953125,
+            0.29305555555555557
+          ],
+          "text": "const map = new Map({\n            container: 'map',\n            style: 'https://demotiles.maplibre.org/style.json',\n            center: [0, 0],\n            zoom: 1,\n        });\n\n// As default, all Terra Draw modes are enabled,\n// you can disable options if you don't want to use them.",
+          "evidence_image_ids": [
+            "frames/00367.jpg",
+            "frames/00368.jpg"
+          ],
+          "timestamp_sample": 367,
+          "source_capture": {
+            "sample": "frames/00367.jpg",
+            "sample_timestamp": 367,
+            "native_frame_index": 11024,
+            "video_time_base": "1/15360",
+            "media_pts_ticks": 5645302,
+            "media_pts_seconds_exact": "2822651/7680",
+            "media_timestamp": 367.532682291667,
+            "local_pts_ticks": 5644288,
+            "local_pts_seconds_exact": "5512/15",
+            "local_timestamp": 367.466666666667,
+            "renderer_input_pts_ticks": 5644611,
+            "renderer_output_pts_ticks": 367,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "79c1092f4c254669a734b803120320121b41ecbf776cc299cecc19e3ff9ac054",
+            "replayed_jpeg_sha256": "79c1092f4c254669a734b803120320121b41ecbf776cc299cecc19e3ff9ac054",
+            "native_reencoded_jpeg_sha256": "79c1092f4c254669a734b803120320121b41ecbf776cc299cecc19e3ff9ac054",
+            "native_decoded_frame_sha256": "cdd8e1e0ab3121f927717b02309949cb64bea077c7707482574ecc445d43f3d3",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 410.466666667,
+          "roi": [
+            0.10078125,
+            0.7069444444444445,
+            0.85234375,
+            0.19583333333333333
+          ],
+          "text": "const draw = new MaplibreMeasureControl({\n    modes: ['render','point','linestring','polygon','select','delete-selection','delete','download'],\n    open: true,\n    distanceUnit: 'kilometers', distancePrecision: 2, areaUnit: 'metric', areaPrecision: 2, computeElevation: true\n});\nmap.addControl(draw, 'top-left');",
+          "evidence_image_ids": [
+            "frames/00410.jpg",
+            "frames/00411.jpg",
+            "frames/00412.jpg"
+          ],
+          "timestamp_sample": 410,
+          "source_capture": {
+            "sample": "frames/00410.jpg",
+            "sample_timestamp": 410,
+            "native_frame_index": 12314,
+            "video_time_base": "1/15360",
+            "media_pts_ticks": 6305782,
+            "media_pts_seconds_exact": "3152891/7680",
+            "media_timestamp": 410.532682291667,
+            "local_pts_ticks": 6304768,
+            "local_pts_seconds_exact": "6157/15",
+            "local_timestamp": 410.466666666667,
+            "renderer_input_pts_ticks": 6305091,
+            "renderer_output_pts_ticks": 410,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "fe1cf7bd46cf52e0993665496701908140fdf309ff5406833295b3fa1a82d0b5",
+            "replayed_jpeg_sha256": "fe1cf7bd46cf52e0993665496701908140fdf309ff5406833295b3fa1a82d0b5",
+            "native_reencoded_jpeg_sha256": "fe1cf7bd46cf52e0993665496701908140fdf309ff5406833295b3fa1a82d0b5",
+            "native_decoded_frame_sha256": "c8c7703c6f53ee33529fba4c691186009ae0e622ee7ef9c5873988f1082f17ba",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 508.466666667,
+          "roi": [
+            0.009375,
+            0.3236111111111111,
+            0.5203125,
+            0.40694444444444444
+          ],
+          "text": "const drawControl = new MaplibreTerradrawControl.MaplibreMeasureControl({\n    modes: ['point', 'linestring', 'delete', 'download'],\n    open: true,\n    // enable the flag to compute elevation\n    computeElevation: true,\n    // set your own terrainRGB or terrarium source.\n    // PNG or WEBP is supported.\n    terrainSource: {\n        url: 'https://wasac.github.io/rw-terrain-webp/tiles/{z}/{x}/{y}.webp',\n        tileSize: 512,\n        minzoom: 5,\n        maxzoom: 15,\n        encoding: 'mapbox'\n    }",
+          "evidence_image_ids": [
+            "frames/00508.jpg",
+            "frames/00509.jpg"
+          ],
+          "timestamp_sample": 508,
+          "source_capture": {
+            "sample": "frames/00508.jpg",
+            "sample_timestamp": 508,
+            "native_frame_index": 15254,
+            "video_time_base": "1/15360",
+            "media_pts_ticks": 7811062,
+            "media_pts_seconds_exact": "3905531/7680",
+            "media_timestamp": 508.532682291667,
+            "local_pts_ticks": 7810048,
+            "local_pts_seconds_exact": "7627/15",
+            "local_timestamp": 508.466666666667,
+            "renderer_input_pts_ticks": 7810371,
+            "renderer_output_pts_ticks": 508,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "6c184ef776631bad132a752fc8d8e5721cfefd939b466bf39ed4ac923f1b35a6",
+            "replayed_jpeg_sha256": "6c184ef776631bad132a752fc8d8e5721cfefd939b466bf39ed4ac923f1b35a6",
+            "native_reencoded_jpeg_sha256": "6c184ef776631bad132a752fc8d8e5721cfefd939b466bf39ed4ac923f1b35a6",
+            "native_decoded_frame_sha256": "d9f1182af1f1472c6e1683fc26245a6cdc72275e7114247f9855d9a56e6fbe12",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 530.466666667,
+          "roi": [
+            0.57265625,
+            0.21666666666666667,
+            0.35,
+            0.4361111111111111
+          ],
+          "text": "map.once('load', () => {\n    const drawInstance = drawControl.getTerraDrawInstance();\n    if (drawInstance) {\n        // geojson data to be added\n        const geojson = [\n            {\n                id: '6b438f48-f6da-4649-9212-76f5a1506296',\n                type: 'Feature',\n                geometry: {\n                    type: 'Polygon',\n                    coordinates: [\n                        [\n                            [26.938972246, 25.217617825],\n                            [-4.045232861, 25.217617825],\n                            [-4.045232861, -7.839055615],\n                            [26.938972246, -7.839055615],\n                            [26.938972246, 25.217617825]",
+          "evidence_image_ids": [
+            "frames/00530.jpg",
+            "frames/00531.jpg"
+          ],
+          "timestamp_sample": 530,
+          "source_capture": {
+            "sample": "frames/00530.jpg",
+            "sample_timestamp": 530,
+            "native_frame_index": 15914,
+            "video_time_base": "1/15360",
+            "media_pts_ticks": 8148982,
+            "media_pts_seconds_exact": "4074491/7680",
+            "media_timestamp": 530.532682291667,
+            "local_pts_ticks": 8147968,
+            "local_pts_seconds_exact": "7957/15",
+            "local_timestamp": 530.466666666667,
+            "renderer_input_pts_ticks": 8148291,
+            "renderer_output_pts_ticks": 530,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "f1e0c3ac00d309b076edec9b4642fbdfcba9b7214440df64336222586c01686a",
+            "replayed_jpeg_sha256": "f1e0c3ac00d309b076edec9b4642fbdfcba9b7214440df64336222586c01686a",
+            "native_reencoded_jpeg_sha256": "f1e0c3ac00d309b076edec9b4642fbdfcba9b7214440df64336222586c01686a",
+            "native_decoded_frame_sha256": "3382db2cac87820efd1bc91c8fbe3664d5be8fe138ef5fc005e7faa2fa230fd6",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 772.466666667,
+          "roi": [
+            0.040625,
+            0.6430555555555556,
+            0.10625,
+            0.08472222222222223
+          ],
+          "text": "\"type\": \"Feature\",\n\"geometry\": {\n    \"type\": \"Polygon\",\n    \"coordinates\": [",
+          "evidence_image_ids": [
+            "frames/00772.jpg"
+          ],
+          "timestamp_sample": 772,
+          "source_capture": {
+            "sample": "frames/00772.jpg",
+            "sample_timestamp": 772,
+            "native_frame_index": 23174,
+            "video_time_base": "1/15360",
+            "media_pts_ticks": 11866102,
+            "media_pts_seconds_exact": "5933051/7680",
+            "media_timestamp": 772.532682291667,
+            "local_pts_ticks": 11865088,
+            "local_pts_seconds_exact": "11587/15",
+            "local_timestamp": 772.466666666667,
+            "renderer_input_pts_ticks": 11865411,
+            "renderer_output_pts_ticks": 772,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "96840bb40fc0a387c49faa63fec52e824b72fedec4d27dc9e5e6b5978c4a3a5c",
+            "replayed_jpeg_sha256": "96840bb40fc0a387c49faa63fec52e824b72fedec4d27dc9e5e6b5978c4a3a5c",
+            "native_reencoded_jpeg_sha256": "96840bb40fc0a387c49faa63fec52e824b72fedec4d27dc9e5e6b5978c4a3a5c",
+            "native_decoded_frame_sha256": "9c7b675096af661a194f9f30478e089b6e48a7fbbb33a254b4dff011bc1b456d",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 860.466666667,
+          "roi": [
+            0.0140625,
+            0.7402777777777778,
+            0.25390625,
+            0.02361111111111111
+          ],
+          "text": "npm install --save-dev @watergis/maplibre-gl-terradraw",
+          "evidence_image_ids": [
+            "frames/00860.jpg"
+          ],
+          "timestamp_sample": 860,
+          "source_capture": {
+            "sample": "frames/00860.jpg",
+            "sample_timestamp": 860,
+            "native_frame_index": 25814,
+            "video_time_base": "1/15360",
+            "media_pts_ticks": 13217782,
+            "media_pts_seconds_exact": "6608891/7680",
+            "media_timestamp": 860.532682291667,
+            "local_pts_ticks": 13216768,
+            "local_pts_seconds_exact": "12907/15",
+            "local_timestamp": 860.466666666667,
+            "renderer_input_pts_ticks": 13217091,
+            "renderer_output_pts_ticks": 860,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "434498920afc5841fc9de364ff7d4c53595612e6ea323eabe804681bfd85a0f5",
+            "replayed_jpeg_sha256": "434498920afc5841fc9de364ff7d4c53595612e6ea323eabe804681bfd85a0f5",
+            "native_reencoded_jpeg_sha256": "434498920afc5841fc9de364ff7d4c53595612e6ea323eabe804681bfd85a0f5",
+            "native_decoded_frame_sha256": "a39e6b0065952a5e63435fc8b1d49c9de1d1745e59cafdfa4d6ec1371e88866f",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 874.466666667,
+          "roi": [
+            0.0515625,
+            0.7416666666666667,
+            0.6015625,
+            0.0625
+          ],
+          "text": "<script src=\"https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@1.4.0/dist/maplibre-gl-terradraw.umd.js\"></script>\n<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/@watergis/maplibre-gl-terradraw@1.4.0/dist/maplibre-gl-terradraw.css\" />\n<div id=\"map\"></div>",
+          "evidence_image_ids": [
+            "frames/00874.jpg",
+            "frames/00875.jpg"
+          ],
+          "timestamp_sample": 874,
+          "source_capture": {
+            "sample": "frames/00874.jpg",
+            "sample_timestamp": 874,
+            "native_frame_index": 26234,
+            "video_time_base": "1/15360",
+            "media_pts_ticks": 13432822,
+            "media_pts_seconds_exact": "6716411/7680",
+            "media_timestamp": 874.532682291667,
+            "local_pts_ticks": 13431808,
+            "local_pts_seconds_exact": "13117/15",
+            "local_timestamp": 874.466666666667,
+            "renderer_input_pts_ticks": 13432131,
+            "renderer_output_pts_ticks": 874,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "f5b094bd4c3b04c942f2be75b80599ba27da7170046b5eeed7f4200b8a58cf5d",
+            "replayed_jpeg_sha256": "f5b094bd4c3b04c942f2be75b80599ba27da7170046b5eeed7f4200b8a58cf5d",
+            "native_reencoded_jpeg_sha256": "f5b094bd4c3b04c942f2be75b80599ba27da7170046b5eeed7f4200b8a58cf5d",
+            "native_decoded_frame_sha256": "6eb81a84814ff9f491445c14875b59f6a0d4a862b68d3073bf8a3acc15467c98",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 875.466666667,
+          "roi": [
+            0.01484375,
+            0.2986111111111111,
+            0.42109375,
+            0.41805555555555557
+          ],
+          "text": "<html lang=\"en\">\n    <head>\n        <title>Draw geometries with terra-draw</title>\n        <meta charset=\"utf-8\" />\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n        <link rel=\"stylesheet\" href=\"https://unpkg.com/maplibre-gl/dist/maplibre-gl.css\" />\n        <script src=\"https://unpkg.com/maplibre-gl/dist/maplibre-gl.js\"></script>\n        <style>\n            body {\n                margin: 0;\n                padding: 0;\n            }\n            html,\n            body,\n            #map {\n                height: 100%;\n            }\n        </style>\n    </head>",
+          "evidence_image_ids": [
+            "frames/00875.jpg",
+            "frames/00874.jpg"
+          ],
+          "timestamp_sample": 875,
+          "source_capture": {
+            "sample": "frames/00875.jpg",
+            "sample_timestamp": 875,
+            "native_frame_index": 26264,
+            "video_time_base": "1/15360",
+            "media_pts_ticks": 13448182,
+            "media_pts_seconds_exact": "6724091/7680",
+            "media_timestamp": 875.532682291667,
+            "local_pts_ticks": 13447168,
+            "local_pts_seconds_exact": "13132/15",
+            "local_timestamp": 875.466666666667,
+            "renderer_input_pts_ticks": 13447491,
+            "renderer_output_pts_ticks": 875,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "809278538eacf74a350f4ecd82a8c3e46663b662fb4d2c0494762ae9fa31998a",
+            "replayed_jpeg_sha256": "809278538eacf74a350f4ecd82a8c3e46663b662fb4d2c0494762ae9fa31998a",
+            "native_reencoded_jpeg_sha256": "809278538eacf74a350f4ecd82a8c3e46663b662fb4d2c0494762ae9fa31998a",
+            "native_decoded_frame_sha256": "529a8977cb8cbc4696c8bdb7efbda540ce3165480b23312f34af714eb2590552",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 886.466666667,
+          "roi": [
+            0.01484375,
+            0.4083333333333333,
+            0.2375,
+            0.019444444444444445
+          ],
+          "text": "pnpm add --save-dev @watergis/maplibre-gl-terradraw",
+          "evidence_image_ids": [
+            "frames/00885.jpg",
+            "frames/00886.jpg",
+            "frames/00887.jpg"
+          ],
+          "timestamp_sample": 886,
+          "source_capture": {
+            "sample": "frames/00886.jpg",
+            "sample_timestamp": 886,
+            "native_frame_index": 26594,
+            "video_time_base": "1/15360",
+            "media_pts_ticks": 13617142,
+            "media_pts_seconds_exact": "6808571/7680",
+            "media_timestamp": 886.532682291667,
+            "local_pts_ticks": 13616128,
+            "local_pts_seconds_exact": "13297/15",
+            "local_timestamp": 886.466666666667,
+            "renderer_input_pts_ticks": 13616451,
+            "renderer_output_pts_ticks": 886,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "2bda322d6fd3564fb5c15d787eab35b4a44b891e1e54f88180ce6a96f9957c9d",
+            "replayed_jpeg_sha256": "2bda322d6fd3564fb5c15d787eab35b4a44b891e1e54f88180ce6a96f9957c9d",
+            "native_reencoded_jpeg_sha256": "2bda322d6fd3564fb5c15d787eab35b4a44b891e1e54f88180ce6a96f9957c9d",
+            "native_decoded_frame_sha256": "f07134cc1fb914f12c367a4b1d204142dfd7083c68c8f499e7ed8644ec0ef04f",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 917.466666667,
+          "roi": [
+            0.0140625,
+            0.6583333333333333,
+            0.5296875,
+            0.17916666666666667
+          ],
+          "text": "// As default, all Terra Draw modes are enabled,\n// you can disable options if you don't want to use them.\nconst draw = new MaplibreMeasureControl({\n    modes: ['polygon','linestring','point','delete'],\n    open: true,\n    distanceUnit: 'kilometers', distancePrecision: 2, areaUnit: 'metric', areaPrecision: 2, computeElevation: true\n});\nmap.addControl(draw, 'top-left');",
+          "evidence_image_ids": [
+            "frames/00917.jpg"
+          ],
+          "timestamp_sample": 917,
+          "source_capture": {
+            "sample": "frames/00917.jpg",
+            "sample_timestamp": 917,
+            "native_frame_index": 27524,
+            "video_time_base": "1/15360",
+            "media_pts_ticks": 14093302,
+            "media_pts_seconds_exact": "7046651/7680",
+            "media_timestamp": 917.532682291667,
+            "local_pts_ticks": 14092288,
+            "local_pts_seconds_exact": "13762/15",
+            "local_timestamp": 917.466666666667,
+            "renderer_input_pts_ticks": 14092611,
+            "renderer_output_pts_ticks": 917,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "071a5dc3b838a01449d7bdafaa31c641356daa17568fc4b1bfd07d047b708320",
+            "replayed_jpeg_sha256": "071a5dc3b838a01449d7bdafaa31c641356daa17568fc4b1bfd07d047b708320",
+            "native_reencoded_jpeg_sha256": "071a5dc3b838a01449d7bdafaa31c641356daa17568fc4b1bfd07d047b708320",
+            "native_decoded_frame_sha256": "9872469749f9275201fb08d2c6ab7a33766b52d47802860a18decbb7ad8c351f",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 976.466666667,
+          "roi": [
+            0.0875,
+            0.2569444444444444,
+            0.23046875,
+            0.3111111111111111
+          ],
+          "text": "// custom terradraw layer style is following.\nmodeOptions: {\n    polygon: new terraDraw.TerraDrawPolygonMode({\n        styles: {\n            fillColor: '#F5AEAE',\n            fillOpacity: 0.7,\n            outlineColor: '#FF0000',\n            outlineWidth: 2,\n            closingPointColor: '#FAFAFA',\n            closingPointWidth: 3,\n            closingPointOutlineColor: '#FF0000',\n            closingPointOutlineWidth: 1\n        }\n    }),",
+          "evidence_image_ids": [
+            "frames/00976.jpg"
+          ],
+          "timestamp_sample": 976,
+          "source_capture": {
+            "sample": "frames/00976.jpg",
+            "sample_timestamp": 976,
+            "native_frame_index": 29294,
+            "video_time_base": "1/15360",
+            "media_pts_ticks": 14999542,
+            "media_pts_seconds_exact": "7499771/7680",
+            "media_timestamp": 976.532682291667,
+            "local_pts_ticks": 14998528,
+            "local_pts_seconds_exact": "14647/15",
+            "local_timestamp": 976.466666666667,
+            "renderer_input_pts_ticks": 14998851,
+            "renderer_output_pts_ticks": 976,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "c52b477e804d059a7459a3913c1f95219627abcb7a2f23097eb8d02af1de223e",
+            "replayed_jpeg_sha256": "c52b477e804d059a7459a3913c1f95219627abcb7a2f23097eb8d02af1de223e",
+            "native_reencoded_jpeg_sha256": "c52b477e804d059a7459a3913c1f95219627abcb7a2f23097eb8d02af1de223e",
+            "native_decoded_frame_sha256": "0742e3431df42c673d44311c177c6cbc0d86b37b2460192be90d03d13fa8b7e7",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 990.466666667,
+          "roi": [
+            0.10546875,
+            0.6486111111111111,
+            0.27890625,
+            0.15138888888888888
+          ],
+          "text": "        properties: {\n            // make sure you put terradraw mode for geojson\n            mode: 'polygon'\n        }\n    }\n];\ndrawInstance?.addFeatures(geojson);",
+          "evidence_image_ids": [
+            "frames/00990.jpg"
+          ],
+          "timestamp_sample": 990,
+          "source_capture": {
+            "sample": "frames/00990.jpg",
+            "sample_timestamp": 990,
+            "native_frame_index": 29714,
+            "video_time_base": "1/15360",
+            "media_pts_ticks": 15214582,
+            "media_pts_seconds_exact": "7607291/7680",
+            "media_timestamp": 990.532682291667,
+            "local_pts_ticks": 15213568,
+            "local_pts_seconds_exact": "14857/15",
+            "local_timestamp": 990.466666666667,
+            "renderer_input_pts_ticks": 15213891,
+            "renderer_output_pts_ticks": 990,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "6418b964f454e87c8717976c268266ffa8758853f922c46cb6999b4dd90be7c7",
+            "replayed_jpeg_sha256": "6418b964f454e87c8717976c268266ffa8758853f922c46cb6999b4dd90be7c7",
+            "native_reencoded_jpeg_sha256": "6418b964f454e87c8717976c268266ffa8758853f922c46cb6999b4dd90be7c7",
+            "native_decoded_frame_sha256": "e42611a4c38edb25dd1a55b36456fc586e6726b39ab893cb7a770a205f263e20",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 1034.466666667,
+          "roi": [
+            0.06953125,
+            0.6680555555555555,
+            0.28984375,
+            0.19722222222222222
+          ],
+          "text": "map.addControl(drawControl, 'top-left');\nmap.addControl(\n    new maplibregl.NavigationControl({\n        visualizePitch: true,\n        showCompass: true\n    }),\n    'bottom-right'\n);\nmap.addControl(new maplibregl.GlobeControl(), 'bottom-right');",
+          "evidence_image_ids": [
+            "frames/01034.jpg"
+          ],
+          "timestamp_sample": 1034,
+          "source_capture": {
+            "sample": "frames/01034.jpg",
+            "sample_timestamp": 1034,
+            "native_frame_index": 31034,
+            "video_time_base": "1/15360",
+            "media_pts_ticks": 15890422,
+            "media_pts_seconds_exact": "7945211/7680",
+            "media_timestamp": 1034.532682291667,
+            "local_pts_ticks": 15889408,
+            "local_pts_seconds_exact": "15517/15",
+            "local_timestamp": 1034.466666666667,
+            "renderer_input_pts_ticks": 15889731,
+            "renderer_output_pts_ticks": 1034,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "8381affb260c70a2f6459c39ed61c1b45e0a6fd99f759a66200ddd057f931ab7",
+            "replayed_jpeg_sha256": "8381affb260c70a2f6459c39ed61c1b45e0a6fd99f759a66200ddd057f931ab7",
+            "native_reencoded_jpeg_sha256": "8381affb260c70a2f6459c39ed61c1b45e0a6fd99f759a66200ddd057f931ab7",
+            "native_decoded_frame_sha256": "f4979649de40bb59e07cbc184e5a968db2f5c6e54941df610505ed9e5781fd6e",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        },
+        {
+          "timestamp": 1069.466666667,
+          "roi": [
+            0.06953125,
+            0.5930555555555556,
+            0.5140625,
+            0.21944444444444444
+          ],
+          "text": "const drawControl = new MaplibreTerradrawControl.MaplibreMeasureControl({\n    modes: ['point', 'linestring', 'polygon', 'delete'],\n    open: true,\n    computeElevation: true\n});\n// set your own font glyphs\n// make sure the font is supported by your map style.\n// Please also see the documentation of glyphs for maplibre at https://maplibre.org/maplibre-style-spec/glyphs/\ndrawControl.fontGlyphs = ['Open Sans Italic'];\nmap.addControl(drawControl, 'top-left');",
+          "evidence_image_ids": [
+            "frames/01069.jpg",
+            "frames/01070.jpg",
+            "frames/01075.jpg"
+          ],
+          "timestamp_sample": 1069,
+          "source_capture": {
+            "sample": "frames/01069.jpg",
+            "sample_timestamp": 1069,
+            "native_frame_index": 32084,
+            "video_time_base": "1/15360",
+            "media_pts_ticks": 16428022,
+            "media_pts_seconds_exact": "8214011/7680",
+            "media_timestamp": 1069.532682291667,
+            "local_pts_ticks": 16427008,
+            "local_pts_seconds_exact": "16042/15",
+            "local_timestamp": 1069.466666666667,
+            "renderer_input_pts_ticks": 16427331,
+            "renderer_output_pts_ticks": 1069,
+            "renderer_output_time_base": "1",
+            "sample_sha256": "c69bbb459697885392736db4717bdf10d1a8bdeb70cf81c02d108de8c99e6581",
+            "replayed_jpeg_sha256": "c69bbb459697885392736db4717bdf10d1a8bdeb70cf81c02d108de8c99e6581",
+            "native_reencoded_jpeg_sha256": "c69bbb459697885392736db4717bdf10d1a8bdeb70cf81c02d108de8c99e6581",
+            "native_decoded_frame_sha256": "fb57868857fb38883ab4245acfcddfcb19b3eb7608ddf6a889198673b33a7bd3",
+            "native_decoded_frame_bytes": 1382400,
+            "exact_jpeg_bytes": true
+          },
+          "kind": "code"
+        }
+      ]
+    }
+  }
+}

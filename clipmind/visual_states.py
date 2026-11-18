@@ -9,18 +9,21 @@ import statistics
 import unicodedata
 from collections import Counter
 from dataclasses import dataclass, replace
+from functools import cache
 from pathlib import Path
 from typing import Iterable
 
 import numpy as np
 from PIL import Image
 
-from . import media, ocr, screen_faces, screen_motion
+from . import media, ocr, screen_faces, screen_motion, screen_projection, screen_viewport
 from .media import Frame
 from .providers import TextRecognizer
 
 PREVIEW_ALGORITHM = "adaptive-scene-text-v2"
-INFORMATION_BOUNDARY_ALGORITHM = "anchored-text-novelty-v3"
+INFORMATION_BOUNDARY_ALGORITHM = "anchored-display-v5"
+SIDE_DETAIL_REASON = "Visible detail appeared on a separate surface."
+NO_READABLE_TEXT_REASON = "No new readable text; image-only change remains unresolved."
 NOVEL_MIN_CHARACTERS = 5
 NOVEL_MIN_SHARE = 0.04
 RETURN_MAX_CHANGED_SHARE = 0.012
@@ -216,7 +219,9 @@ def annotate_change_kinds(frames: list[Frame]) -> None:
                  if box[1] < 0.06 or box[1] + box[3] > 0.94 or (box[0] + box[2] > 0.94 and box[2] < 0.25 and box[1] < 0.3)}
     overlays = {text for text, count in frequency.items()
                 if len(text) <= 32 and text in edge_text and count >= max(3, 0.4 * len(frames))}
-    motion = screen_motion.screen_motion_evidence(frames)
+    face_boxes = cache(screen_faces.boxes)
+    motion = screen_motion.screen_motion_evidence(frames, face_boxes=face_boxes)
+    display = screen_viewport.DisplayEvidence(frames)
     signatures: dict[int, np.ndarray | None] = {}
 
     def signature(frame: Frame) -> np.ndarray | None:
@@ -225,8 +230,10 @@ def annotate_change_kinds(frames: list[Frame]) -> None:
         return signatures[frame.index]
 
     anchor: Frame | None = None
+    anchor_position = -1
     anchor_lines: tuple[str, ...] = ()
     for position, frame in enumerate(frames):
+        frame.information_boundary = None
         frame.change_kind, frame.change_reason = "uncertain", "Unresolved visual change."
         lines = _screen_lines(frame, overlays)
         if position == 0:
@@ -238,6 +245,11 @@ def annotate_change_kinds(frames: list[Frame]) -> None:
             frame.change_reason = motion[frame.index].reason
         elif signature(frame) is None or signature(frames[position - 1]) is None:
             frame.change_reason = "Image comparison unavailable; boundary retained."
+        elif display.unchanged(position, anchor_position):
+            frame.change_kind = "layout"
+            frame.change_reason = "The display stayed the same while the surrounding image changed."
+        elif display.outside_detail:
+            frame.change_kind, frame.change_reason = "content", SIDE_DETAIL_REASON
         elif (anchor is not None and not _adds_information(*_text_novelty(anchor_lines, lines)[::2])
               and (share := _changed_share(signature(anchor), signature(frame))) is not None
               and share < RETURN_MAX_CHANGED_SHARE):
@@ -251,7 +263,7 @@ def annotate_change_kinds(frames: list[Frame]) -> None:
         elif not lines:
             # Empty OCR, or a repeated title alone, cannot prove a speaker:
             # a new diagram may have no readable text at all.
-            frame.change_reason = "No new readable text; image-only change remains unresolved."
+            frame.change_reason = NO_READABLE_TEXT_REASON
         elif anchor is not None and anchor_lines:
             added, removed, total = _text_novelty(anchor_lines, lines)
             common = set(anchor_lines) & set(lines)
@@ -290,7 +302,28 @@ def annotate_change_kinds(frames: list[Frame]) -> None:
         if frame.change_kind in {"content", "build", "uncertain"}:
             if lines or anchor is None or not anchor_lines:
                 anchor, anchor_lines = frame, lines
+                anchor_position = position
     _settle_transitions(frames)
+    unchanged = screen_projection.unchanged_projection_indices(frames)
+    for frame in frames:
+        if frame.index in unchanged and frame.change_reason != SIDE_DETAIL_REASON:
+            frame.change_kind = "layout"
+            frame.change_reason = "The projected image stayed the same after camera registration."
+    _annotate_full_frame_speakers(frames, face_boxes=face_boxes)
+
+
+def _annotate_full_frame_speakers(
+    frames: list[Frame], *, face_boxes: screen_motion.FaceReader | None = None,
+) -> None:
+    # Apply only after anchor-based classification and projection checks.
+    candidates = [
+        position for position, frame in enumerate(frames)
+        if frame.change_kind == "uncertain" and frame.change_reason == NO_READABLE_TEXT_REASON
+        and not (frame.ocr_warning or frame.dedupe_warning)
+    ]
+    for position in screen_motion.full_frame_speaker_positions(frames, candidates, face_boxes=face_boxes):
+        frames[position].change_kind = "speaker"
+        frames[position].change_reason = screen_motion.FULL_FRAME_SPEAKER_REASON
 
 
 def _settle_transitions(frames: list[Frame]) -> None:
@@ -301,7 +334,7 @@ def _settle_transitions(frames: list[Frame]) -> None:
     information = {"content", "build", "uncertain"}
     for current, following in zip(frames, frames[1:]):
         if (current.change_kind in information and following.change_kind in information
-                and current.change_reason != "Initial screen."
+                and current.change_reason not in {"Initial screen.", SIDE_DETAIL_REASON}
                 and not (current.ocr_warning or current.dedupe_warning)
                 and current.observed_sample_count <= 1
                 and 0 < following.timestamp - current.timestamp <= TRANSITION_MAX_SECONDS):
