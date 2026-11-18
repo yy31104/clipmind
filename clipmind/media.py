@@ -57,6 +57,8 @@ class Frame:
     change_kind: str = "uncertain"
     change_reason: str = ""
     source_stream_index: int | None = None
+    # Optional rank decision derived from the completed canonical timeline.
+    information_boundary: bool | None = None
 
 
 async def _ffmpeg(args: list[str]) -> bytes:

@@ -28,9 +28,9 @@ def boundary_inventory(reference: list[float], states: list[dict], *,
                        information_only: bool = False) -> dict:
     """Keep every event while using the existing sorted one-to-one matcher.
 
-    Missing or unfamiliar change kinds are included conservatively. Only an
-    explicit non-information kind without extraction warnings can remove a
-    state from the information score; it remains in the canonical control.
+    Information scoring honors an explicit rank decision. Older states
+    use their change kind. Extraction warnings keep a prediction eligible
+    in either case, and the canonical score includes every prediction.
     """
     truth = [{"id": f"reference-{index:04d}", "timestamp": float(value)}
              for index, value in enumerate(sorted(reference), 1)]
@@ -41,8 +41,10 @@ def boundary_inventory(reference: list[float], states: list[dict], *,
             continue
         kind = state.get("change_kind")
         warning = any(state.get(key) for key in ("dedupe_warning", "ocr_warning", "ocr_error", "error"))
-        included = (not information_only or warning or not isinstance(kind, str)
-                    or kind not in NON_INFORMATION_KINDS)
+        decision = state.get("information_boundary")
+        if not isinstance(decision, bool):
+            decision = not isinstance(kind, str) or kind not in NON_INFORMATION_KINDS
+        included = not information_only or warning or decision
         guesses.append({"id": f"prediction-{index:04d}", "timestamp": timestamp,
                         "visual_state_id": state.get("id"), "change_kind": kind,
                         "extraction_warning": warning, "included": included})

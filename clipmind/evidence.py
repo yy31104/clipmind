@@ -181,6 +181,8 @@ def _timeline_records(
             "change_kind": frame.change_kind,
             "change_reason": frame.change_reason,
         }
+        if frame.information_boundary is not None:
+            record["information_boundary"] = frame.information_boundary
         if preview_frame is not None:
             record["preview_file"] = preview_frame.path.relative_to(dest).as_posix()
         if frame.build_group_id:
@@ -309,6 +311,7 @@ def write_pack(
     config: Settings = settings,
     preflight_result: dict | None = None,
     preview_algorithm: str = PREVIEW_ALGORITHM,
+    boundary_algorithm: str = INFORMATION_BOUNDARY_ALGORITHM,
 ) -> dict:
     """Write every canonical artifact, with manifest.json written last."""
     dest.mkdir(parents=True, exist_ok=True)
@@ -399,7 +402,7 @@ def write_pack(
             "evidence_width": config.evidence_width,
             "dedupe_threshold": config.dedupe_threshold,
             "dedupe_algorithm": media.DEDUPE_ALGORITHM,
-            "information_boundary_algorithm": INFORMATION_BOUNDARY_ALGORITHM,
+            "information_boundary_algorithm": boundary_algorithm,
             "asr_guards": {
                 "vad_filter": config.asr_vad_filter,
                 "hallucination_silence_threshold": config.asr_hallucination_silence_threshold,

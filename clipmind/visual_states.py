@@ -233,6 +233,7 @@ def annotate_change_kinds(frames: list[Frame]) -> None:
     anchor_position = -1
     anchor_lines: tuple[str, ...] = ()
     for position, frame in enumerate(frames):
+        frame.information_boundary = None
         frame.change_kind, frame.change_reason = "uncertain", "Unresolved visual change."
         lines = _screen_lines(frame, overlays)
         if position == 0:

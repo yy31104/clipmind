@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from urllib.parse import quote
 
-from . import acquisition, evidence, media, preflight, render, visual_content, visual_states
+from . import acquisition, evidence, media, preflight, render, screen_rank, visual_content, visual_states
 from .config import Settings, settings
 from .fetch import fetch
 from .providers import ProviderBundle, default_providers
@@ -219,7 +219,13 @@ async def process(
             workdir / "visual_states" / "preview",
         )
         preview_seconds = round(time.perf_counter() - stage_started, 3)
+        rank_started = time.perf_counter()
+        async with pools.ocr:
+            ranked = await asyncio.to_thread(
+                screen_rank.annotate_information_boundaries, canonical, item.duration,
+            )
         timings.update(
+            boundary_rank_seconds=round(time.perf_counter()-rank_started,3),
             asr_seconds=asr_seconds,
             ocr_seconds=ocr_seconds,
             preview_seconds=preview_seconds,
@@ -238,6 +244,8 @@ async def process(
             config=config,
             preflight_result=estimate.public(),
             preview_algorithm=visual_content.CONTENT_ALGORITHM,
+            boundary_algorithm=(screen_rank.ALGORITHM if ranked
+                                else visual_states.INFORMATION_BOUNDARY_ALGORITHM),
         )
         base += STAGES[2][1]
         report("writing", base, f"{len(preview)} preview states, "
