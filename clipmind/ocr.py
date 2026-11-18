@@ -56,6 +56,7 @@ RECOVER_MAX_COVERED = 0.5
 RECOVER_MIN_INK = 0.05
 DARK_PANEL_MIN_SHARE = 0.04
 VISION_DARK_PANEL_LIMIT = 64
+LOCAL_CONTRAST_PIXEL_LIMIT = 6_000_000
 
 
 class OCRError(RuntimeError):
@@ -125,6 +126,13 @@ def _dark_code_image(rgb, cv2):
     upper = float(np.quantile(strokes, 0.97))
     gain = min(3.6, max(1.0, 235 / max(1.0, upper)))
     contrasted = 255 - np.clip(strokes.astype(np.float32) * gain, 0, 255).astype(np.uint8)
+    gray = cv2.cvtColor(rgb, cv2.COLOR_RGB2GRAY)
+    local_gray = cv2.blur(gray, (25, 25))
+    light_surface = local_gray >= 160
+    dark_strokes = cv2.subtract(local_gray, gray)
+    light_contrast = 255 - np.minimum(255, dark_strokes.astype(np.uint16) * 2)
+    contrasted[light_surface] = np.minimum(gray[light_surface], light_contrast[light_surface])
+    strokes[light_surface] = 0
     return contrasted, strokes
 
 
@@ -136,10 +144,27 @@ def _has_dense_code_rows(strokes, cv2) -> bool:
     connected = cv2.morphologyEx(ink, cv2.MORPH_CLOSE,
                                  np.ones((1, max(9, round(width / 95))), np.uint8))
     _, _, stats, _ = cv2.connectedComponentsWithStats(connected)
-    rows = [(y, h) for _, y, w, h, area in stats[1:]
+    rows = [(x, y, w, h) for x, y, w, h, area in stats[1:]
             if w >= 0.055 * width and 0.005 * height <= h < 0.047 * height and area >= 0.14 * w * h]
-    centers = {round((y + h / 2) / max(3, 0.011 * height)) for y, h in rows}
-    return len(centers) >= 5 and max(y + h for y, h in rows) - min(y for y, _ in rows) > 0.1 * height
+
+    def row_count(group):
+        return len({round((y + h / 2) / max(3, 0.011 * height)) for _, y, _, h in group})
+
+    if row_count(rows) < 5 or max(y + h for _, y, _, h in rows) - min(y for _, y, _, _ in rows) <= 0.1 * height:
+        return False
+    # A nearly full dark frame can still contain two independent editors.
+    # Preserve sparse segmentation when both sides of a wide gutter hold text.
+    margin = round(0.03 * width)
+    for split in range(width // 5, 4 * width // 5, max(1, margin)):
+        left = [row for row in rows if row[0] + row[2] <= split - margin]
+        right = [row for row in rows if row[0] >= split + margin]
+        if len(left) + len(right) != len(rows) or min(row_count(left), row_count(right)) < 5:
+            continue
+        overlap = (min(max(y + h for _, y, _, h in left), max(y + h for _, y, _, h in right))
+                   - max(min(y for _, y, _, _ in left), min(y for _, y, _, _ in right)))
+        if overlap >= 0.12 * height:
+            return False
+    return True
 
 
 @contextmanager
@@ -164,7 +189,8 @@ def _recognition_image(path: Path, *, portable: bool = False, scale: float | Non
         import cv2
     except ImportError:
         cv2 = None
-    if dark and cv2 is not None:
+    use_local_contrast = cv2 is not None and total <= LOCAL_CONTRAST_PIXEL_LIMIT
+    if dark and use_local_contrast:
         import numpy as np
 
         pixels, strokes = _dark_code_image(np.asarray(image), cv2)
@@ -184,9 +210,9 @@ def _recognition_image(path: Path, *, portable: bool = False, scale: float | Non
         image = value.point([255 if level <= threshold else 0
                              for level in range(256)])
     elif portable and cv2 is not None:
-        image, panels = _enhance_dark_panels(image, value, cv2)
+        image, panels = _enhance_dark_panels(image, value, cv2, use_local_contrast=use_local_contrast)
         dark = dark or panels
-        enhanced = panels
+        enhanced = panels and use_local_contrast
     # A darker mask isolates a code pane from surrounding UI. Vision reads
     # that pane at higher resolution while keeping the full image in color.
     upscale = (
@@ -278,18 +304,23 @@ def _dark_panel_slices(value, limit: int):
         yield np.s_[top:top + panel_height, left:left + panel_width]
 
 
-def _enhance_dark_panels(image, value, cv2):
+def _enhance_dark_panels(image, value, cv2, *, use_local_contrast: bool):
     """Bring out dim syntax colors in mixed screens for portable OCR."""
     import numpy as np
     from PIL import Image
 
     levels = np.asarray(value)
-    rgb = np.asarray(image)
+    rgb = np.asarray(image) if use_local_contrast else None
     result = None
     for bounds in _dark_panel_slices(levels, 96):
         if result is None:
             result = np.asarray(image.convert("L")).copy()
-        result[bounds], _ = _dark_code_image(rgb[bounds], cv2)
+        if rgb is not None:
+            result[bounds], _ = _dark_code_image(rgb[bounds], cv2)
+        else:
+            region = levels[bounds]
+            threshold = _foreground_threshold(np.bincount(region.ravel(), minlength=256).tolist())
+            result[bounds] = np.where(region <= threshold, 255, 0)
     return (Image.fromarray(result), True) if result is not None else (image, False)
 
 

@@ -254,6 +254,19 @@ class RecognitionImageTests(unittest.TestCase):
             with ocr._recognition_image(path) as prepared:
                 self.assertEqual(prepared.path, path)
 
+    def test_large_dark_input_keeps_the_bounded_legacy_preparation(self):
+        from PIL import Image
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "oversized.png"
+            Image.new("RGB", (160, 100), "black").save(path)
+            with patch.object(ocr, "LOCAL_CONTRAST_PIXEL_LIMIT", 10_000), patch.object(
+                ocr, "_dark_code_image", side_effect=AssertionError("local contrast ran above its pixel limit")
+            ):
+                with ocr._recognition_image(path, portable=True) as prepared, Image.open(prepared.path) as image:
+                    self.assertEqual(image.size, (320, 200))
+                    self.assertEqual(prepared.page_mode, 11)
+
     def test_mixed_light_panel_keeps_dim_colored_syntax_intact(self):
         from PIL import Image, ImageDraw
 
@@ -458,6 +471,26 @@ class LayoutOrderTests(unittest.TestCase):
                 result = ocr.VisionTextRecognizer(SimpleNamespace(ocr_languages=("en-US",))).recognize(path)
             self.assertEqual([block.text for block in result.blocks], ["top line", "lower line"])
 
+    def test_vision_keeps_dark_letters_on_a_light_card_inside_a_dark_screen(self):
+        from PIL import Image, ImageDraw, ImageFont
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "editor.png"
+            image = Image.new("RGB", (640, 360), (24, 29, 40))
+            draw = ImageDraw.Draw(image)
+            draw.rectangle((230, 130, 435, 210), fill=(229, 229, 229))
+            font = ImageFont.load_default(size=14)
+            title = "Build target: RELEASE"
+            draw.text((252, 159), title, font=font, fill=(130, 130, 130))
+            left, top, right, bottom = draw.textbbox((252, 159), title, font=font)
+            image.save(path)
+            block = ocr.OCRBlock(title, 0.96, (left / 640, top / 360,
+                                               (right - left) / 640, (bottom - top) / 360))
+            with patch.object(ocr, "_recognize_in_worker",
+                              side_effect=[ocr.OCRResult(()), ocr.OCRResult((block,))]):
+                result = ocr.VisionTextRecognizer(Settings(ocr_languages=("en-US",))).recognize(path)
+            self.assertEqual(result.blocks, (block,))
+
     def test_tesseract_boxes_use_prepared_dimensions(self):
         from PIL import Image
 
@@ -483,16 +516,18 @@ class LayoutOrderTests(unittest.TestCase):
     def test_tesseract_uses_block_mode_only_for_a_nearly_full_dark_text_page(self):
         from PIL import Image, ImageDraw
 
-        for mixed, expected in ((False, "--psm 6"), (True, "--psm 11")):
-            with self.subTest(mixed=mixed), tempfile.TemporaryDirectory() as directory:
+        for layout, expected in (("single", "--psm 6"), ("mixed", "--psm 11"), ("split", "--psm 11")):
+            with self.subTest(layout=layout), tempfile.TemporaryDirectory() as directory:
                 path = Path(directory) / "code.png"
                 image = Image.new("RGB", (640, 360), (15, 25, 52))
                 draw = ImageDraw.Draw(image)
-                if mixed:
+                if layout == "mixed":
                     draw.rectangle((0, 0, 639, 75), fill="white")
+                pane_columns = (range(50, 240, 12), range(394, 602, 12)) if layout == "split" else (range(50, 420, 12),)
                 for line_y in range(90, 300, 30):
-                    for char_x in range(50, 420, 12):
-                        draw.rectangle((char_x, line_y, char_x + 7, line_y + 9), fill=(140, 95, 125))
+                    for columns in pane_columns:
+                        for char_x in columns:
+                            draw.rectangle((char_x, line_y, char_x + 7, line_y + 9), fill=(140, 95, 125))
                 image.save(path)
                 called = []
 
