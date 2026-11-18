@@ -30,8 +30,10 @@ class ScreenInteractionTests(unittest.TestCase):
         return frames
 
     def selected(self, frames, scores):
-        adjusted = screen_interaction.adjust_scores(frames, scores)
-        return screen_rank._select([frame.timestamp for frame in frames], adjusted, set())
+        adjusted, fallback_onsets = screen_interaction.adjust_scores(frames, scores)
+        return screen_rank._select(
+            [frame.timestamp for frame in frames], adjusted, set(), fallback_onsets=fallback_onsets,
+        )
 
     def menu(self, image):
         rendered = image.copy()

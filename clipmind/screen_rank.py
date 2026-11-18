@@ -52,9 +52,10 @@ def _score(values: tuple[float, ...]) -> float:
 
 
 def _select(times: list[float], scores: dict[int, float], warnings: set[int],
-            cutoff: float = CUTOFF) -> set[int]:
+            cutoff: float = CUTOFF, *, fallback_onsets: dict[int, int] | None = None) -> set[int]:
     selected = set(warnings)
     blocked = set()
+    fallback_onsets = fallback_onsets or {}
 
     def suppress(position: int) -> None:
         t = times[position]
@@ -68,7 +69,7 @@ def _select(times: list[float], scores: dict[int, float], warnings: set[int],
     for position in sorted(scores,key=lambda i:(-scores[i],i)):
         if scores[position] < cutoff:
             break
-        if position in blocked:
+        if position in blocked or fallback_onsets.get(position) in selected:
             continue
         selected.add(position)
         suppress(position)
@@ -96,7 +97,8 @@ def annotate_information_boundaries(frames: list[Frame], duration: float) -> boo
         scores = {i:_score(values) for i,values in features(frames,duration)}
         if set(scores) != eligible - warnings:
             raise ValueError("Screen-ranker feature coverage differs from the timeline.")
-        selected = _select(times,adjust_scores(frames, scores),warnings)
+        adjusted, fallback_onsets = adjust_scores(frames, scores)
+        selected = _select(times, adjusted, warnings, fallback_onsets=fallback_onsets)
     except (OSError,ValueError,TypeError,ArithmeticError,cv2.error) as exc:
         _LOGGER.warning("Using existing boundary classification because ranking failed: %s",exc)
         return False

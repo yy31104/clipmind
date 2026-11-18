@@ -394,10 +394,12 @@ def _text_adjustments(frames, changes, height):
     return pending, results
 
 
-def adjust_scores(frames: list[Frame], scores: dict[int, float]) -> dict[int, float]:
+def adjust_scores(
+    frames: list[Frame], scores: dict[int, float],
+) -> tuple[dict[int, float], dict[int, int]]:
     """Use only saved images, their layout observations, and neighboring timestamps."""
     if not scores:
-        return scores
+        return scores, {}
     changes, height = _raster_changes(frames)
     pending, results = _text_adjustments(frames, changes, height)
     adjusted = scores.copy()
@@ -413,12 +415,14 @@ def adjust_scores(frames: list[Frame], scores: dict[int, float]) -> dict[int, fl
             adjusted[i] = score * .34
         elif change and change.persistent_shape:
             adjusted[i] = max(score, _SHAPE_SCORE)
+    fallback_onsets = {}
     for i, score in scores.items():
         change = changes[i]
         if (change and change.continues_move and adjusted[i] == _SHAPE_SCORE
                 and score < CUTOFF and i - 1 in adjusted and adjusted[i - 1] < CUTOFF
                 and i - 1 not in pending):
-            # The settled frame corroborates the earlier onset. Only move
-            # the raster bonus when neither candidate has its own rank vote.
-            adjusted[i - 1], adjusted[i] = _SHAPE_SCORE, score
-    return adjusted
+            # Prefer the earlier onset, but keep the settled frame eligible
+            # if another boundary suppresses it.
+            adjusted[i - 1] = _SHAPE_SCORE
+            fallback_onsets[i] = i - 1
+    return adjusted, fallback_onsets
