@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 
 from .media import Frame
-from .screen_viewport import _new_side_detail
+from .screen_viewport import _new_side_detail, _side_text_replaced
 
 _WIDTH, _HEIGHT = 480, 270
 _RIM_SAMPLES = np.linspace(0.12, 0.88, 20, dtype=np.float32)
@@ -94,9 +94,7 @@ def _rectify(image, corners, size, cv2):
     width, height = size
     rectangle = np.float32([[0, 0], [width - 1, 0], [width - 1, height - 1], [0, height - 1]])
     matrix = cv2.getPerspectiveTransform(corners, rectangle)
-    crop = cv2.warpPerspective(image, matrix, size)
-    border = round(min(width, height) * 0.032)
-    return crop[border:-border, border:-border]
+    return cv2.warpPerspective(image, matrix, size)
 
 
 def _largest_component(mask, cv2):
@@ -128,22 +126,25 @@ def _same_projection(before, after, cv2):
         return False
     aligned = cv2.warpAffine(after, shift, (after.shape[1], after.shape[0]),
                              flags=cv2.INTER_LINEAR | cv2.WARP_INVERSE_MAP)
-    before, after = (image[12:-12, 12:-12].astype(np.float32) for image in (before, aligned))
-    if not before.size:
-        return False
+    before, after = before.astype(np.float32), aligned.astype(np.float32)
     first = cv2.GaussianBlur(before, (0, 0), 2)
     second = cv2.GaussianBlur(after, (0, 0), 2)
-    old_span = np.ptp(np.percentile(first, (15, 85), axis=(0, 1)), axis=0)
-    new_span = np.ptp(np.percentile(second, (15, 85), axis=(0, 1)), axis=0)
+    inner = np.s_[12:-12, 12:-12]
+    old_span = np.ptp(np.percentile(first[inner], (15, 85), axis=(0, 1)), axis=0)
+    new_span = np.ptp(np.percentile(second[inner], (15, 85), axis=(0, 1)), axis=0)
     scales = np.where(old_span >= 2, np.clip(old_span / np.maximum(2, new_span), 0.65, 1.55), 1)
-    offset = np.median(first - scales * second, axis=(0, 1))
-    # A small colored stroke can vanish in grayscale or an average. Any
-    # connected native residual of five pixels vetoes an unchanged result.
+    offset = np.median((first - scales * second)[inner], axis=(0, 1))
+    # Check native color at the edge as well as in the alignment interior.
+    # Exclude only pixels interpolated from outside the captured canvas.
+    valid = cv2.warpAffine(
+        np.ones(before.shape[:2], dtype=np.float32), shift, (after.shape[1], after.shape[0]),
+        flags=cv2.INTER_LINEAR | cv2.WARP_INVERSE_MAP,
+    ) >= 0.999
     color = np.abs(before - (scales * after + offset)).max(axis=2)
-    if _largest_component(color > 24, cv2) >= 5:
+    if _largest_component((color > 24) & valid, cv2) >= 5:
         return False
-    low = np.abs(grayscale(np.float32(first - (scales * second + offset))))
-    high = np.abs(grayscale(np.float32((before - first) - scales * (after - second))))
+    low = np.abs(grayscale(np.float32(first - (scales * second + offset))))[inner]
+    high = np.abs(grayscale(np.float32((before - first) - scales * (after - second))))[inner]
     strokes = cv2.morphologyEx(np.uint8(high > 9), cv2.MORPH_OPEN, np.ones((2, 2), np.uint8))
     return np.mean(low > 13) <= 0.025 and np.mean(high > 10) <= 0.025 and _largest_component(strokes, cv2) <= 48
 
@@ -205,13 +206,17 @@ def unchanged_projection_indices(frames: list[Frame]) -> set[int]:
                                     _rectify(later, actual, size, cv2), cv2):
                 break
             stable = None
+            stable_frame = current
             if position + 1 < len(frames) and frames[position + 1].timestamp - current.timestamp <= 10:
-                stable, _ = read(frames[position + 1].path)
+                stable_frame = frames[position + 1]
+                stable, _ = read(stable_frame.path)
             if stable is None and current.stable_duration >= 1:
-                stable = later
+                stable, stable_frame = later, current
             x, y, width, height = cv2.boundingRect(actual)
-            if stable is not None and _new_side_detail(
-                earlier, later, stable, (x, y, x + width, y + height), True, cv2,
+            surface = (x, y, x + width, y + height)
+            if stable is not None and (
+                _new_side_detail(earlier, later, stable, surface, True, cv2)
+                or _side_text_replaced(previous, current, stable_frame, earlier, later, surface, cv2)
             ):
                 break
             result.add(current.index)

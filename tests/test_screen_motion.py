@@ -255,6 +255,27 @@ class DisplayEvidenceTests(unittest.TestCase):
             self.assertEqual(frames[4].change_reason, visual_states.SIDE_DETAIL_REASON)
             self.assertEqual(frames[5].change_kind, "layout")
 
+    def test_repeated_result_change_on_existing_side_console_stays_eligible(self):
+        def text_at(index):
+            return "Result: 0 success" if index < 4 else "Result: build 42 passed"
+
+        def side_console(draw, index, lines):
+            draw.rectangle((982, 107, 1255, 239), fill="#22242a")
+            draw.text((1000, 165), text_at(index), fill="white")
+            return lines + (text_at(index),)
+
+        with tempfile.TemporaryDirectory() as directory:
+            frames = self.frames(directory, edit=side_console)
+            for frame in frames:
+                frame.ocr_layout = (
+                    {"text": "Active display", "bbox": (0.07, 0.17, 0.11, 0.03)},
+                    {"text": text_at(frame.index), "bbox": (0.78, 0.22, 0.16, 0.04)},
+                )
+            with patch.object(screen_motion.screen_faces, "boxes", return_value=()):
+                visual_states.annotate_change_kinds(frames)
+            self.assertEqual(frames[4].change_kind, "content")
+            self.assertEqual(frames[5].change_kind, "layout")
+
     def test_display_accepts_unicode_image_paths_and_empty_images(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

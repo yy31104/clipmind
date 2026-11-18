@@ -184,6 +184,46 @@ def _new_side_detail(before, current, following, primary: Box, room_projection: 
     return False
 
 
+def _side_text_replaced(previous: Frame, current: Frame, following: Frame,
+                        first_image, current_image, primary: Box, cv2) -> bool:
+    """Require recurring recognized text and changed pixels in a second pane."""
+    height, width = current_image.shape[:2]
+    left, top, right, bottom = primary
+
+    def readable(frame: Frame):
+        for line in frame.ocr_layout:
+            text = "".join(line.get("text", "").split())
+            confidence = line.get("confidence")
+            bounds = line.get("bbox")
+            known_confidence = isinstance(confidence, (int, float)) and confidence >= 0.75
+            if (len(text) >= 5 and (confidence is None or known_confidence)
+                    and isinstance(bounds, (tuple, list)) and len(bounds) == 4):
+                x, y, w, h = bounds
+                if w > 0 and h > 0:
+                    yield text, (x, y, w, h)
+
+    older = tuple(readable(previous))
+    stable = tuple(readable(following))
+    for text, box in readable(current):
+        x, y, w, h = box
+        a, b = max(0, int(x * width)), max(0, int(y * height))
+        c, d = min(width, round((x + w) * width)), min(height, round((y + h) * height))
+        if c <= a or d <= b or (left < c and a < right and top < d and b < bottom):
+            continue
+
+        def nearby(other):
+            return abs(box[0] - other[0]) <= 0.02 and abs(box[1] - other[1]) <= 0.025
+
+        before = {seen for seen, bounds in older if nearby(bounds)}
+        if not before or text in before or not any(
+            seen == text and nearby(bounds) for seen, bounds in stable
+        ):
+            continue
+        if native_change(first_image[b:d, a:c], current_image[b:d, a:c], cv2):
+            return True
+    return False
+
+
 class DisplayEvidence:
     """Find recurring physical display bounds, then compare their captured pixels."""
 
@@ -319,15 +359,20 @@ class DisplayEvidence:
                 if np.mean(reduced.max(axis=2) >= _CONTRAST) >= 0.18:
                     continue
             stable = None
+            stable_frame = self.frames[position]
             if position + 1 < len(self.frames):
                 following = self.frames[position + 1]
                 if following.timestamp - self.frames[position].timestamp <= 10:
                     stable = self._read(following.path)
+                    stable_frame = following
             if stable is None and self.frames[position].stable_duration >= 1:
-                stable = current
-            if stable is not None and _new_side_detail(
-                previous, current, stable, (left, top, right, bottom),
-                self.projector[earlier] or self.projector[position], self.cv2,
+                stable, stable_frame = current, self.frames[position]
+            surface = (left, top, right, bottom)
+            if stable is not None and (
+                _new_side_detail(previous, current, stable, surface,
+                                 self.projector[earlier] or self.projector[position], self.cv2)
+                or _side_text_replaced(self.frames[earlier], self.frames[position], stable_frame,
+                                       previous, current, surface, self.cv2)
             ):
                 self.outside_detail = True
                 return False
