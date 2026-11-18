@@ -21,9 +21,8 @@ _FIELD = re.compile(r"^([^\W\d_][^:@!?.;(){}/<>\[\]\\|=]{2,26}):\s*(.*?)\s*$")
 
 @dataclass(frozen=True)
 class _Change:
-    share: float
     bands: tuple[tuple[int, int, int], ...]
-    menu_opening: bool
+    menu_only: bool
     recurring_chrome: bool
     persistent_shape: bool
 
@@ -52,25 +51,89 @@ def _menu_region(changed):
     return None
 
 
-def _opens_menu(i, times, gray, changed):
-    # Condense a menu's spaced text rows into a single, top-anchored panel.
-    # Require the covered pixels to return. A settled closure can still report
-    # an operation result and keeps its ordinary ranking evidence.
+def _menu_return(i, times, gray, changed):
+    # Look for a temporary panel covering the same pixels in either theme.
+    # An independent edit at the same time keeps its ordinary ranking evidence.
     region = _menu_region(changed)
     if region is None:
-        return False
-    before, current = gray(i - 1)[region], gray(i)[region]
+        return None
+    old_image, current_image = gray(i - 1), gray(i)
+    before, current = old_image[region], current_image[region]
     shade = np.mean(current.astype(np.int16) - before)
-    if shade >= -5:
-        return False
+    tone = float(np.median(before))
+    if not ((tone > 80 and shade < -5) or (tone <= 80 and shade > 6)):
+        return None
     active = changed[region]
     count = np.count_nonzero(active)
-    start = max(-1, i - 14, bisect_left(times, times[i] - 12) - 1)
     stop = min(len(times), i + 14, bisect_left(times, times[i] + 12))
-    def returned(indices, anchor, fraction):
-        return any(np.count_nonzero(active & (cv2.absdiff(anchor, gray(k)[region]) <= 20)) >= fraction * count
-                   for k in indices)
-    return returned(range(i + 1, stop), before, .84) and not returned(range(i - 2, start, -1), current, .72)
+
+    closing = next((k for k in range(i + 1, stop)
+                    if np.count_nonzero(active & (cv2.absdiff(before, gray(k)[region]) <= 20)) >= .84 * count),
+                   None)
+    if closing is None:
+        return None
+
+    # The uncovered area may already hold a real edit as a menu opens.
+    after = gray(closing)
+    height, width = changed.shape
+    y, x = region
+    panel = np.s_[max(0, y.start - 5):y.stop + 5, max(0, x.start - 5):x.stop + 5]
+    visible = np.s_[round(.115 * height):round(.88 * height), round(.06 * width):round(.94 * width)]
+    sustained = changed & (cv2.absdiff(current_image, after) <= 19)
+    sustained[panel] = False
+    if _has_connected_detail(sustained[visible]):
+        return None
+
+    # A pure dismissal restores the covered pixels and leaves the rest of
+    # the last displayed screen as it was. Check both areas for new detail.
+    residual = cv2.absdiff(gray(closing - 1), after) >= 25
+    residual[panel] = False
+    inside = cv2.absdiff(before, after[region]) >= 25
+    pure = not _has_connected_detail(residual) and not _has_connected_detail(inside)
+    return closing if pure else i
+
+
+def _has_connected_detail(changed):
+    return any(row[cv2.CC_STAT_AREA] >= 6 for row in _components(changed))
+
+
+def _persistent_line_edit(changed, before, current, following):
+    height, width = changed.shape
+    count = np.count_nonzero(changed)
+    if count < 6 or count > changed.size * .0014:
+        return False
+    retained = cv2.absdiff(current, following) <= 19
+    if np.count_nonzero(changed & retained) < .8 * count:
+        return False
+    grouped = cv2.morphologyEx(np.uint8(changed), cv2.MORPH_CLOSE, np.ones((3, 13), np.uint8))
+    for x, y, w, h, _ in _components(grouped):
+        if not (3 <= h <= 20 and 2 <= w <= 110 and .11 * height < y < .9 * height and 11 < x < width - 11):
+            continue
+        edited = np.count_nonzero(changed[y:y + h, x:x + w])
+        if edited < max(6, .75 * count):
+            continue
+        flank_rows = slice(max(0, y - 4), y + h + 4)
+        flanks = (
+            np.s_[flank_rows, max(0, x - 22):x - 1],
+            np.s_[flank_rows, x + w + 1:x + w + 23],
+        )
+        ink = []
+        for flank in flanks:
+            pixels = current[flank]
+            if not pixels.size:
+                ink.append(0)
+                continue
+            rich = np.abs(pixels.astype(np.float32) - np.median(pixels)) >= 38
+            ink.append(np.count_nonzero(rich & retained[flank]))
+        if min(ink) >= 5:
+            return True
+        if edited >= 30 and max(ink) >= 10:
+            area = np.s_[y:y + h, x:x + w]
+            previous = before[area].astype(np.float32)
+            old_ink = np.abs(previous - np.median(previous)) >= 38
+            if np.count_nonzero(old_ink & changed[area]) >= .15 * edited:
+                return True
+    return False
 
 
 def _recurs(i, times, masks):
@@ -120,6 +183,7 @@ def _raster_changes(frames):
 
     interior = np.s_[round(height * .115):round(height * .88), round(width * .06):round(width * .94)]
     evidence = [None]
+    menu_dismissals = set()
     for i, t in enumerate(times[1:], 1):
         before, current = gray(i - 1), gray(i)
         delta = cv2.absdiff(before, current)
@@ -143,8 +207,13 @@ def _raster_changes(frames):
             bands = tuple((int(a), int(b), int(row_counts[a:b].sum()))
                           for a, b in zip(edges[::2], edges[1::2])
                           if .12 * height <= a < .95 * height and row_counts[a:b].sum() >= 40)
-        opening = .025 <= share <= .38 and _opens_menu(i, times, gray, changed)
-        evidence.append(_Change(share, bands, opening, chrome, shape))
+        menu_return = _menu_return(i, times, gray, changed) if .013 <= share <= .38 else None
+        if menu_return is not None and menu_return != i:
+            menu_dismissals.add(menu_return)
+        if not shape and i + 1 < len(times) and times[i + 1] >= t + .8 and share <= .0014:
+            shape = _persistent_line_edit(changed, before, current, gray(i + 1))
+        menu_only = menu_return is not None or i in menu_dismissals
+        evidence.append(_Change(bands, menu_only, chrome, shape))
     return evidence, height
 
 
@@ -248,7 +317,7 @@ def adjust_scores(frames: list[Frame], scores: dict[int, float]) -> dict[int, fl
             adjusted[i] = score * .25
         elif i in results:
             adjusted[i] = max(score, .26)
-        elif change and change.menu_opening:
+        elif change and change.menu_only:
             adjusted[i] = score * .22
         elif change and change.recurring_chrome:
             adjusted[i] = score * .34
