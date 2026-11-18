@@ -14,6 +14,7 @@ from .screen_viewport import _new_side_detail, _side_text_replaced
 _WIDTH, _HEIGHT = 480, 270
 _RIM_SAMPLES = np.linspace(0.12, 0.88, 20, dtype=np.float32)
 _CONTEXT_SECONDS = 48
+_MIN_SKEW = 3
 
 
 def _intersection(horizontal, vertical):
@@ -67,22 +68,34 @@ def _measure_screen(gray, cv2):
             vertical.append((slope, x - slope * y, min(y, yy), max(y, yy)))
     horizontal = _distinct(horizontal, _WIDTH)
     vertical = _distinct(vertical, _HEIGHT)
+    # A grid of straight horizontal and vertical lines cannot establish
+    # camera perspective, regardless of how the lines are combined.
+    if not (any(abs(line[0]) * _WIDTH >= _MIN_SKEW for line in horizontal)
+            or any(abs(line[0]) * _HEIGHT >= _MIN_SKEW for line in vertical)):
+        return None
     best = 0.0
     chosen = None
     for top, bottom in combinations(horizontal, 2):
         for left, right in combinations(vertical, 2):
-            corners = np.float32([_intersection(top, left), _intersection(top, right),
-                                  _intersection(bottom, right), _intersection(bottom, left)])
-            if np.any(corners < 10) or np.any(corners > [_WIDTH - 11, _HEIGHT - 11]):
+            upper_left = _intersection(top, left)
+            upper_right = _intersection(top, right)
+            lower_right = _intersection(bottom, right)
+            lower_left = _intersection(bottom, left)
+            quad = (upper_left, upper_right, lower_right, lower_left)
+            if any(x < 10 or y < 10 or x > _WIDTH - 11 or y > _HEIGHT - 11 for x, y in quad):
                 continue
-            width = (corners[1, 0] + corners[2, 0] - corners[0, 0] - corners[3, 0]) / 2
-            height = (corners[2, 1] + corners[3, 1] - corners[0, 1] - corners[1, 1]) / 2
+            width = (upper_right[0] + lower_right[0] - upper_left[0] - lower_left[0]) / 2
+            height = (lower_right[1] + lower_left[1] - upper_right[1] - upper_left[1]) / 2
             if width < 104 or height < 65 or not 1.12 <= width / height <= 2.28:
                 continue
-            spans = (corners[[0, 1], 0], corners[[3, 2], 0], corners[[0, 3], 1], corners[[1, 2], 1])
+            spans = (
+                (upper_left[0], upper_right[0]), (lower_left[0], lower_right[0]),
+                (upper_left[1], lower_left[1]), (upper_right[1], lower_right[1]),
+            )
             if any(min(end, b) - max(start, a) < 0.51 * (b - a)
                    for (a, b), (_, _, start, end) in zip(spans, (top, bottom, left, right))):
                 continue
+            corners = np.float32(quad)
             support = _rim_support(gray, corners, cv2)
             score = sum(support) * 3 + 0.9 * width * height / (_WIDTH * _HEIGHT)
             if support[1] >= 0.40 and support[2] >= 0.55 and score > best:
@@ -198,7 +211,7 @@ def unchanged_projection_indices(frames: list[Frame]) -> set[int]:
             # visible perspective in the recurring border before warping it.
             skew = max(abs(median[0, 1] - median[1, 1]), abs(median[2, 1] - median[3, 1]),
                        abs(median[0, 0] - median[3, 0]), abs(median[1, 0] - median[2, 0]))
-            if skew < 3 or min(a[1], b[1]) < 0.25 or min(a[2], b[2]) < 0.44:
+            if skew < _MIN_SKEW or min(a[1], b[1]) < 0.25 or min(a[2], b[2]) < 0.44:
                 continue
             actual = median * np.float32([later.shape[1] / _WIDTH, later.shape[0] / _HEIGHT])
             size = (int(np.linalg.norm(actual[1] - actual[0])), int(np.linalg.norm(actual[3] - actual[0])))
