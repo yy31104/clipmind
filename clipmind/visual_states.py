@@ -21,6 +21,7 @@ from .providers import TextRecognizer
 
 PREVIEW_ALGORITHM = "adaptive-scene-text-v2"
 INFORMATION_BOUNDARY_ALGORITHM = "anchored-display-v4"
+SIDE_DETAIL_REASON = "Visible detail appeared on a separate surface."
 NOVEL_MIN_CHARACTERS = 5
 NOVEL_MIN_SHARE = 0.04
 RETURN_MAX_CHANGED_SHARE = 0.012
@@ -243,6 +244,8 @@ def annotate_change_kinds(frames: list[Frame]) -> None:
         elif display.unchanged(position, anchor_position):
             frame.change_kind = "layout"
             frame.change_reason = "The display stayed the same while the surrounding image changed."
+        elif display.outside_detail:
+            frame.change_kind, frame.change_reason = "content", SIDE_DETAIL_REASON
         elif (anchor is not None and not _adds_information(*_text_novelty(anchor_lines, lines)[::2])
               and (share := _changed_share(signature(anchor), signature(frame))) is not None
               and share < RETURN_MAX_CHANGED_SHARE):
@@ -307,7 +310,7 @@ def _settle_transitions(frames: list[Frame]) -> None:
     information = {"content", "build", "uncertain"}
     for current, following in zip(frames, frames[1:]):
         if (current.change_kind in information and following.change_kind in information
-                and current.change_reason != "Initial screen."
+                and current.change_reason not in {"Initial screen.", SIDE_DETAIL_REASON}
                 and not (current.ocr_warning or current.dedupe_warning)
                 and current.observed_sample_count <= 1
                 and 0 < following.timestamp - current.timestamp <= TRANSITION_MAX_SECONDS):

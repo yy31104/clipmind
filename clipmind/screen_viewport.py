@@ -125,6 +125,37 @@ def _pixels_at(image, box: Box) -> Box:
             round(right * width / _WIDTH) - 2, round(bottom * height / _HEIGHT) - 2)
 
 
+def _new_side_detail(before, current, following, primary: Box, room_projection: bool, cv2) -> bool:
+    """Find persistent new strokes on a previously blank neighboring surface."""
+    if before.shape != current.shape or following.shape != current.shape:
+        return False
+    height, width = current.shape[:2]
+    left, top, right, bottom = primary
+    changed = np.uint8(cv2.absdiff(before, current).max(axis=2) >= _CONTRAST)
+    changed[max(0, top - 12):bottom + 12, max(0, left - 12):right + 12] = 0
+    groups = cv2.morphologyEx(changed, cv2.MORPH_CLOSE, np.ones((5, 15), np.uint8))
+    _, _, stats, _ = cv2.connectedComponentsWithStats(groups)
+    for x, y, span, depth, _ in stats[1:]:
+        if not (span >= 22 and depth >= 7 and span * depth <= 0.08 * width * height):
+            continue
+        section = np.s_[max(0, y - 4):min(height, y + depth + 4), max(0, x - 4):min(width, x + span + 4)]
+        old, new, later = before[section], current[section], following[section]
+        if np.mean(cv2.absdiff(new, later).max(axis=2) >= 15) > 0.009:
+            continue
+        added = cv2.absdiff(old, new).max(axis=2) >= _CONTRAST
+        if np.count_nonzero(added) < 35 or not 0.02 <= np.mean(added) <= 0.44:
+            continue
+        background = np.median(old.reshape(-1, 3), axis=0)
+        if np.mean(np.abs(old - background).max(axis=2) >= 18) > 0.03:
+            continue
+        # In a room view, a dark occluder can look like a blank surface
+        # and then reveal a fixed wall or an object as it moves.
+        if room_projection and max(background) < 2 * _CONTRAST:
+            continue
+        return True
+    return False
+
+
 class DisplayEvidence:
     """Find recurring physical display bounds, then compare their captured pixels."""
 
@@ -132,6 +163,7 @@ class DisplayEvidence:
         self.frames = frames
         self.regions: list[Box | None] = [None] * len(frames)
         self.projector = [False] * len(frames)
+        self.outside_detail = False
         self._read = lru_cache(maxsize=6)(self._load)
         try:
             import cv2
@@ -143,7 +175,11 @@ class DisplayEvidence:
             self._find_displays()
 
     def _load(self, path: Path):
-        return self.cv2.imread(str(path), self.cv2.IMREAD_COLOR) if path.is_file() else None
+        try:
+            encoded = np.frombuffer(path.read_bytes(), dtype=np.uint8)
+        except OSError:
+            return None
+        return self.cv2.imdecode(encoded, self.cv2.IMREAD_COLOR) if encoded.size else None
 
     def _find_displays(self) -> None:
         observed, projections = [], []
@@ -193,6 +229,7 @@ class DisplayEvidence:
                     )
 
     def unchanged(self, position: int, anchor: int) -> bool:
+        self.outside_detail = False
         box = self.regions[position]
         if self.cv2 is None or box is None:
             return False
@@ -219,5 +256,18 @@ class DisplayEvidence:
                                           interpolation=self.cv2.INTER_AREA)
                 if np.mean(reduced.max(axis=2) >= _CONTRAST) >= 0.18:
                     continue
+            stable = None
+            if position + 1 < len(self.frames):
+                following = self.frames[position + 1]
+                if following.timestamp - self.frames[position].timestamp <= 10:
+                    stable = self._read(following.path)
+            if stable is None and self.frames[position].stable_duration >= 1:
+                stable = current
+            if stable is not None and _new_side_detail(
+                previous, current, stable, (left, top, right, bottom),
+                self.projector[earlier] or self.projector[position], self.cv2,
+            ):
+                self.outside_detail = True
+                return False
             return True
         return False

@@ -238,6 +238,35 @@ class DisplayEvidenceTests(unittest.TestCase):
             self.assertIn(frames[4].change_kind, {"build", "content", "uncertain"})
             self.assertEqual(frames[5].change_kind, "layout")
 
+    def test_side_whiteboard_strokes_stay_eligible(self):
+        def side_diagram(draw, index, lines):
+            draw.rectangle((992, 100, 1248, 250), fill="white")
+            if index >= 4:
+                draw.line(((1020, 185), (1075, 155), (1120, 192), (1220, 125)), fill="black", width=4)
+                draw.text((1030, 205), "Confirmed response after replay", fill="black")
+            return lines
+
+        with tempfile.TemporaryDirectory() as directory:
+            frames = self.frames(directory, edit=side_diagram)
+            with patch.object(screen_motion.screen_faces, "boxes", return_value=()):
+                visual_states.annotate_change_kinds(frames)
+            self.assertEqual(frames[3].change_kind, "layout")
+            self.assertEqual(frames[4].change_kind, "content")
+            self.assertEqual(frames[4].change_reason, visual_states.SIDE_DETAIL_REASON)
+            self.assertEqual(frames[5].change_kind, "layout")
+
+    def test_display_accepts_unicode_image_paths_and_empty_images(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            image = root / "frame-\u00e9.png"
+            Image.new("RGB", (32, 16)).save(image)
+            empty = root / "empty.png"
+            empty.touch()
+            evidence = screen_viewport.DisplayEvidence([])
+            self.assertEqual(evidence._read(image).shape, (16, 32, 3))
+            self.assertIsNone(evidence._read(empty))
+            self.assertIsNone(evidence._read(root / "missing.png"))
+
 
 if __name__ == "__main__":
     unittest.main()
