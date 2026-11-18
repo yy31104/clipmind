@@ -44,3 +44,23 @@ matches on the four recordings. Hard cuts and one-frame flashes keep
 their original timings in the regression tests.
 
 [Per-recording replay](data/v160-development-fade-onsets.json)
+
+## Native frame onsets
+
+Sampling at 2 Hz can place a new state just after a reference frame even
+when it already shows exactly the same screen. Several EmacsConf and
+DebConf code references landed 33–40 ms before the next saved state.
+The timeline therefore returned the preceding page.
+
+The native-onset check compares the frames immediately before a sampled
+change with the retained screen. It moves the onset only through a
+continuous run of matching source frames. The retained image and its
+capture time stay the same. A local video test confirms the decoder
+timestamp on both modern and older FFmpeg versions.
+
+In a saved-frame replay of the two code recordings, Vision errors fell
+from 1,445 to 413 of 3,734 characters. Tesseract errors fell from 1,576
+to 598. The replay uses the same OCR records, reference regions and
+scorer. These are development results.
+
+[Per-region replay](data/v160-development-native-onsets.json)

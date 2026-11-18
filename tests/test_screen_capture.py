@@ -12,6 +12,29 @@ from clipmind.media import Frame
 
 
 class IncrementalScreenTests(unittest.TestCase):
+    @unittest.skipUnless(shutil.which('ffmpeg'), 'FFmpeg required to verify decoder timestamps')
+    def test_native_onset_uses_a_confirmed_source_frame_between_sample_times(self):
+        async def check(work: Path):
+            video = work / 'source.mp4'
+            subprocess.run([
+                'ffmpeg', '-nostdin', '-v', 'error', '-f', 'lavfi',
+                '-i', 'color=black:s=640x360:r=30:d=3',
+                '-vf', "drawbox=70:100:360:100:white:fill:enable='eq(n,42)+gte(n,44)'",
+                '-c:v', 'libx264', '-threads', '2', str(video),
+            ], check=True, capture_output=True)
+            frames = await media.sample_frames(video, work / 'samples', fps=2, width=640)
+            samples = [(frame.timestamp, frame.path) for frame in frames]
+            kept = media.dedupe(frames)
+            self.assertEqual([frame.timestamp for frame in kept], [0, 1.5])
+            settled_path = kept[1].path
+            await media.refine_native_onsets(video, samples, kept, work / 'native')
+            self.assertEqual(kept[1].timestamp, 1.466666667)
+            self.assertEqual(kept[1].source_timestamp, 1.5)
+            self.assertEqual(kept[1].path, settled_path)
+
+        with tempfile.TemporaryDirectory() as directory:
+            asyncio.run(check(Path(directory)))
+
     def test_settled_image_keeps_interval_onset_and_its_own_capture_time(self):
         with tempfile.TemporaryDirectory() as directory:
             frames = []

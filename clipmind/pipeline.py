@@ -119,6 +119,7 @@ async def process(
             fps=config.sample_fps,
             width=config.sample_width,
         )
+        source_samples = [(frame.timestamp, frame.path) for frame in candidates]
         unique = media.dedupe(candidates, threshold=config.dedupe_threshold)
         estimate = preflight.estimate(
             item.duration,
@@ -140,6 +141,7 @@ async def process(
         if not estimate.within_budget and not estimate.forced:
             raise preflight.CostLimitExceeded(estimate)
 
+        await media.refine_native_onsets(item.video_path, source_samples, unique, workdir / "native_onsets")
         audio_path = await media.extract_audio(item.video_path, workdir / "audio.wav")
         evidence_candidates = await media.sample_frames(
             item.video_path,
