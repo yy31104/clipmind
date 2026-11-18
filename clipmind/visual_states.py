@@ -15,12 +15,12 @@ from typing import Iterable
 import numpy as np
 from PIL import Image
 
-from . import media, ocr, screen_faces, screen_motion
+from . import media, ocr, screen_faces, screen_motion, screen_viewport
 from .media import Frame
 from .providers import TextRecognizer
 
 PREVIEW_ALGORITHM = "adaptive-scene-text-v2"
-INFORMATION_BOUNDARY_ALGORITHM = "anchored-text-novelty-v3"
+INFORMATION_BOUNDARY_ALGORITHM = "anchored-display-v4"
 NOVEL_MIN_CHARACTERS = 5
 NOVEL_MIN_SHARE = 0.04
 RETURN_MAX_CHANGED_SHARE = 0.012
@@ -217,6 +217,7 @@ def annotate_change_kinds(frames: list[Frame]) -> None:
     overlays = {text for text, count in frequency.items()
                 if len(text) <= 32 and text in edge_text and count >= max(3, 0.4 * len(frames))}
     motion = screen_motion.screen_motion_evidence(frames)
+    display = screen_viewport.DisplayEvidence(frames)
     signatures: dict[int, np.ndarray | None] = {}
 
     def signature(frame: Frame) -> np.ndarray | None:
@@ -225,6 +226,7 @@ def annotate_change_kinds(frames: list[Frame]) -> None:
         return signatures[frame.index]
 
     anchor: Frame | None = None
+    anchor_position = -1
     anchor_lines: tuple[str, ...] = ()
     for position, frame in enumerate(frames):
         frame.change_kind, frame.change_reason = "uncertain", "Unresolved visual change."
@@ -238,6 +240,9 @@ def annotate_change_kinds(frames: list[Frame]) -> None:
             frame.change_reason = motion[frame.index].reason
         elif signature(frame) is None or signature(frames[position - 1]) is None:
             frame.change_reason = "Image comparison unavailable; boundary retained."
+        elif display.unchanged(position, anchor_position):
+            frame.change_kind = "layout"
+            frame.change_reason = "The display stayed the same while the surrounding image changed."
         elif (anchor is not None and not _adds_information(*_text_novelty(anchor_lines, lines)[::2])
               and (share := _changed_share(signature(anchor), signature(frame))) is not None
               and share < RETURN_MAX_CHANGED_SHARE):
@@ -290,6 +295,7 @@ def annotate_change_kinds(frames: list[Frame]) -> None:
         if frame.change_kind in {"content", "build", "uncertain"}:
             if lines or anchor is None or not anchor_lines:
                 anchor, anchor_lines = frame, lines
+                anchor_position = position
     _settle_transitions(frames)
 
 

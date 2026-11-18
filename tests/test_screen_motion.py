@@ -7,7 +7,7 @@ from unittest.mock import patch
 
 from PIL import Image, ImageDraw
 
-from clipmind import screen_motion, visual_states
+from clipmind import screen_motion, screen_viewport, visual_states
 from clipmind.media import Frame
 
 
@@ -175,6 +175,68 @@ class ScreenMotionTests(unittest.TestCase):
                 visual_states.annotate_change_kinds(frames)
             self.assertNotIn(frames[1].change_kind, {"build", "content"})
             self.assertEqual(len(frames), 4)
+
+
+class DisplayEvidenceTests(unittest.TestCase):
+    def frames(self, directory, *, edit=None):
+        frames = []
+        for index in range(9):
+            image = Image.new("RGB", (1280, 720), "#403071")
+            draw = ImageDraw.Draw(image)
+            draw.rectangle((55, 85, 954, 580), fill="white")
+            draw.text((96, 124), "Active display", fill="black")
+            draw.rectangle((1000, 300, 1240, 570), fill=(15 * index, 50, 100))
+            path = Path(directory) / f"display-{index}.png"
+            lines = ("Active display", f"Recognized changing foreground text {index}")
+            if edit is not None:
+                lines = edit(draw, index, lines)
+            image.save(path)
+            frames.append(Frame(index, index * 3.5, path, lines=lines))
+        return frames
+
+    def test_recurring_display_outranks_text_from_motion_outside_it(self):
+        with tempfile.TemporaryDirectory() as directory:
+            frames = self.frames(directory)
+            with patch.object(screen_motion.screen_faces, "boxes", return_value=()):
+                visual_states.annotate_change_kinds(frames)
+            self.assertTrue(all(frame.change_kind == "layout" for frame in frames[1:]))
+            self.assertTrue(all("display stayed the same" in frame.change_reason for frame in frames[1:]))
+            self.assertEqual([(frame.index, frame.timestamp) for frame in frames],
+                             [(index, index * 3.5) for index in range(9)])
+
+    def test_native_display_evidence_vetoes_a_compact_glyph_and_colored_mark(self):
+        def add_mark(draw, index, lines):
+            if index >= 2:
+                # A five-pixel stroke is largely lost in a 320 px signature.
+                draw.line((450, 350, 454, 350), fill=(255, 0, 0))
+            if index >= 5:
+                draw.line((575, 380, 575, 388), fill="black")
+            return lines
+
+        with tempfile.TemporaryDirectory() as directory:
+            frames = self.frames(directory, edit=add_mark)
+            evidence = screen_viewport.DisplayEvidence(frames)
+            self.assertTrue(evidence.unchanged(1, 0))
+            self.assertFalse(evidence.unchanged(2, 0))
+            self.assertTrue(evidence.unchanged(3, 2))
+            self.assertFalse(evidence.unchanged(5, 2))
+
+    def test_a_new_terminal_result_in_the_display_stays_eligible(self):
+        result = "Task completed with 27 accepted items and zero errors"
+
+        def command_result(draw, index, lines):
+            if index >= 4:
+                draw.rectangle((215, 230, 835, 460), fill="#242424")
+                draw.text((250, 300), result, fill="white")
+                return lines + (result,)
+            return lines
+
+        with tempfile.TemporaryDirectory() as directory:
+            frames = self.frames(directory, edit=command_result)
+            with patch.object(screen_motion.screen_faces, "boxes", return_value=()):
+                visual_states.annotate_change_kinds(frames)
+            self.assertIn(frames[4].change_kind, {"build", "content", "uncertain"})
+            self.assertEqual(frames[5].change_kind, "layout")
 
 
 if __name__ == "__main__":
