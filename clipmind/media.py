@@ -13,6 +13,7 @@ from PIL import Image
 
 from . import subprocesses
 from .config import settings
+from .screen_edits import SettledEdits
 
 
 class MediaError(RuntimeError):
@@ -126,7 +127,7 @@ async def extract_still(video: Path, timestamp: float, dest: Path) -> Path:
 
 # Identifies how canonical membership was decided, so a later evaluation can
 # tell "the algorithm changed" apart from "the source bytes changed".
-DEDUPE_ALGORITHM = "dhash-stationary-strokes-native-onset-v7"
+DEDUPE_ALGORITHM = "dhash-stationary-strokes-native-onset-v8"
 
 
 def _detail_signature(path: Path) -> np.ndarray:
@@ -305,6 +306,51 @@ async def refine_native_onsets(
     _clamp_stable_durations(kept)
 
 
+def _restore_settled_edits(
+    frames: list[Frame], samples: list[tuple[float, Path]], kept: list[Frame],
+    coarse_onsets: list[float],
+) -> list[Frame]:
+    """Split a near-duplicate interval only when both appearances persist."""
+    positions = {time: index for index, (time, _) in enumerate(samples)}
+    if len(positions) != len(samples):
+        return kept
+    starts = [positions[time] for time in coarse_onsets]
+    captured_at = {path: time for time, path in samples}
+    detector = SettledEdits(samples)
+    restored = []
+    for number, (start, stop, original) in enumerate(zip(starts, starts[1:] + [len(frames)], kept)):
+        if original.dedupe_warning:
+            restored.append(original)
+            continue
+        next_onset = kept[number + 1].timestamp if number + 1 < len(kept) else float("inf")
+        previous_onset = original.timestamp
+        original_capture = original.source_timestamp
+        if original_capture is None:
+            original_capture = captured_at[original.path]
+        positions_in_interval = [start]
+        for position in range(start + 2, stop - 1):
+            time, _ = samples[position]
+            # Allow a short dwell on both sides of a recovered edit.
+            if time - previous_onset < 0.85 or next_onset - time < 0.85:
+                continue
+            if detector.at(position, replacing_representative=time <= original_capture):
+                positions_in_interval.append(position)
+                previous_onset = time
+        if len(positions_in_interval) == 1:
+            restored.append(original)
+            continue
+        for left, right in zip(positions_in_interval, positions_in_interval[1:] + [stop]):
+            frame = original if left == start else frames[left]
+            if left == start and right < stop and original_capture >= samples[right][0]:
+                still = frames[right - 1]
+                frame.index, frame.path, frame.phash = still.index, still.path, still.phash
+                frame.source_timestamp = still.source_timestamp
+            frame.observed_sample_count = right - left
+            frame.stable_duration = samples[right - 1][0] - samples[left][0]
+            restored.append(frame)
+    return restored
+
+
 def dedupe(frames: list[Frame], threshold: int | None = None) -> list[Frame]:
     """Drop near-duplicates; retain and mark frames that cannot be compared."""
     threshold = settings.dedupe_threshold if threshold is None else threshold
@@ -379,6 +425,8 @@ def dedupe(frames: list[Frame], threshold: int | None = None) -> list[Frame]:
         last_hash = frame.phash
         last_detail = detail
         representative_detail = detail
+    coarse_onsets = [frame.timestamp for frame in kept]
     _restore_fade_onsets(samples, kept)
+    kept = _restore_settled_edits(frames, samples, kept, coarse_onsets)
     _clamp_stable_durations(kept)
     return kept

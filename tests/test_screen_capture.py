@@ -179,6 +179,34 @@ class IncrementalScreenTests(unittest.TestCase):
                 frames.append(Frame(index, index / 2, path))
             self.assertEqual(len(media.dedupe(frames)), 1)
 
+    def test_settled_small_edit_adds_a_boundary_but_a_flash_or_caret_does_not(self):
+        for kind in ('edit', 'flash', 'caret'):
+            with self.subTest(kind=kind), tempfile.TemporaryDirectory() as directory:
+                frames = []
+                for index in range(14):
+                    path = Path(directory) / f'{index}.png'
+                    image = Image.new('RGB', (640, 360), '#171717')
+                    draw = ImageDraw.Draw(image)
+                    draw.text((50, 40), 'Configuration', fill='white')
+                    edited = kind == 'edit' and index >= 6 or kind == 'flash' and index == 6
+                    draw.text((200, 110), f'timeout = {1 if edited else 0}', fill='white')
+                    if kind == 'caret':
+                        x = 279 if index < 6 else 289
+                        draw.rectangle((x, 109, x + 5, 123), fill='white')
+                    image.save(path)
+                    frames.append(Frame(index, index / 2, path, source_timestamp=index / 2))
+                self.assertLessEqual(media.hamming(media.dhash(frames[0].path),
+                                                   media.dhash(frames[6].path)), 6)
+                kept = media.dedupe(frames)
+                if kind == 'edit':
+                    self.assertEqual(
+                        [(f.timestamp, f.source_timestamp, f.path.name, f.observed_sample_count)
+                         for f in kept],
+                        [(0, 0, '0.png', 6), (3, 3, '6.png', 8)],
+                    )
+                else:
+                    self.assertEqual([f.timestamp for f in kept], [0])
+
     def test_fade_uses_a_visible_onset_and_preserves_the_settled_capture(self):
         before = Image.new('RGB', (640, 360), '#181818')
         ImageDraw.Draw(before).text((35, 25), 'Sending a message', fill='white')
