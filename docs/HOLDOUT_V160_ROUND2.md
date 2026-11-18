@@ -38,3 +38,16 @@ video-relative source presentation time for every code region.
 All 44 referenced stills matched the [native frame re-encode](data/v160-round2-native-evidence.json) byte for byte. Both scored
 backends use the same four input files and the existing ±1 s boundary
 matcher.
+
+## Frozen run
+
+The [campaign lock](data/v160-round2-campaign.json) records the candidate,
+source files, labels and scorer. The [runtime fingerprint](data/v160-round2-runtime.json)
+identifies the application files used by both backends. Docker uses the
+[recorded Linux arm64 image](data/v160-round2-docker-image.json). Each
+backend runs once on this corpus.
+
+The candidate completed [two exposed development recordings](data/v160-round2-development-smoke.json)
+on both backends with no OCR failures or temporary frames left on disk.
+Boundary precision was still below 16% on those recordings. They are
+separate from the round 2 sources.

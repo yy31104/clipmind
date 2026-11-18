@@ -1,0 +1,46 @@
+{
+  "candidate_commit": "f5efbe186f458de6b20301a26fb5245f8e75829f",
+  "runtime_sha256": "cd9356bfe70fbfdeac1a346db7d78780d8b46f2694dec822dff744909048153a",
+  "fingerprint_sha256": "69a1dd86781bbb9aee26b3a4ba6d8f199360abf8d1d26dcf05be3038f8d50ec1",
+  "corpus_sha256": "d360de7f3261a854cc3bec7c12c14a21353bd563597b6a404146e5152b94c7ba",
+  "labels_sha256": "84cc77f2270b5997eb39d7c7cd8f816c8591661b484100d0fdf723e04c98874e",
+  "benchmark_sha256": {
+    "evaluate_real_talks.py": "6939a1936bbeb89ed6005d9dd2217f4d13ba286cc8bb6fe847d428be911187bf",
+    "screen_evaluation.py": "c068100b0a1066b42282d09e9c7a123004ff94d80f9d42ddf23580db05eda395"
+  },
+  "inputs": {
+    "r02-a01": {
+      "input.mp4": "a850348583c8919fa35b6ca1029abc2b4d4249297cb274899c1aadc0e8f93380"
+    },
+    "r02-a02": {
+      "input.mp4": "51ac214e3691745e90a022a1177d517ac6ee6acee0cdc31637ff2f63256f20e4"
+    },
+    "r02-a03": {
+      "input.mp4": "607d52d3340bfd46b768d06eac8b0c58af0a4f0de6905ec178ba9ec46ab4f177"
+    },
+    "r02-a04": {
+      "input.mp4": "3049513dbfc70e91efa760303b62e17cff5c165a2142e57780c844aecb6c2c82"
+    }
+  },
+  "docker_image_record_sha256": "b41201ff0b4c5af1b06f073de1b5539371e0b288257a8090966a3a067303f94f",
+  "backends": {
+    "mac": {
+      "asr": "mlx",
+      "ocr": "vision"
+    },
+    "docker": {
+      "asr": "faster-whisper",
+      "ocr": "tesseract"
+    }
+  },
+  "shared_options": {
+    "force": true,
+    "language": "auto",
+    "ocr_diagnostics": true
+  },
+  "targets": {
+    "information_recall": 0.85,
+    "information_precision": 0.5,
+    "code_cer": 0.15
+  }
+}
