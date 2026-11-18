@@ -4,6 +4,7 @@ from __future__ import annotations
 import shutil
 import re
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
@@ -118,7 +119,7 @@ async def extract_still(video: Path, timestamp: float, dest: Path) -> Path:
 
 # Identifies how canonical membership was decided, so a later evaluation can
 # tell "the algorithm changed" apart from "the source bytes changed".
-DEDUPE_ALGORITHM = "dhash-stationary-strokes-settle-v5"
+DEDUPE_ALGORITHM = "dhash-stationary-strokes-fade-onset-v6"
 
 
 def _detail_signature(path: Path) -> np.ndarray:
@@ -161,9 +162,59 @@ def hamming(a: int, b: int) -> int:
     return bin(a ^ b).count("1")
 
 
+def _restore_fade_onsets(samples: list[tuple[float, Path]], kept: list[Frame]) -> None:
+    """Time a persistent reveal from its visible lead-in and keep the settled still."""
+    positions = {time: index for index, (time, _) in enumerate(samples)}
+    if len(positions) != len(samples):
+        return
+
+    @lru_cache(maxsize=10)
+    def detail(position: int) -> np.ndarray:
+        return _detail_signature(samples[position][1])
+
+    previous = previous_capture = -1.0
+    for frame in kept:
+        position = positions[frame.timestamp]
+        original_onset = frame.timestamp
+        anchor = position - 4
+        if (not frame.dedupe_warning and anchor >= 0 and position + 2 < len(samples)
+                and previous < samples[anchor][0] < original_onset
+                and original_onset - samples[anchor][0] <= 2.3):
+            try:
+                before, settled = detail(anchor), detail(position + 2)
+                difference = settled - before
+                region = (np.abs(difference) >= 30) & (np.abs(settled - detail(position)) <= 8)
+                if anchor:
+                    region &= np.abs(before - detail(anchor - 1)) <= 8
+                if np.count_nonzero(region) >= 60:
+                    expected = difference[region]
+                    candidate = None
+                    previous_blend = 0.0
+                    for earlier in range(anchor + 1, position):
+                        progress = (detail(earlier)[region] - before[region]) / expected
+                        blend = float(np.median(progress))
+                        coherent = (np.abs(progress - blend) <= 0.22) & (progress >= 0.12) & (progress <= 1.15)
+                        if not (0.22 <= blend <= 1.10 and np.mean(coherent) >= 0.74):
+                            candidate, previous_blend = None, 0.0
+                            continue
+                        if blend < previous_blend - 0.12:
+                            candidate = None
+                        if candidate is None and samples[earlier][0] > previous_capture:
+                            candidate = samples[earlier][0]
+                        previous_blend = blend
+                    if candidate is not None:
+                        frame.timestamp = candidate
+            except (OSError, ValueError):
+                # Keep the original timestamp if there are no readable witnesses.
+                pass
+        previous = original_onset
+        previous_capture = max(original_onset, frame.source_timestamp or original_onset)
+
+
 def dedupe(frames: list[Frame], threshold: int | None = None) -> list[Frame]:
     """Drop near-duplicates; retain and mark frames that cannot be compared."""
     threshold = settings.dedupe_threshold if threshold is None else threshold
+    samples = [(frame.timestamp, frame.path) for frame in frames]
     kept: list[Frame] = []
     last_hash: int | None = None
     last_detail: np.ndarray | None = None
@@ -234,4 +285,5 @@ def dedupe(frames: list[Frame], threshold: int | None = None) -> list[Frame]:
         last_hash = frame.phash
         last_detail = detail
         representative_detail = detail
+    _restore_fade_onsets(samples, kept)
     return kept

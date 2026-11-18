@@ -129,6 +129,32 @@ class IncrementalScreenTests(unittest.TestCase):
                 frames.append(Frame(index, index / 2, path))
             self.assertEqual(len(media.dedupe(frames)), 1)
 
+    def test_fade_uses_a_visible_onset_and_preserves_the_settled_capture(self):
+        before = Image.new('RGB', (640, 360), '#181818')
+        ImageDraw.Draw(before).text((35, 25), 'Sending a message', fill='white')
+        settled = before.copy()
+        draw = ImageDraw.Draw(settled)
+        for line in range(5):
+            draw.text((35, 130 + line * 18), f'send_message(connection, {line}, data);', fill='white')
+        examples = (
+            ('fade', (0, 0, 0, 0, .28, .53, 1, 1, 1, 1, 1), 2.5, 3.0),
+            ('hard cut', (0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1), 3.0, 3.0),
+            ('flash', (0, 0, 0, 0, .30, 0, 0, 1, 1, 1, 1), 3.5, 3.5),
+        )
+        for name, opacities, onset, capture in examples:
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                frames = []
+                for index, opacity in enumerate(opacities):
+                    path = Path(directory) / f'{index}.png'
+                    Image.blend(before, settled, opacity).save(path)
+                    frames.append(Frame(index, index / 2, path, source_timestamp=index / 2))
+                kept = media.dedupe(frames)
+                self.assertEqual(len(kept), 2)
+                self.assertEqual(kept[1].timestamp, onset)
+                self.assertEqual(kept[1].source_timestamp, capture)
+                self.assertLess(kept[0].source_timestamp, onset)
+                self.assertEqual(kept[1].path, Path(directory) / f'{round(capture * 2)}.png')
+
 
 if __name__ == '__main__':
     unittest.main()

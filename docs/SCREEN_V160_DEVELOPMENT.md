@@ -28,3 +28,19 @@ slides and settled application views during a live demo. A replay that
 excluded every single-sample state lost 17 Mac and 18 Docker matches
 and still reached only 48.63% and 41.79% precision, respectively.
 The final classifier kept those states eligible.
+
+## Fade onsets
+
+In the four recordings from the first holdout, the WordCamp Taipei
+recording had 19 unmatched canonical changes per backend. For 18, the
+nearest retained change was about one to one and a half seconds late.
+The source shows slide elements becoming visible before their clear,
+settled captures.
+
+A replay kept every screenshot and moved starts back only where several
+source frames showed the same content fading in. WordCamp matches rose
+from 27 to 41 on Vision and from 25 to 38 on Tesseract, with no lost
+matches on the four recordings. Hard cuts and one-frame flashes keep
+their original timings in the regression tests.
+
+[Per-recording replay](data/v160-development-fade-onsets.json)
