@@ -64,3 +64,15 @@ to 598. The replay uses the same OCR records, reference regions and
 scorer. These are development results.
 
 [Per-region replay](data/v160-development-native-onsets.json)
+
+## Small terminal text
+
+Tesseract keeps grayscale stroke detail when enlarging dark terminal
+frames. Mixed light slides still use local dark-panel preprocessing.
+A saved-frame comparison on the older code recordings reduced errors
+from 916 to 742 of 7,056 characters. In the two recordings with verified
+native onsets, errors fell from 598 to 556 of 3,734 characters. Some
+regions regressed, including a small increase in one DebConf region.
+
+[Older code recordings](data/v160-development-dark-terminal-historical.json) ·
+[Code recordings from round 1](data/v160-development-dark-terminal-exposed.json)

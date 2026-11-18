@@ -374,6 +374,22 @@ class LayoutOrderTests(unittest.TestCase):
                 self.assertGreater(pixels.getpixel((300, 230)), 200)
                 self.assertEqual(pixels.getpixel((20, 20)), 255)
 
+    def test_portable_dark_terminal_preserves_intermediate_stroke_levels(self):
+        from PIL import Image, ImageDraw
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "terminal.png"
+            image = Image.new("RGB", (100, 80), (14, 14, 14))
+            draw = ImageDraw.Draw(image)
+            draw.rectangle((10, 20, 29, 39), fill=(64, 8, 8))
+            draw.rectangle((40, 20, 59, 39), fill=(8, 175, 8))
+            image.save(path)
+            with ocr._recognition_image(path, portable=True) as prepared, Image.open(prepared) as result:
+                levels = [result.getpixel((x, 60)) for x in (155, 40, 100)]
+                self.assertGreater(levels[0], levels[1])
+                self.assertGreater(levels[1], levels[2])
+            self.assertFalse(prepared.exists())
+
     def test_fragments_on_the_same_line_use_horizontal_order(self):
         left = ocr.OCRBlock("let value", bbox=(0.05, 0.21, 0.12, 0.04))
         right = ocr.OCRBlock("function()", bbox=(0.19, 0.2, 0.5, 0.06))

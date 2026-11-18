@@ -111,7 +111,7 @@ def _foreground_threshold(histogram: list[int]) -> int:
 @contextmanager
 def _recognition_image(path: Path, *, portable: bool = False, scale: float | None = None):
     """A bounded, temporary OCR derivative; evidence images stay untouched."""
-    from PIL import Image, ImageChops
+    from PIL import Image, ImageChops, ImageOps
 
     with Image.open(path) as original:
         image = original.convert("RGB")
@@ -123,7 +123,10 @@ def _recognition_image(path: Path, *, portable: bool = False, scale: float | Non
     total = width * height
     dark = (sum(histogram[:96]) / total >= 0.7 and
             sum(histogram[192:]) / total < 0.12)
-    if dark:
+    if dark and portable:
+        # Keep antialiased strokes available while enlarging small terminal glyphs.
+        image = ImageOps.autocontrast(ImageOps.invert(value), cutoff=(0.02, 0.08))
+    elif dark:
         # A broad bright panel can contain its own dark code panel. Keep
         # that mixed-polarity content intact instead of erasing dim syntax.
         threshold = _foreground_threshold(histogram)
