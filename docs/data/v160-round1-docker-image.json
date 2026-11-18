@@ -1,0 +1,11 @@
+{
+  "image_id": "sha256:606a8fa0506f060298339f414ce86bb8bde1538bb62197e9e581e73414a548fb",
+  "code_revision": "b8982c4c708e585b3f19faf6cf61b57716ab1632",
+  "os": "linux",
+  "architecture": "arm64",
+  "cpu_limit": 6,
+  "memory_limit": "4 GiB",
+  "network": "none",
+  "version": "1.6.0",
+  "model_cache": "read-only local cache"
+}
