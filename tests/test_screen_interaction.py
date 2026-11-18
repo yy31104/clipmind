@@ -67,6 +67,19 @@ class ScreenInteractionTests(unittest.TestCase):
         frames = self.frames([old, self.menu(new), new], [0., 2., 4.])
         self.assertIn(1, self.selected(frames, {1: .5}))
 
+    def test_highlight_in_open_menu_does_not_hide_a_nearby_edit(self):
+        old, new = self.editor(4), self.editor(9)
+        opened = self.menu(old)
+        highlighted = opened.copy()
+        highlighted[55:68, 54:152] = 160
+        edited = self.menu(new)
+        edited[55:68, 54:152] = 160
+        frames = self.frames(
+            [old, opened, highlighted, edited, new],
+            [0., 2., 4., 6., 9.],
+        )
+        self.assertEqual(self.selected(frames, {1: .8, 2: .8, 3: .8, 4: .8}), {3})
+
     def test_temporary_textured_tile_keeps_its_score(self):
         base = np.full((360, 640), 220, np.uint8)
         tile = base.copy()

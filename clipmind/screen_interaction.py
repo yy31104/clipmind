@@ -86,8 +86,7 @@ def _menu_return(i, times, gray, changed):
     visible = np.s_[round(.115 * height):round(.88 * height), round(.06 * width):round(.94 * width)]
     sustained = changed & (cv2.absdiff(current_image, after) <= 19)
     sustained[panel] = False
-    if _has_connected_detail(sustained[visible]):
-        return None
+    opening_only = not _has_connected_detail(sustained[visible])
 
     # A pure dismissal restores the covered pixels and leaves the rest of
     # the last displayed screen as it was. Check both areas for new detail.
@@ -95,7 +94,16 @@ def _menu_return(i, times, gray, changed):
     residual[panel] = False
     inside = cv2.absdiff(before, after[region]) >= 25
     pure = not _has_connected_detail(residual) and not _has_connected_detail(inside)
-    return closing if pure else i
+    return closing, panel, opening_only, pure
+
+
+def _inside_open_menu(changed, panels):
+    if not panels:
+        return False
+    visible = changed.copy()
+    for _, panel in panels:
+        visible[panel] = False
+    return not _has_connected_detail(visible)
 
 
 def _has_connected_detail(changed):
@@ -189,6 +197,7 @@ def _raster_changes(frames):
     interior = np.s_[round(height * .115):round(height * .88), round(width * .06):round(width * .94)]
     evidence = [None]
     menu_dismissals = set()
+    open_menus = []
     for i, t in enumerate(times[1:], 1):
         before, current = gray(i - 1), gray(i)
         delta = cv2.absdiff(before, current)
@@ -212,12 +221,18 @@ def _raster_changes(frames):
             bands = tuple((int(a), int(b), int(row_counts[a:b].sum()))
                           for a, b in zip(edges[::2], edges[1::2])
                           if .12 * height <= a < .95 * height and row_counts[a:b].sum() >= 40)
+        open_menus = [(closing, panel) for closing, panel in open_menus if closing > i]
+        menu_hover = _inside_open_menu(changed, open_menus)
         menu_return = _menu_return(i, times, gray, changed) if .013 <= share <= .38 else None
-        if menu_return is not None and menu_return != i:
-            menu_dismissals.add(menu_return)
+        opening_only = False
+        if menu_return is not None:
+            closing, panel, opening_only, closing_only = menu_return
+            open_menus.append((closing, panel))
+            if closing_only:
+                menu_dismissals.add(closing)
         if not shape and i + 1 < len(times) and times[i + 1] >= t + .8 and share <= .0014:
             shape = _persistent_line_edit(changed, before, current, gray(i + 1))
-        menu_only = menu_return is not None or i in menu_dismissals
+        menu_only = opening_only or menu_hover or i in menu_dismissals
         evidence.append(_Change(bands, menu_only, chrome, shape))
     return evidence, height
 
@@ -362,7 +377,7 @@ def adjust_scores(frames: list[Frame], scores: dict[int, float]) -> dict[int, fl
         elif i in results:
             adjusted[i] = max(score, .26)
         elif change and change.menu_only:
-            adjusted[i] = score * .22
+            adjusted[i] = score * .12
         elif change and change.recurring_chrome:
             adjusted[i] = score * .34
         elif change and change.persistent_shape:
