@@ -27,3 +27,5 @@ CPU. Both use automatic speech language detection. The Mandarin recording
 uses Traditional Chinese and English for OCR. The [development
 results](SCREEN_V160_DEVELOPMENT.md) give the baseline and candidate scores
 on the exposed recordings.
+
+[Round 1 results and attempt receipts](HOLDOUT_V160_RESULTS.md)

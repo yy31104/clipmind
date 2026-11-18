@@ -3,8 +3,7 @@
 The development pool has 16 recordings, including the formerly held-out
 v1.5.0 talks. Thirteen recordings contribute 320 scored changes.
 The code regions contain 7,056 reference characters. All comparisons
-below use the same historical labels. The [revised v1.5.0 scores]
-(SCREEN_REFERENCE_COMPARISON.md) use a separate set of labels.
+below use the same historical labels. The [revised v1.5.0 scores](SCREEN_REFERENCE_COMPARISON.md) use a separate set of labels.
 
 | Runtime | Backend | Recall | Precision | Code CER |
 | --- | --- | ---: | ---: | ---: |
@@ -21,8 +20,8 @@ matched 303 of 899 predictions.
 
 A later Vision run with perspective registration had three OCR
 deadline failures in one recording. The final candidate completed all
-16 recordings on both backends. The per-recording [score receipts]
-(data/v160-round1-development.json) retain the incomplete run and checksums.
+16 recordings on both backends. The per-recording [score receipts](data/v160-round1-development.json)
+retain the incomplete run and checksums.
 
 Residual errors include foreground occlusion in front of projected
 slides and settled application views during a live demo. A replay that
