@@ -76,3 +76,17 @@ regions regressed, including a small increase in one DebConf region.
 
 [Older code recordings](data/v160-development-dark-terminal-historical.json) ·
 [Code recordings from round 1](data/v160-development-dark-terminal-exposed.json)
+
+The timing changes were also tested in the full pipeline on the four
+exposed recordings.
+
+| Backend | Recall | Precision | Code CER |
+| --- | ---: | ---: | ---: |
+| Mac / Vision | 186/211 (88.15%) | 186/907 (20.51%) | 413/3734 (11.06%) |
+| Docker / Tesseract | 177/211 (83.89%) | 177/937 (18.89%) | 598/3734 (16.01%) |
+
+The [development extraction audit](data/v160-development-timing-extraction.json)
+includes the temporary native frames found after these runs. The
+original inventory missed that directory. The pipeline now removes
+those frames as soon as timing verification ends. Restart cleanup and
+the benchmark check the same directory list.

@@ -14,6 +14,16 @@ from scripts import evaluate_real_talks as benchmark
 from tests.pack_fixture import make_complete_pack
 
 
+class CleanupInventoryTests(unittest.TestCase):
+    def test_native_onset_frames_are_counted_as_temporary_media(self):
+        with tempfile.TemporaryDirectory() as directory:
+            library = Path(directory)
+            witnesses = library / "pack" / "native_onsets"
+            witnesses.mkdir(parents=True)
+            (witnesses / "n_000001.jpg").write_bytes(b"native witness")
+            self.assertEqual(benchmark.cleanup_inventory(library), {"pack": ["native_onsets"]})
+
+
 class BoundaryTests(unittest.TestCase):
     def test_full_build_coverage_checks_actual_frame_capture_not_its_broad_interval(self):
         pack = SimpleNamespace(frame=lambda timestamp: (None, {"id": "early", "start": 0, "end": 30,

@@ -235,11 +235,15 @@ class CleanupContractTests(unittest.TestCase):
         media = self._acquire()
         (self.workdir / "samples").mkdir()
         (self.workdir / "samples" / "s_00001.jpg").write_bytes(b"candidate")
+        native = self.workdir / "native_onsets"
+        native.mkdir()
+        (native / "n_000001.jpg").write_bytes(b"native witness")
 
         pipeline.cleanup_temporary(self.workdir, keep_source=True)
 
         self.assertTrue(media.exists())
         self.assertFalse((self.workdir / "samples").exists())
+        self.assertFalse(native.exists())
 
     def test_job_directories_from_before_this_change_are_still_cleaned(self) -> None:
         legacy_media = self.workdir / "source.mp4"

@@ -27,10 +27,37 @@ class IncrementalScreenTests(unittest.TestCase):
             kept = media.dedupe(frames)
             self.assertEqual([frame.timestamp for frame in kept], [0, 1.5])
             settled_path = kept[1].path
+            blocked = work / 'blocked'
+            blocked.write_bytes(b'existing file')
+            await media.refine_native_onsets(video, samples, kept, blocked)
+            self.assertEqual(kept[1].timestamp, 1.5)
+            self.assertEqual(blocked.read_bytes(), b'existing file')
             await media.refine_native_onsets(video, samples, kept, work / 'native')
             self.assertEqual(kept[1].timestamp, 1.466666667)
             self.assertEqual(kept[1].source_timestamp, 1.5)
             self.assertEqual(kept[1].path, settled_path)
+
+        with tempfile.TemporaryDirectory() as directory:
+            asyncio.run(check(Path(directory)))
+
+    @unittest.skipUnless(shutil.which('ffmpeg'), 'FFmpeg required to verify stream selection')
+    def test_native_onset_cannot_use_an_alternate_video_track(self):
+        async def check(work: Path):
+            video = work / 'two-tracks.mp4'
+            subprocess.run([
+                'ffmpeg', '-nostdin', '-v', 'error', '-f', 'lavfi', '-i',
+                "color=black:s=320x180:r=30:d=3,drawbox=35:50:180:50:white:fill:enable='gte(n,43)'",
+                '-f', 'lavfi', '-i',
+                "color=black:s=640x360:r=30:d=3,drawbox=70:100:360:100:white:fill:enable='gte(n,45)'",
+                '-map', '0:v', '-map', '1:v', '-disposition:v:0', '0',
+                '-disposition:v:1', 'default', '-c:v', 'libx264', '-threads', '2', str(video),
+            ], check=True, capture_output=True)
+            frames = await media.sample_frames(video, work / 'samples', fps=2, width=640)
+            self.assertTrue(all(frame.source_stream_index == 1 for frame in frames))
+            samples = [(frame.timestamp, frame.path) for frame in frames]
+            kept = media.dedupe(frames)
+            await media.refine_native_onsets(video, samples, kept, work / 'native')
+            self.assertEqual([frame.timestamp for frame in kept], [0, 1.5])
 
         with tempfile.TemporaryDirectory() as directory:
             asyncio.run(check(Path(directory)))

@@ -1,0 +1,288 @@
+{
+  "mac": {
+    "status": "measured",
+    "mode": "run",
+    "extraction_code_revision": "d37fe23afc3df78df1a7c69879919f884aff0320",
+    "runtime_sha256": "ae9a797cf5c9791dbae343b85ff5307ce4df59c620581059954d0c8debb8d394",
+    "source_sha256": "f16a4e5a50209c0ba3a8b490142d71ef74f6a9cae1d1a0286b5a695ec1ded611",
+    "labels_sha256": "8a21223c50151107991b2a0c53a30a8e5e9733c33179efdc4ffc8d587c7b1cd2",
+    "totals": {
+      "matched": 186,
+      "references": 211,
+      "predictions": 907,
+      "canonical_predictions": 1779,
+      "canonical_matched": 199,
+      "code_errors": 413,
+      "code_characters": 3734,
+      "ocr_failures": 0
+    },
+    "values": {
+      "recall": 0.8815165876777251,
+      "precision": 0.20507166482910694,
+      "code_cer": 0.11060524906266737
+    },
+    "reaches_targets": {
+      "recall": true,
+      "precision": false,
+      "code_cer": true
+    },
+    "all_recordings_measured": true,
+    "passed": false,
+    "cases": [
+      {
+        "case_id": "b01",
+        "status": "measured",
+        "matched": 52,
+        "references": 53,
+        "predictions": 277,
+        "recall": 0.9811320754716981,
+        "precision": 0.18772563176895307,
+        "canonical_matched": 53,
+        "canonical_predictions": 640,
+        "code_errors": 0,
+        "code_characters": 0,
+        "ocr_failures": 0,
+        "cleanup_leftovers": {},
+        "wall_seconds": 158.244,
+        "timings": {
+          "acquisition_seconds": 0.14,
+          "asr_seconds": 43.58,
+          "ocr_seconds": 103.528,
+          "preview_seconds": 34.198,
+          "sampling_seconds": 17.534
+        }
+      },
+      {
+        "case_id": "b02",
+        "status": "measured",
+        "matched": 58,
+        "references": 75,
+        "predictions": 429,
+        "recall": 0.7733333333333333,
+        "precision": 0.1351981351981352,
+        "canonical_matched": 65,
+        "canonical_predictions": 817,
+        "code_errors": 372,
+        "code_characters": 3286,
+        "ocr_failures": 0,
+        "cleanup_leftovers": {},
+        "wall_seconds": 193.61,
+        "timings": {
+          "acquisition_seconds": 0.117,
+          "asr_seconds": 71.988,
+          "ocr_seconds": 131.557,
+          "preview_seconds": 43.158,
+          "sampling_seconds": 18.18
+        }
+      },
+      {
+        "case_id": "b03",
+        "status": "measured",
+        "matched": 43,
+        "references": 48,
+        "predictions": 44,
+        "recall": 0.8958333333333334,
+        "precision": 0.9772727272727273,
+        "canonical_matched": 47,
+        "canonical_predictions": 53,
+        "code_errors": 0,
+        "code_characters": 0,
+        "ocr_failures": 0,
+        "cleanup_leftovers": {},
+        "wall_seconds": 72.502,
+        "timings": {
+          "acquisition_seconds": 0.104,
+          "asr_seconds": 50.665,
+          "ocr_seconds": 7.862,
+          "preview_seconds": 3.982,
+          "sampling_seconds": 17.464
+        }
+      },
+      {
+        "case_id": "b04",
+        "status": "measured",
+        "matched": 33,
+        "references": 35,
+        "predictions": 157,
+        "recall": 0.9428571428571428,
+        "precision": 0.21019108280254778,
+        "canonical_matched": 34,
+        "canonical_predictions": 269,
+        "code_errors": 41,
+        "code_characters": 448,
+        "ocr_failures": 0,
+        "cleanup_leftovers": {},
+        "wall_seconds": 78.685,
+        "timings": {
+          "acquisition_seconds": 0.138,
+          "asr_seconds": 48.483,
+          "ocr_seconds": 45.607,
+          "preview_seconds": 15.191,
+          "sampling_seconds": 14.499
+        }
+      }
+    ],
+    "original_report_sha256": "ef4ffba5acc27ac356da52136bacbd145d1ee65acc8e10f22c2968787c0c2808",
+    "native_onset_artifact_audit": {
+      "b01": {
+        "native_jpegs": 1920,
+        "native_jpeg_bytes": 32459991
+      },
+      "b02": {
+        "native_jpegs": 3268,
+        "native_jpeg_bytes": 90348255
+      },
+      "b03": {
+        "native_jpegs": 230,
+        "native_jpeg_bytes": 9967996
+      },
+      "b04": {
+        "native_jpegs": 801,
+        "native_jpeg_bytes": 20552955
+      }
+    }
+  },
+  "docker": {
+    "status": "measured",
+    "mode": "run",
+    "extraction_code_revision": "d37fe23afc3df78df1a7c69879919f884aff0320",
+    "runtime_sha256": "ae9a797cf5c9791dbae343b85ff5307ce4df59c620581059954d0c8debb8d394",
+    "source_sha256": "f16a4e5a50209c0ba3a8b490142d71ef74f6a9cae1d1a0286b5a695ec1ded611",
+    "labels_sha256": "8a21223c50151107991b2a0c53a30a8e5e9733c33179efdc4ffc8d587c7b1cd2",
+    "totals": {
+      "matched": 177,
+      "references": 211,
+      "predictions": 937,
+      "canonical_predictions": 1777,
+      "canonical_matched": 201,
+      "code_errors": 598,
+      "code_characters": 3734,
+      "ocr_failures": 0
+    },
+    "values": {
+      "recall": 0.8388625592417062,
+      "precision": 0.18890074706510138,
+      "code_cer": 0.16014997321906801
+    },
+    "reaches_targets": {
+      "recall": false,
+      "precision": false,
+      "code_cer": false
+    },
+    "all_recordings_measured": true,
+    "passed": false,
+    "cases": [
+      {
+        "case_id": "b01",
+        "status": "measured",
+        "matched": 44,
+        "references": 53,
+        "predictions": 298,
+        "recall": 0.8301886792452831,
+        "precision": 0.1476510067114094,
+        "canonical_matched": 53,
+        "canonical_predictions": 638,
+        "code_errors": 0,
+        "code_characters": 0,
+        "ocr_failures": 0,
+        "cleanup_leftovers": {},
+        "wall_seconds": 254.992,
+        "timings": {
+          "acquisition_seconds": 0.631,
+          "asr_seconds": 173.673,
+          "ocr_seconds": 144.917,
+          "preview_seconds": 50.627,
+          "sampling_seconds": 29.418
+        }
+      },
+      {
+        "case_id": "b02",
+        "status": "measured",
+        "matched": 61,
+        "references": 75,
+        "predictions": 459,
+        "recall": 0.8133333333333334,
+        "precision": 0.1328976034858388,
+        "canonical_matched": 67,
+        "canonical_predictions": 819,
+        "code_errors": 494,
+        "code_characters": 3286,
+        "ocr_failures": 0,
+        "cleanup_leftovers": {},
+        "wall_seconds": 492.615,
+        "timings": {
+          "acquisition_seconds": 0.298,
+          "asr_seconds": 7.623,
+          "ocr_seconds": 405.16,
+          "preview_seconds": 54.971,
+          "sampling_seconds": 31.048
+        }
+      },
+      {
+        "case_id": "b03",
+        "status": "measured",
+        "matched": 39,
+        "references": 48,
+        "predictions": 40,
+        "recall": 0.8125,
+        "precision": 0.975,
+        "canonical_matched": 47,
+        "canonical_predictions": 53,
+        "code_errors": 0,
+        "code_characters": 0,
+        "ocr_failures": 0,
+        "cleanup_leftovers": {},
+        "wall_seconds": 207.155,
+        "timings": {
+          "acquisition_seconds": 0.175,
+          "asr_seconds": 173.447,
+          "ocr_seconds": 52.996,
+          "preview_seconds": 5.984,
+          "sampling_seconds": 26.866
+        }
+      },
+      {
+        "case_id": "b04",
+        "status": "measured",
+        "matched": 33,
+        "references": 35,
+        "predictions": 140,
+        "recall": 0.9428571428571428,
+        "precision": 0.2357142857142857,
+        "canonical_matched": 34,
+        "canonical_predictions": 267,
+        "code_errors": 104,
+        "code_characters": 448,
+        "ocr_failures": 0,
+        "cleanup_leftovers": {},
+        "wall_seconds": 235.325,
+        "timings": {
+          "acquisition_seconds": 0.312,
+          "asr_seconds": 191.313,
+          "ocr_seconds": 106.443,
+          "preview_seconds": 20.5,
+          "sampling_seconds": 22.46
+        }
+      }
+    ],
+    "original_report_sha256": "11b4929234115765b3ac1db82777343a8ebff785e8b9af267ef1e65466d69006",
+    "native_onset_artifact_audit": {
+      "b01": {
+        "native_jpegs": 1914,
+        "native_jpeg_bytes": 32383307
+      },
+      "b02": {
+        "native_jpegs": 3276,
+        "native_jpeg_bytes": 90749617
+      },
+      "b03": {
+        "native_jpegs": 235,
+        "native_jpeg_bytes": 10180508
+      },
+      "b04": {
+        "native_jpegs": 795,
+        "native_jpeg_bytes": 20459478
+      }
+    }
+  }
+}

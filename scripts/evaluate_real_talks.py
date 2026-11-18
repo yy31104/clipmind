@@ -285,13 +285,13 @@ def roi_text(layout: list[dict], roi: list[float]) -> str:
 
 
 def cleanup_inventory(library: Path) -> dict:
-    from clipmind import acquisition
+    from clipmind import acquisition, pipeline
 
     found = {}
     for directory in library.iterdir() if library.exists() else []:
         if directory.is_dir():
             paths = acquisition.leftovers(directory) + [name for name in
-                    ("samples", "evidence_samples", "audio.wav") if (directory / name).exists()]
+                    (*pipeline.TEMPORARY_FRAME_DIRECTORIES, "audio.wav") if (directory / name).exists()]
             paths.extend(path.name for path in directory.glob("source.*") if path.name != "source.json")
             if paths:
                 found[directory.name] = paths

@@ -56,6 +56,7 @@ class Frame:
     content_hint: str = "visual"
     change_kind: str = "uncertain"
     change_reason: str = ""
+    source_stream_index: int | None = None
 
 
 async def _ffmpeg(args: list[str]) -> bytes:
@@ -106,8 +107,11 @@ async def sample_frames(
     times = [float(value) for value in re.findall(rb"\bn:\s*\d+.*?\bpts_time:([0-9.eE+-]+)", diagnostics or b"")]
     if diagnostics and len(times) != len(files):
         raise MediaError("FFmpeg image timestamps do not match its sampled frames")
+    mappings = set(re.findall(rb"(?m)^[ \t]+Stream #0:(\d+) -> #0:\d+", diagnostics or b""))
+    stream = int(mappings.pop()) if len(mappings) == 1 else None
     return [Frame(index=i, timestamp=times[i] if times else i / fps, path=p,
-                  source_timestamp=times[i] if times else None) for i, p in enumerate(files)]
+                  source_timestamp=times[i] if times else None,
+                  source_stream_index=stream) for i, p in enumerate(files)]
 
 
 async def extract_still(video: Path, timestamp: float, dest: Path) -> Path:
@@ -161,6 +165,11 @@ def dhash(path: Path, size: int = 8) -> int:
 
 def hamming(a: int, b: int) -> int:
     return bin(a ^ b).count("1")
+
+
+def _clamp_stable_durations(kept: list[Frame]) -> None:
+    for current, following in zip(kept, kept[1:]):
+        current.stable_duration = min(current.stable_duration, max(0.0, following.timestamp - current.timestamp))
 
 
 def _restore_fade_onsets(samples: list[tuple[float, Path]], kept: list[Frame]) -> None:
@@ -227,6 +236,10 @@ async def refine_native_onsets(
     """Check source frames just before a sampled change without replacing its screenshot."""
     if len(kept) < 2:
         return
+    streams = {frame.source_stream_index for frame in kept}
+    if len(streams) != 1 or None in streams:
+        return
+    stream = streams.pop()
     positions = {time: index for index, (time, _) in enumerate(samples)}
     windows = []
     for previous, frame in zip(kept, kept[1:]):
@@ -237,23 +250,23 @@ async def refine_native_onsets(
             windows.append((lower, start - 1e-7, frame, positions[start]))
     if not windows:
         return
-    dest.mkdir(parents=True, exist_ok=True)
     graph = dest / "select.txt"
-    graph.write_text(
-        "[0:v:0]setpts=PTS-STARTPTS,select='"
-        + _time_ranges([(lower, upper) for lower, upper, _, _ in windows])
-        + "',scale=640:-2,showinfo[lead]\n", encoding="ascii",
-    )
     source = ["-loglevel", "info", "-i", str(video)]
     capture = [str(graph), "-map", "[lead]", "-fps_mode", "vfr", "-q:v", "4", str(dest / "n_%06d.jpg")]
     try:
+        dest.mkdir(parents=True, exist_ok=True)
+        graph.write_text(
+            f"[0:{stream}]setpts=PTS-STARTPTS,select='"
+            + _time_ranges([(lower, upper) for lower, upper, _, _ in windows])
+            + "',scale=640:-2,showinfo[lead]\n", encoding="ascii",
+        )
         try:
             diagnostics = await _ffmpeg([*source, "-/filter_complex", *capture])
         except MediaError as error:
             if "Unrecognized option '/filter_complex'" not in str(error):
                 raise
             diagnostics = await _ffmpeg([*source, "-filter_complex_script", *capture])
-    except MediaError:
+    except (MediaError, OSError):
         # Decoder refinements are optional. Matching selection still uses the coarse samples.
         return
     base = re.search(rb"config in time_base:\s*(\d+)/(\d+)", diagnostics)
@@ -287,6 +300,7 @@ async def refine_native_onsets(
             frame.timestamp = round(confirmed, 9)
         except (OSError, ValueError):
             continue
+    _clamp_stable_durations(kept)
 
 
 def dedupe(frames: list[Frame], threshold: int | None = None) -> list[Frame]:
@@ -364,4 +378,5 @@ def dedupe(frames: list[Frame], threshold: int | None = None) -> list[Frame]:
         last_detail = detail
         representative_detail = detail
     _restore_fade_onsets(samples, kept)
+    _clamp_stable_durations(kept)
     return kept

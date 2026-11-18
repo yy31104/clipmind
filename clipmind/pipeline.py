@@ -23,6 +23,7 @@ STAGES = (
     ("analysing", 0.55),
     ("writing", 0.13),
 )
+TEMPORARY_FRAME_DIRECTORIES = ("samples", "evidence_samples", "native_onsets")
 
 
 def _apply_uploaded_filename(item, options: dict) -> None:
@@ -63,8 +64,8 @@ def cleanup_temporary(workdir: Path, keep_source: bool = False) -> None:
     ``MediaAsset``, so what acquisition owns is read back from disk rather than
     from the caller.
     """
-    shutil.rmtree(workdir / "samples", ignore_errors=True)
-    shutil.rmtree(workdir / "evidence_samples", ignore_errors=True)
+    for name in TEMPORARY_FRAME_DIRECTORIES:
+        shutil.rmtree(workdir / name, ignore_errors=True)
     if keep_source:
         return
     acquisition.purge(workdir)
@@ -141,7 +142,11 @@ async def process(
         if not estimate.within_budget and not estimate.forced:
             raise preflight.CostLimitExceeded(estimate)
 
-        await media.refine_native_onsets(item.video_path, source_samples, unique, workdir / "native_onsets")
+        native_onsets = workdir / "native_onsets"
+        try:
+            await media.refine_native_onsets(item.video_path, source_samples, unique, native_onsets)
+        finally:
+            shutil.rmtree(native_onsets, ignore_errors=True)
         audio_path = await media.extract_audio(item.video_path, workdir / "audio.wav")
         evidence_candidates = await media.sample_frames(
             item.video_path,
