@@ -87,6 +87,12 @@ class OCRResult:
         return [block.text for block in self.blocks if block.text]
 
 
+@dataclass(frozen=True)
+class _PreparedOCR:
+    path: Path
+    page_mode: int = 11
+
+
 def _foreground_threshold(histogram: list[int]) -> int:
     """Otsu separation of a dark background layer from brighter foreground."""
     total = sum(histogram)
@@ -108,6 +114,34 @@ def _foreground_threshold(histogram: list[int]) -> int:
     return threshold
 
 
+def _dark_code_image(rgb, cv2):
+    """Lift dim strokes relative to the surrounding color without binarizing."""
+    import numpy as np
+
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (25, 25))
+    background = cv2.morphologyEx(rgb, cv2.MORPH_OPEN, kernel)
+    background = cv2.GaussianBlur(background, (0, 0), sigmaX=4.0)
+    strokes = cv2.subtract(rgb, background).max(axis=2)
+    upper = float(np.quantile(strokes, 0.97))
+    gain = min(3.6, max(1.0, 235 / max(1.0, upper)))
+    contrasted = 255 - np.clip(strokes.astype(np.float32) * gain, 0, 255).astype(np.uint8)
+    return contrasted, strokes
+
+
+def _has_dense_code_rows(strokes, cv2) -> bool:
+    import numpy as np
+
+    height, width = strokes.shape
+    ink = (strokes >= 30).astype(np.uint8)
+    connected = cv2.morphologyEx(ink, cv2.MORPH_CLOSE,
+                                 np.ones((1, max(9, round(width / 95))), np.uint8))
+    _, _, stats, _ = cv2.connectedComponentsWithStats(connected)
+    rows = [(y, h) for _, y, w, h, area in stats[1:]
+            if w >= 0.055 * width and 0.005 * height <= h < 0.047 * height and area >= 0.14 * w * h]
+    centers = {round((y + h / 2) / max(3, 0.011 * height)) for y, h in rows}
+    return len(centers) >= 5 and max(y + h for y, h in rows) - min(y for y, _ in rows) > 0.1 * height
+
+
 @contextmanager
 def _recognition_image(path: Path, *, portable: bool = False, scale: float | None = None):
     """A bounded, temporary OCR derivative; evidence images stay untouched."""
@@ -121,9 +155,26 @@ def _recognition_image(path: Path, *, portable: bool = False, scale: float | Non
     value = ImageChops.lighter(ImageChops.lighter(red, green), blue)
     histogram = value.histogram()
     total = width * height
-    dark = (sum(histogram[:96]) / total >= 0.7 and
-            sum(histogram[192:]) / total < 0.12)
-    if dark and portable:
+    dark_share = sum(histogram[:96]) / total
+    bright_share = sum(histogram[192:]) / total
+    dark = dark_share >= 0.7 and bright_share < 0.12
+    page_mode = 11
+    enhanced = False
+    try:
+        import cv2
+    except ImportError:
+        cv2 = None
+    if dark and cv2 is not None:
+        import numpy as np
+
+        pixels, strokes = _dark_code_image(np.asarray(image), cv2)
+        image = Image.fromarray(pixels)
+        enhanced = True
+        # For a nearly full-frame dark block, sparse segmentation drops code
+        # rows, especially includes and comments. Keep it for mixed layouts.
+        if portable and dark_share >= 0.85 and bright_share < 0.1 and _has_dense_code_rows(strokes, cv2):
+            page_mode = 6
+    elif dark and portable:
         # Keep antialiased strokes available while enlarging small terminal glyphs.
         image = ImageOps.autocontrast(ImageOps.invert(value), cutoff=(0.02, 0.08))
     elif dark:
@@ -132,9 +183,10 @@ def _recognition_image(path: Path, *, portable: bool = False, scale: float | Non
         threshold = _foreground_threshold(histogram)
         image = value.point([255 if level <= threshold else 0
                              for level in range(256)])
-    elif portable:
-        image, panels = _binarize_dark_panels(image, value)
+    elif portable and cv2 is not None:
+        image, panels = _enhance_dark_panels(image, value, cv2)
         dark = dark or panels
+        enhanced = panels
     # A darker mask isolates a code pane from surrounding UI. Vision reads
     # that pane at higher resolution while keeping the full image in color.
     upscale = (
@@ -143,18 +195,20 @@ def _recognition_image(path: Path, *, portable: bool = False, scale: float | Non
     )
     factor = (min(2.0, 2560 / width, math.sqrt(6_000_000 / total))
               if upscale else 1)
+    if portable and enhanced:
+        factor = min(3.2, 4096 / width, math.sqrt(16_000_000 / total))
     if scale is not None:
         factor = min(scale, 4096 / width, math.sqrt(16_000_000 / total))
     if factor > 1:
         image = image.resize((round(width * factor), round(height * factor)),
                              Image.Resampling.LANCZOS)
     if not dark and factor <= 1:
-        yield path
+        yield _PreparedOCR(path, page_mode)
         return
     with tempfile.TemporaryDirectory(prefix="clipmind-ocr-") as folder:
         prepared = Path(folder) / "recognition.png"
         image.save(prepared)
-        yield prepared
+        yield _PreparedOCR(prepared, page_mode)
 
 
 def _recover_missing_lines(primary: list[OCRBlock], secondary: list[OCRBlock],
@@ -224,19 +278,18 @@ def _dark_panel_slices(value, limit: int):
         yield np.s_[top:top + panel_height, left:left + panel_width]
 
 
-def _binarize_dark_panels(image, value):
+def _enhance_dark_panels(image, value, cv2):
     """Bring out dim syntax colors in mixed screens for portable OCR."""
     import numpy as np
     from PIL import Image
 
     levels = np.asarray(value)
+    rgb = np.asarray(image)
     result = None
     for bounds in _dark_panel_slices(levels, 96):
         if result is None:
             result = np.asarray(image.convert("L")).copy()
-        region = levels[bounds]
-        threshold = _foreground_threshold(np.bincount(region.ravel(), minlength=256).tolist())
-        result[bounds] = np.where(region <= threshold, 255, 0)
+        result[bounds], _ = _dark_code_image(rgb[bounds], cv2)
     return (Image.fromarray(result), True) if result is not None else (image, False)
 
 
@@ -524,7 +577,8 @@ class VisionTextRecognizer:
         return self.recognize(image).lines
 
     def recognize(self, image: Path) -> OCRResult:
-        with _recognition_image(image) as prepared:
+        with _recognition_image(image) as preparation:
+            prepared = preparation.path
             languages = self.config.ocr_languages
             try:
                 result = _recognize_in_worker(prepared, languages=languages)
@@ -580,13 +634,13 @@ class TesseractTextRecognizer:
         import pytesseract
         from PIL import Image
 
-        with _recognition_image(image, portable=True, scale=scale) as prepared, Image.open(prepared) as source:
+        with _recognition_image(image, portable=True, scale=scale) as prepared, Image.open(prepared.path) as source:
             width, height = source.size
             data = pytesseract.image_to_data(
                 source,
                 lang=self.config.tesseract_languages,
                 output_type=pytesseract.Output.DICT,
-                config="--psm 11",
+                config=f"--psm {prepared.page_mode}",
                 timeout=30,
             )
         grouped: dict[tuple[int, int, int], list[int]] = {}

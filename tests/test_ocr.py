@@ -187,7 +187,7 @@ class VisionWorkerTests(unittest.TestCase):
             @contextmanager
             def recorded(path):
                 with prepare(path) as prepared:
-                    paths.append(prepared)
+                    paths.append(prepared.path)
                     yield prepared
 
             with patch.object(ocr, "_vision_worker_command", _sleeping_vision_command), patch.object(
@@ -204,7 +204,7 @@ class VisionWorkerTests(unittest.TestCase):
 
 
 class RecognitionImageTests(unittest.TestCase):
-    def test_faint_layer_is_removed_without_losing_bright_colored_text(self):
+    def test_prepared_dark_image_keeps_faint_and_bright_colored_strokes(self):
         from PIL import Image, ImageDraw
 
         with tempfile.TemporaryDirectory() as directory:
@@ -218,14 +218,15 @@ class RecognitionImageTests(unittest.TestCase):
             original = hashlib.sha256(path.read_bytes()).hexdigest()
 
             with ocr._recognition_image(path) as prepared:
-                self.assertNotEqual(path, prepared)
-                with Image.open(prepared) as image:
+                self.assertNotEqual(path, prepared.path)
+                with Image.open(prepared.path) as image:
                     self.assertEqual(image.size, (200, 160))
-                    self.assertEqual(image.getpixel((30, 21)), 255)
+                    self.assertLess(image.getpixel((30, 21)), 240)
+                    self.assertGreater(image.getpixel((30, 21)), 80)
                     self.assertLess(image.getpixel((70, 21)), 80)
                     self.assertLess(image.getpixel((110, 21)), 80)
 
-            self.assertFalse(prepared.exists())
+            self.assertFalse(prepared.path.exists())
             self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), original)
 
     def test_derivative_is_removed_when_recognition_fails(self):
@@ -238,10 +239,10 @@ class RecognitionImageTests(unittest.TestCase):
 
             with self.assertRaisesRegex(RuntimeError, "recognizer failed"):
                 with ocr._recognition_image(path, portable=True) as prepared:
-                    self.assertTrue(prepared.is_file())
+                    self.assertTrue(prepared.path.is_file())
                     raise RuntimeError("recognizer failed")
 
-            self.assertFalse(prepared.exists())
+            self.assertFalse(prepared.path.exists())
             self.assertEqual(path.read_bytes(), original)
 
     def test_large_light_image_is_not_downsampled(self):
@@ -251,7 +252,7 @@ class RecognitionImageTests(unittest.TestCase):
             path = Path(directory) / "screen.png"
             Image.new("RGB", (2600, 100), "white").save(path)
             with ocr._recognition_image(path) as prepared:
-                self.assertEqual(prepared, path)
+                self.assertEqual(prepared.path, path)
 
     def test_mixed_light_panel_keeps_dim_colored_syntax_intact(self):
         from PIL import Image, ImageDraw
@@ -264,8 +265,8 @@ class RecognitionImageTests(unittest.TestCase):
             draw.line((10, 10, 30, 10), fill=(90, 20, 20), width=2)
             image.save(path)
             with ocr._recognition_image(path) as prepared:
-                self.assertEqual(prepared, path)
-                with Image.open(prepared) as preserved:
+                self.assertEqual(prepared.path, path)
+                with Image.open(prepared.path) as preserved:
                     self.assertEqual(preserved.getpixel((20, 10)), (90, 20, 20))
 
 
@@ -359,7 +360,7 @@ class LayoutOrderTests(unittest.TestCase):
         self.assertEqual([item.text for item in ordered],
                          ["int argc;", "// number of args", "char *argv[MAX];", "// argument list"])
 
-    def test_portable_preparation_binarizes_a_dark_code_panel_inside_a_light_slide(self):
+    def test_portable_preparation_enhances_dark_code_inside_a_light_slide(self):
         from PIL import Image, ImageDraw
 
         with tempfile.TemporaryDirectory() as directory:
@@ -369,7 +370,7 @@ class LayoutOrderTests(unittest.TestCase):
             draw.rectangle((50, 100, 350, 250), fill=(30, 30, 30))
             draw.text((70, 150), "requires", fill=(150, 90, 200))
             image.save(path)
-            with ocr._recognition_image(path, portable=True) as prepared, Image.open(prepared) as result:
+            with ocr._recognition_image(path, portable=True) as prepared, Image.open(prepared.path) as result:
                 pixels = result.convert("L").resize((400, 300))
                 self.assertGreater(pixels.getpixel((300, 230)), 200)
                 self.assertEqual(pixels.getpixel((20, 20)), 255)
@@ -384,11 +385,12 @@ class LayoutOrderTests(unittest.TestCase):
             draw.rectangle((10, 20, 29, 39), fill=(64, 8, 8))
             draw.rectangle((40, 20, 59, 39), fill=(8, 175, 8))
             image.save(path)
-            with ocr._recognition_image(path, portable=True) as prepared, Image.open(prepared) as result:
-                levels = [result.getpixel((x, 60)) for x in (155, 40, 100)]
+            with ocr._recognition_image(path, portable=True) as prepared, Image.open(prepared.path) as result:
+                frame = result.resize((100, 80))
+                levels = [frame.getpixel((x, 30)) for x in (76, 20, 50)]
                 self.assertGreater(levels[0], levels[1])
                 self.assertGreater(levels[1], levels[2])
-            self.assertFalse(prepared.exists())
+            self.assertFalse(prepared.path.exists())
 
     def test_fragments_on_the_same_line_use_horizontal_order(self):
         left = ocr.OCRBlock("let value", bbox=(0.05, 0.21, 0.12, 0.04))
@@ -477,6 +479,36 @@ class LayoutOrderTests(unittest.TestCase):
                     SimpleNamespace(tesseract_languages="eng")
                 ).recognize(path)
         self.assertEqual(result.blocks[0].bbox, (0.25, 0.25, 0.4, 0.125))
+
+    def test_tesseract_uses_block_mode_only_for_a_nearly_full_dark_text_page(self):
+        from PIL import Image, ImageDraw
+
+        for mixed, expected in ((False, "--psm 6"), (True, "--psm 11")):
+            with self.subTest(mixed=mixed), tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / "code.png"
+                image = Image.new("RGB", (640, 360), (15, 25, 52))
+                draw = ImageDraw.Draw(image)
+                if mixed:
+                    draw.rectangle((0, 0, 639, 75), fill="white")
+                for line_y in range(90, 300, 30):
+                    for char_x in range(50, 420, 12):
+                        draw.rectangle((char_x, line_y, char_x + 7, line_y + 9), fill=(140, 95, 125))
+                image.save(path)
+                called = []
+
+                def image_to_data(source, **kwargs):
+                    called.append(kwargs["config"])
+                    self.assertEqual(source.width, 2048)
+                    return {"text": []}
+
+                fake = SimpleNamespace(image_to_data=image_to_data, Output=SimpleNamespace(DICT="dict"))
+                with patch.dict("sys.modules", {"pytesseract": fake}), patch.object(
+                    ocr.TesseractTextRecognizer, "available", return_value=True
+                ):
+                    ocr.TesseractTextRecognizer(
+                        SimpleNamespace(tesseract_languages="eng")
+                    ).recognize(path)
+                self.assertEqual(called, [expected])
 
     def test_tesseract_does_not_join_distant_columns_into_one_box(self):
         from PIL import Image
