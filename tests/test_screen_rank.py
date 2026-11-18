@@ -3,7 +3,7 @@ from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch
 
-from clipmind import screen_rank, screen_rank_features, visual_states
+from clipmind import screen_interaction, screen_rank, screen_rank_features, visual_states
 from clipmind.media import Frame
 from scripts.classify_screen_ablation import _legacy_timeline
 from scripts.screen_evaluation import boundary_inventory
@@ -30,7 +30,8 @@ class ScreenRankTests(unittest.TestCase):
     def test_rank_keeps_warnings_and_semantic_types(self):
         timeline = frames()
         with patch.object(screen_rank_features, "features", return_value=iter(((1, (.8,)), (2, (.3,))))), \
-             patch.object(screen_rank, "_score", side_effect=(.8, .3)):
+             patch.object(screen_rank, "_score", side_effect=(.8, .3)), \
+             patch.object(screen_interaction, "adjust_scores", side_effect=lambda frames, scores: scores):
             self.assertTrue(screen_rank.annotate_information_boundaries(timeline, 5.))
         self.assertEqual([f.information_boundary for f in timeline], [None, True, False, True])
         self.assertEqual([f.change_kind for f in timeline], ["content", "speaker", "content", "uncertain"])

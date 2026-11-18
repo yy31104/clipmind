@@ -16,7 +16,7 @@ from .screen_rank_model import (
     LOGISTIC_COEFFICIENTS,
 )
 
-ALGORITHM = "offline-screen-rank-v1"
+ALGORITHM = "offline-screen-rank-v2"
 _LOGGER = logging.getLogger(__name__)
 _WINDOW_SECONDS = 1.0
 _FLOAT = struct.Struct("<f")
@@ -87,6 +87,7 @@ def annotate_information_boundaries(frames: list[Frame], duration: float) -> boo
     warnings = {i for i in eligible if frames[i].ocr_warning or frames[i].dedupe_warning}
     try:
         import cv2
+        from .screen_interaction import adjust_scores
         from .screen_rank_features import features
     except ImportError as exc:
         _LOGGER.warning("Using existing boundary classification because the ranker is unavailable: %s",exc)
@@ -95,7 +96,7 @@ def annotate_information_boundaries(frames: list[Frame], duration: float) -> boo
         scores = {i:_score(values) for i,values in features(frames,duration)}
         if set(scores) != eligible - warnings:
             raise ValueError("Screen-ranker feature coverage differs from the timeline.")
-        selected = _select(times,scores,warnings)
+        selected = _select(times,adjust_scores(frames, scores),warnings)
     except (OSError,ValueError,TypeError,ArithmeticError,cv2.error) as exc:
         _LOGGER.warning("Using existing boundary classification because ranking failed: %s",exc)
         return False
