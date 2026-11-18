@@ -310,6 +310,30 @@ class LayoutOrderTests(unittest.TestCase):
             self.assertFalse(worker.call_args_list[0].args[0].exists())
             self.assertEqual(path.read_bytes(), source_bytes)
 
+    def test_a_failed_vision_pass_keeps_the_other_pass(self):
+        from PIL import Image, ImageDraw
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "mixed.png"
+            image = Image.new("RGB", (400, 300), "white")
+            ImageDraw.Draw(image).rectangle((45, 90, 330, 235), fill=(35, 33, 40))
+            image.save(path)
+            recognizer = ocr.VisionTextRecognizer(Settings(ocr_languages=("en-US",)))
+            expected = ocr.OCRResult((ocr.OCRBlock("useful line"),))
+            failure = ocr.OCRError("Vision worker timed out")
+            for responses in ([failure, expected], [expected, failure]):
+                with self.subTest(responses=responses):
+                    with patch.object(ocr, "_recognize_in_worker", side_effect=responses) as worker:
+                        self.assertEqual(recognizer.recognize(path), expected)
+                    self.assertEqual(worker.call_count, 2)
+                    self.assertEqual(worker.call_args_list[1].args[0], path)
+                    self.assertFalse(worker.call_args_list[0].args[0].exists())
+
+            with patch.object(ocr, "_recognize_in_worker", side_effect=[failure, failure]) as worker:
+                with self.assertRaises(ocr.OCRError):
+                    recognizer.recognize(path)
+            self.assertEqual(worker.call_count, 2)
+
     def test_vision_reads_an_ordinary_light_slide_once_at_native_size(self):
         from PIL import Image
 

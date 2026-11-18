@@ -522,13 +522,24 @@ class VisionTextRecognizer:
 
     def recognize(self, image: Path) -> OCRResult:
         with _recognition_image(image) as prepared:
-            result = _recognize_in_worker(prepared, languages=self.config.ocr_languages)
+            languages = self.config.ocr_languages
+            try:
+                result = _recognize_in_worker(prepared, languages=languages)
+            except OCRError:
+                if prepared == image:
+                    raise
+                result = _recognize_in_worker(image, languages=languages)
+                return OCRResult(_reading_order(list(result.blocks)))
             blocks = list(result.blocks)
             if prepared != image:
-                # Keep source lines missed after contrast changes or resizing
-                # where the prepared image still has strokes.
-                original = _recognize_in_worker(image, languages=self.config.ocr_languages)
-                blocks = _recover_missing_lines(blocks, list(original.blocks), prepared)
+                # A second pass can recover lines, but cannot invalidate the
+                # recognition that already succeeded.
+                try:
+                    original = _recognize_in_worker(image, languages=languages)
+                except OCRError:
+                    pass
+                else:
+                    blocks = _recover_missing_lines(blocks, list(original.blocks), prepared)
         return OCRResult(_reading_order(blocks))
 
 
