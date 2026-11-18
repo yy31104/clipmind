@@ -1,6 +1,6 @@
 # v1.6.0 screen holdout, round 2
 
-Round 2 covers four full recordings and 75 minutes of video. The
+Round 2 covers four full recordings and 75 minutes 46 seconds of video. The
 [recording manifest](data/v160-round2-cases.json) lists the publishers and
 licenses. The [source checksums](data/v160-round2-sources.json) identify
 the downloaded and prepared files.
@@ -27,7 +27,8 @@ Commons license version.
 Two independent GPT-6.2 Sol sessions used the same
 [screen rules](SCREEN_LABEL_PROTOCOL_V160.md) and source images. They
 matched 132 boundaries across 139 and 136 proposals, an F1 of 96.0%.
-They agreed on all 2,020 characters in 12 identical source crops.
+They matched 23 code regions across 41 and 27 proposals, an F1 of 67.65%.
+On 12 fixed source crops, they agreed on all 2,020 code characters.
 A separate source-only pass resolved disagreements. The
 [boundary and region comparison](data/v160-round2-label-agreement.json)
 and [fixed-crop comparison](data/v160-round2-shared-crop-agreement.json)
@@ -51,3 +52,5 @@ The candidate completed [two exposed development recordings](data/v160-round2-de
 on both backends with no OCR failures or temporary frames left on disk.
 Boundary precision was still below 16% on those recordings. They are
 separate from the round 2 sources.
+
+[Round 2 results](HOLDOUT_V160_ROUND2_RESULTS.md)
