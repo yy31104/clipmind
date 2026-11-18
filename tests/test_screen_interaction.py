@@ -61,6 +61,15 @@ class ScreenInteractionTests(unittest.TestCase):
         frames = self.frames([old, self.menu(new), new], [0., 2., 4.])
         self.assertIn(1, self.selected(frames, {1: .5}))
 
+    def test_temporary_textured_tile_keeps_its_score(self):
+        base = np.full((360, 640), 220, np.uint8)
+        tile = base.copy()
+        for i, shade in enumerate((75, 125, 175)):
+            x = 170 + i * 52
+            tile[28:130, x:x + 52] = shade
+        frames = self.frames([base, tile, base], [0., 2., 4.])
+        self.assertIn(1, self.selected(frames, {1: .5}))
+
     def test_recurring_chrome_is_discounted_and_stable_canvas_move_is_selected(self):
         old = np.full((360, 640), 250, np.uint8)
         cv2.rectangle(old, (255, 175), (285, 198), 30, cv2.FILLED)

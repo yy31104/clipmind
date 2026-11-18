@@ -63,6 +63,10 @@ def _menu_return(i, times, gray, changed):
     tone = float(np.median(before))
     if not ((tone > 80 and shade < -5) or (tone <= 80 and shade > 6)):
         return None
+    # A popover has a flat background. Reject loading tiles and other
+    # rectangular changes that reveal a textured part of the scene.
+    if np.mean(np.abs(current.astype(np.int16) - np.median(current)) <= 20) < .76:
+        return None
     active = changed[region]
     count = np.count_nonzero(active)
     stop = min(len(times), i + 14, bisect_left(times, times[i] + 12))
