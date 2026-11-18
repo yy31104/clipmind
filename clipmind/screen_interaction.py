@@ -200,8 +200,8 @@ def _raster_changes(frames):
     if first is None:
         raise ValueError("The initial frame could not be read for interaction ranking.")
     source_height, source_width = first.shape
-    width = min(source_width, _WIDTH)
-    height = max(1, round(source_height * width / source_width))
+    scale = min(1, _WIDTH / max(source_width, source_height))
+    width, height = (max(1, round(side * scale)) for side in (source_width, source_height))
     size = (width, height)
     if min(size) < 32:
         return [None] * len(frames), height

@@ -27,8 +27,8 @@ class SettledEdits:
         first = bisect_right(self.times, t - 1.25) - 1
         last = bisect_left(self.times, t + 1.25)
         if (first < 0 or first >= position - 1 or last <= position + 1
-                or last >= len(self.times) or t - self.times[first] > 1.95
-                or self.times[last] - t > 1.95):
+                or last >= len(self.times) or t - self.times[first] > 2.05
+                or self.times[last] - t > 2.05):
             return False
         try:
             before, current = self._raster(position - 1), self._raster(position)
