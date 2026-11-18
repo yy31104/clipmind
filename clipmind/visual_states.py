@@ -15,7 +15,7 @@ from typing import Iterable
 import numpy as np
 from PIL import Image
 
-from . import media, ocr, screen_faces, screen_motion, screen_viewport
+from . import media, ocr, screen_faces, screen_motion, screen_projection, screen_viewport
 from .media import Frame
 from .providers import TextRecognizer
 
@@ -300,6 +300,11 @@ def annotate_change_kinds(frames: list[Frame]) -> None:
                 anchor, anchor_lines = frame, lines
                 anchor_position = position
     _settle_transitions(frames)
+    unchanged = screen_projection.unchanged_projection_indices(frames)
+    for frame in frames:
+        if frame.index in unchanged and frame.change_reason != SIDE_DETAIL_REASON:
+            frame.change_kind = "layout"
+            frame.change_reason = "The projected image stayed the same after camera registration."
 
 
 def _settle_transitions(frames: list[Frame]) -> None:
