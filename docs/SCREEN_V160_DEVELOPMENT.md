@@ -90,3 +90,26 @@ includes the temporary native frames found after these runs. The
 original inventory missed that directory. The pipeline now removes
 those frames as soon as timing verification ends. Restart cleanup and
 the benchmark check the same directory list.
+
+## Dark code panels and presenter motion
+
+The four recordings from round 2 are now development inputs. Full
+re-extraction with local contrast for dark code and a fixed-room
+presenter check gave the following results. The comparison uses the
+[original round 2 scores](data/v160-round2-summary.json).
+
+| Runtime | Backend | Recall | Precision | Code CER |
+| --- | --- | ---: | ---: | ---: |
+| Round 2 | Mac / Vision | 128/139 (92.09%) | 128/608 (21.05%) | 940/6980 (13.47%) |
+| Development `80163de` | Mac / Vision | 128/139 (92.09%) | 128/515 (24.85%) | 498/6980 (7.13%) |
+| Round 2 | Docker / Tesseract | 129/139 (92.81%) | 129/582 (22.16%) | 2695/6980 (38.61%) |
+| Development `80163de` | Docker / Tesseract | 129/139 (92.81%) | 129/515 (25.05%) | 999/6980 (14.31%) |
+
+The room check initially suppressed a new diagram inside the area a
+presenter had occupied. The revised check requires nearby views on
+both sides and keeps boundaries with new local image detail. On saved
+frames, the revised OCR read 499/6980 characters incorrectly on Vision
+and 977/6980 on Tesseract. Both engines still missed the projected
+JSON-LD example, where some glyphs are only five pixels high.
+
+[Per-recording development receipts](data/v160-development-room-ocr.json)
