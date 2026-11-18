@@ -207,6 +207,28 @@ class IncrementalScreenTests(unittest.TestCase):
                 else:
                     self.assertEqual([f.timestamp for f in kept], [0])
 
+    def test_inverting_caret_does_not_hide_a_new_glyph_or_duplicate_old_ink(self):
+        for edit in (False, True):
+            with self.subTest(edit=edit), tempfile.TemporaryDirectory() as directory:
+                frames = []
+                for index in range(18):
+                    path = Path(directory) / f'{index}.png'
+                    image = Image.new('L', (640, 360), 23)
+                    draw = ImageDraw.Draw(image)
+                    for x in (176, 184, 192, 214, 222):
+                        draw.line((x, 110, x, 116, x + 3, 116), fill=244)
+                    cursor = 4 <= index < 10
+                    if cursor:
+                        draw.rectangle((200, 108, 208, 123), fill=244)
+                    if not edit or index >= 4:
+                        draw.line((204, 110, 204, 116, 207, 116), fill=23 if cursor else 244)
+                    image.save(path)
+                    frames.append(Frame(index, index / 2, path, source_timestamp=index / 2))
+                kept = media.dedupe(frames)
+                self.assertEqual([f.timestamp for f in kept], [0, 5] if edit else [0])
+                if edit:
+                    self.assertEqual(kept[-1].path.name, '10.png')
+
     def test_fade_uses_a_visible_onset_and_preserves_the_settled_capture(self):
         before = Image.new('RGB', (640, 360), '#181818')
         ImageDraw.Draw(before).text((35, 25), 'Sending a message', fill='white')

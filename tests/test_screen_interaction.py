@@ -116,6 +116,17 @@ class ScreenInteractionTests(unittest.TestCase):
         self.assertTrue(screen_interaction._continues_ink_move(original, early, settled, 36))
         self.assertFalse(screen_interaction._continues_ink_move(original, early, separate, 36))
 
+    def test_growing_unclosed_call_does_not_treat_a_complete_signature_as_typing(self):
+        image = self.editor(4)
+        frames = self.frames([image] * 3, [0., 3., 8.])
+        lines = [
+            [(0., .3, 'run(config)')],
+            [(0., .3, 'run("sample frame)')],
+            [(0., .3, 'run("sample frame finished")')],
+        ]
+        self.assertFalse(screen_interaction._composing_call(0, frames, lines, .3, lines[0][0][2]))
+        self.assertTrue(screen_interaction._composing_call(1, frames, lines, .3, lines[1][0][2]))
+
     def test_entered_shell_input_is_discounted_and_new_prompt_with_output_is_selected(self):
         transcripts = [
             [("host:~$", 120)],

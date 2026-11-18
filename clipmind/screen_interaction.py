@@ -20,6 +20,7 @@ _SHAPE_SCORE = .18
 _SHELL = re.compile(r"^([^\s$>%#]*[@:~][^\s$>%#]*[$>%#]|[$>%#])(?:\s+(.*?))?\s*$")
 _FIELD = re.compile(r"^([^\W\d_][^:@!?.;(){}/<>\[\]\\|=]{2,26}):\s*(.*?)\s*$")
 _QUOTED = re.compile(r'"(?:[^"\\]|\\.)*"' r"|'(?:[^'\\]|\\.)*'")
+_CALL = re.compile(r"\b([a-z_]\w*)\s*\(")
 
 
 @dataclass(frozen=True)
@@ -295,11 +296,7 @@ def _grows(before, after):
     return after.startswith(before) or SequenceMatcher(None, before, after[:len(before)], autojunk=False).ratio() >= .86
 
 
-def _statement(text):
-    # A semicolon can terminate a statement or occur inside a partial header.
-    # OCR can also mistake the caret after a real terminator for a stroke.
-    if not text.rstrip("!|¦•").endswith(";") or len(_characters(text)) < 4:
-        return False
+def _balanced_code(text):
     code = _QUOTED.sub("", text)
     if "'" in code or '"' in code:
         return False
@@ -311,6 +308,13 @@ def _statement(text):
         elif char in pairs and (not stack or stack.pop() != pairs[char]):
             return False
     return not stack
+
+
+def _statement(text):
+    # A semicolon can terminate a statement or occur inside a partial header.
+    # OCR can also mistake the caret after a real terminator for a stroke.
+    return (text.rstrip("!|¦•").endswith(";") and len(_characters(text)) >= 4
+            and _balanced_code(text))
 
 
 def _settled_statement(i, frames, lines, center, dominance, previous, current):
@@ -328,6 +332,29 @@ def _settled_statement(i, frames, lines, center, dominance, previous, current):
         following = _line_at(supported, center)
         if (_statement(following)
                 and SequenceMatcher(None, text, _characters(following), autojunk=False).ratio() >= .75):
+            return True
+    return False
+
+
+def _composing_call(i, frames, lines, center, current):
+    match = _CALL.search(current)
+    if not match or _balanced_code(current):
+        return False
+    tail = current[match.end():].strip()
+    if len(_characters(tail)) < 3:
+        return False
+    tokens = _characters(current[match.start():])
+    for n in range(i + 1, min(i + 5, len(frames))):
+        if frames[n].timestamp - frames[i].timestamp > 24:
+            break
+        text = _line_at(lines[n], center)
+        next_call = _CALL.search(text)
+        if not next_call or next_call[1] != match[1]:
+            continue
+        later = _characters(text[next_call.start():])
+        if len(later) >= len(tokens) + 4 and SequenceMatcher(
+            None, tokens, later[:len(tokens)], autojunk=False,
+        ).ratio() >= .78:
             return True
     return False
 
@@ -381,6 +408,11 @@ def _text_adjustments(frames, changes, height):
                 and before != after and len(after) >= 8 and not closed
                 and (not current.endswith("()") or len(after) >= 12)):
             pending[i] = True
+            continue
+
+        if (.12 < center < .86 and dominance >= .67 and next_local and not shell
+                and _composing_call(i, frames, lines, center, current)):
+            pending[i] = False
             continue
 
         if (center > .87 and dominance >= .48 and old_field and not field

@@ -48,14 +48,31 @@ class SettledEdits:
                 stable &= np.abs(current - raster) >= 12
             for difference in tail:
                 stable &= difference <= 10
+
+            def returns_to_earlier_view(region, visible):
+                start = bisect_left(self.times, t - 7.0)
+                step = max(1, (first - start) // 5)
+                ink = current[region][visible]
+                for j in range(start, first, step):
+                    try:
+                        past = self._raster(j)
+                    except (OSError, ValueError):
+                        continue
+                    if past.shape == current.shape and np.mean(np.abs(ink - past[region][visible]) <= 12) >= .85:
+                        return True
+                return False
+
             return _settled_patch(
                 before, lead, tail, delta, strong, stable, replacing_representative,
+                returns_to_earlier_view,
             )
         except (OSError, ValueError, ImportError):
             return False
 
 
-def _settled_patch(before, lead, tail, delta, strong, stable, replacing_representative) -> bool:
+def _settled_patch(
+    before, lead, tail, delta, strong, stable, replacing_representative, returns_to_earlier_view,
+) -> bool:
     if np.count_nonzero(strong & stable) < 8:
         return False
     import cv2
@@ -79,6 +96,10 @@ def _settled_patch(before, lead, tail, delta, strong, stable, replacing_represen
         negative = mask & (measured < 0)
         replaced = min(np.count_nonzero(positive), np.count_nonzero(negative))
         pixels = np.count_nonzero(mask)
+        if low_motion and _settled_ink(
+            before, delta, tail, stable, x, y, w, h, count, returns_to_earlier_view,
+        ):
+            return True
         if (pixels < 18 or replaced < 6 or np.count_nonzero(strong[region] & mask) < 8
                 or np.max(np.abs(measured[mask])) < 42):
             continue
@@ -112,3 +133,37 @@ def _settled_patch(before, lead, tail, delta, strong, stable, replacing_represen
         if solid < 0.75 * pixels:
             return True
     return False
+
+
+def _settled_ink(before, delta, tail, stable, x, y, width, height, count, returns_to_earlier_view):
+    # A solid cursor can cover an inserted glyph before it blinks off.
+    # Check the final ink shape and the surrounding text in those cases.
+    rows, columns = before.shape
+    if not (10 <= width <= 54 and 9 <= height <= 28
+            and .11 * rows < y < .86 * rows and count <= 370):
+        return False
+    region = np.s_[y:y+height, x:x+width]
+    if np.count_nonzero(stable[region]) < 31:
+        return False
+    area = np.s_[max(0, y-22):y+height+22, max(0, x-26):min(columns, x+width+26)]
+    tone = np.median(before[area])
+    old = before[region]
+    new = old + delta[region]
+    if np.mean(np.abs(before[area] - tone) < 24) < .72:
+        return False
+    import cv2
+
+    printed = np.abs(new - tone) >= 38
+    for difference in tail:
+        printed &= difference[region] <= 15
+    _, components, glyphs, _ = cv2.connectedComponentsWithStats(printed.astype(np.uint8))
+    supported = np.bincount(components[stable[region]], minlength=len(glyphs))
+    context = np.abs(before[area] - tone) >= 38
+    if np.count_nonzero(context) - np.count_nonzero(np.abs(old - tone) >= 38) < 36:
+        return False
+    return any(
+        3 <= gw <= 14 and 5 <= gh <= 17 and 9 <= n < .78 * gw * gh
+        and supported[index] >= max(2, .13 * n)
+        and not returns_to_earlier_view(region, (components == index) & stable[region])
+        for index, (_, _, gw, gh, n) in enumerate(glyphs[1:], 1)
+    )
