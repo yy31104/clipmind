@@ -1,0 +1,1223 @@
+{
+  "schema_version": 1,
+  "annotation_protocol": "docs/SCREEN_LABEL_PROTOCOL_V160.md",
+  "labels_method": "Two blind GPT-6.2 Sol source passes and a separate source-only adjudication.",
+  "cases": {
+    "b01": {
+      "reviewed": true,
+      "review_start": 0,
+      "review_end": 1104.759021,
+      "input_sha256": "21ac6f74e89e709853d4bf9a0d71f397e1a964582d9686cc152f9ea212f0a04e",
+      "slide_changes": [
+        5,
+        91,
+        144,
+        191,
+        225,
+        227,
+        279,
+        308,
+        316,
+        332,
+        340,
+        354,
+        389,
+        411,
+        427,
+        443,
+        475,
+        478,
+        481,
+        491,
+        526,
+        562,
+        566,
+        568,
+        576,
+        609,
+        620,
+        630,
+        639,
+        661,
+        684,
+        688,
+        695,
+        718,
+        735,
+        745,
+        776,
+        790,
+        807,
+        818,
+        827,
+        857,
+        893,
+        899,
+        912,
+        918,
+        939.56,
+        940.68,
+        984,
+        997,
+        1008,
+        1065,
+        1095
+      ],
+      "ocr": [],
+      "build_groups": [],
+      "source_record_sha256": "0090166ba4216968f128665f367b0f6c41eb789f16dbdfcca5876bb55746b843"
+    },
+    "b02": {
+      "reviewed": true,
+      "review_start": 0,
+      "review_end": 1216.373854,
+      "input_sha256": "c9206b00969eb36af26417f18410b974e106899092b014ebcfa19a5236d58186",
+      "slide_changes": [
+        3,
+        6,
+        33,
+        39,
+        119,
+        125,
+        127,
+        144,
+        156,
+        165,
+        200,
+        206,
+        223,
+        230,
+        269,
+        274,
+        278,
+        279,
+        284,
+        287,
+        288,
+        296,
+        331,
+        343,
+        344,
+        346,
+        347,
+        348,
+        352,
+        354,
+        363,
+        372,
+        493,
+        507,
+        539,
+        557,
+        580,
+        586,
+        589,
+        721,
+        729,
+        735,
+        745,
+        746,
+        778,
+        788,
+        795,
+        799,
+        802,
+        813,
+        819,
+        847,
+        872,
+        884,
+        901,
+        910,
+        917,
+        922,
+        924,
+        928,
+        930,
+        933,
+        937,
+        946,
+        952,
+        955,
+        975,
+        984,
+        1122,
+        1123,
+        1131,
+        1139,
+        1141,
+        1184,
+        1197
+      ],
+      "ocr": [
+        {
+          "timestamp": 4.466666667,
+          "kind": "code",
+          "roi": [
+            0.2421875,
+            0.0,
+            0.103125,
+            0.03055556
+          ],
+          "text": "make solar",
+          "evidence_image_ids": [
+            "frames/00003.jpg",
+            "frames/00004.jpg"
+          ],
+          "timestamp_sample": 4,
+          "source_capture": {
+            "sample": "frames/00004.jpg",
+            "native_frame_index": 134,
+            "native_timestamp": 4.466666667,
+            "native_pts": "67/15",
+            "sample_sha256": "cdd2687460b312082df0b7354774d1afd880303e81cc3b9a27e0b3352f8cf518",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 119.466666667,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.03194444,
+            0.52734375,
+            0.36666667
+          ],
+          "text": "[ thread 140419747870400 ] I made 313 surfaces\n[ thread 140419739477696 ] I made 385 surfaces\n     700 textures created\n     700 -------- destroyed\n     698 surfaces created (6.1% of worst-case 11520)\n     698 -------- destroyed\n      32 -------- collisions\n     360 frames\n       0 -------- skipped as identical (0.0%)\n       0 -------- not drawn as timeout (0.0%)\nsleep: 0.004 s/frame",
+          "evidence_image_ids": [
+            "frames/00119.jpg",
+            "frames/00120.jpg"
+          ],
+          "timestamp_sample": 119,
+          "source_capture": {
+            "sample": "frames/00119.jpg",
+            "native_frame_index": 3584,
+            "native_timestamp": 119.466666667,
+            "native_pts": "1792/15",
+            "sample_sha256": "c9b8a4b2817333f2d837339a0646b2dda1f1e4f6a1dd41f37fc26bf2aa0317ac",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 200.466666667,
+          "kind": "code",
+          "roi": [
+            0.15625,
+            0.05277778,
+            0.10390625,
+            0.02916667
+          ],
+          "text": "make snake",
+          "evidence_image_ids": [
+            "frames/00200.jpg"
+          ],
+          "timestamp_sample": 200,
+          "source_capture": {
+            "sample": "frames/00200.jpg",
+            "native_frame_index": 6014,
+            "native_timestamp": 200.466666667,
+            "native_pts": "3007/15",
+            "sample_sha256": "061cc05b50273da5f6c0ed9321cd2b4cc5a5d9593b62a65d5f7b41df1c3187b9",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 269.466666667,
+          "kind": "code",
+          "roi": [
+            0.0453125,
+            0.01944444,
+            0.48828125,
+            0.25138889
+          ],
+          "text": "1134 textures created\n1134 -------- destroyed\n1132 surfaces created (7.9% of worst-case 14400)\n1132 -------- destroyed\n  71 -------- collisions\n 450 frames\n   0 -------- skipped as identical (0.0%)\n   0 -------- not drawn as timeout (0.0%)",
+          "evidence_image_ids": [
+            "frames/00269.jpg",
+            "frames/00270.jpg"
+          ],
+          "timestamp_sample": 269,
+          "source_capture": {
+            "sample": "frames/00269.jpg",
+            "native_frame_index": 8084,
+            "native_timestamp": 269.466666667,
+            "native_pts": "4042/15",
+            "sample_sha256": "abeb5a100904138c316d1d559cd024d057568137010a8681ee11ed2f909e7afe",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 281.466666667,
+          "kind": "code",
+          "roi": [
+            0.00390625,
+            0.14722222,
+            0.2765625,
+            0.19444444
+          ],
+          "text": "[ELC ELN] bad-alpha.el\n[ELC ELN] bad-ascii.el\n[ELC ELN] bad-box.el\n[ELC ELN] bad-color.el\n[ELC ELN] bad-color-norm.el\n[ELC ELN] bad-demos.el",
+          "evidence_image_ids": [
+            "frames/00279.jpg",
+            "frames/00281.jpg"
+          ],
+          "timestamp_sample": 281,
+          "source_capture": {
+            "sample": "frames/00281.jpg",
+            "native_frame_index": 8444,
+            "native_timestamp": 281.466666667,
+            "native_pts": "4222/15",
+            "sample_sha256": "b7d211390efcffd452cecdac3c2b681e3dc14caa3a607b10508bd2679795ed36",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 288.466666667,
+          "kind": "code",
+          "roi": [
+            0.00390625,
+            0.88333333,
+            0.846875,
+            0.02916667
+          ],
+          "text": "Makefile  bad-sdl3.c  bad-sdl3.el  bad-sdl3.h  bad-sdl3.o  solar.png@  bad-sdl3.so*",
+          "evidence_image_ids": [
+            "frames/00288.jpg",
+            "frames/00289.jpg"
+          ],
+          "timestamp_sample": 288,
+          "source_capture": {
+            "sample": "frames/00288.jpg",
+            "native_frame_index": 8654,
+            "native_timestamp": 288.466666667,
+            "native_pts": "4327/15",
+            "sample_sha256": "959bc01e3b2e7e81c83bc25d6ce42b4aff925b388040e3a7cfec182b0cdfd31e",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 344.466666667,
+          "kind": "code",
+          "roi": [
+            0.05,
+            0.0,
+            0.315625,
+            0.03333333
+          ],
+          "text": "echo hello GNU Emacs people :\\)",
+          "evidence_image_ids": [
+            "frames/00343.jpg",
+            "frames/00344.jpg",
+            "frames/00345.jpg"
+          ],
+          "timestamp_sample": 344,
+          "source_capture": {
+            "sample": "frames/00344.jpg",
+            "native_frame_index": 10334,
+            "native_timestamp": 344.466666667,
+            "native_pts": "5167/15",
+            "sample_sha256": "55912c477ce2625ecad81b81b3e8e5633613efd274a3078275ff7393ea9e9032",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 352.466666667,
+          "kind": "code",
+          "roi": [
+            0.15078125,
+            0.93888889,
+            0.103125,
+            0.03888889
+          ],
+          "text": "make space",
+          "evidence_image_ids": [
+            "frames/00352.jpg",
+            "frames/00363.jpg"
+          ],
+          "timestamp_sample": 352,
+          "source_capture": {
+            "sample": "frames/00352.jpg",
+            "native_frame_index": 10574,
+            "native_timestamp": 352.466666667,
+            "native_pts": "5287/15",
+            "sample_sha256": "a903d48a489df97b1b5148ec8de192654a5c2ed9c9c2a24b833a07302148dde9",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 580.466666667,
+          "kind": "code",
+          "roi": [
+            0.15703125,
+            0.02222222,
+            0.1140625,
+            0.02916667
+          ],
+          "text": "make studio",
+          "evidence_image_ids": [
+            "frames/00580.jpg",
+            "frames/00581.jpg",
+            "frames/00582.jpg"
+          ],
+          "timestamp_sample": 580,
+          "source_capture": {
+            "sample": "frames/00580.jpg",
+            "native_frame_index": 17414,
+            "native_timestamp": 580.466666667,
+            "native_pts": "8707/15",
+            "sample_sha256": "06f73a56af5f6e246e4e4362a12ec146a7ce153589260c7dbee9480ef44eba6f",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 587.466666667,
+          "kind": "code",
+          "roi": [
+            0.16640625,
+            0.01527778,
+            0.08984375,
+            0.03611111
+          ],
+          "text": "make fps",
+          "evidence_image_ids": [
+            "frames/00586.jpg",
+            "frames/00587.jpg",
+            "frames/00588.jpg"
+          ],
+          "timestamp_sample": 587,
+          "source_capture": {
+            "sample": "frames/00587.jpg",
+            "native_frame_index": 17624,
+            "native_timestamp": 587.466666667,
+            "native_pts": "8812/15",
+            "sample_sha256": "23b58672d6201f7bd47bc3c30875fd658d0f8ac60fe817c463deb54a8a2bf17c",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 721.466666667,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.0,
+            0.7203125,
+            0.53194444
+          ],
+          "text": "const char* vert_shader_src =\n  \"#version 460 core                                               \\n\"\n  \"layout (location = 0) in vec3 aPos;                             \\n\"\n  \"layout (location = 1) in vec3 aCol;                             \\n\"\n  \"out vec3 vCol;                                                  \\n\"\n  \"uniform vec3  uScale;                                           \\n\"\n  \"uniform float uAngle;                                           \\n\"\n  \"void main () {                                                  \\n\"\n  \"  mat3 R = mat3(                                                \\n\"\n  \"    uScale.x * cos (uAngle), uScale.y * -sin (uAngle), 0.0,     \\n\"\n  \"    uScale.x * sin (uAngle), uScale.y *  cos (uAngle), 0.0,     \\n\"\n  \"    0.0,                     0.0,                      uScale.z \\n\"\n  \"  );                                                            \\n\"\n  \"  gl_Position = vec4 (aPos * R, 1.0);                           \\n\"\n  \"  vCol = aCol;                                                  \\n\"\n  \"}                                                               \\n\";",
+          "evidence_image_ids": [
+            "frames/00721.jpg",
+            "frames/00722.jpg",
+            "frames/00737.jpg"
+          ],
+          "timestamp_sample": 721,
+          "source_capture": {
+            "sample": "frames/00721.jpg",
+            "native_frame_index": 21644,
+            "native_timestamp": 721.466666667,
+            "native_pts": "10822/15",
+            "sample_sha256": "38bfe6180196ac13c4a56db9f103422a5b35d0db00af078cef37f2047ede52c9",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 728.466666667,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.69861111,
+            0.3953125,
+            0.23333333
+          ],
+          "text": "const char* frag_shader_src =\n  \"#version 460 core               \\n\"\n  \"in  vec3 vCol;                  \\n\"\n  \"out vec4 FragColor;             \\n\"\n  \"void main () {                  \\n\"\n  \"  FragColor = vec4 (vCol, 1.0); \\n\"\n  \"}                               \\n\";",
+          "evidence_image_ids": [
+            "frames/00724.jpg",
+            "frames/00728.jpg"
+          ],
+          "timestamp_sample": 728,
+          "source_capture": {
+            "sample": "frames/00728.jpg",
+            "native_frame_index": 21854,
+            "native_timestamp": 728.466666667,
+            "native_pts": "10927/15",
+            "sample_sha256": "a1c9713ed00884c115531e54c49128fd704b1c529478942ed753f8d40083ef54",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 737.466666667,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.0,
+            0.3390625,
+            0.14444444
+          ],
+          "text": "static SDL_GLContext  ctx;\nstatic GLuint         VAO  = 0;\nstatic GLuint         VBO  = 0;\nstatic GLuint         prog = 0;",
+          "evidence_image_ids": [
+            "frames/00737.jpg",
+            "frames/00738.jpg"
+          ],
+          "timestamp_sample": 737,
+          "source_capture": {
+            "sample": "frames/00737.jpg",
+            "native_frame_index": 22124,
+            "native_timestamp": 737.466666667,
+            "native_pts": "11062/15",
+            "sample_sha256": "7adaa2acac2f4b16de699e95e5b6ce049a8863a73696cec9e89a358d6a96cbad",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 778.466666667,
+          "kind": "code",
+          "roi": [
+            0.003125,
+            0.05277778,
+            0.47109375,
+            0.30833333
+          ],
+          "text": "OpenGL version .... 4.6\nshader compile .... ok\nshader compile .... ok\nlinking ........... ok\ninit .............. ok\nversion used ...... 4.6.0 NVIDIA 550.163.01\nframes drawn ...... 2048\nerrors ............ none",
+          "evidence_image_ids": [
+            "frames/00778.jpg",
+            "frames/00785.jpg"
+          ],
+          "timestamp_sample": 778,
+          "source_capture": {
+            "sample": "frames/00778.jpg",
+            "native_frame_index": 23354,
+            "native_timestamp": 778.466666667,
+            "native_pts": "11677/15",
+            "sample_sha256": "9c9d7fe5dc8d76ca42bac93a8c3272e35921b7e31f91c787f6d426c5ef4e454e",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 799.466666667,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.36666667,
+            0.51796875,
+            0.33472222
+          ],
+          "text": ";; 01. (progn (eval-buffer) (bad-demo-ansi-cubes ))\n;; 02. (progn (eval-buffer) (bad-demo-icac       ))\n;; 03. (progn (eval-buffer) (bad-demo-uxu        ))\n;; 04. (progn (eval-buffer) (bad-demo-fonts t    ))\n;;\n;;; Code:\n\n(require 'cl-lib)\n(cl-pushnew \"..\" load-path :test #'string=)\n(require 'luki-lisp)",
+          "evidence_image_ids": [
+            "frames/00799.jpg"
+          ],
+          "timestamp_sample": 799,
+          "source_capture": {
+            "sample": "frames/00799.jpg",
+            "native_frame_index": 23984,
+            "native_timestamp": 799.466666667,
+            "native_pts": "11992/15",
+            "sample_sha256": "ecf5dfde576720a1282a399ac28d69420c6d89277fac661b354474f29efab9bf",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 819.466666667,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.16666667,
+            0.6703125,
+            0.4375
+          ],
+          "text": "(cl-defmethod bad-grad-colors ((e elem) (beg string) (end string))\n  (cl-loop\n   initially (goto-char (pos-bol))\n   with a = (bad-color-decimal beg)\n   with o = (bad-color-decimal end)\n   with w = (@ e w)\n   with h = (@ e h)\n   with n = (* w h)\n   for (r g b) in (color-gradient a o n)\n   for bgc = (color-rgb-to-hex r g b)\n   for fgc = (color-complement bgc)\n   for prp = (list :background bgc :foreground fgc)\n   collect prp into props finally",
+          "evidence_image_ids": [
+            "frames/00819.jpg",
+            "frames/00840.jpg"
+          ],
+          "timestamp_sample": 819,
+          "source_capture": {
+            "sample": "frames/00819.jpg",
+            "native_frame_index": 24584,
+            "native_timestamp": 819.466666667,
+            "native_pts": "12292/15",
+            "sample_sha256": "1f648a90e7177f456bc792331057518e095d610fad1af494d211b51518eafee3",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 840.466666667,
+          "kind": "code",
+          "roi": [
+            0.03828125,
+            0.73472222,
+            0.40859375,
+            0.13472222
+          ],
+          "text": "for p in props do\n(@i c)\n(put-text-property pnt (1+ pnt) 'face p)\n(& (z (m m w)) (@i 10)))))",
+          "evidence_image_ids": [
+            "frames/00840.jpg"
+          ],
+          "timestamp_sample": 840,
+          "source_capture": {
+            "sample": "frames/00840.jpg",
+            "native_frame_index": 25214,
+            "native_timestamp": 840.466666667,
+            "native_pts": "12607/15",
+            "sample_sha256": "35bc0faa7f7e76c886270ffac3516322638e54dd64df1448b8323dd7ec2ee4e8",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 924.466666667,
+          "kind": "code",
+          "roi": [
+            0.00234375,
+            0.20833333,
+            0.98671875,
+            0.07222222
+          ],
+          "text": "Linux ebchw-eight 6.12.57+deb13-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.57-1 (2025-11-05)\nx86_64 GNU/Linux",
+          "evidence_image_ids": [
+            "frames/00924.jpg",
+            "frames/00925.jpg"
+          ],
+          "timestamp_sample": 924,
+          "source_capture": {
+            "sample": "frames/00924.jpg",
+            "native_frame_index": 27734,
+            "native_timestamp": 924.466666667,
+            "native_pts": "13867/15",
+            "sample_sha256": "d45a263e02b2faab5d2551a26387716648230e6c83ced2d9bbff4535c6e98eb0",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 928.466666667,
+          "kind": "code",
+          "roi": [
+            0.00234375,
+            0.325,
+            0.8015625,
+            0.07361111
+          ],
+          "text": "GNU Emacs 31.0.50\nDevelopment version 5ee1e205e166 on master branch; build date 2025-10-05.",
+          "evidence_image_ids": [
+            "frames/00928.jpg",
+            "frames/00929.jpg"
+          ],
+          "timestamp_sample": 928,
+          "source_capture": {
+            "sample": "frames/00928.jpg",
+            "native_frame_index": 27854,
+            "native_timestamp": 928.466666667,
+            "native_pts": "13927/15",
+            "sample_sha256": "cfdd68278267396fa83983c51b238b76fb998fccb61391a67c63af261c408737",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 952.466666667,
+          "kind": "code",
+          "roi": [
+            0.0890625,
+            0.94722222,
+            0.36171875,
+            0.03888889
+          ],
+          "text": "pl --loop ehrnebeat--what-for.mp4",
+          "evidence_image_ids": [
+            "frames/00951.jpg",
+            "frames/00952.jpg",
+            "frames/00953.jpg"
+          ],
+          "timestamp_sample": 952,
+          "source_capture": {
+            "sample": "frames/00952.jpg",
+            "native_frame_index": 28574,
+            "native_timestamp": 952.466666667,
+            "native_pts": "14287/15",
+            "sample_sha256": "fb3fd9d7d6291bd62d75bda9bc4aa772430cacdd8a6c81348069430961210be6",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 984.466666667,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.26111111,
+            0.27734375,
+            0.20833333
+          ],
+          "text": "(defvar ecs-circles    nil)\n(defvar ecs-components nil)\n(defvar ecs-debug      nil)\n(defvar ecs-entities   nil)\n(defvar ecs-overview   t)\n(defvar ecs-triangles  nil)",
+          "evidence_image_ids": [
+            "frames/00984.jpg"
+          ],
+          "timestamp_sample": 984,
+          "source_capture": {
+            "sample": "frames/00984.jpg",
+            "native_frame_index": 29534,
+            "native_timestamp": 984.466666667,
+            "native_pts": "14767/15",
+            "sample_sha256": "8545b6f5b37ade4b81b43cef1c99bbe2cf8f016b1e17c6e23733366839104c8c",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 1047.466666667,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.39583333,
+            0.75625,
+            0.09861111
+          ],
+          "text": "(cl-defmethod v+v ((a vector) (b vector)) (seq--into-vector (cl-mapcar #'+ a b)))\n(cl-defmethod v-v ((a vector) (b vector)) (seq--into-vector (cl-mapcar #'- a b)))\n(cl-defmethod k*v ((k number) (v vector)) (seq--into-vector (mapcar (L (e) (* k e)) v)))",
+          "evidence_image_ids": [
+            "frames/01047.jpg"
+          ],
+          "timestamp_sample": 1047,
+          "source_capture": {
+            "sample": "frames/01047.jpg",
+            "native_frame_index": 31424,
+            "native_timestamp": 1047.466666667,
+            "native_pts": "15712/15",
+            "sample_sha256": "aac3d9af434310d99739cb89369e054699bf39fd015760f6288a5a878e87def1",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 1061.466666667,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.03472222,
+            0.69609375,
+            0.21111111
+          ],
+          "text": "(cl-defmethod ecs-set-component ((id symbol) (cmp symbol) val)\n  (setf (alist-get cmp (gethash id ecs-components)) val))\n\n(cl-defmethod ecs-set-component-vector ((id symbol) (cmp symbol) &optional x y z)\n  (& x (aset (alist-get cmp (gethash id ecs-components)) 0 x))\n  (& y (aset (alist-get cmp (gethash id ecs-components)) 1 y))\n  (& z (aset (alist-get cmp (gethash id ecs-components)) 2 z)))",
+          "evidence_image_ids": [
+            "frames/01061.jpg"
+          ],
+          "timestamp_sample": 1061,
+          "source_capture": {
+            "sample": "frames/01061.jpg",
+            "native_frame_index": 31844,
+            "native_timestamp": 1061.466666667,
+            "native_pts": "15922/15",
+            "sample_sha256": "a915913edef8913f1c594c77604c72c8c884bb098b042365a2a3d04e3e458c92",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 1126.466666667,
+          "kind": "code",
+          "roi": [
+            0.0,
+            0.0,
+            0.2421875,
+            0.275
+          ],
+          "text": "(defun bad-sdl-3d () (i)\n  (cl-loop\n   with dist     = (** 2 11)\n   with beg      = (** 2  2)\n   with end      = (** 2  5)\n   with stp      = (** 2 -5)\n   with k        = 64\n   with pyramid  = (ecs-ld4)\n   with cube     = (ecs-ld6)",
+          "evidence_image_ids": [
+            "frames/01123.jpg",
+            "frames/01124.jpg",
+            "frames/01125.jpg",
+            "frames/01126.jpg"
+          ],
+          "timestamp_sample": 1126,
+          "source_capture": {
+            "sample": "frames/01126.jpg",
+            "native_frame_index": 33794,
+            "native_timestamp": 1126.466666667,
+            "native_pts": "16897/15",
+            "sample_sha256": "0f8944f5ff0f986450791876f4b9d3d4ac04ad7f4e1fa2c602ecd1f741def029",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 1197.466666667,
+          "kind": "code",
+          "roi": [
+            0.02421875,
+            0.79027778,
+            0.775,
+            0.03333333
+          ],
+          "text": "finally (sdl_draw_quit))) ; (eval-buffer) (bad-sdl-3d) *bows* /incal and rave dave GLHF :)",
+          "evidence_image_ids": [
+            "frames/01140.jpg",
+            "frames/01196.jpg",
+            "frames/01197.jpg",
+            "frames/01198.jpg"
+          ],
+          "timestamp_sample": 1197,
+          "source_capture": {
+            "sample": "frames/01197.jpg",
+            "native_frame_index": 35924,
+            "native_timestamp": 1197.466666667,
+            "native_pts": "17962/15",
+            "sample_sha256": "4fc6dd74506776ca221cf064ef03b760e4672c17d47a3762c9a4d71e579f7e3d",
+            "exact_jpeg_bytes": true
+          }
+        }
+      ],
+      "build_groups": [],
+      "source_record_sha256": "24bd182841e72aa2b0e38a5df12c78551341c5c3568058633725224f31d2844c"
+    },
+    "b03": {
+      "reviewed": true,
+      "review_start": 0,
+      "review_end": 1230.03,
+      "input_sha256": "711f5d2c4cc78f0095b5483eb83915500814196f2ca2fce1027666369474e390",
+      "slide_changes": [
+        16,
+        61,
+        65,
+        129,
+        173,
+        206,
+        258,
+        310,
+        316,
+        364,
+        432,
+        466,
+        503,
+        581,
+        611,
+        635,
+        645,
+        698,
+        772,
+        779,
+        795,
+        803,
+        810,
+        819,
+        826,
+        834,
+        842,
+        862,
+        868,
+        874,
+        887,
+        896,
+        923,
+        934,
+        965,
+        970,
+        984,
+        993,
+        1003,
+        1052,
+        1076,
+        1079,
+        1082,
+        1085,
+        1091,
+        1104,
+        1109,
+        1124
+      ],
+      "ocr": [],
+      "build_groups": [],
+      "source_record_sha256": "96be31ebee13280668276aba8625c79e75d2f10b55eb3c3027ad0c092079a0bc"
+    },
+    "b04": {
+      "reviewed": true,
+      "review_start": 0,
+      "review_end": 1259.68,
+      "input_sha256": "66b9f41181cf052f890625fc5cc76ef581296f7685dfdad8356f988f9bcfcece",
+      "slide_changes": [
+        27,
+        52,
+        93,
+        197,
+        235,
+        239,
+        251,
+        312,
+        353,
+        426,
+        485,
+        534,
+        554,
+        598,
+        609,
+        629,
+        662,
+        673,
+        688,
+        694,
+        695,
+        706,
+        741,
+        765,
+        795,
+        798,
+        804,
+        829,
+        885,
+        917,
+        948,
+        951,
+        1110,
+        1132,
+        1255
+      ],
+      "ocr": [
+        {
+          "timestamp": 353.48,
+          "kind": "code",
+          "roi": [
+            0.14453125,
+            0.25833333,
+            0.378125,
+            0.02777778
+          ],
+          "text": "qemu-system-x86_64 -kernel bzImage -initrd initrd.img",
+          "evidence_image_ids": [
+            "frames/00353.jpg",
+            "frames/00383.jpg"
+          ],
+          "timestamp_sample": 353,
+          "source_capture": {
+            "sample": "frames/00353.jpg",
+            "native_frame_index": 8381,
+            "native_timestamp": 353.48,
+            "native_pts": "8837/25",
+            "sample_sha256": "3c23c1860025b75d0a2fee9d7662dd473c28719510530fda4307fb5165b9b3c0",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 629.48,
+          "kind": "code",
+          "roi": [
+            0.16015625,
+            0.325,
+            0.08125,
+            0.05833333
+          ],
+          "text": "cd linux\nvng --build",
+          "evidence_image_ids": [
+            "frames/00629.jpg"
+          ],
+          "timestamp_sample": 629,
+          "source_capture": {
+            "sample": "frames/00629.jpg",
+            "native_frame_index": 15279,
+            "native_timestamp": 629.48,
+            "native_pts": "15737/25",
+            "sample_sha256": "26450d9ac16faa653f69603a6f032d27a537858897321a684a5fc9ff1b592aa1",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 629.48,
+          "kind": "code",
+          "roi": [
+            0.16015625,
+            0.53194444,
+            0.02578125,
+            0.02916667
+          ],
+          "text": "vng",
+          "evidence_image_ids": [
+            "frames/00629.jpg"
+          ],
+          "timestamp_sample": 629,
+          "source_capture": {
+            "sample": "frames/00629.jpg",
+            "native_frame_index": 15279,
+            "native_timestamp": 629.48,
+            "native_pts": "15737/25",
+            "sample_sha256": "26450d9ac16faa653f69603a6f032d27a537858897321a684a5fc9ff1b592aa1",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 688.48,
+          "kind": "code",
+          "roi": [
+            0.00234375,
+            0.2125,
+            0.253125,
+            0.0375
+          ],
+          "text": "6.15.4-200.fc42.x86_64",
+          "evidence_image_ids": [
+            "frames/00688.jpg"
+          ],
+          "timestamp_sample": 688,
+          "source_capture": {
+            "sample": "frames/00688.jpg",
+            "native_frame_index": 16754,
+            "native_timestamp": 688.48,
+            "native_pts": "17212/25",
+            "sample_sha256": "11cca108c24ac58ef46e06fefca6c199deddedb489636926dea346e7c9be9de6",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 688.48,
+          "kind": "code",
+          "roi": [
+            0.5625,
+            0.16944444,
+            0.0953125,
+            0.03888889
+          ],
+          "text": "uname -r",
+          "evidence_image_ids": [
+            "frames/00688.jpg"
+          ],
+          "timestamp_sample": 688,
+          "source_capture": {
+            "sample": "frames/00688.jpg",
+            "native_frame_index": 16754,
+            "native_timestamp": 688.48,
+            "native_pts": "17212/25",
+            "sample_sha256": "11cca108c24ac58ef46e06fefca6c199deddedb489636926dea346e7c9be9de6",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 694.48,
+          "kind": "code",
+          "roi": [
+            0.5625,
+            0.25416667,
+            0.15390625,
+            0.04027778
+          ],
+          "text": "vng --verbose",
+          "evidence_image_ids": [
+            "frames/00694.jpg",
+            "frames/00695.jpg"
+          ],
+          "timestamp_sample": 694,
+          "source_capture": {
+            "sample": "frames/00694.jpg",
+            "native_frame_index": 16904,
+            "native_timestamp": 694.48,
+            "native_pts": "17362/25",
+            "sample_sha256": "cd5456eb701abf371ad51816e665aef3f3ded8cfb4705863241f12f2278007de",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 695.48,
+          "kind": "code",
+          "roi": [
+            0.00234375,
+            0.3,
+            0.98828125,
+            0.07777778
+          ],
+          "text": "warning: `file` is not installed in the system, virtme-ng may fail to detect kernel ve\nrsion",
+          "evidence_image_ids": [
+            "frames/00695.jpg",
+            "frames/00696.jpg"
+          ],
+          "timestamp_sample": 695,
+          "source_capture": {
+            "sample": "frames/00695.jpg",
+            "native_frame_index": 16929,
+            "native_timestamp": 695.48,
+            "native_pts": "17387/25",
+            "sample_sha256": "2b508b84b025c1376831195644b3354319f40d5c303abc78ed563f2f1d63b672",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 706.48,
+          "kind": "code",
+          "roi": [
+            0.00234375,
+            0.73472222,
+            0.81640625,
+            0.08055556
+          ],
+          "text": "[    4.287068] Kernel panic - not syncing: Fatal exception in interrupt\n[    7.008423] Shutting down cpus with NMI",
+          "evidence_image_ids": [
+            "frames/00706.jpg",
+            "frames/00707.jpg"
+          ],
+          "timestamp_sample": 706,
+          "source_capture": {
+            "sample": "frames/00706.jpg",
+            "native_frame_index": 17204,
+            "native_timestamp": 706.48,
+            "native_pts": "17662/25",
+            "sample_sha256": "9a76d1045649fb9bafd0ce6eb3dc198e1bf3079ff0cc7e79cc665c58a1292cea",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 765.48,
+          "kind": "code",
+          "roi": [
+            0.16015625,
+            0.37638889,
+            0.215625,
+            0.02916667
+          ],
+          "text": "vng --root=/path/to/rootfs-dir",
+          "evidence_image_ids": [
+            "frames/00765.jpg",
+            "frames/00785.jpg"
+          ],
+          "timestamp_sample": 765,
+          "source_capture": {
+            "sample": "frames/00765.jpg",
+            "native_frame_index": 18679,
+            "native_timestamp": 765.48,
+            "native_pts": "19137/25",
+            "sample_sha256": "c1609de70a3024075f3c29a00ce38d8aa31c16ef309dff3894eeb2467d6a9ab4",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 765.48,
+          "kind": "code",
+          "roi": [
+            0.16015625,
+            0.55138889,
+            0.30859375,
+            0.02916667
+          ],
+          "text": "vng --arch=arm64 --root=/path/to/rootfs-dir",
+          "evidence_image_ids": [
+            "frames/00765.jpg",
+            "frames/00785.jpg"
+          ],
+          "timestamp_sample": 765,
+          "source_capture": {
+            "sample": "frames/00765.jpg",
+            "native_frame_index": 18679,
+            "native_timestamp": 765.48,
+            "native_pts": "19137/25",
+            "sample_sha256": "c1609de70a3024075f3c29a00ce38d8aa31c16ef309dff3894eeb2467d6a9ab4",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 885.48,
+          "kind": "code",
+          "roi": [
+            0.16015625,
+            0.39583333,
+            0.24296875,
+            0.03055556
+          ],
+          "text": "dpkg -x linux-image-*.deb extract/",
+          "evidence_image_ids": [
+            "frames/00885.jpg"
+          ],
+          "timestamp_sample": 885,
+          "source_capture": {
+            "sample": "frames/00885.jpg",
+            "native_frame_index": 21679,
+            "native_timestamp": 885.48,
+            "native_pts": "22137/25",
+            "sample_sha256": "61664bfbd2f296967c658157f97f985428878bd30756229d306880696dff4055",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 885.48,
+          "kind": "code",
+          "roi": [
+            0.16015625,
+            0.56944444,
+            0.26484375,
+            0.02916667
+          ],
+          "text": "vng -r extract/boot/vmlinuz-<version>",
+          "evidence_image_ids": [
+            "frames/00885.jpg"
+          ],
+          "timestamp_sample": 885,
+          "source_capture": {
+            "sample": "frames/00885.jpg",
+            "native_frame_index": 21679,
+            "native_timestamp": 885.48,
+            "native_pts": "22137/25",
+            "sample_sha256": "61664bfbd2f296967c658157f97f985428878bd30756229d306880696dff4055",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 917.48,
+          "kind": "code",
+          "roi": [
+            0.146875,
+            0.34722222,
+            0.10234375,
+            0.03333333
+          ],
+          "text": "vng -r v6.6",
+          "evidence_image_ids": [
+            "frames/00917.jpg"
+          ],
+          "timestamp_sample": 917,
+          "source_capture": {
+            "sample": "frames/00917.jpg",
+            "native_frame_index": 22479,
+            "native_timestamp": 917.48,
+            "native_pts": "22937/25",
+            "sample_sha256": "c5f94bf5739259c5f65eba8e5f29b7349ee38c99b7e7da45e2706635eb61aad6",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 958.48,
+          "kind": "code",
+          "roi": [
+            0.2140625,
+            0.31388889,
+            0.19609375,
+            0.04166667
+          ],
+          "text": "vng -r <url.deb>",
+          "evidence_image_ids": [
+            "frames/00951.jpg",
+            "frames/00958.jpg",
+            "frames/00961.jpg"
+          ],
+          "timestamp_sample": 958,
+          "source_capture": {
+            "sample": "frames/00958.jpg",
+            "native_frame_index": 23504,
+            "native_timestamp": 958.48,
+            "native_pts": "23962/25",
+            "sample_sha256": "1e54289d8ecf9c4c22917b57434b9a6fcdadaf1a4c1e29d23898175c0a773638",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 958.48,
+          "kind": "code",
+          "roi": [
+            0.3046875,
+            0.60138889,
+            0.14765625,
+            0.04444444
+          ],
+          "text": "apt download",
+          "evidence_image_ids": [
+            "frames/00951.jpg",
+            "frames/00958.jpg",
+            "frames/00961.jpg"
+          ],
+          "timestamp_sample": 958,
+          "source_capture": {
+            "sample": "frames/00958.jpg",
+            "native_frame_index": 23504,
+            "native_timestamp": 958.48,
+            "native_pts": "23962/25",
+            "sample_sha256": "1e54289d8ecf9c4c22917b57434b9a6fcdadaf1a4c1e29d23898175c0a773638",
+            "exact_jpeg_bytes": true
+          }
+        }
+      ],
+      "build_groups": [],
+      "source_record_sha256": "17bc47988ba5c84dd843a665c99f8bc9515903c1763be737c07578c095535e89"
+    }
+  },
+  "source_roi_timestamp_method": "Source-only annotation crop timestamps are the verified normalized input presentation timestamps."
+}

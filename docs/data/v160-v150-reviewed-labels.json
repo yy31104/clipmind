@@ -1,0 +1,1178 @@
+{
+  "schema_version": 1,
+  "annotation_protocol": "docs/SCREEN_LABEL_PROTOCOL_V160.md",
+  "labels_method": "Two blind GPT-6.2 Sol source passes and a separate source-only adjudication.",
+  "cases": {
+    "fosdem2026-synctest": {
+      "reviewed": true,
+      "review_start": 0,
+      "review_end": 1356.066667,
+      "input_sha256": "b2508d82e88bcc07d356ca74a924049cd672738fe28247f15d497cc6055e3fbd",
+      "slide_changes": [
+        6,
+        52,
+        66,
+        91,
+        121,
+        184,
+        207,
+        225,
+        239,
+        246,
+        264,
+        274,
+        305,
+        313,
+        318,
+        365,
+        394,
+        469,
+        492,
+        559,
+        632,
+        669,
+        688,
+        745,
+        760,
+        884,
+        891,
+        926,
+        958,
+        1008,
+        1058,
+        1087,
+        1091,
+        1122,
+        1136,
+        1143,
+        1146,
+        1172,
+        1182,
+        1295,
+        1329,
+        1333,
+        1336,
+        1351
+      ],
+      "ocr": [
+        {
+          "timestamp": 121.466666667,
+          "kind": "code",
+          "roi": [
+            0.0734375,
+            0.2611111111111111,
+            0.3421875,
+            0.46111111111111114
+          ],
+          "text": "func DoNoDeadlock() {\n    log.Println(\"DoNoDeadlock invoked\")\n}\n\nfunc DoDeadlock() {\n    log.Println(\"DoDeadlock invoked\")\n    ch := make(chan struct{})\n    <-ch // blocks forever\n}",
+          "evidence_image_ids": [
+            "frames/00121.jpg",
+            "frames/00126.jpg"
+          ],
+          "timestamp_sample": 121,
+          "source_capture": {
+            "sample": "frames/00121.jpg",
+            "native_frame_index": 3614,
+            "native_timestamp": 121.466666667,
+            "native_pts": "1822/15",
+            "sample_sha256": "698a83f087adb13743bf08e8b2bd31ee0cae57ab2fd85bf28ded7d6d313adced",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 184.466666667,
+          "kind": "code",
+          "roi": [
+            0.074219,
+            0.261111,
+            0.398438,
+            0.319444
+          ],
+          "text": "func TestAllGoRoutinesFinished(t *testing.T) {\n    var wg sync.WaitGroup\n    wg.Go(DoNoDeadlock)\n    wg.Go(DoDeadlock)\n    wg.Wait()\n}",
+          "evidence_image_ids": [
+            "frames/00184.jpg"
+          ],
+          "timestamp_sample": 184,
+          "source_capture": {
+            "sample": "frames/00184.jpg",
+            "native_frame_index": 5504,
+            "native_timestamp": 184.466666667,
+            "native_pts": "2767/15",
+            "sample_sha256": "f00b15c0c1d0157037a4efd89b5d648124abbb6d6676d9b5f8b117b457095865",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 207.466666667,
+          "kind": "code",
+          "roi": [
+            0.074219,
+            0.263889,
+            0.501563,
+            0.258333
+          ],
+          "text": "> go test -run TestAllGoRoutinesFinished -v -timeout=100ms\n=== RUN   TestAllGoRoutinesFinished\n2026/01/31 13:09:23 DoDeadlock invoked\n2026/01/31 13:09:23 DoNoDeadlock invoked\npanic: test timed out after 100ms",
+          "evidence_image_ids": [
+            "frames/00207.jpg",
+            "frames/00212.jpg"
+          ],
+          "timestamp_sample": 207,
+          "source_capture": {
+            "sample": "frames/00207.jpg",
+            "native_frame_index": 6194,
+            "native_timestamp": 207.466666667,
+            "native_pts": "3112/15",
+            "sample_sha256": "449a8ba04ec20f84434d5825f394398e462f41df826480ab30e1bf537289634c",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 225.466666667,
+          "kind": "code",
+          "roi": [
+            0.11015625,
+            0.43472222222222223,
+            0.4296875,
+            0.0375
+          ],
+          "text": "wg.Go(DoNoDeadlock) // Was previously: DoDeadlock",
+          "evidence_image_ids": [
+            "frames/00225.jpg"
+          ],
+          "timestamp_sample": 225,
+          "source_capture": {
+            "sample": "frames/00225.jpg",
+            "native_frame_index": 6734,
+            "native_timestamp": 225.466666667,
+            "native_pts": "3382/15",
+            "sample_sha256": "680781d9241df48be6ffa31dfbd98eff0b9f95d6cafc9ec0822bbd9071bb8afe",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 246.466666667,
+          "kind": "code",
+          "roi": [
+            0.11015625,
+            0.31527777777777777,
+            0.1375,
+            0.03333333333333333
+          ],
+          "text": "go DoDeadlock()",
+          "evidence_image_ids": [
+            "frames/00246.jpg"
+          ],
+          "timestamp_sample": 246,
+          "source_capture": {
+            "sample": "frames/00246.jpg",
+            "native_frame_index": 7363,
+            "native_timestamp": 246.466666667,
+            "native_pts": "3697/15",
+            "sample_sha256": "6b8f190c869796b8eed3685372d2b1381dcb499ab55c80b9fdf2b9ba887e3b2f",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 264.466666667,
+          "kind": "code",
+          "roi": [
+            0.074219,
+            0.263889,
+            0.390625,
+            0.258333
+          ],
+          "text": "> go test -run ^TestAllGoRoutinesFinished$ -v\n=== RUN   TestAllGoRoutinesFinished\n2026/01/31 15:43:38 DoNoDeadlock invoked\n2026/01/31 15:43:38 DoNoDeadlock invoked\n--- PASS: TestAllGoRoutinesFinished (0.00s)",
+          "evidence_image_ids": [
+            "frames/00264.jpg"
+          ],
+          "timestamp_sample": 264,
+          "source_capture": {
+            "sample": "frames/00264.jpg",
+            "native_frame_index": 7903,
+            "native_timestamp": 264.466666667,
+            "native_pts": "3967/15",
+            "sample_sha256": "2c7e82df12d96f938a9677d1b5ff4f396107f65242ef5a569f6080fb925fb3b6",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 365.466666667,
+          "kind": "code",
+          "roi": [
+            0.074219,
+            0.263889,
+            0.467187,
+            0.181944
+          ],
+          "text": "func TestAllGoRoutinesFinishedSynctest(t *testing.T) {\n    synctest.Test(t, func(t *testing.T) {\n        go DoNoDeadlock()\n        go DoNoDeadlock()\n    })\n}",
+          "evidence_image_ids": [
+            "frames/00365.jpg"
+          ],
+          "timestamp_sample": 365,
+          "source_capture": {
+            "sample": "frames/00365.jpg",
+            "native_frame_index": 10933,
+            "native_timestamp": 365.466666667,
+            "native_pts": "5482/15",
+            "sample_sha256": "5d7b282d596e2ab1bfd538978a050fd936a2f6c0214b5d33e6ccc715b3be736e",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 394.466666667,
+          "kind": "code",
+          "roi": [
+            0.074219,
+            0.263889,
+            0.621094,
+            0.302778
+          ],
+          "text": "> go test -run ^TestAllGoRoutinesFinishedSynctest$ -v\n=== RUN   TestAllGoRoutinesFinishedSynctest\n2000/01/01 01:00:00 DoNoDeadlock invoked\n2000/01/01 01:00:00 DoNoDeadlock invoked\n2000/01/01 01:00:00 DoDeadlock invoked\n2000/01/01 01:00:00 DoDeadlock invoked\n--- FAIL: TestAllGoRoutinesFinishedSynctest (0.00s)\npanic: deadlock: main bubble goroutine has exited but blocked goroutines\nremain [recovered, repanicked]",
+          "evidence_image_ids": [
+            "frames/00394.jpg",
+            "frames/00398.jpg"
+          ],
+          "timestamp_sample": 394,
+          "source_capture": {
+            "sample": "frames/00394.jpg",
+            "native_frame_index": 11803,
+            "native_timestamp": 394.466666667,
+            "native_pts": "5917/15",
+            "sample_sha256": "b84ac90527bd0a65ccf6ab2bce408837efbc3b0da0780d80d917f04ffe800ed8",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 632.466666667,
+          "kind": "code",
+          "roi": [
+            0.074219,
+            0.263889,
+            0.509375,
+            0.213889
+          ],
+          "text": "func TestListenAndServe(t *testing.T) {\n    synctest.Test(t, func(t *testing.T) {\n        go http.ListenAndServe(\":8080\", nil)\n    })\n}\n\n// Will hang because http.ListenAndServe is waiting on I/O.",
+          "evidence_image_ids": [
+            "frames/00632.jpg"
+          ],
+          "timestamp_sample": 632,
+          "source_capture": {
+            "sample": "frames/00632.jpg",
+            "native_frame_index": 18943,
+            "native_timestamp": 632.466666667,
+            "native_pts": "9487/15",
+            "sample_sha256": "8646ee906059762ac6fdae3bd8484c8384f72b7218675f8bd820fa8b57ad4fb5",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 669.466666667,
+          "kind": "code",
+          "roi": [
+            0.074219,
+            0.263889,
+            0.441406,
+            0.120833
+          ],
+          "text": "> go test -run TestListenAndServe -v -timeout=100ms\n=== RUN   TestListenAndServe\npanic: test timed out after 100ms",
+          "evidence_image_ids": [
+            "frames/00669.jpg"
+          ],
+          "timestamp_sample": 669,
+          "source_capture": {
+            "sample": "frames/00669.jpg",
+            "native_frame_index": 20053,
+            "native_timestamp": 669.466666667,
+            "native_pts": "10042/15",
+            "sample_sha256": "b1e991dc82ef889bd0bb8cd9e60d679b4bd2115c04a0c3d95c5d746ff8efe363",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 688.466666667,
+          "kind": "code",
+          "roi": [
+            0.0734375,
+            0.2611111111111111,
+            0.46953125,
+            0.4166666666666667
+          ],
+          "text": "func DoDeadlockWithMutex() {\n    var mu sync.Mutex\n    mu.Lock()\n    mu.Lock()\n}\n\nfunc TestAllGoRoutinesFinishedSynctest(t *testing.T) {\n    synctest.Test(t, func(t *testing.T) {\n        go DoDeadlockWithMutex()\n    })\n}",
+          "evidence_image_ids": [
+            "frames/00688.jpg"
+          ],
+          "timestamp_sample": 688,
+          "source_capture": {
+            "sample": "frames/00688.jpg",
+            "native_frame_index": 20623,
+            "native_timestamp": 688.466666667,
+            "native_pts": "10327/15",
+            "sample_sha256": "2bc2c44fda3a62b52b7b30e036186c7583b5fc7ffa093c51159a65bea98ce030",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 774.466666667,
+          "kind": "code",
+          "roi": [
+            0.075,
+            0.256944,
+            0.471875,
+            0.419444
+          ],
+          "text": "func TestWorkerProcessesItem(t *testing.T) {\n    synctest.Test(t, func(t *testing.T) {\n        var processed int\n        ch := make(chan int, 1)\n        defer close(ch)\n        go func() {\n            for i := range ch {\n                processed = i\n            }\n        }()\n        ch <- 42\n        synctest.Wait()\n        if processed != 42 {\n            t.Fatalf(\"expected 42, got %d\", processed)\n        }\n    })\n}",
+          "evidence_image_ids": [
+            "frames/00760.jpg",
+            "frames/00774.jpg"
+          ],
+          "timestamp_sample": 774,
+          "source_capture": {
+            "sample": "frames/00774.jpg",
+            "native_frame_index": 23203,
+            "native_timestamp": 774.466666667,
+            "native_pts": "11617/15",
+            "sample_sha256": "58fc56ddecaec01c35f8cad16edeb3be25a168eafa5b74db2f8c6aee3d236296",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 884.466666667,
+          "kind": "code",
+          "roi": [
+            0.074219,
+            0.263889,
+            0.364063,
+            0.152778
+          ],
+          "text": "> go test -run TestWorkerProcessesItem$ -v\n=== RUN   TestWorkerProcessesItem\n--- PASS: TestWorkerProcessesItem (0.00s)\nPASS\nok   github.com/ronna-s/fosdem2026 0.182s",
+          "evidence_image_ids": [
+            "frames/00884.jpg"
+          ],
+          "timestamp_sample": 884,
+          "source_capture": {
+            "sample": "frames/00884.jpg",
+            "native_frame_index": 26503,
+            "native_timestamp": 884.466666667,
+            "native_pts": "13267/15",
+            "sample_sha256": "93f0bae3d4f5b99a3548015e5cd2fb7d2c79ca101c6d81abb5306cb63c46500f",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 926.466666667,
+          "kind": "code",
+          "roi": [
+            0.074219,
+            0.263889,
+            0.35625,
+            0.272222
+          ],
+          "text": "func TestBubbleTime(t *testing.T) {\n    synctest.Test(t, func(t *testing.T) {\n        t.Log(time.Now())\n        for range 3 {\n            time.Sleep(time.Second)\n            t.Log(time.Now())\n        }\n    })\n}",
+          "evidence_image_ids": [
+            "frames/00926.jpg"
+          ],
+          "timestamp_sample": 926,
+          "source_capture": {
+            "sample": "frames/00926.jpg",
+            "native_frame_index": 27763,
+            "native_timestamp": 926.466666667,
+            "native_pts": "13897/15",
+            "sample_sha256": "214c034781a4a4165088e40c1f02028179476244be8a4e0785102a8feab27629",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 990.466666667,
+          "kind": "code",
+          "roi": [
+            0.07265625,
+            0.25833333333333336,
+            0.4546875,
+            0.2791666666666667
+          ],
+          "text": "> go test -run TestBubbleTime -v -timeout=100ms\n\n=== RUN   TestBubbleTime\n    bubble_test.go:63: 2000-01-01 01:00:02 +0100 CET\n    bubble_test.go:63: 2000-01-01 01:00:03 +0100 CET\n    bubble_test.go:63: 2000-01-01 01:00:04 +0100 CET\n--- PASS: TestBubbleTime (0.00s)\nPASS\nok  github.com/ronna-s/fosdem2026 0.182s",
+          "evidence_image_ids": [
+            "frames/00958.jpg",
+            "frames/00990.jpg"
+          ],
+          "timestamp_sample": 990,
+          "source_capture": {
+            "sample": "frames/00990.jpg",
+            "native_frame_index": 29683,
+            "native_timestamp": 990.466666667,
+            "native_pts": "14857/15",
+            "sample_sha256": "9267516933de783ecbbe2730b1d57207541721425bfb1f58812d876148d2d3f8",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 1008.466666667,
+          "kind": "code",
+          "roi": [
+            0.073438,
+            0.263889,
+            0.640625,
+            0.365278
+          ],
+          "text": "func Retry(f func() error, n int, interval time.Duration) error {\n    var err error\n    for range n {\n        if err = f(); err != nil {\n            time.Sleep(interval)\n        } else {\n            return nil\n        }\n    }\n    return fmt.Errorf(\"failed to execute the function after %d tries. Last\nerror: %s\", n, err.Error())\n}",
+          "evidence_image_ids": [
+            "frames/01008.jpg"
+          ],
+          "timestamp_sample": 1008,
+          "source_capture": {
+            "sample": "frames/01008.jpg",
+            "native_frame_index": 30223,
+            "native_timestamp": 1008.466666667,
+            "native_pts": "15127/15",
+            "sample_sha256": "d09cdc05b7c807c234b8cd47bd64c4a047f618166a0bbb5007abeeed3b9c5552",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 1058.466666667,
+          "kind": "code",
+          "roi": [
+            0.073438,
+            0.2625,
+            0.538281,
+            0.426389
+          ],
+          "text": "func TestRetry(t *testing.T) {\n    f := func() error { return errors.New(\"error\") }\n    var err error\n    ch := make(chan struct{})\n    go func() {\n        err = Retry(f, 3, time.Second*10)\n        close(ch)\n    }()\n    time.Sleep(30 * time.Second)\n    <-ch\n    if err == nil {\n        t.Fatal(\"Retry was expected to fail after 30 seconds\")\n    }\n}",
+          "evidence_image_ids": [
+            "frames/01058.jpg"
+          ],
+          "timestamp_sample": 1058,
+          "source_capture": {
+            "sample": "frames/01058.jpg",
+            "native_frame_index": 31723,
+            "native_timestamp": 1058.466666667,
+            "native_pts": "15877/15",
+            "sample_sha256": "097330c74ec57d83b3fc1f706126e175dad6788729348517c57aa41f302b4e33",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 1087.466666667,
+          "kind": "code",
+          "roi": [
+            0.073438,
+            0.263889,
+            0.357812,
+            0.151389
+          ],
+          "text": "> go test -run TestRetry$ -v\n=== RUN   TestRetry\n--- PASS: TestRetry (30.00s)\nPASS\nok  github.com/ronna-s/fosdem2026 30.188s",
+          "evidence_image_ids": [
+            "frames/01087.jpg"
+          ],
+          "timestamp_sample": 1087,
+          "source_capture": {
+            "sample": "frames/01087.jpg",
+            "native_frame_index": 32593,
+            "native_timestamp": 1087.466666667,
+            "native_pts": "16312/15",
+            "sample_sha256": "98d1cf454a52839d8bec7487c6d7c9bda3579bc4d1b529818763031a4d05b79b",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 1136.466666667,
+          "kind": "code",
+          "roi": [
+            0.073438,
+            0.2625,
+            0.575781,
+            0.427778
+          ],
+          "text": "func TestRetrySynctest(t *testing.T) {\n    synctest.Test(t, func(t *testing.T) {\n        f := func() error { return errors.New(\"error\") }\n        var err error\n        go func() {\n            err = Retry(f, 3, time.Second*10)\n        }()\n        time.Sleep(30 * time.Second)\n        synctest.Wait() // prevents race\n        if err == nil {\n            t.Fatal(\"Retry was expected to fail after 30 seconds\")\n        }\n    })\n}",
+          "evidence_image_ids": [
+            "frames/01136.jpg",
+            "frames/01146.jpg"
+          ],
+          "timestamp_sample": 1136,
+          "source_capture": {
+            "sample": "frames/01136.jpg",
+            "native_frame_index": 34063,
+            "native_timestamp": 1136.466666667,
+            "native_pts": "17047/15",
+            "sample_sha256": "375fe640dd87b52bc34a8a923e9ddcfbfd6c630d4d00ffe37ef24aa892d9560b",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 1172.466666667,
+          "kind": "code",
+          "roi": [
+            0.073438,
+            0.263889,
+            0.348438,
+            0.148611
+          ],
+          "text": "> go test -run TestRetrySynctest$ -v\n=== RUN   TestRetrySynctest\n--- PASS: TestRetrySynctest (0.00s)\nPASS\nok  github.com/ronna-s/fosdem2026 0.305s",
+          "evidence_image_ids": [
+            "frames/01172.jpg"
+          ],
+          "timestamp_sample": 1172,
+          "source_capture": {
+            "sample": "frames/01172.jpg",
+            "native_frame_index": 35142,
+            "native_timestamp": 1172.466666667,
+            "native_pts": "17587/15",
+            "sample_sha256": "7b2d4dfe523300ef4bd4c5cca087d0234cd5de7a00033f10b4f8fb0bbd3b7c05",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 1336.466666667,
+          "kind": "code",
+          "roi": [
+            0.176563,
+            0.265278,
+            0.235937,
+            0.0875
+          ],
+          "text": "=== RUN   TestTimeMovesBackwards\nHello from Feb  1 11:57:45!\nHello from Feb  1 11:57:44!",
+          "evidence_image_ids": [
+            "frames/01336.jpg",
+            "frames/01341.jpg"
+          ],
+          "timestamp_sample": 1336,
+          "source_capture": {
+            "sample": "frames/01336.jpg",
+            "native_frame_index": 40062,
+            "native_timestamp": 1336.466666667,
+            "native_pts": "20047/15",
+            "sample_sha256": "0332b99d02070450503bfa5e1d4b38079ae38d2e3c930bdf239f496384159613",
+            "exact_jpeg_bytes": true
+          }
+        }
+      ],
+      "build_groups": [],
+      "source_record_sha256": "02f18018d324142e68a943cc3f0cabf59f2632f2a70e495c47d2c27294127388"
+    },
+    "pycontw2024-observability": {
+      "reviewed": true,
+      "review_start": 0,
+      "review_end": 1845.591655,
+      "input_sha256": "58e3cdee8a608d4388e4097cb017f382df7f2962cf7da0c35cd5194658c7f7f6",
+      "slide_changes": [
+        52,
+        82,
+        125,
+        148,
+        200,
+        211,
+        223,
+        238,
+        345,
+        398,
+        493,
+        543,
+        572,
+        586,
+        589,
+        594,
+        601,
+        611,
+        638,
+        648,
+        650,
+        685,
+        752,
+        789,
+        849,
+        884,
+        896,
+        911,
+        914,
+        951,
+        1033,
+        1047,
+        1074,
+        1077,
+        1135,
+        1206,
+        1305,
+        1317,
+        1324,
+        1355,
+        1390,
+        1405,
+        1415,
+        1428,
+        1430,
+        1432,
+        1451,
+        1469,
+        1481,
+        1509,
+        1531,
+        1546,
+        1549,
+        1554,
+        1568,
+        1582,
+        1584,
+        1588,
+        1590,
+        1599,
+        1602,
+        1608,
+        1616,
+        1620,
+        1623,
+        1625,
+        1632,
+        1633,
+        1635,
+        1643,
+        1645,
+        1647,
+        1649,
+        1654,
+        1657,
+        1672,
+        1684,
+        1698,
+        1702,
+        1713,
+        1716,
+        1721,
+        1727,
+        1777,
+        1787,
+        1809
+      ],
+      "ocr": [
+        {
+          "timestamp": 650.483166667,
+          "kind": "code",
+          "roi": [
+            0.0625,
+            0.5625,
+            0.26875,
+            0.086111
+          ],
+          "text": "# HELP fastapi_requests Total count of requests by method and path.\n# TYPE fastapi_requests counter\nfastapi_requests_total{method=\"GET\",path=\"/\"} 6.0\nfastapi_requests_total{method=\"GET\",path=\"/metrics\"} 647.0\nfastapi_requests_total{method=\"GET\",path=\"/io_task\"} 3.0",
+          "evidence_image_ids": [
+            "frames/00650.jpg"
+          ],
+          "timestamp_sample": 650,
+          "source_capture": {
+            "sample": "frames/00650.jpg",
+            "native_frame_index": 19495,
+            "native_timestamp": 650.483166667,
+            "native_pts": "3902899/6000",
+            "sample_sha256": "fe2012f4f60891f0ca6b2a429b38ac485b9c54fe81165334a2e50d8729474eaa",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 752.485066667,
+          "kind": "code",
+          "roi": [
+            0.104688,
+            0.427778,
+            0.567187,
+            0.391667
+          ],
+          "text": "# HELP container_memory_usage_bytes Current memory usage in bytes\n# TYPE container_memory_usage_bytes gauge\ncontainer_memory_usage_bytes{image=\"prom/prometheus:v2.54.0\",name=\"prometheus\"} 6.4237568e+07\ncontainer_memory_usage_bytes{image=\"grafana/grafana:11.2.0\",name=\"grafana\"} 1.08425216e+08\ncontainer_memory_usage_bytes{image=\"gcr.io/cadvisor/cadvisor:v0.49.1\",name=\"cadvisor\"} 8.8117248e+07\n\n# HELP fastapi_requests Total count of requests by method and path.\n# TYPE fastapi_requests counter\nfastapi_requests_total{method=\"GET\",path=\"/\"} 10.0\nfastapi_requests_total{method=\"GET\",path=\"/cpu_task\"} 10.0\nfastapi_requests_total{method=\"GET\",path=\"/io_task\"} 10.0\n\n# HELP fastapi_responses Total count of responses by method, path and status codes.\n# TYPE fastapi_responses counter\nfastapi_responses_total{method=\"GET\",path=\"/random_status\",status_code=\"200\"} 5.0\nfastapi_responses_total{method=\"GET\",path=\"/random_status\",status_code=\"300\"} 2.0",
+          "evidence_image_ids": [
+            "frames/00752.jpg"
+          ],
+          "timestamp_sample": 752,
+          "source_capture": {
+            "sample": "frames/00752.jpg",
+            "native_frame_index": 22552,
+            "native_timestamp": 752.485066667,
+            "native_pts": "2821819/3750",
+            "sample_sha256": "d94a34fcb94f421c15ae2b2dd02f80968bd2f6e6b717564282411ff0c7493f7f",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 800.4997,
+          "kind": "code",
+          "roi": [
+            0.2359375,
+            0.3486111111111111,
+            0.48203125,
+            0.4152777777777778
+          ],
+          "text": "from fastapi import FastAPI, Request\nfrom prometheus_client import Counter, Gauge, Histogram, make_asgi_app\n\nREQUEST_TIME = Histogram(\"request_processing_seconds\", \"Time spent processing request\")\n\nREQUEST_IN_PROCESSING = Gauge(\"request_in_processing\", \"Requests in progress\")\n\nREQUEST_COUNT = Counter(\"requests_count\", \"Total count of requests\")\n\n@app.get(\"/\")\nasync def root(request: Request):\n    REQUEST_IN_PROCESSING.inc()\n    REQUEST_COUNT.inc()\n    with REQUEST_TIME.time():\n        await random_sleep()\n    REQUEST_IN_PROCESSING.dec()\n    return {\"Hello\": \"World\"}",
+          "evidence_image_ids": [
+            "frames/00789.jpg",
+            "frames/00800.jpg"
+          ],
+          "timestamp_sample": 800,
+          "source_capture": {
+            "sample": "frames/00800.jpg",
+            "native_frame_index": 23991,
+            "native_timestamp": 800.4997,
+            "native_pts": "8004997/10000",
+            "sample_sha256": "3bea7c2ec9683c4596ed13a6b254a1902409eab38a5254e417e0900eda1f5702",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 849.481966667,
+          "kind": "code",
+          "roi": [
+            0.459375,
+            0.454167,
+            0.205469,
+            0.319444
+          ],
+          "text": "scrape_configs:\n  - job_name: \"prometheus\"\n    static_configs:\n      - targets: [\"localhost:9090\"]\n\n  - job_name: 'cadvisor'\n    static_configs:\n      - targets: ['cadvisor:8080']\n\n  - job_name: 'app-a'\n    scrape_interval: 5s\n    metrics_path: '/metrics'\n    static_configs:\n      - targets: ['app-a:8000']",
+          "evidence_image_ids": [
+            "frames/00849.jpg"
+          ],
+          "timestamp_sample": 849,
+          "source_capture": {
+            "sample": "frames/00849.jpg",
+            "native_frame_index": 25459,
+            "native_timestamp": 849.481966667,
+            "native_pts": "25484459/30000",
+            "sample_sha256": "4840aad365bbe431ef7a53f7fc8342d949fbbeb93cbc05937404cc972685bdec",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 1033.499133333,
+          "kind": "code",
+          "roi": [
+            0.41875,
+            0.480556,
+            0.138281,
+            0.018056
+          ],
+          "text": "Critical error. Please fix this!",
+          "evidence_image_ids": [
+            "frames/01033.jpg"
+          ],
+          "timestamp_sample": 1033,
+          "source_capture": {
+            "sample": "frames/01033.jpg",
+            "native_frame_index": 30974,
+            "native_timestamp": 1033.499133333,
+            "native_pts": "15502487/15000",
+            "sample_sha256": "2abc3ae6a37feba8d574a4d2ca13f68a63094fca33678b73dd336e54b47285eb",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 1317.482833333,
+          "kind": "code",
+          "roi": [
+            0.379688,
+            0.566667,
+            0.190625,
+            0.048611
+          ],
+          "text": "\"INSERT INTO todo_items (title, description,\ncompleted) VALUES (%(title)s, %(description)s,\n%(completed)s) RETURNING todo_items.id\"",
+          "evidence_image_ids": [
+            "frames/01317.jpg"
+          ],
+          "timestamp_sample": 1317,
+          "source_capture": {
+            "sample": "frames/01317.jpg",
+            "native_frame_index": 39485,
+            "native_timestamp": 1317.482833333,
+            "native_pts": "7904897/6000",
+            "sample_sha256": "170217d2bb666e4f1eaad3667a9b3d26c36b84e97fe4253ab70688ef4c52059d",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 1324.489833333,
+          "kind": "code",
+          "roi": [
+            0.191406,
+            0.579167,
+            0.378906,
+            0.109722
+          ],
+          "text": "# 根據已安裝的 Package 列出可用的 Instrumentation Package 清單\nopentelemetry-bootstrap -a requirements\n# 直接安裝可用的 Instrumentation Package 清單\nopentelemetry-bootstrap -a install",
+          "evidence_image_ids": [
+            "frames/01324.jpg"
+          ],
+          "timestamp_sample": 1324,
+          "source_capture": {
+            "sample": "frames/01324.jpg",
+            "native_frame_index": 39695,
+            "native_timestamp": 1324.489833333,
+            "native_pts": "7946939/6000",
+            "sample_sha256": "df15823cf0f5d5fc5f4757f3672db27b1419a7366bb630de240aa347ff880886",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 1324.489833333,
+          "kind": "code",
+          "roi": [
+            0.446875,
+            0.736111,
+            0.225781,
+            0.026389
+          ],
+          "text": "opentelemetry-instrument python main.py",
+          "evidence_image_ids": [
+            "frames/01324.jpg"
+          ],
+          "timestamp_sample": 1324,
+          "source_capture": {
+            "sample": "frames/01324.jpg",
+            "native_frame_index": 39695,
+            "native_timestamp": 1324.489833333,
+            "native_pts": "7946939/6000",
+            "sample_sha256": "df15823cf0f5d5fc5f4757f3672db27b1419a7366bb630de240aa347ff880886",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 1355.487466667,
+          "kind": "code",
+          "roi": [
+            0.069531,
+            0.533333,
+            0.342187,
+            0.2
+          ],
+          "text": "app:\n  image: fastapi-app\n  environment:\n    - OTEL_TRACES_EXPORTER=otlp\n    - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317\n    - OTEL_SERVICE_NAME=basic\n  command: opentelemetry-instrument python main.py",
+          "evidence_image_ids": [
+            "frames/01355.jpg"
+          ],
+          "timestamp_sample": 1355,
+          "source_capture": {
+            "sample": "frames/01355.jpg",
+            "native_frame_index": 40624,
+            "native_timestamp": 1355.487466667,
+            "native_pts": "2541539/1875",
+            "sample_sha256": "89593a364d3dd8f0f4a71b744915b747fc518f474c44c83590e4fbc019c1a13e",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 1481.48,
+          "kind": "code",
+          "roi": [
+            0.107031,
+            0.454167,
+            0.559375,
+            0.025
+          ],
+          "text": "OTEL_PYTHON_LOG_CORRELATION_LOG_FORMAT=true opentelemetry-instrument python basic.py",
+          "evidence_image_ids": [
+            "frames/01481.jpg"
+          ],
+          "timestamp_sample": 1481,
+          "source_capture": {
+            "sample": "frames/01481.jpg",
+            "native_frame_index": 44400,
+            "native_timestamp": 1481.48,
+            "native_pts": "37037/25",
+            "sample_sha256": "fa4e178e7999c7d990dd5fdf074ac8ea90823c3f9f4792f5aad0e5f60d3332f3",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 1481.48,
+          "kind": "code",
+          "roi": [
+            0.16875,
+            0.531944,
+            0.435156,
+            0.076389
+          ],
+          "text": "from opentelemetry.instrumentation.logging import LoggingInstrumentor\n\nLoggingInstrumentor().instrument(set_logging_format=True)",
+          "evidence_image_ids": [
+            "frames/01481.jpg"
+          ],
+          "timestamp_sample": 1481,
+          "source_capture": {
+            "sample": "frames/01481.jpg",
+            "native_frame_index": 44400,
+            "native_timestamp": 1481.48,
+            "native_pts": "37037/25",
+            "sample_sha256": "fa4e178e7999c7d990dd5fdf074ac8ea90823c3f9f4792f5aad0e5f60d3332f3",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 1521.486633333,
+          "kind": "code",
+          "roi": [
+            0.23046875,
+            0.4083333333333333,
+            0.3265625,
+            0.1763888888888889
+          ],
+          "text": "from opentelemetry import trace\n# retrieve trace id for exemplar\nspan = trace.get_current_span()\ntrace_id = trace.format_trace_id(span.get_span_context().trace_id)\n\nREQUESTS_PROCESSING_TIME.labels(\n    method=method, path=path, app_name=self.app_name\n).observe(after_time - before_time, exemplar={\"TraceID\": trace_id})",
+          "evidence_image_ids": [
+            "frames/01509.jpg",
+            "frames/01521.jpg"
+          ],
+          "timestamp_sample": 1521,
+          "source_capture": {
+            "sample": "frames/01521.jpg",
+            "native_frame_index": 45599,
+            "native_timestamp": 1521.486633333,
+            "native_pts": "45644599/30000",
+            "sample_sha256": "01ce0b52c62c1d0ab8b93c58a4c259f19861a41789f775690a895e0b19618e89",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 1546.478266667,
+          "kind": "code",
+          "roi": [
+            0.1328125,
+            0.2125,
+            0.29453125,
+            0.03194444444444444
+          ],
+          "text": "rye run opentelemetry-bootstrap -a requirements",
+          "evidence_image_ids": [
+            "frames/01544.jpg",
+            "frames/01546.jpg",
+            "frames/01547.jpg"
+          ],
+          "timestamp_sample": 1546,
+          "source_capture": {
+            "sample": "frames/01546.jpg",
+            "native_frame_index": 46348,
+            "native_timestamp": 1546.478266667,
+            "native_pts": "11598587/7500",
+            "sample_sha256": "1206181a0ae69dacb527c8b5749aedf8f17dc65c80540e68d42af3a63295a964",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 1549.481266667,
+          "kind": "code",
+          "roi": [
+            0.338281,
+            0.452778,
+            0.292187,
+            0.026389
+          ],
+          "text": "k6 run --vus 5 --duration 3000s k6-script.js",
+          "evidence_image_ids": [
+            "frames/01549.jpg"
+          ],
+          "timestamp_sample": 1549,
+          "source_capture": {
+            "sample": "frames/01549.jpg",
+            "native_frame_index": 46438,
+            "native_timestamp": 1549.481266667,
+            "native_pts": "23242219/15000",
+            "sample_sha256": "509315a83790812605dbdbe4e1fda686e76862d9def455af3e3d477ebd42c438",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 1568.4669,
+          "kind": "code",
+          "roi": [
+            0.08125,
+            0.494444,
+            0.220312,
+            0.120833
+          ],
+          "text": "@app.get(\"/request\")\nasync def request(request: Request):\n    httpx.get(\"https://httpstat.us/200\")\n    httpx.post(\"https://httpstat.us/404?sleep=3000\")\n    httpx.post(\"https://httpstat.us/500?sleep=1500\")\n    return {\"request\": \"completed\"}",
+          "evidence_image_ids": [
+            "frames/01568.jpg"
+          ],
+          "timestamp_sample": 1568,
+          "source_capture": {
+            "sample": "frames/01568.jpg",
+            "native_frame_index": 47007,
+            "native_timestamp": 1568.4669,
+            "native_pts": "15684669/10000",
+            "sample_sha256": "72bcef6df5accb13bd97215e664cd2d383c3453bf25b410852b216a6f2f29918",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 1590.4889,
+          "kind": "code",
+          "roi": [
+            0.089063,
+            0.293056,
+            0.301563,
+            0.266667
+          ],
+          "text": "basic:\n  image: ghcr.io/blueswen/pycon-tw-2024-python-observability/app:latest\n  ports:\n    - \"8080:8000\"\n  depends_on:\n    - loki\n  logging: *default-logging\n  environment:\n    - OTEL_TRACES_EXPORTER=otlp\n    - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317\n    - OTEL_METRICS_EXPORTER=none\n    - OTEL_SERVICE_NAME=basic\n  command: opentelemetry-instrument python basic.py",
+          "evidence_image_ids": [
+            "frames/01590.jpg"
+          ],
+          "timestamp_sample": 1590,
+          "source_capture": {
+            "sample": "frames/01590.jpg",
+            "native_frame_index": 47667,
+            "native_timestamp": 1590.4889,
+            "native_pts": "15904889/10000",
+            "sample_sha256": "2e0657baaf034c9ee358f0439b6de0ff7d7186be0b16b1cddcb47eee1f488f06",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 1599.4979,
+          "kind": "code",
+          "roi": [
+            0.057031,
+            0.747222,
+            0.124219,
+            0.044444
+          ],
+          "text": "curl -X 'GET' \\\n  'http://localhost:8080/request' \\\n  -H 'accept: application/json'",
+          "evidence_image_ids": [
+            "frames/01599.jpg"
+          ],
+          "timestamp_sample": 1599,
+          "source_capture": {
+            "sample": "frames/01599.jpg",
+            "native_frame_index": 47937,
+            "native_timestamp": 1599.4979,
+            "native_pts": "15994979/10000",
+            "sample_sha256": "2cfef7b59b9895c64b8e393e4f32d9bb37b45212dcd6313bf288f0ed96f61204",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 1632.497533333,
+          "kind": "code",
+          "roi": [
+            0.046875,
+            0.538889,
+            0.192969,
+            0.015278
+          ],
+          "text": "{resource.service.name=\"basic\" && name=\"GET /request\"}",
+          "evidence_image_ids": [
+            "frames/01632.jpg"
+          ],
+          "timestamp_sample": 1632,
+          "source_capture": {
+            "sample": "frames/01632.jpg",
+            "native_frame_index": 48926,
+            "native_timestamp": 1632.497533333,
+            "native_pts": "24487463/15000",
+            "sample_sha256": "def1479c9e60a355d95416e93cc161620d0d16fb73919097ed629df57c18fb0b",
+            "exact_jpeg_bytes": true
+          }
+        },
+        {
+          "timestamp": 1684.4828,
+          "kind": "code",
+          "roi": [
+            0.413281,
+            0.376389,
+            0.25625,
+            0.019444
+          ],
+          "text": "{compose_service=\"app-a\"} |=\"8f5682867416a372a8835cfe19894877\"",
+          "evidence_image_ids": [
+            "frames/01684.jpg"
+          ],
+          "timestamp_sample": 1684,
+          "source_capture": {
+            "sample": "frames/01684.jpg",
+            "native_frame_index": 50484,
+            "native_timestamp": 1684.4828,
+            "native_pts": "4211207/2500",
+            "sample_sha256": "34476cae53b69dc966fdfe9fdef4af01156065361357624a3f93fe33a89c612f",
+            "exact_jpeg_bytes": true
+          }
+        }
+      ],
+      "build_groups": [],
+      "source_record_sha256": "8d625c5a5b89bc5ab36250b70123ccedd7cd4916debb260a3520fe3b4a231238"
+    },
+    "coscup2022-govdata": {
+      "reviewed": true,
+      "review_start": 0,
+      "review_end": 960.0,
+      "input_sha256": "e35588f979a4a1eede67e41e59f9ded1169e6ee06f2e92280857be7413962649",
+      "slide_changes": [
+        2,
+        27,
+        33,
+        52,
+        69,
+        84,
+        90,
+        126,
+        133,
+        139,
+        153,
+        158,
+        172,
+        195,
+        230,
+        241,
+        269,
+        279,
+        285,
+        308,
+        314,
+        326,
+        333,
+        336,
+        378,
+        396,
+        403,
+        450,
+        467,
+        480,
+        488,
+        501,
+        520,
+        537,
+        566,
+        576,
+        597,
+        618,
+        638,
+        641,
+        652,
+        657,
+        670,
+        700,
+        702,
+        719,
+        773,
+        949,
+        954
+      ],
+      "ocr": [
+        {
+          "timestamp": 645.483333333,
+          "kind": "code",
+          "roi": [
+            0.549,
+            0.3125,
+            0.038,
+            0.0139
+          ],
+          "text": "SELECT DISTINCT",
+          "evidence_image_ids": [
+            "frames/00645.jpg",
+            "frames/00646.jpg"
+          ],
+          "timestamp_sample": 645,
+          "source_capture": {
+            "sample": "frames/00645.jpg",
+            "native_frame_index": 38729,
+            "native_timestamp": 645.483333333,
+            "native_pts": "38729/60",
+            "sample_sha256": "f5f1f56a26dd8f37975314aec8d07369003120c33b002b992bccdd544652caae",
+            "exact_jpeg_bytes": true
+          }
+        }
+      ],
+      "build_groups": [],
+      "source_record_sha256": "b31273db99e1e4ea2f0f18aabf502212f2118e6e08b05a0220dbf7748598416a"
+    }
+  },
+  "source_roi_timestamp_method": "Source-only annotation crop timestamps are the verified normalized input presentation timestamps."
+}
