@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "split": "holdout",
+  "description": "Four complete openly licensed recordings from three new producers.",
+  "cases": [
+    {
+      "case_id": "r03-a01",
+      "title": "Seamless Collaboration: Versioning Flat ODF Documents with Git",
+      "authors": [
+        "Marco Marinello",
+        "Gabriele Ponzo"
+      ],
+      "publisher": "The Document Foundation and Pordenone Linux User Group",
+      "page_url": "https://peertube.opencloud.lu/videos/watch/a5c24ad6-0748-4ef5-8d95-07bb5aa152bd",
+      "video_url": "https://peertube.opencloud.lu/static/streaming-playlists/hls/a5c24ad6-0748-4ef5-8d95-07bb5aa152bd/eb797f8b-9cab-4d2c-becb-7fd1a538996d-720-fragmented.mp4",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "license_proof_url": "https://blog.documentfoundation.org/blog/2026/03/11/libocon-2026-call-for-papers/",
+      "sample_start_seconds": 0,
+      "sample_end_seconds": 1444.421016,
+      "ocr_languages": [
+        "en-US"
+      ],
+      "tesseract_languages": "eng",
+      "captions_available": false,
+      "captions_reason": "The publisher lists no timed caption tracks for these bytes.",
+      "captions_inventory_url": "https://peertube.opencloud.lu/api/v1/videos/a5c24ad6-0748-4ef5-8d95-07bb5aa152bd/captions"
+    },
+    {
+      "case_id": "r03-a02",
+      "title": "Decomposing character components in Inkscape",
+      "authors": [
+        "有關仲佑的教學影片"
+      ],
+      "publisher": "有關仲佑的教學影片",
+      "page_url": "https://peertube.slat.org/videos/watch/a55a16cd-822a-44ab-ad92-1c86c0b20da4",
+      "video_url": "https://peertube.slat.org/static/streaming-playlists/hls/a55a16cd-822a-44ab-ad92-1c86c0b20da4/73e734b9-0488-4574-8551-b8f13924d0c9-720-fragmented.mp4",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "license_proof_url": "https://peertube.slat.org/videos/watch/a55a16cd-822a-44ab-ad92-1c86c0b20da4",
+      "sample_start_seconds": 0,
+      "sample_end_seconds": 254.627029,
+      "ocr_languages": [
+        "zh-Hant"
+      ],
+      "tesseract_languages": "chi_tra+eng",
+      "captions_available": false,
+      "captions_reason": "The publisher lists no timed caption tracks for these bytes.",
+      "captions_inventory_url": "https://peertube.slat.org/api/v1/videos/a55a16cd-822a-44ab-ad92-1c86c0b20da4/captions"
+    },
+    {
+      "case_id": "r03-a03",
+      "title": "Hello World in Linux with GCC, Emacs and Makefiles",
+      "authors": [
+        "Renepick"
+      ],
+      "publisher": "Renepick",
+      "page_url": "https://commons.wikimedia.org/wiki/File:Hallo_Welt_in_Linux_mit_gcc,_emacs_und_make_files..ogv",
+      "video_url": "https://upload.wikimedia.org/wikipedia/commons/6/6c/Hallo_Welt_in_Linux_mit_gcc%2C_emacs_und_make_files..ogv",
+      "license": "CC BY-SA 3.0 Unported",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "license_proof_url": "https://commons.wikimedia.org/wiki/File:Hallo_Welt_in_Linux_mit_gcc,_emacs_und_make_files..ogv",
+      "sample_start_seconds": 0,
+      "sample_end_seconds": 1242.133333,
+      "ocr_languages": [
+        "de-DE"
+      ],
+      "tesseract_languages": "eng",
+      "captions_available": false,
+      "captions_reason": "The publisher lists no timed caption tracks for these bytes.",
+      "captions_inventory_url": "https://commons.wikimedia.org/w/api.php?action=query&list=allpages&apnamespace=102&apprefix=Hallo_Welt_in_Linux_mit_gcc%2C_emacs_und_make_files..ogv&format=json"
+    },
+    {
+      "case_id": "r03-a04",
+      "title": "Distributing LibreOffice as AppImage",
+      "authors": [
+        "Emiliano Vavassori"
+      ],
+      "publisher": "The Document Foundation and Pordenone Linux User Group",
+      "page_url": "https://peertube.opencloud.lu/videos/watch/46226350-0aba-4af8-825d-3f4eb535a05b",
+      "video_url": "https://peertube.opencloud.lu/static/streaming-playlists/hls/46226350-0aba-4af8-825d-3f4eb535a05b/3722fde0-56e2-4c70-84cb-8597147690d1-720-fragmented.mp4",
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "license_proof_url": "https://blog.documentfoundation.org/blog/2026/03/11/libocon-2026-call-for-papers/",
+      "sample_start_seconds": 0,
+      "sample_end_seconds": 1286.354341,
+      "ocr_languages": [
+        "en-US"
+      ],
+      "tesseract_languages": "eng",
+      "captions_available": false,
+      "captions_reason": "The publisher lists no timed caption tracks for these bytes.",
+      "captions_inventory_url": "https://peertube.opencloud.lu/api/v1/videos/46226350-0aba-4af8-825d-3f4eb535a05b/captions"
+    }
+  ]
+}

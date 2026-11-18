@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "recordings": {
+    "r03-a01": {
+      "source_sha256": "52b467504adf268a0dc03887bd4fcfe46d776f50e3a6fc0816365087a968de7e",
+      "source_media_filename": "r03-a01.mp4",
+      "full_review_sha256": "61f2e2e9c9653eb7f6e62811108213e9a10efc7a8340c06e1356d744b4f44755",
+      "native_clock_sha256": "0f66e81817fc60d2ff3fc698378ff3d775fed5b2ce37cc346e28bab1d8b714b8",
+      "first_native_pts": 1014,
+      "video_time_base": "1/15360",
+      "container_start_seconds": "0.045000",
+      "native_frame_count": 43330,
+      "fixed_sample_count": 482,
+      "boundary_references": 38,
+      "code_regions": 6,
+      "code_reference_units": 975
+    },
+    "r03-a02": {
+      "source_sha256": "785476d46c2dc456e58131f38669aa19ef0b978793257be26ebc8c70e2090f7b",
+      "source_media_filename": "r03-a02.mp4",
+      "full_review_sha256": "a30a4aac2959a1a767bb03cf480b5d0f72398e26218b5b606c8a2eccc291cfa6",
+      "native_clock_sha256": "bf6b719695be609f45821900c08cac44b59f2ebc7d86dfa98a66ae92d613d039",
+      "first_native_pts": 1014,
+      "video_time_base": "1/15360",
+      "container_start_seconds": "0.066009",
+      "native_frame_count": 7635,
+      "fixed_sample_count": 85,
+      "boundary_references": 20,
+      "code_regions": 0,
+      "code_reference_units": 0
+    },
+    "r03-a03": {
+      "source_sha256": "4909bfc4e21573032dd69bb814f90514867d351ce5d01d343478e72fc9d5b7de",
+      "source_media_filename": "r03-a03.ogv",
+      "full_review_sha256": "b6faaadf323da92ef0bd974a3ae462d2227e1932193f18971e2eb9bc659001bb",
+      "native_clock_sha256": "88fef2c7e762111c93f4daa1d2552ccbc0e9f19ceb9cc4ed34572b455189db41",
+      "first_native_pts": 0,
+      "video_time_base": "1/15",
+      "container_start_seconds": "0.000000",
+      "native_frame_count": 8649,
+      "fixed_sample_count": 415,
+      "boundary_references": 47,
+      "code_regions": 9,
+      "code_reference_units": 700
+    },
+    "r03-a04": {
+      "source_sha256": "c4b268ff4889fa20c3d726240a090f7627068c0d0e47cda5676785ff648bb85c",
+      "source_media_filename": "r03-a04.mp4",
+      "full_review_sha256": "f2a9d55bc2cdebf9770e38a015043c75250d441c84db540a8923a1453aa65e4d",
+      "native_clock_sha256": "68df1bf97613683265a1104f2ead71d0649337b123af041b2ae2867c2172a80d",
+      "first_native_pts": 1020,
+      "video_time_base": "1/12288",
+      "container_start_seconds": "0.062000",
+      "native_frame_count": 30870,
+      "fixed_sample_count": 429,
+      "boundary_references": 69,
+      "code_regions": 0,
+      "code_reference_units": 0
+    }
+  }
+}
