@@ -484,9 +484,17 @@ def benchmark(args) -> dict:
     if args.mode == "score" and previous_path is None:
         raise ValueError("score needs --previous and a new --output; reports cannot be overwritten")
     previous = json.loads(previous_path.read_text()) if args.mode == "score" else {}
-    if previous and (previous.get("labels_sha256") != file_digest(args.labels) or
+    previous_labels = getattr(args, "previous_labels", None)
+    if previous_labels is not None and args.mode != "score":
+        raise ValueError("--previous-labels requires score mode")
+    labels_digest = file_digest(args.labels)
+    original_labels_digest = file_digest(previous_labels) if previous_labels else labels_digest
+    if previous and (previous.get("labels_sha256") != original_labels_digest or
                      previous.get("corpus_sha256") != file_digest(args.corpus)):
         raise ValueError("rescore requires the original frozen labels and corpus")
+    if previous_labels:
+        original_labels = json.loads(previous_labels.read_text(encoding="utf-8"))
+        validate_inputs(corpus, original_labels, args.workdir)
     previous_cases = {row["case_id"]: row for row in previous.get("cases", [])}
     if args.mode == "score":
         for case in corpus["cases"]:
@@ -505,7 +513,7 @@ def benchmark(args) -> dict:
               "metric_implementation_sha256": {
                   "scripts/evaluate_real_talks.py": file_digest(Path(__file__)),
                   "scripts/screen_evaluation.py": file_digest(REPO / "scripts/screen_evaluation.py")},
-              "labels_sha256": file_digest(args.labels),
+              "labels_sha256": labels_digest,
               "configuration": previous.get("configuration", asdict(config)),
               "processing_options": {"force": bool(getattr(args, "force", False)), "reprocess": True,
                                      "ocr_diagnostics": bool(getattr(args, "ocr_diagnostics", False))},
@@ -523,6 +531,10 @@ def benchmark(args) -> dict:
               "cases": []}
     if previous_path:
         report["previous_report_sha256"] = file_digest(previous_path)
+    if previous_labels:
+        report["label_revision"] = {"original_labels_sha256": original_labels_digest,
+                                    "revised_labels_sha256": labels_digest,
+                                    "extraction_reused": True}
     if expected_path is not None:
         report["expected_runtime_fingerprint_sha256"] = file_digest(expected_path)
     provenance_keys = ("code_revision", "working_tree_dirty", "runtime_code_fingerprint",
@@ -635,6 +647,8 @@ def main(argv=None) -> int:
     parser.add_argument("--workdir", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--previous", type=Path, help="Original report for score mode; --output must be new")
+    parser.add_argument("--previous-labels", type=Path,
+                        help="Original frozen labels for an explicit score-only label revision")
     parser.add_argument("--once-token", type=Path, help="Exclusive campaign marker, retained even if extraction fails")
     parser.add_argument("--force", action="store_true", help="Extract the full source despite a local cost refusal; network limits remain")
     parser.add_argument("--installed-runtime", action="store_true", help="Use and verify the image-installed package instead of a mounted checkout")

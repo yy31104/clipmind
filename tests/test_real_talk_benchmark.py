@@ -448,6 +448,25 @@ class RealMetricTests(unittest.TestCase):
             self.assertEqual(result['status'], 'measured')
             self.assertEqual(result['cases'][0]['wall_seconds'], 42)
             self.assertEqual(result['cases'][0]['publisher_caption_agreement']['value'], 0)
+            source_report_bytes = previous_file.read_bytes()
+            labels['cases']['talk']['slide_changes'] = [7]
+            revised_labels = root / 'revised-labels.json'
+            revised_labels.write_text(json.dumps(labels))
+            args.labels = revised_labels
+            args.output = root / 'explicit-label-revision.json'
+            with self.assertRaisesRegex(ValueError, 'original frozen labels'):
+                benchmark.benchmark(args)
+            self.assertFalse(args.output.exists())
+            args.previous_labels = labels_file
+            with patch('clipmind.sdk.ClipMind.analyze') as analyze:
+                revised = benchmark.benchmark(args)
+            analyze.assert_not_called()
+            self.assertEqual(revised['planned_primary_change_count'], 1)
+            self.assertEqual(revised['label_revision']['original_labels_sha256'], previous['labels_sha256'])
+            self.assertEqual(revised['label_revision']['revised_labels_sha256'], benchmark.file_digest(revised_labels))
+            self.assertEqual(previous_file.read_bytes(), source_report_bytes)
+            args.labels = labels_file
+            args.previous_labels = None
             manifest['source']['id'] = 'some other video'
             (pack / 'manifest.json').write_text(json.dumps(manifest))
             args.output = root / 'mismatch-report.json'
