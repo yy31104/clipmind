@@ -1,0 +1,14 @@
+{
+  "metric_protocol": "screen-evidence-v1",
+  "code_revision": "a604b7c3f24f95bd6d139dc43c88a4840f8a6678",
+  "runtime_code_fingerprint": "a3364116f5a0c025898508e6dd40fb4bb64f954b522e69f52b92cfcf788ed707",
+  "metric_implementation_sha256": {
+    "scripts/evaluate_real_talks.py": "6939a1936bbeb89ed6005d9dd2217f4d13ba286cc8bb6fe847d428be911187bf",
+    "scripts/screen_evaluation.py": "d6419e3719f83ad8b9ce7b782b80abd08a4c9984faa2dd40fe534ac6d4bc8e13"
+  },
+  "corpus_sha256": "6899a4fcad884dc1def08702f08de392ff6cb25bf62e9165af752674be9469d4",
+  "labels_sha256": "b5dcea5259091b4c22cb21b73600c74fe7db4111c8d7a6caaef3b735aa681ffb",
+  "asr_provider": "faster-whisper",
+  "ocr_provider": "tesseract",
+  "status": "attempt_started"
+}

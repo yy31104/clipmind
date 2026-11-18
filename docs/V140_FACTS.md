@@ -11,9 +11,9 @@ Local video evidence: timestamped speech, screen text and retained images, avail
 | One-shot holdout change recall | 73/78, 93.59% | 73/78, 93.59% |
 | Holdout precision / code CER | 20.39% / 19.00% | 20.28% / 16.08% |
 
-Holdout: three full public talks, 40 minutes, English/Mandarin, 78 changes. All 15 code ROIs (2,295 characters) come from one English talk; Chinese code OCR is N/A. Recall meets 85%; precision misses 50% and CER misses 15%. Known timing/transcription discrepancies remain in the frozen references. **AI-assisted annotations; human review pending.**
+Holdout: three full public talks, 40 minutes, English/Mandarin, 78 changes. All 15 code ROIs (2,295 characters) come from one English talk; Chinese code OCR is N/A. Recall meets 85%; precision misses 50% and CER misses 15%. Known timing/transcription discrepancies remain in the frozen references. These scores use the original AI-assisted labels.
 
-[Full results, regressions and limits](SCREEN_QUALITY.md) · [Default-tool comparison](TOOL_COMPARISON.md) · [Source licenses](HOLDOUT_SCREEN_PROTOCOL.md)
+[Full results, regressions and limits](https://github.com/yy31104/clipmind/blob/v1.4.0/docs/SCREEN_QUALITY.md) · [Default-tool comparison](TOOL_COMPARISON.md) · [Source licenses](HOLDOUT_SCREEN_PROTOCOL.md)
 
 The published v1.3.0 CPU image processed the full 39:24 Xous talk in 450.892 s, plus a separate 92.120 s first model download, with six CPUs and 4 GiB. Timings may overlap other local work; Windows/CUDA quality was not measured.
 

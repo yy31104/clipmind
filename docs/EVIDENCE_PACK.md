@@ -179,8 +179,8 @@ Additive measurements include:
 
 All of these describe a retained state. The information flag is available
 after offline boundary ranking succeeds. The manifest records which
-boundary algorithm ran. All frames remain available in the full pack
-and as search results.
+boundary algorithm ran. The full pack keeps every retained frame.
+Search indexes the text recognized in those frames.
 
 ### `evidence.md`
 

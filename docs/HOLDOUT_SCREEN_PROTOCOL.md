@@ -81,4 +81,4 @@ The review archive provides every change's before/after images, every code crop,
 timestamps, source links, and editable CSV decisions. Review can change the
 published annotation assessment later, with the previous labels and scores kept.
 Until the completed review is returned, all reports must retain the label
-provenance: AI-assisted annotations; human review pending.
+provenance: original AI-assisted annotations.

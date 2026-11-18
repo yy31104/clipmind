@@ -27,4 +27,4 @@ images.
 [Revised labels](data/v160-v150-reviewed-labels.json) ·
 [Mac scores](data/v160-v150-reviewed-mac-results.json) ·
 [Docker scores](data/v160-v150-reviewed-docker-results.json) ·
-[Original results](SCREEN_QUALITY.md#new-holdout)
+[Original results](SCREEN_QUALITY_V150.md#new-holdout)
