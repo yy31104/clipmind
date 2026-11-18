@@ -11,7 +11,7 @@ After installing [uv](https://docs.astral.sh/uv/) and the system dependencies
 listed below, run this in Terminal or PowerShell:
 
 ```bash
-uv tool install --python 3.12 git+https://github.com/yy31104/clipmind.git@v1.4.0
+uv tool install --python 3.12 git+https://github.com/yy31104/clipmind.git@v1.5.0
 ```
 
 This installs the CLI, web app and MCP server in an isolated tool environment.
@@ -112,7 +112,7 @@ Installed builds choose a writable per-user directory:
 
 Override all of these with an absolute or user-relative `CLIPMIND_OUT` path.
 
-Reprocess an existing video to apply v1.4.0 sampling and OCR rules. Installing the new version preserves earlier saved packs.
+Reprocess an existing video to apply v1.5.0 screen and OCR rules. Installing the new version preserves earlier saved packs.
 
 ## Provider selection
 
@@ -149,7 +149,7 @@ off if quiet speech over loud music is being dropped.
 Optional local speaker diarization is deliberately separate:
 
 ```bash
-uv tool install --force --python 3.12 'clipmind[diarization] @ git+https://github.com/yy31104/clipmind.git@v1.4.0'
+uv tool install --force --python 3.12 'clipmind[diarization] @ git+https://github.com/yy31104/clipmind.git@v1.5.0'
 ```
 
 ```dotenv
@@ -190,7 +190,7 @@ frozen lock; speech model weights download only when first needed.
 Run the versioned image with one command (Terminal or PowerShell):
 
 ```bash
-docker run --rm -p 127.0.0.1:8420:8420 -v clipmind-data:/data ghcr.io/yy31104/clipmind:v1.4.0
+docker run --rm -p 127.0.0.1:8420:8420 -v clipmind-data:/data ghcr.io/yy31104/clipmind:v1.5.0
 ```
 
 Open [127.0.0.1:8420](http://127.0.0.1:8420). The first speech extraction can
@@ -207,7 +207,7 @@ The container uses CPU inference by default; it does not use Apple Silicon's GPU
 To build the same image from a checkout:
 
 ```bash
-docker build --build-arg VERSION=1.4.0 -t clipmind .
+docker build --build-arg VERSION=1.5.0 -t clipmind .
 docker run --rm \
   -p 127.0.0.1:8420:8420 \
   -v "$PWD/clipmind-data:/data" \

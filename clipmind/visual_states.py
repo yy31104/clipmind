@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+import difflib
 import re
 import shutil
 import statistics
@@ -19,11 +20,41 @@ from .media import Frame
 from .providers import TextRecognizer
 
 PREVIEW_ALGORITHM = "adaptive-scene-text-v2"
-INFORMATION_BOUNDARY_ALGORITHM = "supported-pane-layout-v2"
+INFORMATION_BOUNDARY_ALGORITHM = "anchored-text-novelty-v3"
+NOVEL_MIN_CHARACTERS = 5
+NOVEL_MIN_SHARE = 0.04
+RETURN_MAX_CHANGED_SHARE = 0.012
+TRANSITION_MAX_SECONDS = 0.6
+MISREAD_SIMILARITY = 0.6
+TRANSIENT_WINDOW_SECONDS = 6.0
+TRANSIENT_MAX_CHANGED_SHARE = 0.012
+SAME_PAGE_SIMILARITY = 0.8
+CHANGE_MIN_CONFIDENCE = 0.5
+SAME_TEXT_MAX_CHANGED_SHARE = 0.03
+
+
+def _confident_lines(frame: Frame) -> tuple[str, ...]:
+    """Recognized lines, without low-confidence fragments when confidences exist.
+
+    Camera views and animated diagrams produce short, low-confidence garbage
+    that differs from one sample to the next. It stays in the OCR record; it
+    only does not count as new screen text here.
+    """
+    blocks = [block for block in frame.ocr_layout if isinstance(block, dict)]
+    if not blocks or not any(isinstance(block.get("confidence"), (int, float)) for block in blocks):
+        return tuple(frame.lines)
+    def kept(block: dict) -> bool:
+        confidence = block.get("confidence")
+        if not isinstance(confidence, (int, float)):
+            return True
+        letters = sum(character.isalnum() for character in str(block.get("text") or ""))
+        return confidence >= CHANGE_MIN_CONFIDENCE or (confidence >= 0.3 and letters > 6)
+
+    return tuple(str(block.get("text") or "") for block in blocks if kept(block))
 
 
 def _screen_lines(frame: Frame, overlays: set[str]) -> tuple[str, ...]:
-    return tuple(text for line in frame.lines
+    return tuple(text for line in _confident_lines(frame)
                  if (text := "".join(unicodedata.normalize("NFKC", line).split()))
                  and text not in overlays
                  and not (len(text) <= 8 and any(value.startswith(text) for value in overlays if len(value) <= 8)))
@@ -58,12 +89,125 @@ def _same_viewport(earlier: Frame, later: Frame, old_layout: dict, layout: dict)
         return False
 
 
+_STROKE_GLYPHS = frozenset("一二三丨丶")
+
+
+def _meaningful(token: str) -> bool:
+    """Ignore fragments that recognizers produce from lines, dots and noise."""
+    if token in _STROKE_GLYPHS:
+        return False
+    return len(token) >= 3 or token.isdigit() or "\u3400" <= token[0] <= "\u9fff"
+
+
+def _text_novelty(anchor: tuple[str, ...], lines: tuple[str, ...]) -> tuple[int, int, int]:
+    """Characters in tokens added and removed relative to the anchor.
+
+    Tokens are Latin words and single CJK ideographs, compared as multisets.
+    Order is ignored on purpose: recognizers reorder columns and split lines
+    differently from one sample to the next, which is not new information. An
+    added word that closely resembles a word that disappeared is a misread of
+    the same text, not an addition.
+    """
+    old = Counter(token for token in _tokens(" ".join(anchor)) if _meaningful(token))
+    new = Counter(token for token in _tokens(" ".join(lines)) if _meaningful(token))
+    added, removed = new - old, old - new
+    spare = [token for token in removed.elements() if len(token) >= 3]
+    novel = 0
+    for token in sorted(added.elements(), key=len, reverse=True):
+        match = None
+        if len(token) >= 3:
+            match = next((other for other in spare
+                          if difflib.SequenceMatcher(None, token, other).ratio() >= MISREAD_SIMILARITY), None)
+        if match is None:
+            novel += len(token)
+        else:
+            spare.remove(match)
+    size = lambda counts: sum(len(token) * count for token, count in counts.items())
+    return novel, size(removed), size(new)
+
+
+def _adds_information(added: int, total: int) -> bool:
+    # A pointer, a speaker inset or a person in front of the screen changes a
+    # few recognized characters; a build or a new page adds a line or more.
+    return added >= NOVEL_MIN_CHARACTERS and added >= NOVEL_MIN_SHARE * total
+
+
+def _signature(frame: Frame) -> np.ndarray | None:
+    try:
+        pixels = media._detail_signature(frame.path).astype(np.float32)
+    except (OSError, ValueError):
+        return None
+    # Exposure drift in camera recordings shifts every pixel; compare shape.
+    return pixels - pixels.mean()
+
+
+def _changed_share(first: np.ndarray | None, second: np.ndarray | None) -> float | None:
+    if first is None or second is None:
+        return None
+    return float(np.mean(np.abs(first - second) > 28))
+
+
+def _novel_or_empty(anchor_lines: tuple[str, ...], lines: tuple[str, ...]) -> bool:
+    """True when the frame adds no readable information to the anchor."""
+    return not lines or not _adds_information(*_text_novelty(anchor_lines, lines)[::2])
+
+
+def _persistent_change(frames: list[Frame], position: int, signature) -> float | None:
+    """Share of pixels whose typical value differs before and after this state.
+
+    Medians over the neighbouring states within a few seconds suppress people
+    and pointers that keep moving; a new page or diagram stays different.
+    """
+    moment = frames[position].timestamp
+    before = [signature(frame) for frame in frames[:position]
+              if moment - TRANSIENT_WINDOW_SECONDS <= frame.timestamp < moment]
+    after = [signature(frame) for frame in frames[position:]
+             if frame.timestamp <= moment + TRANSIENT_WINDOW_SECONDS]
+    if not before and position:
+        before = [signature(frames[position - 1])]
+    before = [value for value in before if value is not None]
+    after = [value for value in after if value is not None]
+    if not before or len(after) < 2:
+        return None
+    return float(np.mean(np.abs(np.median(before, axis=0) - np.median(after, axis=0)) > 28))
+
+
+def _same_page_misread(anchor: Frame, anchor_lines: tuple[str, ...],
+                       frame: Frame, lines: tuple[str, ...]) -> bool:
+    """Small-text pages are misread differently in each sample.
+
+    The page is the same when the text is still largely similar and nothing
+    was recognized outside the areas the anchor's text already occupied.
+    """
+    old, new = "".join(anchor_lines), "".join(lines)
+    if not old or difflib.SequenceMatcher(None, old, new, autojunk=False).ratio() < SAME_PAGE_SIMILARITY:
+        return False
+    boxes = [tuple(block["bbox"]) for block in anchor.ocr_layout
+             if isinstance(block.get("bbox"), (list, tuple)) and len(block["bbox"]) == 4]
+    current = [(block, tuple(block["bbox"])) for block in frame.ocr_layout
+               if isinstance(block.get("bbox"), (list, tuple)) and len(block["bbox"]) == 4]
+    if not boxes or not current:
+        return False
+
+    def overlaps(box: tuple, other: tuple) -> bool:
+        width = min(box[0] + box[2], other[0] + other[2]) - max(box[0], other[0])
+        height = min(box[1] + box[3], other[1] + other[3]) - max(box[1], other[1])
+        return width > 0 and height > 0.5 * min(box[3], other[3])
+
+    outside = sum(len("".join(unicodedata.normalize("NFKC", block.get("text", "")).split()))
+                  for block, box in current if not any(overlaps(box, other) for other in boxes))
+    return outside < NOVEL_MIN_CHARACTERS
+
+
 def annotate_change_kinds(frames: list[Frame]) -> None:
     """Distinguish information from camera/motion without deleting any frame.
 
-    OCR failure and unclear image-only changes stay uncertain and therefore
-    count as information boundaries. Repeated headers are ignored for this
-    comparison only; the original OCR and images stay in the pack.
+    Each state is compared with the last information state (the anchor), not
+    only with its neighbour, so a pointer, a speaker shot or a person walking
+    past does not turn the unchanged screen into a new boundary when it comes
+    back. OCR failure and image-only changes that persist stay uncertain and
+    therefore count as information boundaries. Repeated headers are ignored for
+    this comparison only; the original OCR and images stay in the pack.
     """
     if not frames:
         return
@@ -73,6 +217,13 @@ def annotate_change_kinds(frames: list[Frame]) -> None:
     overlays = {text for text, count in frequency.items()
                 if len(text) <= 32 and text in edge_text and count >= max(3, 0.4 * len(frames))}
     motion = screen_motion.screen_motion_evidence(frames)
+    signatures: dict[int, np.ndarray | None] = {}
+
+    def signature(frame: Frame) -> np.ndarray | None:
+        if frame.index not in signatures:
+            signatures[frame.index] = _signature(frame)
+        return signatures[frame.index]
+
     anchor: Frame | None = None
     anchor_lines: tuple[str, ...] = ()
     for position, frame in enumerate(frames):
@@ -85,27 +236,79 @@ def annotate_change_kinds(frames: list[Frame]) -> None:
         elif motion[frame.index].kind == "speaker":
             frame.change_kind = "speaker"
             frame.change_reason = motion[frame.index].reason
+        elif signature(frame) is None or signature(frames[position - 1]) is None:
+            frame.change_reason = "Image comparison unavailable; boundary retained."
+        elif (anchor is not None and not _adds_information(*_text_novelty(anchor_lines, lines)[::2])
+              and (share := _changed_share(signature(anchor), signature(frame))) is not None
+              and share < RETURN_MAX_CHANGED_SHARE):
+            frame.change_kind = "layout" if lines == anchor_lines or not lines else "animation"
+            frame.change_reason = "The preceding information screen is back; the change in between was transient."
+        elif (_novel_or_empty(anchor_lines, lines)
+              and (persistent := _persistent_change(frames, position, signature)) is not None
+              and persistent < TRANSIENT_MAX_CHANGED_SHARE):
+            frame.change_kind = "speaker"
+            frame.change_reason = "Transient motion in front of an unchanged screen; it does not persist."
         elif not lines:
             # Empty OCR, or a repeated title alone, cannot prove a speaker:
             # a new diagram may have no readable text at all.
             frame.change_reason = "No new readable text; image-only change remains unresolved."
         elif anchor is not None and anchor_lines:
-            old, new = "\n".join(anchor_lines), "\n".join(lines)
+            added, removed, total = _text_novelty(anchor_lines, lines)
             common = set(anchor_lines) & set(lines)
             layout = _screen_layout(frame, lines)
             old_layout = _screen_layout(anchor, anchor_lines)
             offsets = [abs(layout[text][axis] - old_layout[text][axis])
                        for text in common & layout.keys() & old_layout.keys() for axis in (0, 1, 2, 3)]
-            if old == new and offsets and max(offsets) > 0.04 and _same_viewport(anchor, frame, old_layout, layout):
+            if _adds_information(added, total) and _same_page_misread(anchor, anchor_lines, frame, lines):
+                frame.change_kind = "animation"
+                frame.change_reason = "Same page; recognition differs only inside the existing text areas."
+            elif _adds_information(added, total):
+                old_length = len("".join(anchor_lines))
+                if removed <= max(3, 0.1 * old_length) and old_length:
+                    frame.change_kind, frame.change_reason = "build", "Persistent text added to the preceding screen."
+                else:
+                    frame.change_kind, frame.change_reason = "content", "Screen text changed."
+            elif offsets and max(offsets) > 0.04 and _same_viewport(anchor, frame, old_layout, layout):
                 frame.change_kind, frame.change_reason = "layout", "Same screen text in a different camera layout."
-            elif len(new) > len(old) and common and sum(len(text) for text in common) >= 0.75 * len(old.replace("\n", "")):
-                frame.change_kind, frame.change_reason = "build", "Persistent text added to the preceding screen."
-            elif old != new:
-                frame.change_kind, frame.change_reason = "content", "Screen text changed."
+            elif removed > max(3, 0.1 * len("".join(anchor_lines))):
+                if screen_faces.boxes(frame.path):
+                    frame.change_kind = "speaker"
+                    frame.change_reason = "Speaker view hides part of the preceding screen; no new text."
+                else:
+                    frame.change_reason = "Screen text was removed without new text; change remains unresolved."
+            elif (share := _changed_share(signature(anchor), signature(frame))) is not None \
+                    and share < SAME_TEXT_MAX_CHANGED_SHARE:
+                frame.change_kind = "animation"
+                frame.change_reason = "Same screen text; only a pointer, highlight or overlay changed."
+            elif screen_faces.boxes(frame.path):
+                frame.change_kind = "speaker"
+                frame.change_reason = "Same screen text; the larger image change is in a speaker view."
+            else:
+                frame.change_reason = "Same screen text with a larger image-only change; unresolved."
         else:
             frame.change_kind, frame.change_reason = "content", "Screen information appears."
-        if lines and frame.change_kind in {"content", "build", "uncertain"}:
-            anchor, anchor_lines = frame, lines
+        if frame.change_kind in {"content", "build", "uncertain"}:
+            if lines or anchor is None or not anchor_lines:
+                anchor, anchor_lines = frame, lines
+    _settle_transitions(frames)
+
+
+def _settle_transitions(frames: list[Frame]) -> None:
+    """A one-sample state between two pages is a transition frame.
+
+    The page that settles right after it keeps the information boundary.
+    """
+    information = {"content", "build", "uncertain"}
+    for current, following in zip(frames, frames[1:]):
+        if (current.change_kind in information and following.change_kind in information
+                and current.change_reason != "Initial screen."
+                and not (current.ocr_warning or current.dedupe_warning)
+                and current.observed_sample_count <= 1
+                and 0 < following.timestamp - current.timestamp <= TRANSITION_MAX_SECONDS):
+            added, _, total = _text_novelty(tuple(following.lines), tuple(current.lines))
+            if not _adds_information(added, total):
+                current.change_kind = "animation"
+                current.change_reason = "Transition frame; the settled page follows within a sample."
 
 
 @dataclass(frozen=True)

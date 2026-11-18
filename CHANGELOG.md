@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.5.0
+
+- Compare each screen state with the last information screen; speaker, camera, pointer and transition states stay saved but are typed separately instead of counting as new information.
+- Keep trailing code comments in line order, recover thin small text missed by high-contrast preparation on Mac, and binarize dark code panels inside light slides for Tesseract.
+- Move the used v1.4.0 holdout to development with a corrected label copy, freeze a new three-talk holdout before code changes, and publish its single-campaign results and a blank review package.
+
 ## v1.4.0
 
 - Retain settled progressive builds with actual screenshot times and distinguish supported speaker motion from information changes.

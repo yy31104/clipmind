@@ -11,18 +11,22 @@ Personal project. Built with AI assistance.
 
 [Run locally](#run-locally) · [Measured quality](docs/SCREEN_QUALITY.md) · [Agent demo](docs/REAL_TALK_DEMO.md#a-real-agent-used-the-mcp-tools) · [Docs](#docs)
 
-The v1.4.0 holdout used three complete public talks (40 minutes), including Mandarin, with one run per backend:
+v1.5.0 was measured on a new holdout of three complete public talks (69 minutes,
+English and Mandarin, three publishers), frozen before any code change and run once per backend:
 
-| Backend | Change recall | Boundary precision | Code character error rate |
-| --- | ---: | ---: | ---: |
-| Mac: MLX + Vision | 73/78 (93.59%) | 20.39% | 19.00% |
-| Docker CPU: faster-whisper + Tesseract | 73/78 (93.59%) | 20.28% | 16.08% |
+| Set | Backend | Change recall | Boundary precision | Code character error rate |
+| --- | --- | ---: | ---: | ---: |
+| Holdout | Mac: MLX + Vision | 169/182 (92.86%) | 33.87% | 22.45% |
+| Holdout | Docker CPU: faster-whisper + Tesseract | 173/182 (95.05%) | 24.96% | 13.18% |
+| Development | Mac: MLX + Vision | 99.28% → 94.20% | 23.42% → 41.27% | 15.95% → 10.20% |
+| Development | Docker CPU: faster-whisper + Tesseract | 99.28% → 94.20% | 23.46% → 34.48% | 17.40% → 12.69% |
 
-Recall meets the 85% target. Precision misses 50%; code error rates miss 15%.
-AI-assisted annotations; human review pending. Source inspection found timing
-and transcription discrepancies; original frozen scores remain unchanged.
-Code scores cover 15 ROIs from one English talk. The Mandarin recording has change labels, with code OCR N/A.
-[Results, regressions, raw records and review downloads](docs/SCREEN_QUALITY.md).
+Targets are 85% recall, 50% precision and 15% code CER. On the holdout, recall
+meets the target on both backends and Docker code CER meets it; precision misses on
+both, and Mac code CER misses because Vision skips lines in dark code windows on
+light slides. Holdout code covers 15 regions in an English and a Mandarin talk.
+AI-assisted annotations; human review pending.
+[Results, per-change measurements, raw records and the review package](docs/SCREEN_QUALITY.md).
 
 ![Search a real Xous talk and jump to the corresponding code slide](docs/images/real-talk-search.gif)
 
@@ -31,10 +35,10 @@ This recording uses a complete public 39-minute talk, not a generated fixture.
 An agent also answered a question using the saved transcript, timeline and images
 through MCP. [Source, attribution, captured calls and reproduction](docs/REAL_TALK_DEMO.md).
 
-On the ten development excerpts, capture improved from 44/60 to 59/60 changes;
-code CER improved from 39.29% to 6.24% on Mac and 54.30% to 23.61% on Docker.
-These gains did not fully generalize to the holdout. `complete` means the
-pipeline finished, not perfect recall. [Saved-frame comparison](https://github.com/yy31104/clipmind/releases/download/v1.4.0/clipmind-v1.4.0-screen-retention.gif).
+Development data is the ten 39C3 excerpts plus the three complete talks of the
+v1.4.0 holdout, which was used once and then moved to development. `complete`
+means the pipeline finished, not perfect recall. Speaker, camera and animation
+states stay saved even when they are not counted as new information.
 
 ## How it works
 
@@ -63,7 +67,7 @@ With Docker installed, one command starts the app with FFmpeg, Tesseract and
 portable speech recognition included:
 
 ```bash
-docker run --rm -p 127.0.0.1:8420:8420 -v clipmind-data:/data ghcr.io/yy31104/clipmind:v1.4.0
+docker run --rm -p 127.0.0.1:8420:8420 -v clipmind-data:/data ghcr.io/yy31104/clipmind:v1.5.0
 ```
 
 Open [127.0.0.1:8420](http://127.0.0.1:8420), paste a link or upload a local
@@ -76,7 +80,7 @@ For native Apple Silicon acceleration, or an existing Python setup, install
 Tesseract), then run:
 
 ```bash
-uv tool install --python 3.12 git+https://github.com/yy31104/clipmind.git@v1.4.0
+uv tool install --python 3.12 git+https://github.com/yy31104/clipmind.git@v1.5.0
 ```
 
 Start with `clipmind doctor`, then `clipmind serve`. Speech language is detected
@@ -127,10 +131,11 @@ Evidence Pack files are the source of truth. The search index can be rebuilt, an
 - [Installation and platform setup](docs/INSTALL.md)
 - [CLI, SDK, REST, and MCP usage](docs/USAGE.md)
 - [Real talk demo and MCP question answering](docs/REAL_TALK_DEMO.md)
-- [Screen quality, frozen holdout and CPU results](docs/SCREEN_QUALITY.md)
+- [Screen quality: development and holdout results](docs/SCREEN_QUALITY.md)
+- [v1.5.0 holdout protocol](docs/HOLDOUT_V150_PROTOCOL.md)
 - [Default-tool comparison](docs/TOOL_COMPARISON.md)
-- [Owner review packages and facts](docs/V140_FACTS.md)
-- [v1.4.0 release notes](docs/releases/v1.4.0.md)
+- [v1.4.0 review packages and facts](docs/V140_FACTS.md)
+- [v1.5.0 release notes](docs/releases/v1.5.0.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Evidence Pack format](docs/EVIDENCE_PACK.md)
 - [Privacy](docs/PRIVACY.md)

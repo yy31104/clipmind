@@ -1,0 +1,478 @@
+{
+ "method": "Recognition of the exact retained frame each baseline ROI score used, scored with the frozen metric.",
+ "vision": {
+  "v1.4.0": {
+   "errors": 461,
+   "units": 2891
+  },
+  "trailing comments only": {
+   "errors": 461,
+   "units": 2891
+  },
+  "trailing comments + line recovery": {
+   "errors": 295,
+   "units": 2891
+  }
+ },
+ "tesseract": {
+  "v1.4.0": {
+   "errors": 503,
+   "units": 2891
+  },
+  "trailing comments (with an upscale pass that changed nothing)": {
+   "errors": 422,
+   "units": 2891
+  },
+  "trailing comments + dark panels": {
+   "errors": 367,
+   "units": 2891
+  }
+ },
+ "rows": {
+  "vision_final": [
+   {
+    "case_id": "39c3-2154",
+    "timestamp": 60,
+    "units": 29,
+    "errors": 2,
+    "S": 2,
+    "D": 0,
+    "I": 0,
+    "hypothesis": "OSS:FONT-OPTICAL-SIZING:AUTO:"
+   },
+   {
+    "case_id": "39c3-2274",
+    "timestamp": 112,
+    "units": 76,
+    "errors": 4,
+    "S": 4,
+    "D": 0,
+    "I": 0,
+    "hypothesis": "67active_tasks[eVarll.fieldl_0x8=0;68active_tasks[eVarl].field48_0x54=uVar2;"
+   },
+   {
+    "case_id": "39c3-1317",
+    "timestamp": 4,
+    "units": 42,
+    "errors": 1,
+    "S": 1,
+    "D": 0,
+    "I": 0,
+    "hypothesis": "letsrv=create_server(b'0123456789abcdef\");"
+   },
+   {
+    "case_id": "39c3-1317",
+    "timestamp": 68,
+    "units": 118,
+    "errors": 2,
+    "S": 2,
+    "D": 0,
+    "I": 0,
+    "hypothesis": "letconnection=connect(b'0123456789abcdef®);scalar_message(connection,1,2,3,4,5);lend_message(connection,1,&slice,4,5);"
+   },
+   {
+    "case_id": "39c3-1989",
+    "timestamp": 5,
+    "units": 126,
+    "errors": 7,
+    "S": 6,
+    "D": 1,
+    "I": 0,
+    "hypothesis": "methodMaximum(values:seq<int>)returns(max:int)requiresvalues1=[]ensuresmaxinvaluesensuresforalli|0‹i‹]values]::values[i]‹=max"
+   },
+   {
+    "case_id": "39c3-1508",
+    "timestamp": 3,
+    "units": 76,
+    "errors": 5,
+    "S": 2,
+    "D": 3,
+    "I": 0,
+    "hypothesis": "fndo_thing(x:&str)->boo1iforcinx.chars(){if!c.is_ascii(){returnfalse;true"
+   },
+   {
+    "case_id": "39c3-1508",
+    "timestamp": 32,
+    "units": 126,
+    "errors": 16,
+    "S": 10,
+    "D": 6,
+    "I": 0,
+    "hypothesis": "fndo_another(x:&str)->boolfletmutv=0;ifx[0..1]==\"¿\"{v+=1;ifx[1..2]==\"b\"{v+=1;ifx[2..3]==\"c\"{v+=1;ifx[3..4]==\"d\"{v+=1;==4"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 100,
+    "units": 159,
+    "errors": 6,
+    "S": 4,
+    "D": 2,
+    "I": 0,
+    "hypothesis": "#include<stdio.h>//printf#include<string.h›//strlen#include<stdlib.h›//exit#include<unistd.h>//syscallaintMAXLINE=1024;charprompt[]=insh>;//commandlineprompt"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 100,
+    "units": 92,
+    "errors": 2,
+    "S": 0,
+    "D": 2,
+    "I": 0,
+    "hypothesis": "//removetrailingnewlinecmdline[strlen(cmdline)-1]='\\0';//evaluatecommandlineeval(cmdline);"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 205,
+    "units": 210,
+    "errors": 5,
+    "S": 4,
+    "D": 1,
+    "I": 0,
+    "hypothesis": "voideval(char*cmdline){intbg;structcommandemd;printf(\"Evaluating'8s'\\n\",cmdline);//parsecndlineintocndstructurebg=parse(cmdline,&cmd);printf(\"Foundcommand%s\\n\",cmd.argv[0]);//-1meansparseerrorif(bg==-1)return;"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 245,
+    "units": 59,
+    "errors": 0,
+    "S": 0,
+    "D": 0,
+    "I": 0,
+    "hypothesis": "//maxargsinstructcan'tbevariable,usedefine#defineMAXARGS128"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 245,
+    "units": 142,
+    "errors": 5,
+    "S": 3,
+    "D": 2,
+    "I": 0,
+    "hypothesis": "structcommand(intarge;//numberofargschar*argv[MAXARGS];//argumentslistenumbuiltin_t1//isargv[0]abuiltincommand?NONE,QUIT,JOBS,BG,FG}builtin;"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 270,
+    "units": 297,
+    "errors": 82,
+    "S": 36,
+    "D": 24,
+    "I": 22,
+    "hypothesis": "intpacao|conalchatintparsefconstchar*cndline.structcornandtemdhdstaticchararray|MAXLINE|!localcopyofcoemandlineconstchardelineliẠạiI//argumentdelimiterachas•line-arrayi//ptrthattraversescommandlinecher\"coken;ptrtotheandofthecurrentargchar*endline;char//ptrtotheendofthecndlinestringIckgrounaJoor"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 270,
+    "units": 248,
+    "errors": 75,
+    "S": 49,
+    "D": 26,
+    "I": 0,
+    "hypothesis": "/argumentlistustandwithaNULLpointerend-›argy[end-›arge]-NULL;ificod-sargo==ia//igroieblanklinecmd->builtinparseBuiltin(cnd);shouldonaninbackgroundeif|[is_bg-(*end-›argy[end-›arge-!]==cnd-›argy(--cad->arge]-NOLL;razuralaby:"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 450,
+    "units": 107,
+    "errors": 15,
+    "S": 4,
+    "D": 0,
+    "I": 11,
+    "hypothesis": "#include<gtdlib.h>#include<atdio.h>#include<unistd.h>runprogramsintmain(intarge,charconst*argy[]){printf(\"Hithere\\n\");"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 450,
+    "units": 98,
+    "errors": 4,
+    "S": 3,
+    "D": 1,
+    "I": 0,
+    "hypothesis": "//executingan1scommandchar*argv2[]={\"1s\",\"-la\",NULL};execyp(argv2[0],argv2);printf(\"..anddone!\");"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 615,
+    "units": 111,
+    "errors": 16,
+    "S": 2,
+    "D": 0,
+    "I": 14,
+    "hypothesis": "#include<stdio.h>#include<unistd.h>#include<stdlib.h>fork+childrenintmain(){pid_tchildpid;|printf(\"Beforefork&d\\n\",getpid());"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 615,
+    "units": 99,
+    "errors": 2,
+    "S": 1,
+    "D": 1,
+    "I": 0,
+    "hypothesis": "//forkcreatesachildandreturnsitsprocessIDchildPid=fork();printf(\"Afterfork&d\\n\",getpid());exit(0);"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 750,
+    "units": 144,
+    "errors": 5,
+    "S": 4,
+    "D": 1,
+    "I": 0,
+    "hypothesis": "//updated!!!voideval(char*cmdline){intbg;structcommandemd;printf(Evaluating'8s'\\ni,cmdline);//parselineintocommandstructbg=parse(cmdline,acmd);"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 750,
+    "units": 154,
+    "errors": 26,
+    "S": 7,
+    "D": 19,
+    "I": 0,
+    "hypothesis": "1f(bg===1)//hamptyline-ignoreifcmd.argv(0]==NULL)return;if(cmd.builtin==NONE)runsystemCommand(&cmd,bg);elserunBuiltinCommand(&cmd,bg);}"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 790,
+    "units": 268,
+    "errors": 10,
+    "S": 7,
+    "D": 3,
+    "I": 0,
+    "hypothesis": "voidrunsystemCommand(structcommand*cmo,intbg)ipid_tchildPid;//FORK!!!if((childPid=fork())<0)error('fork()error\");elseif(childPid==0){//I'mthechildandcouldrunacommand//EXECVP!1!!if(execvp(cmd->argv[0],cd->argv)<0){printf(\"8s:Commandnotfound\\n\",cnd->argv[0]);exit(0);"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 790,
+    "units": 110,
+    "errors": 5,
+    "S": 1,
+    "D": 2,
+    "I": 2,
+    "hypothesis": "else{//I'mtheparent.Shellcontinueshere.if(bg)printf(\"Childinbackground[3⁄8d]\\n\",childPid);elsewait(&childPid);"
+   }
+  ],
+  "tesseract_final": [
+   {
+    "case_id": "39c3-2154",
+    "timestamp": 60,
+    "units": 29,
+    "errors": 1,
+    "S": 1,
+    "D": 0,
+    "I": 0,
+    "hypothesis": "CSS:FONT-OPTICAL-SIZING:AUTO:"
+   },
+   {
+    "case_id": "39c3-2274",
+    "timestamp": 112,
+    "units": 76,
+    "errors": 8,
+    "S": 3,
+    "D": 5,
+    "I": 0,
+    "hypothesis": "active_tasks[eVarl].fieldl_0x8=0;active_tasks[eVarl].field480x54=uVar2;"
+   },
+   {
+    "case_id": "39c3-1317",
+    "timestamp": 4,
+    "units": 42,
+    "errors": 2,
+    "S": 1,
+    "D": 0,
+    "I": 1,
+    "hypothesis": "letsrv——create_server(b\"0123456789abcdef\");"
+   },
+   {
+    "case_id": "39c3-1317",
+    "timestamp": 68,
+    "units": 118,
+    "errors": 0,
+    "S": 0,
+    "D": 0,
+    "I": 0,
+    "hypothesis": "letconnection=connect(b\"0123456789abcdef\");scalar_message(connection,1,2,3,4,5);lend_message(connection,1,&slice,4,5);"
+   },
+   {
+    "case_id": "39c3-1989",
+    "timestamp": 5,
+    "units": 126,
+    "errors": 13,
+    "S": 11,
+    "D": 2,
+    "I": 0,
+    "hypothesis": "methodNaximum(values:seq<int>)returns{max:2AL)requiresvalues‘=[]ensuresmaxinvaluesensuresforaili|6<=1<[values]values[i]<=max"
+   },
+   {
+    "case_id": "39c3-1508",
+    "timestamp": 3,
+    "units": 76,
+    "errors": 4,
+    "S": 0,
+    "D": 3,
+    "I": 1,
+    "hypothesis": "fndo_thing(x:&str)->bool{forcinx.chars(){if!c.is_ascii()f{returnfalse;true"
+   },
+   {
+    "case_id": "39c3-1508",
+    "timestamp": 32,
+    "units": 126,
+    "errors": 57,
+    "S": 36,
+    "D": 15,
+    "I": 6,
+    "hypothesis": "fndo_another(x:&str)->bool{letmutysQ;ifx[@1Pars“aa{Votei;ifx[1l=<ssb”{Voit1;}ifx[2~~“=Vote1;ifx[3=dq”{Vote1;}vor2re4}"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 100,
+    "units": 159,
+    "errors": 12,
+    "S": 10,
+    "D": 0,
+    "I": 2,
+    "hypothesis": "#include<stdio.h>tiprintf#include<string.h>//strlen#include<atdlib.h>ffexit#include<unistd.h>//syscallaintMAXLINE==1024;charprompt[]>“Lnsh>\"+?//commandlineprompt"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 100,
+    "units": 92,
+    "errors": 6,
+    "S": 3,
+    "D": 2,
+    "I": 1,
+    "hypothesis": "//removetrailingnewlineemdline[strlen(emdline)-t]='\\0';//fevaluatecommandlineeval(cmdline);"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 205,
+    "units": 210,
+    "errors": 6,
+    "S": 2,
+    "D": 1,
+    "I": 3,
+    "hypothesis": "voideval(char*cmdline){intbg;structcommandcmd;printf(\"Evaluating'%s'\\n\",cmdline);//parsecmdlineintocmdstructurebg—=parse(cmdline,&cmd);printf(\"Foundcommand%s\\n\",cmd.argv[0]);//-1meansparseerrorif(bg==———1}return;"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 245,
+    "units": 59,
+    "errors": 0,
+    "S": 0,
+    "D": 0,
+    "I": 0,
+    "hypothesis": "//maxargsinstructcan'tbevariable,usedefine#defineMAXARGS128"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 245,
+    "units": 142,
+    "errors": 5,
+    "S": 2,
+    "D": 3,
+    "I": 0,
+    "hypothesis": "structcommand{intargc;//numberofargschar*argv[MAXARGS];//argumentslistenumbuiltin_t{//isargv[0)abuiltincommand?NONE,QUIT,JOBS,FG}builtin;}3"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 270,
+    "units": 297,
+    "errors": 87,
+    "S": 73,
+    "D": 12,
+    "I": 2,
+    "hypothesis": "intpacaeiconstchac*cadline,strucceccomand*cmdb¢statlecharacroy|MAXLIEI|eelocalcopyofcommendlineconatcherdelins!apeSearka>oeecqumentdelalterschar¢line=accay;teptethattraversescommendLingchar-tohenteptetetheandofthecurrentarqchar-ondlsaepletotheandofthecodlinaatringaneLebierbackgroundjon?"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 270,
+    "units": 248,
+    "errors": 97,
+    "S": 80,
+    "D": 15,
+    "I": 2,
+    "hypothesis": "ffargusentJletsueandwith«\"ULLpointerend->orgy|¢rd->orge|=4af(emd-rergee=62ttlqnoveBlankLineveturn3:cod=>burttan=parseBualtin(cad);7]shouldjobrunanBackground?afdqia_bg=(*cend-Sarqvicad-saracne..IhI-demd-*argvi--¢rd-2arqcy=Nt;returnisbq?"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 450,
+    "units": 107,
+    "errors": 5,
+    "S": 1,
+    "D": 3,
+    "I": 1,
+    "hypothesis": "include<stdlib.h>include<stdio.h>include<unistd.h>intmain{intargc,charconst*argv[])}{printf(\"Hithere\\n\");"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 450,
+    "units": 98,
+    "errors": 5,
+    "S": 3,
+    "D": 1,
+    "I": 1,
+    "hypothesis": "//executingan1scommandchar*argv2[]={\"1ls\",\"1a\",NULL};execvp(argv2[0],argv2);printf(\"..anddone!”);}"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 615,
+    "units": 111,
+    "errors": 4,
+    "S": 0,
+    "D": 3,
+    "I": 1,
+    "hypothesis": "include<stdio.h>include<unistd.h>include<stdlib.h>intmain(){pid_tchildPid;printf(\"Beforefork%#d\\n\",getpid());"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 615,
+    "units": 99,
+    "errors": 2,
+    "S": 0,
+    "D": 2,
+    "I": 0,
+    "hypothesis": "//forkcreatesachildandreturnsitsprocessIDchildPid=fork();printf(\"Afterforkd\\n\",getpid());exit(0);"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 750,
+    "units": 144,
+    "errors": 8,
+    "S": 4,
+    "D": 0,
+    "I": 4,
+    "hypothesis": "f//uapdatedl!!voideval{char*cmdline){intbg;structcommandcmd;printf(\"Evaluating‘%s'\\n\",cmdline};//parselineintocommandstructbg=—tparse(cmdline,&cmd);"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 750,
+    "units": 154,
+    "errors": 16,
+    "S": 9,
+    "D": 5,
+    "I": 2,
+    "hypothesis": "//parseerrorif(bgs====1)return;ffptyline-ignoreifmd.argy(0]==NULL)return;if(emd.builtin==NONE)runSystemCommand(&emd,bg);elserunBuiltinCommand{&cmd,bg};"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 790,
+    "units": 268,
+    "errors": 25,
+    "S": 16,
+    "D": 6,
+    "I": 3,
+    "hypothesis": "voidrunSystemCommand(structcommand*cmd,intbg){pid_tchildPid;f/fFORK![1!if((childPid=fork())<0)error(”fork()error\");elseif(childPid==0){#/I‘mthechildandcouldrunacommand//EXECVPtltlif(execvp(cmd-DDoremd->argv)<0){print£{\"%s:Commandnotfound\\n\",emd->argv[0));exit(0);}}"
+   },
+   {
+    "case_id": "enthusiasticon-shell",
+    "timestamp": 790,
+    "units": 110,
+    "errors": 4,
+    "S": 1,
+    "D": 3,
+    "I": 0,
+    "hypothesis": "else{//I'mtheparent.Shellcontinueshere.if(bg)printf(\"Childinbackground[d]\\n\",childPid);elsewait{&childPid);"
+   }
+  ]
+ },
+ "not_kept": "3x and 4x Tesseract upscaling: no reduction on the smallest code (Shell 270 s)."
+}
