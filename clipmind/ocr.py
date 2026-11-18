@@ -55,6 +55,7 @@ _VISION_IDLE_SECONDS = 30.0
 RECOVER_MAX_COVERED = 0.5
 RECOVER_MIN_INK = 0.05
 DARK_PANEL_MIN_SHARE = 0.04
+VISION_DARK_PANEL_LIMIT = 64
 
 
 class OCRError(RuntimeError):
@@ -131,8 +132,14 @@ def _recognition_image(path: Path, *, portable: bool = False, scale: float | Non
     elif portable:
         image, panels = _binarize_dark_panels(image, value)
         dark = dark or panels
+    # A darker mask isolates a code pane from surrounding UI. Vision reads
+    # that pane at higher resolution while keeping the full image in color.
+    upscale = (
+        portable or dark
+        or next(_dark_panel_slices(value, VISION_DARK_PANEL_LIMIT), None) is not None
+    )
     factor = (min(2.0, 2560 / width, math.sqrt(6_000_000 / total))
-              if portable or dark else 1)
+              if upscale else 1)
     if scale is not None:
         factor = min(scale, 4096 / width, math.sqrt(16_000_000 / total))
     if factor > 1:
@@ -193,36 +200,41 @@ def _trailing_comments(left: list[OCRBlock], right: list[OCRBlock]) -> bool:
     return sum(any(same_row(block, other) for other in left) for block in right) >= 0.6 * len(right)
 
 
-def _binarize_dark_panels(image, value):
-    """Binarize large dark code panels inside an otherwise light screen.
-
-    Portable OCR drops dim syntax colours on a dark panel; the rest of the
-    screen keeps its original pixels.
-    """
+def _dark_panel_slices(value, limit: int):
+    """Find large, densely filled dark rectangles on a mixed screen."""
     import numpy as np
-    from PIL import Image
 
     try:
         import cv2
     except ImportError:
-        return image, False
+        return
     levels = np.asarray(value)
     height, width = levels.shape
-    dark = (levels < 96).astype(np.uint8)
+    dark = (levels < limit).astype(np.uint8)
     dark = cv2.morphologyEx(dark, cv2.MORPH_CLOSE, np.ones((9, 9), np.uint8))
     count, _, stats, _ = cv2.connectedComponentsWithStats(dark)
-    result = np.asarray(image.convert("L")).copy()
-    found = False
     for left, top, panel_width, panel_height, area in stats[1:count]:
         if (panel_width * panel_height < DARK_PANEL_MIN_SHARE * width * height
                 or area < 0.6 * panel_width * panel_height
                 or panel_width * panel_height > 0.9 * width * height):
             continue
-        region = levels[top:top + panel_height, left:left + panel_width]
+        yield np.s_[top:top + panel_height, left:left + panel_width]
+
+
+def _binarize_dark_panels(image, value):
+    """Bring out dim syntax colors in mixed screens for portable OCR."""
+    import numpy as np
+    from PIL import Image
+
+    levels = np.asarray(value)
+    result = None
+    for bounds in _dark_panel_slices(levels, 96):
+        if result is None:
+            result = np.asarray(image.convert("L")).copy()
+        region = levels[bounds]
         threshold = _foreground_threshold(np.bincount(region.ravel(), minlength=256).tolist())
-        result[top:top + panel_height, left:left + panel_width] = np.where(region <= threshold, 255, 0)
-        found = True
-    return (Image.fromarray(result), True) if found else (image, False)
+        result[bounds] = np.where(region <= threshold, 255, 0)
+    return (Image.fromarray(result), True) if result is not None else (image, False)
 
 
 def _reading_order(blocks: list[OCRBlock]) -> tuple[OCRBlock, ...]:
@@ -513,9 +525,8 @@ class VisionTextRecognizer:
             result = _recognize_in_worker(prepared, languages=self.config.ocr_languages)
             blocks = list(result.blocks)
             if prepared != image:
-                # High-contrast preparation removes faint background text but
-                # can also erase thin small glyphs. Recover lines the original
-                # image reads where the prepared image still has strokes.
+                # Keep source lines missed after contrast changes or resizing
+                # where the prepared image still has strokes.
                 original = _recognize_in_worker(image, languages=self.config.ocr_languages)
                 blocks = _recover_missing_lines(blocks, list(original.blocks), prepared)
         return OCRResult(_reading_order(blocks))

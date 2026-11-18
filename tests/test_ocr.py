@@ -271,6 +271,58 @@ class RecognitionImageTests(unittest.TestCase):
 
 
 class LayoutOrderTests(unittest.TestCase):
+    def test_vision_upscales_a_dark_pane_without_changing_its_colors(self):
+        from PIL import Image, ImageDraw
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "mixed.png"
+            image = Image.new("RGB", (400, 300), (80, 80, 80))
+            draw = ImageDraw.Draw(image)
+            draw.rectangle((30, 25, 370, 275), fill="white")
+            # Under a broader dark threshold the pane joins the surrounding
+            # frame, making its bounding box too large to be a local panel.
+            draw.rectangle((120, 25, 135, 135), fill=(80, 80, 80))
+            draw.rectangle((120, 120, 345, 240), fill=(30, 30, 30))
+            draw.rectangle((136, 141, 186, 154), fill=(120, 35, 40))
+            image.save(path)
+            source_bytes = path.read_bytes()
+            title = ocr.OCRBlock("slide title", bbox=(0.25, 0.1, 0.4, 0.05))
+            code = ocr.OCRBlock("visible only at higher resolution", bbox=(0.34, 0.47, 0.13, 0.05))
+            original_line = ocr.OCRBlock("from original", bbox=(0.34, 0.65, 0.25, 0.05))
+
+            def recognize(prepared, *, languages):
+                self.assertEqual(languages, ("en-US",))
+                if prepared == path:
+                    return ocr.OCRResult((title, original_line))
+                with Image.open(prepared) as derivative:
+                    self.assertEqual(derivative.size, (800, 600))
+                    self.assertEqual(derivative.mode, "RGB")
+                    self.assertEqual(derivative.getpixel((600, 450)), (30, 30, 30))
+                    self.assertEqual(derivative.getpixel((310, 290)), (120, 35, 40))
+                return ocr.OCRResult((title, code))
+
+            with patch.object(ocr, "_recognize_in_worker", side_effect=recognize) as worker:
+                result = ocr.VisionTextRecognizer(Settings(ocr_languages=("en-US",))).recognize(path)
+
+            self.assertEqual(result.blocks, (title, code, original_line))
+            self.assertEqual(worker.call_count, 2)
+            self.assertEqual(worker.call_args_list[1].args[0], path)
+            self.assertFalse(worker.call_args_list[0].args[0].exists())
+            self.assertEqual(path.read_bytes(), source_bytes)
+
+    def test_vision_reads_an_ordinary_light_slide_once_at_native_size(self):
+        from PIL import Image
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "light.png"
+            Image.new("RGB", (400, 300), "white").save(path)
+            expected = ocr.OCRResult((ocr.OCRBlock("slide title"),))
+            with patch.object(ocr, "_recognize_in_worker", return_value=expected) as worker:
+                result = ocr.VisionTextRecognizer(Settings(ocr_languages=("en-US",))).recognize(path)
+
+        self.assertEqual(result, expected)
+        worker.assert_called_once_with(path, languages=("en-US",))
+
     def test_trailing_comments_stay_on_their_code_lines(self):
         def block(text, x, y, width):
             return ocr.OCRBlock(text, bbox=(x, y, width, 0.03))
