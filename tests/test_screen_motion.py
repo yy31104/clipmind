@@ -267,6 +267,36 @@ class DisplayEvidenceTests(unittest.TestCase):
             self.assertIsNone(evidence._read(empty))
             self.assertIsNone(evidence._read(root / "missing.png"))
 
+    def test_room_landmarks_preserve_projection_scope_before_it_lights_up(self):
+        with tempfile.TemporaryDirectory() as directory:
+            frames = []
+            for index in range(21):
+                room = Image.new("RGB", (1280, 720), "#24262a")
+                draw = ImageDraw.Draw(room)
+                draw.rectangle((27, 24, 1262, 110), outline="#dddadd", width=4)
+                draw.rectangle((73, 532, 440, 687), outline="#aaa9a7", width=4)
+                for left in (42, 214, 1010, 1132):
+                    draw.rectangle((left, 152, left + 65, 488), outline="#adaab8", width=10)
+                for y in (41, 72, 556, 614):
+                    draw.line((68, y, 1230, y), fill="#c6c2ca", width=3)
+                draw.rectangle((385, 173, 835, 432), fill="#fcf9ef" if index >= 10 else "#24262a")
+                if index in (2, 3):
+                    draw.line((503, 254, 507, 254), fill="#0612eb")
+                draw.rectangle((931 + index % 3 * 5, 540, 973, 579), fill=(50 + 7 * index, 35, 37))
+                if index == 4:
+                    room.paste("#3a383a", (0, 0, 1280, 720))
+                    ImageDraw.Draw(room).line((0, 0, 1280, 720), fill="#bcbcbc", width=19)
+                path = Path(directory) / f"room-{index}.png"
+                room.save(path)
+                frames.append(Frame(index, 8.0 * index, path))
+
+            evidence = screen_viewport.DisplayEvidence(frames)
+            self.assertTrue(evidence.projector[0])
+            self.assertTrue(evidence.unchanged(1, 0))
+            self.assertFalse(evidence.unchanged(2, 0), "The projected glyph is new content")
+            self.assertFalse(evidence.unchanged(10, 9), "Projection lighting may introduce content")
+            self.assertIsNone(evidence.regions[4], "A different camera must supply its own evidence")
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -109,6 +109,34 @@ def _bright_projection(gray, cv2) -> Box | None:
     return max(candidates)[1] if candidates else None
 
 
+def _room_edges(gray, box: Box, cv2):
+    thumbnail = cv2.resize(gray, (_WIDTH // 2, _HEIGHT // 2), interpolation=cv2.INTER_AREA)
+    edges = cv2.Canny(thumbnail, 24, 80) != 0
+    left, top, right, bottom = (value // 2 for value in box)
+    edges[max(0, top - 8):bottom + 8, max(0, left - 8):right + 8] = False
+    return edges
+
+
+def _same_room(expected, observed, cv2) -> bool:
+    """Confirm established room geometry even if lighting reveals extra detail."""
+    neighborhood = np.ones((3, 3), dtype=np.uint8)
+    nearby = cv2.dilate(np.uint8(expected), neighborhood) != 0
+    expanded = cv2.dilate(np.uint8(observed), neighborhood) != 0
+    matches = expected & expanded
+    if np.count_nonzero(matches) < max(120, np.count_nonzero(expected) * 0.72):
+        return False
+    if np.count_nonzero(observed & nearby) < 120:
+        return False
+    support = 0
+    for y in (0, _HEIGHT // 4):
+        for x in (0, _WIDTH // 4):
+            part = np.s_[y:y + _HEIGHT // 4, x:x + _WIDTH // 4]
+            known = np.count_nonzero(expected[part])
+            if known >= 30 and np.count_nonzero(matches[part]) >= known * 0.64:
+                support += 1
+    return support >= 3
+
+
 def native_change(first, second, cv2) -> bool:
     """Protect compact strokes at the captured resolution and in all color channels."""
     changed = np.uint8(cv2.absdiff(first, second).max(axis=2) >= _CONTRAST)
@@ -192,7 +220,7 @@ class DisplayEvidence:
             if (box := _large_rectangle(gray, self.cv2)) is not None:
                 observed.append((frame.timestamp, box))
             if (box := _bright_projection(gray, self.cv2)) is not None:
-                projections.append((frame.timestamp, box))
+                projections.append((frame.timestamp, box, frame.path))
         for index, frame in enumerate(self.frames):
             nearby = [box for time, box in observed if abs(frame.timestamp - time) <= 12]
             for box in nearby:
@@ -201,7 +229,7 @@ class DisplayEvidence:
                     break
             if self.regions[index] is not None:
                 continue
-            nearby = [box for time, box in projections if abs(frame.timestamp - time) <= 55]
+            nearby = [box for time, box, _ in projections if abs(frame.timestamp - time) <= 55]
             for box in nearby:
                 support = [other for other in nearby if _near(box, other, 9)]
                 if len(support) >= 3:
@@ -227,6 +255,40 @@ class DisplayEvidence:
                     self.regions[index] = next(
                         (box for box in recurring if _visible_rim(gray, box, self.cv2)), None,
                     )
+        self._extend_room_projection(projections)
+
+    def _extend_room_projection(self, observations: list[tuple[float, Box, Path]]) -> None:
+        if len(observations) < 3 or all(box is not None for box in self.regions):
+            return
+        boxes = dict.fromkeys(box for _, box, _ in observations)
+        group = max((
+            [row for row in observations if _near(box, row[1], 9)] for box in boxes
+        ), key=len)
+        if len(group) < 3:
+            return
+        left, top, right, bottom = zip(*(box for _, box, _ in group))
+        region = (min(left), min(top), max(right), max(bottom))
+        if (region[2] - region[0]) * (region[3] - region[1]) > 0.42 * _WIDTH * _HEIGHT:
+            return
+        samples = []
+        for _, _, path in group[::max(1, len(group) // 7)]:
+            image = self._read(path)
+            if image is not None:
+                samples.append(_room_edges(_gray(image, self.cv2), region, self.cv2))
+        backgrounds = [
+            edge for edge in samples if sum(_same_room(edge, other, self.cv2) for other in samples) >= 3
+        ]
+        if not backgrounds:
+            return
+        for index, frame in enumerate(self.frames):
+            if self.regions[index] is not None:
+                continue
+            image = self._read(frame.path)
+            if image is None:
+                continue
+            edges = _room_edges(_gray(image, self.cv2), region, self.cv2)
+            if any(_same_room(expected, edges, self.cv2) for expected in backgrounds):
+                self.regions[index], self.projector[index] = region, True
 
     def unchanged(self, position: int, anchor: int) -> bool:
         self.outside_detail = False
