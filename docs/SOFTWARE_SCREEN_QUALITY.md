@@ -68,6 +68,18 @@ The complete runs took 70 seconds and 7 minutes 30 seconds on Mac, and
 4 minutes and 27 minutes 54 seconds in Docker, in source order above.
 All four runs completed extraction and cleared their temporary media.
 
+### Scroll capture
+
+The original Kotlin timeline attached the screenshot from 1068.50 s to
+the interval starting at 1066.50 s. The editor had already scrolled past
+the code shown at 1066.78 s.
+
+The capture fix keeps the pre-scroll image from 1067.00 s and assigns
+the original 1068.50 s image to its own state starting at 1067.50 s.
+A capture-only replay of the full published file retained the original
+970 images and added the missing viewport. This replay does not replace
+the one-time holdout scores.
+
 ### Reproduce
 
 Download the original files listed in [the corpus manifest](data/software-screen-corpus.json).
