@@ -620,9 +620,10 @@ class TesseractEditorPaneTests(unittest.TestCase):
 
                     fake = SimpleNamespace(image_to_data=image_to_data, Output=SimpleNamespace(DICT="dict"))
                     edge_result = {"side_effect": edges} if isinstance(edges, cv2.error) else {"return_value": edges}
+                    clock = SimpleNamespace(monotonic=iter((100.0, 105.0)).__next__)
                     with patch.dict(sys.modules, {"pytesseract": fake}), patch.object(
                         recognizer.__class__, "available", return_value=True
-                    ), patch.object(ocr, "_recognition_image", prepare), patch(
+                    ), patch.object(ocr, "time", clock), patch.object(ocr, "_recognition_image", prepare), patch(
                         "clipmind.screen_viewport._long_edges", **edge_result
                     ):
                         result = recognizer.recognize(image)
@@ -630,9 +631,7 @@ class TesseractEditorPaneTests(unittest.TestCase):
                     self.assertEqual(calls[0], ((640, 360), "--psm 6", 30))
                     self.assertEqual(len(calls), 1 if crop_data is None else 2)
                     if crop_data is not None:
-                        self.assertEqual(calls[1][:2], ((299, 144), "--psm 6"))
-                        self.assertGreater(calls[1][2], 0)
-                        self.assertLess(calls[1][2], 30)
+                        self.assertEqual(calls[1], ((299, 144), "--psm 6", 25.0))
                     if name != "present":
                         self.assertEqual(result, baseline)
                         continue
