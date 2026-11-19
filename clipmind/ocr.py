@@ -57,6 +57,7 @@ RECOVER_MIN_INK = 0.05
 DARK_PANEL_MIN_SHARE = 0.04
 VISION_DARK_PANEL_LIMIT = 64
 LOCAL_CONTRAST_PIXEL_LIMIT = 6_000_000
+TESSERACT_GUTTER_WORD_LIMIT = 128
 
 
 class OCRError(RuntimeError):
@@ -642,6 +643,93 @@ def tesseract_available() -> bool:
 
 
 @dataclass(frozen=True)
+class _EditorPane:
+    box: tuple[float, float, float, float]
+    first_row: float
+    step: float
+    row_count: int
+
+
+def _tesseract_editor_pane(image, data, width: int, height: int) -> _EditorPane | None:
+    """Find a numbered editor beside another pane from word boxes and a visible divider."""
+    numbers = []
+    for index, value in enumerate(data.get("text", [])):
+        text = str(value).strip()
+        if not text.isdecimal() or len(text) > 6:
+            continue
+        right = (int(data["left"][index]) + int(data["width"][index])) / width
+        depth = int(data["height"][index]) / height
+        if .012 < right < .68 and .005 < depth < .045:
+            center = int(data["top"][index]) / height + depth / 2
+            numbers.append((int(text), right, center))
+            # Avoid fitting a row sequence to number-heavy pages or tables.
+            if len(numbers) > TESSERACT_GUTTER_WORD_LIMIT:
+                return None
+    numbers.sort()
+    rows = []
+    step = 0.0
+    for _, edge, _ in numbers:
+        column = [number for number in numbers if abs(number[1] - edge) < .005]
+        if len(column) <= max(4, len(rows)):
+            continue
+        for first, second in zip(column, column[1:]):
+            advance = second[0] - first[0]
+            if not 1 <= advance <= 4:
+                continue
+            pitch = (second[2] - first[2]) / advance
+            if not .009 <= pitch <= .065:
+                continue
+            aligned = [row for row in column
+                       if abs(row[2] - first[2] - (row[0] - first[0]) * pitch) < .3 * pitch]
+            if len({row[0] for row in aligned}) > max(4, len(rows)):
+                rows, step = aligned, pitch
+    if not rows:
+        return None
+
+    try:
+        import cv2
+        import numpy as np
+
+        from .screen_viewport import _long_edges
+    except ImportError:
+        return None
+
+    gutter = sorted(row[1] for row in rows)[len(rows) // 2]
+    first_row = min(row[2] for row in rows)
+    top = max(0, first_row - .6 * step)
+    bottom = min(1, max(row[2] for row in rows) + .6 * step)
+    try:
+        resized = cv2.resize(np.asarray(image), (640, 360), interpolation=cv2.INTER_AREA)
+        gray = cv2.cvtColor(resized, cv2.COLOR_RGB2GRAY)
+        vertical, _ = _long_edges(gray, cv2)
+    except cv2.error:
+        return None
+    for x, start, end in vertical:
+        overlap = min(bottom, end / 360) - max(top, start / 360)
+        if gutter + .16 < x / 640 < .9 and overlap >= .8 * (bottom - top):
+            box = (gutter + .28 * step, top, (x - 1) / 640, bottom)
+            return _EditorPane(box, first_row, step, len({row[0] for row in rows}))
+    return None
+
+
+def _pane_text_covered(blocks: list[OCRBlock], pane: _EditorPane) -> bool:
+    letters = 0
+    covered = set()
+    for block in blocks:
+        count = sum(char.isalpha() for char in block.text)
+        letters += count
+        if count >= 2:
+            _, top, _, height = block.bbox
+            covered.add(round((top + height / 2 - pane.first_row) / pane.step))
+    return letters >= 12 and len(covered) >= max(3, math.ceil(pane.row_count / 3))
+
+
+def _inside_pane(x, y, pane):
+    left, top, right, bottom = pane
+    return left <= x < right and top <= y < bottom
+
+
+@dataclass(frozen=True)
 class TesseractTextRecognizer:
     """Portable OCR fallback for Linux, Windows and non-Vision macOS hosts."""
 
@@ -661,23 +749,83 @@ class TesseractTextRecognizer:
             )
         return self._recognize_once(image, None)
 
-    def _recognize_once(self, image: Path, scale: float | None) -> OCRResult:
+    def _read_data(self, image: Path, scale: float | None, *,
+                   page_mode: int | None = None, timeout: float = 30):
         import pytesseract
         from PIL import Image
 
         with _recognition_image(image, portable=True, scale=scale) as prepared, Image.open(prepared.path) as source:
-            width, height = source.size
+            mode = prepared.page_mode if page_mode is None else page_mode
             data = pytesseract.image_to_data(
                 source,
                 lang=self.config.tesseract_languages,
                 output_type=pytesseract.Output.DICT,
-                config=f"--psm {prepared.page_mode}",
-                timeout=30,
+                config=f"--psm {mode}",
+                timeout=timeout,
             )
+            return data, source.size, mode
+
+    def _recognize_once(self, image: Path, scale: float | None) -> OCRResult:
+        from PIL import Image
+
+        deadline = time.monotonic() + 30
+        data, (width, height), mode = self._read_data(image, scale)
+        if mode == 6:
+            try:
+                with Image.open(image) as original:
+                    source = original.convert("RGB")
+                pane = _tesseract_editor_pane(source, data, width, height)
+                if pane is not None:
+                    recovered = self._recognize_pane(source, pane.box, scale, deadline)
+                    if _pane_text_covered(recovered, pane):
+                        # A full-frame OCR line can span both sides of the crop.
+                        outside = self._blocks(data, width, height, exclude=pane.box)
+                        return OCRResult(_reading_order(outside + recovered))
+            except (ImportError, OSError, RuntimeError):
+                # The full-frame result remains usable if the optional pass fails.
+                pass
+        return OCRResult(_reading_order(self._blocks(data, width, height)))
+
+    def _recognize_pane(self, source, pane, scale: float | None, deadline: float) -> list[OCRBlock]:
+        from PIL import ImageOps
+
+        width, height = source.size
+        left, top, right, bottom = (round(value * basis)
+                                    for value, basis in zip(pane, (width, height, width, height)))
+        padding = 10
+        crop = source.crop((left, top, right, bottom))
+        crop = ImageOps.expand(crop, border=padding, fill=crop.getpixel((1, 1)))
+        with tempfile.TemporaryDirectory(prefix="clipmind-ocr-pane-") as folder:
+            path = Path(folder) / "pane.png"
+            crop.save(path)
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                return []
+            data, (prepared_width, prepared_height), _ = self._read_data(
+                path, scale, page_mode=6, timeout=remaining
+            )
+
+        origin_x, origin_y = (left - padding) / width, (top - padding) / height
+        scale_x, scale_y = crop.width / width, crop.height / height
+        positioned = []
+        for block in self._blocks(data, prepared_width, prepared_height):
+            x, y, span, depth = block.bbox
+            box = (origin_x + x * scale_x, origin_y + y * scale_y, span * scale_x, depth * scale_y)
+            if _inside_pane(box[0] + box[2] / 2, box[1] + box[3] / 2, pane):
+                positioned.append(OCRBlock(block.text, block.confidence, box))
+        return positioned
+
+    @staticmethod
+    def _blocks(data, width: int, height: int, *, exclude=None) -> list[OCRBlock]:
         grouped: dict[tuple[int, int, int], list[int]] = {}
         for index, text in enumerate(data.get("text", [])):
             if not str(text).strip():
                 continue
+            if exclude is not None:
+                x = (int(data["left"][index]) + int(data["width"][index]) / 2) / width
+                y = (int(data["top"][index]) + int(data["height"][index]) / 2) / height
+                if _inside_pane(x, y, exclude):
+                    continue
             key = (
                 int(data["block_num"][index]),
                 int(data["par_num"][index]),
@@ -725,7 +873,7 @@ class TesseractTextRecognizer:
                     bbox=(left / width, top / height, (right - left) / width, (bottom - top) / height),
                 )
             )
-        return OCRResult(_reading_order(blocks))
+        return blocks
 
 
 def available() -> bool:

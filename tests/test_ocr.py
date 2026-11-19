@@ -566,6 +566,99 @@ class LayoutOrderTests(unittest.TestCase):
         self.assertEqual(result.blocks[0].bbox, (0.05, 0.25, 0.15, 0.0625))
 
 
+class TesseractEditorPaneTests(unittest.TestCase):
+    @staticmethod
+    def _word_data(rows):
+        columns = ("text", "left", "top", "width", "height", "line_num")
+        data = {key: [row[i] for row in rows] for i, key in enumerate(columns)}
+        return data | {"block_num": [1] * len(rows), "par_num": [1] * len(rows), "conf": [90] * len(rows)}
+
+    def test_pane_ocr_preserves_outside_words_and_falls_back_on_failure(self):
+        import cv2
+        from PIL import Image
+
+        primary = self._word_data(
+            [(str(number + 1), 20, 69 + 20 * number, 10, 10, number + 1) for number in range(6)]
+            + [("old line", 65, 69, 230, 13, 1),
+               ("VIEW", 330, 69, 45, 13, 1),
+               ("Terminal", 110, 228, 64, 14, 7)]
+        )
+        secondary = self._word_data(
+            [("recoveredValue", 50, 30, 90, 12, 1),
+             ("otherValue", 50, 50, 74, 12, 2),
+             ("thirdValue", 50, 70, 74, 12, 3)]
+        )
+        divider = ([(320, 40, 270)], [])
+        recognizer = ocr.TesseractTextRecognizer(SimpleNamespace(tesseract_languages="eng"))
+        baseline = ocr.OCRResult(ocr._reading_order(recognizer._blocks(primary, 640, 360)))
+        self.assertIn("1 old line VIEW", baseline.lines)
+
+        @contextmanager
+        def prepare(path, **options):
+            yield ocr._PreparedOCR(path, 6)
+
+        with tempfile.TemporaryDirectory() as directory:
+            image = Path(directory) / "screen.png"
+            Image.new("RGB", (640, 360), "#182030").save(image)
+            for name, edges, crop_data in (
+                ("present", divider, secondary),
+                ("missing divider", ([], []), None),
+                ("geometry failed", cv2.error("cannot read divider"), None),
+                ("empty crop", divider, {"text": []}),
+                ("one line", divider, self._word_data([("recoveredValue", 50, 30, 90, 12, 1)])),
+                ("timed out", divider, RuntimeError("Tesseract process timeout")),
+            ):
+                with self.subTest(name=name):
+                    calls = []
+                    def image_to_data(source, **kwargs):
+                        calls.append((source.size, kwargs["config"], kwargs["timeout"]))
+                        if len(calls) == 1:
+                            return primary
+                        if isinstance(crop_data, RuntimeError):
+                            raise crop_data
+                        return crop_data
+
+                    fake = SimpleNamespace(image_to_data=image_to_data, Output=SimpleNamespace(DICT="dict"))
+                    edge_result = {"side_effect": edges} if isinstance(edges, cv2.error) else {"return_value": edges}
+                    with patch.dict(sys.modules, {"pytesseract": fake}), patch.object(
+                        recognizer.__class__, "available", return_value=True
+                    ), patch.object(ocr, "_recognition_image", prepare), patch(
+                        "clipmind.screen_viewport._long_edges", **edge_result
+                    ):
+                        result = recognizer.recognize(image)
+
+                    self.assertEqual(calls[0], ((640, 360), "--psm 6", 30))
+                    self.assertEqual(len(calls), 1 if crop_data is None else 2)
+                    if crop_data is not None:
+                        self.assertEqual(calls[1][:2], ((299, 144), "--psm 6"))
+                        self.assertGreater(calls[1][2], 0)
+                        self.assertLess(calls[1][2], 30)
+                    if name != "present":
+                        self.assertEqual(result, baseline)
+                        continue
+
+                    by_text = {block.text: block for block in result.blocks}
+                    self.assertNotIn("old line", " ".join(by_text))
+                    self.assertEqual(by_text["1"].bbox, (20 / 640, 69 / 360, 10 / 640, 10 / 360))
+                    self.assertEqual(by_text["VIEW"].bbox, (330 / 640, 69 / 360, 45 / 640, 13 / 360))
+                    self.assertEqual(by_text["Terminal"].bbox, (110 / 640, 228 / 360, 64 / 640, 14 / 360))
+                    expected = (80 / 640, 82 / 360, 90 / 640, 12 / 360)
+                    for actual, value in zip(by_text["recoveredValue"].bbox, expected):
+                        self.assertAlmostEqual(actual, value)
+
+    def test_number_heavy_page_skips_optional_editor_fit(self):
+        from PIL import Image
+
+        image = Image.new("RGB", (640, 360), "#182030")
+        data = self._word_data(
+            [(str(number + 1), 20, 40 + number % 20, 10, 10, number + 1)
+             for number in range(ocr.TESSERACT_GUTTER_WORD_LIMIT + 1)]
+        )
+        with patch("clipmind.screen_viewport._long_edges") as edges:
+            self.assertIsNone(ocr._tesseract_editor_pane(image, data, 640, 360))
+        edges.assert_not_called()
+
+
 class TesseractLanguageConfigurationTests(unittest.TestCase):
     def test_default_prefers_english_and_keeps_both_chinese_models(self):
         with patch.dict(os.environ, {}, clear=True):

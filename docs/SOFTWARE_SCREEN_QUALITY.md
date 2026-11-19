@@ -131,7 +131,32 @@ Replaying the simpler ranker on the same saved images matched the same
 82 Mac and 70 Docker changes. It added one unmatched Docker prediction.
 The experimental ranker remains separate from the capture fix.
 
+There were no OCR or capture warnings in either run. At the current cutoff,
+even selecting every eligible ranker prediction without the one-second
+spacing rule could match at most 86 Mac and 76 Docker changes. Boosting
+persistent image motion also admitted ordinary CAD viewport rotations and
+reduced precision on the earlier GIMP and live-coding recordings.
+
 The full runs took 102 and 66 seconds on Mac and 324 and 173 seconds in
 Docker, in source order above. All four completed OCR and visual extraction
 and cleared their temporary media. Run receipts, metrics and matched
 timestamps are in the [evidence data](data/software-screen-reserve-evidence.json).
+
+### Code OCR replay
+
+Tesseract sometimes joined an editor's line numbers and neighboring viewer
+text to the code. When the full-frame block pass sees aligned numbers and
+a visible pane divider, the portable recognizer can read the editor pane
+separately. It retains the words outside the pane and uses the full-frame
+result if the crop fails or covers too few rows.
+
+On the 29 exposed µcad screenshots, this reduced code errors from 571 to
+201 of 3,150 characters (18.13% to 6.38%). The extra pass ran on 25 images.
+All 33 controls from the Kotlin, Emacs, ODF slide, Inkscape and GIMP
+recordings kept the original OCR path. The additional pass took about
+0.69 seconds per activated image at the median and 0.80 seconds at p90
+in the offline ARM64 container with Tesseract 5.3.0. See the
+[per-image replay counts](data/software-screen-code-ocr-replay.json).
+
+The replay read saved images directly. The frozen holdout results above
+remain the scores for the original full extraction.
