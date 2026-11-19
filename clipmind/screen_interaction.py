@@ -187,10 +187,8 @@ def _recurs(i, times, masks):
     return matches >= 3
 
 
-def _raster_changes(frames):
-    size = None
-
-    @lru_cache(maxsize=18)
+def _grayscale_frames(frames):
+    @lru_cache(maxsize=45)
     def gray(i):
         image = cv2.imread(str(frames[i].path), cv2.IMREAD_GRAYSCALE)
         if image is None:
@@ -204,6 +202,12 @@ def _raster_changes(frames):
     scale = min(1, _WIDTH / max(source_width, source_height))
     width, height = (max(1, round(side * scale)) for side in (source_width, source_height))
     size = (width, height)
+    return gray, size
+
+
+def _raster_changes(frames, rasters=None):
+    gray, size = rasters or _grayscale_frames(frames)
+    width, height = size
     if min(size) < 32:
         return [None] * len(frames), height
 
@@ -432,7 +436,10 @@ def adjust_scores(
     """Use only saved images, their layout observations, and neighboring timestamps."""
     if not scores:
         return scores, {}
-    changes, height = _raster_changes(frames)
+    from .screen_editor import adjust_editor_scores
+
+    rasters = _grayscale_frames(frames)
+    changes, height = _raster_changes(frames, rasters)
     pending, results = _text_adjustments(frames, changes, height)
     adjusted = scores.copy()
     for i, score in scores.items():
@@ -457,4 +464,5 @@ def adjust_scores(
             # if another boundary suppresses it.
             adjusted[i - 1] = _SHAPE_SCORE
             fallback_onsets[i] = i - 1
+    adjust_editor_scores(frames, rasters[0], adjusted)
     return adjusted, fallback_onsets

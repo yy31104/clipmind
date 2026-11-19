@@ -16,7 +16,7 @@ from .screen_rank_model import (
     LOGISTIC_COEFFICIENTS,
 )
 
-ALGORITHM = "offline-screen-rank-v2"
+ALGORITHM = "offline-screen-rank-v3"
 _LOGGER = logging.getLogger(__name__)
 _WINDOW_SECONDS = 1.0
 _FLOAT = struct.Struct("<f")
