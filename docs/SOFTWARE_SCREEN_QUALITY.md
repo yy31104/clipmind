@@ -98,3 +98,40 @@ The native path uses Apple Vision and local MLX Whisper. The Linux path
 uses Tesseract and faster-whisper in an offline ARM64 CPU container with
 the same source revision mounted read-only. The Linux measurements refer to
 that benchmark environment.
+
+## Second software holdout
+
+- [µcad | Parametric Bricks](https://fair.tube/w/bEnaFxqjtWGYYDmRzSMyTj),
+  Micha, CC BY 4.0. Screen-only CAD and code editing, 4:00.
+- [How to use Inkscape](https://commons.wikimedia.org/wiki/File:How_to_use_Inkscape.webm),
+  Ocdp, CC0 1.0. Screen-only vector editing, 5:21.
+
+Both recordings ran in full once per backend on the
+[experimental ranker](https://github.com/yy31104/clipmind/commit/52f4ec8c94f56cd463b359807a9af105c69b83f1).
+The [corpus](data/software-screen-reserve-corpus.json) and
+[labels](data/software-screen-reserve-labels.json) were frozen before the
+candidate was locked. Labels are AI-assisted. Human review is pending.
+The code score covers 29 literal on-screen regions from the µcad recording.
+
+| Backend and recording | Recall | Precision | Code CER |
+| --- | ---: | ---: | ---: |
+| Mac, µcad | 36/61 (59.02%) | 36/63 (57.14%) | 187/3,150 (5.94%) |
+| Mac, Inkscape | 46/62 (74.19%) | 46/89 (51.69%) | n/a |
+| **Mac, both** | **82/123 (66.67%)** | **82/152 (53.95%)** | **5.94%** |
+| Docker, µcad | 27/61 (44.26%) | 27/48 (56.25%) | 571/3,150 (18.13%) |
+| Docker, Inkscape | 43/62 (69.35%) | 43/80 (53.75%) | n/a |
+| **Docker, both** | **70/123 (56.91%)** | **70/128 (54.69%)** | **18.13%** |
+
+Both backends passed 50% precision and missed 85% recall. Docker also
+missed the 15% code error target. Each full timeline matched 119 of 123
+changes. Most misses had a saved image within one second, but the ranker
+left out the corresponding boundary.
+
+Replaying the simpler ranker on the same saved images matched the same
+82 Mac and 70 Docker changes. It added one unmatched Docker prediction.
+The experimental ranker remains separate from the capture fix.
+
+The full runs took 102 and 66 seconds on Mac and 324 and 173 seconds in
+Docker, in source order above. All four completed OCR and visual extraction
+and cleared their temporary media. Run receipts, metrics and matched
+timestamps are in the [evidence data](data/software-screen-reserve-evidence.json).

@@ -1,0 +1,1899 @@
+{
+  "schema_version": 1,
+  "annotation_protocol": "interactive-software-native-pts-v2",
+  "method": "AI-assisted source-frame labels frozen before extraction. Human review pending. Boundaries use native PTS since the first video frame. Code reference includes literal visible characters. Visual scoring requires complete OCR and visual tracks even if a source has no spoken transcript.",
+  "cases": {
+    "mucad-parametric-bricks": {
+      "input_sha256": "e3e8843f6c5a3969ac84b1a244bafa81b869209d358ded35f96b17411bd84e86",
+      "reviewed": true,
+      "review_start": 0,
+      "review_end": 240.421016,
+      "software_interval_seconds": [
+        0.0,
+        240.36673177116668
+      ],
+      "slide_changes": [
+        0.966666667,
+        2.966666667,
+        5.966666667,
+        8.966666667,
+        12.966666667,
+        18.966666667,
+        21.966666667,
+        23.966666667,
+        29.966666667,
+        31.966666667,
+        38.966666667,
+        41.966666667,
+        45.966666667,
+        49.966666667,
+        56.966666667,
+        62.966666667,
+        66.966666667,
+        75.966666667,
+        81.966666667,
+        87.966666667,
+        90.2,
+        91.966666667,
+        95.966666667,
+        97.966666667,
+        100.966666667,
+        106.966666667,
+        108.966666667,
+        112.966666667,
+        113.966666667,
+        116.966666667,
+        118.966666667,
+        122.966666667,
+        126.966666667,
+        131.966666667,
+        136.7,
+        137.966666667,
+        141.966666667,
+        147.966666667,
+        152.966666667,
+        154.966666667,
+        157.966666667,
+        161.966666667,
+        166.966666667,
+        169.966666667,
+        172.966666667,
+        180.966666667,
+        188.966666667,
+        194.966666667,
+        204.966666667,
+        206.966666667,
+        211.966666667,
+        213.966666667,
+        217.966666667,
+        220.966666667,
+        223.966666667,
+        226.966666667,
+        230.966666667,
+        233.966666667,
+        235.966666667,
+        236.966666667,
+        238.966666667
+      ],
+      "boundary_evidence": [
+        {
+          "timestamp": 0.966666667,
+          "native_pts": 15862,
+          "native_frame_index": 29,
+          "previous_timestamp": 0.066015625,
+          "persistence_timestamp": 2.032682292,
+          "description": "The existing brick source is highlighted for replacement while the opening brick still renders.",
+          "category": "editor_selection"
+        },
+        {
+          "timestamp": 2.966666667,
+          "native_pts": 46582,
+          "native_frame_index": 89,
+          "previous_timestamp": 2.032682292,
+          "persistence_timestamp": 5.032682292,
+          "description": "The prior brick source and model clear. A new draft starts with a spacing constant and the viewport shows only its grid.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 5.966666667,
+          "native_pts": 92662,
+          "native_frame_index": 179,
+          "previous_timestamp": 5.032682292,
+          "persistence_timestamp": 7.032682292,
+          "description": "Completion suggestions appear while the spacing and wall-thickness declarations are being entered.",
+          "category": "autocomplete"
+        },
+        {
+          "timestamp": 8.966666667,
+          "native_pts": 138742,
+          "native_frame_index": 269,
+          "previous_timestamp": 8.032682292,
+          "persistence_timestamp": 12.032682292,
+          "description": "Red Diagnostics and an Errors status appear during the incomplete constant declarations.",
+          "category": "diagnostic"
+        },
+        {
+          "timestamp": 12.966666667,
+          "native_pts": 200182,
+          "native_frame_index": 389,
+          "previous_timestamp": 12.032682292,
+          "persistence_timestamp": 17.032682292,
+          "description": "The editor adds width and height formulas based on spacing and tolerance while the viewport remains empty.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 18.966666667,
+          "native_pts": 292342,
+          "native_frame_index": 569,
+          "previous_timestamp": 18.032682292,
+          "persistence_timestamp": 21.032682292,
+          "description": "The first successful 2D output is a filled rectangle. Its preview moves from overhead to an angled grid view.",
+          "category": "render"
+        },
+        {
+          "timestamp": 21.966666667,
+          "native_pts": 338422,
+          "native_frame_index": 659,
+          "previous_timestamp": 21.032682292,
+          "persistence_timestamp": 24.032682292,
+          "description": "The rectangle is assigned to rect and work starts on a frame made from a buffered rectangle.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 23.966666667,
+          "native_pts": 369142,
+          "native_frame_index": 719,
+          "previous_timestamp": 23.032682292,
+          "persistence_timestamp": 29.032682292,
+          "description": "The 2D model clears and Diagnostics shows errors while the subtraction, buffer call and import are written.",
+          "category": "diagnostic"
+        },
+        {
+          "timestamp": 29.966666667,
+          "native_pts": 461302,
+          "native_frame_index": 899,
+          "previous_timestamp": 29.032682292,
+          "persistence_timestamp": 31.032682292,
+          "description": "The std::ops::buffer import resolves the diagnostic and exposes a syntactically complete frame definition before it is emitted.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 31.966666667,
+          "native_pts": 492022,
+          "native_frame_index": 959,
+          "previous_timestamp": 31.032682292,
+          "persistence_timestamp": 38.032682292,
+          "description": "A 2D rectangular outline replaces the filled rectangle after frame is emitted.",
+          "category": "render"
+        },
+        {
+          "timestamp": 38.966666667,
+          "native_pts": 599542,
+          "native_frame_index": 1169,
+          "previous_timestamp": 38.032682292,
+          "persistence_timestamp": 41.032682292,
+          "description": "A Circle expression is added to cut a ring from two circles, with completion suggestions and intermittent diagnostics during entry.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 41.966666667,
+          "native_pts": 645622,
+          "native_frame_index": 1259,
+          "previous_timestamp": 41.032682292,
+          "persistence_timestamp": 45.032682292,
+          "description": "One ring renders inside the rectangular frame.",
+          "category": "render"
+        },
+        {
+          "timestamp": 45.966666667,
+          "native_pts": 707062,
+          "native_frame_index": 1379,
+          "previous_timestamp": 45.032682292,
+          "persistence_timestamp": 49.032682292,
+          "description": "Editing the ring translation temporarily clears the render and triggers red parse diagnostics.",
+          "category": "diagnostic"
+        },
+        {
+          "timestamp": 49.966666667,
+          "native_pts": 768502,
+          "native_frame_index": 1499,
+          "previous_timestamp": 49.032682292,
+          "persistence_timestamp": 55.032682292,
+          "description": "Three translated rings now render in a row inside the rectangular frame.",
+          "category": "render"
+        },
+        {
+          "timestamp": 56.966666667,
+          "native_pts": 876022,
+          "native_frame_index": 1709,
+          "previous_timestamp": 56.032682292,
+          "persistence_timestamp": 61.032682292,
+          "description": "The attempted union and extrusion of the frame and rings clears the 2D geometry and shows a red diagnostic.",
+          "category": "diagnostic"
+        },
+        {
+          "timestamp": 62.966666667,
+          "native_pts": 968182,
+          "native_frame_index": 1889,
+          "previous_timestamp": 62.032682292,
+          "persistence_timestamp": 67.032682292,
+          "description": "The first 3D result extrudes the outline and the rings into a hollow base with three upright tubes.",
+          "category": "render"
+        },
+        {
+          "timestamp": 66.966666667,
+          "native_pts": 1029622,
+          "native_frame_index": 2009,
+          "previous_timestamp": 66.032682292,
+          "persistence_timestamp": 72.032682292,
+          "description": "The 3D viewport zooms out and rotates to give a clearer view into the hollow base and tubes.",
+          "category": "view"
+        },
+        {
+          "timestamp": 75.966666667,
+          "native_pts": 1167862,
+          "native_frame_index": 2279,
+          "previous_timestamp": 75.032682292,
+          "persistence_timestamp": 80.032682292,
+          "description": "Work starts on a rectangular cap extrusion, with completion suggestions and red diagnostics during the draft.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 81.966666667,
+          "native_pts": 1260022,
+          "native_frame_index": 2459,
+          "previous_timestamp": 81.032682292,
+          "persistence_timestamp": 87.032682292,
+          "description": "The cap and base are placed in a block and an alignment call is typed with autocomplete. The incomplete call clears the preview.",
+          "category": "diagnostic"
+        },
+        {
+          "timestamp": 87.966666667,
+          "native_pts": 1352182,
+          "native_frame_index": 2639,
+          "previous_timestamp": 87.032682292,
+          "persistence_timestamp": 90.032682292,
+          "description": "The aligned base and cap now show as a closed, studless brick.",
+          "category": "render"
+        },
+        {
+          "timestamp": 90.2,
+          "native_pts": 1386486,
+          "native_frame_index": 2706,
+          "previous_timestamp": 90.032682292,
+          "persistence_timestamp": 91.266015625,
+          "description": "Adding vertical alignment spacing lifts the studless cap visibly above the hollow base.",
+          "category": "render"
+        },
+        {
+          "timestamp": 91.966666667,
+          "native_pts": 1413622,
+          "native_frame_index": 2759,
+          "previous_timestamp": 91.532682292,
+          "persistence_timestamp": 94.032682292,
+          "description": "Removing the alignment spacing lowers the cap back onto the base.",
+          "category": "render"
+        },
+        {
+          "timestamp": 95.966666667,
+          "native_pts": 1475062,
+          "native_frame_index": 2879,
+          "previous_timestamp": 95.032682292,
+          "persistence_timestamp": 98.032682292,
+          "description": "A wildcard operations import replaces the narrow import, with the closed brick visible.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 97.966666667,
+          "native_pts": 1505782,
+          "native_frame_index": 2939,
+          "previous_timestamp": 97.032682292,
+          "persistence_timestamp": 100.032682292,
+          "description": "The assembly call is simplified to the unqualified align call and the closed brick remains visible.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 100.966666667,
+          "native_pts": 1551862,
+          "native_frame_index": 3029,
+          "previous_timestamp": 100.032682292,
+          "persistence_timestamp": 103.032682292,
+          "description": "Suggestions appear as the new knob starts from a Circle expression.",
+          "category": "autocomplete"
+        },
+        {
+          "timestamp": 106.966666667,
+          "native_pts": 1644022,
+          "native_frame_index": 3209,
+          "previous_timestamp": 106.032682292,
+          "persistence_timestamp": 108.032682292,
+          "description": "The incomplete multiply and distribute_grid expression fails and clears the preview.",
+          "category": "diagnostic"
+        },
+        {
+          "timestamp": 108.966666667,
+          "native_pts": 1674742,
+          "native_frame_index": 3269,
+          "previous_timestamp": 108.032682292,
+          "persistence_timestamp": 111.032682292,
+          "description": "The editor scrolls horizontally to expose the long knob distribution chain as its arguments and extrusion are entered. The studless preview recovers.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 112.966666667,
+          "native_pts": 1736182,
+          "native_frame_index": 3389,
+          "previous_timestamp": 112.032682292,
+          "persistence_timestamp": 114.032682292,
+          "description": "The studs first appear on the capped brick and the distribution order is adjusted into the eight-stud pattern.",
+          "category": "render"
+        },
+        {
+          "timestamp": 113.966666667,
+          "native_pts": 1751542,
+          "native_frame_index": 3419,
+          "previous_timestamp": 113.032682292,
+          "persistence_timestamp": 116.032682292,
+          "description": "The 3D view shows the corrected two-by-four stud layout on the brick.",
+          "category": "render"
+        },
+        {
+          "timestamp": 116.966666667,
+          "native_pts": 1797622,
+          "native_frame_index": 3509,
+          "previous_timestamp": 116.032682292,
+          "persistence_timestamp": 118.032682292,
+          "description": "An exploded view separates the eight studs, cap, and hollow base vertically, and the camera turns to show the gaps.",
+          "category": "render"
+        },
+        {
+          "timestamp": 118.966666667,
+          "native_pts": 1828342,
+          "native_frame_index": 3569,
+          "previous_timestamp": 118.032682292,
+          "persistence_timestamp": 122.032682292,
+          "description": "The spacing is removed and the three parts join again as a finished eight-stud brick.",
+          "category": "render"
+        },
+        {
+          "timestamp": 122.966666667,
+          "native_pts": 1889782,
+          "native_frame_index": 3689,
+          "previous_timestamp": 122.032682292,
+          "persistence_timestamp": 126.032682292,
+          "description": "Separate columns and rows values are introduced and substituted into the dimension formulas.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 126.966666667,
+          "native_pts": 1951222,
+          "native_frame_index": 3809,
+          "previous_timestamp": 126.032682292,
+          "persistence_timestamp": 131.032682292,
+          "description": "The knob distribution expression is updated to use the row and column variables, including a horizontally scrolled editing view.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 131.966666667,
+          "native_pts": 2028022,
+          "native_frame_index": 3959,
+          "previous_timestamp": 131.032682292,
+          "persistence_timestamp": 135.032682292,
+          "description": "The multiply, grid-distribution and extrusion calls are split over multiple readable lines.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 136.7,
+          "native_pts": 2100726,
+          "native_frame_index": 4101,
+          "previous_timestamp": 136.532682292,
+          "persistence_timestamp": 137.766015625,
+          "description": "The rows value changes from two to three and the width parameters are carried into the render. The rebuilt brick has a four-by-three stud layout.",
+          "category": "render"
+        },
+        {
+          "timestamp": 137.966666667,
+          "native_pts": 2120182,
+          "native_frame_index": 4139,
+          "previous_timestamp": 137.266015625,
+          "persistence_timestamp": 141.032682292,
+          "description": "The model rotates underneath to show the hollow shell and its three internal rings.",
+          "category": "view"
+        },
+        {
+          "timestamp": 141.966666667,
+          "native_pts": 2181622,
+          "native_frame_index": 4259,
+          "previous_timestamp": 141.032682292,
+          "persistence_timestamp": 147.032682292,
+          "description": "The new array operation signature is entered with suggestion menus over the editor and parse diagnostics while the declaration is incomplete.",
+          "category": "autocomplete"
+        },
+        {
+          "timestamp": 147.966666667,
+          "native_pts": 2273782,
+          "native_frame_index": 4439,
+          "previous_timestamp": 147.032682292,
+          "persistence_timestamp": 152.032682292,
+          "description": "The array operation body is filled in with input multiplication and a grid distribution expression.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 152.966666667,
+          "native_pts": 2350582,
+          "native_frame_index": 4589,
+          "previous_timestamp": 152.032682292,
+          "persistence_timestamp": 154.032682292,
+          "description": "The preview briefly disappears and a red unresolved-symbol diagnostic appears during editing of the array helper's spacing expression.",
+          "category": "diagnostic"
+        },
+        {
+          "timestamp": 154.966666667,
+          "native_pts": 2381302,
+          "native_frame_index": 4649,
+          "previous_timestamp": 154.032682292,
+          "persistence_timestamp": 157.032682292,
+          "description": "The helper definition accepts the spacing expression and the existing underside preview returns.",
+          "category": "render"
+        },
+        {
+          "timestamp": 157.966666667,
+          "native_pts": 2427382,
+          "native_frame_index": 4739,
+          "previous_timestamp": 157.032682292,
+          "persistence_timestamp": 161.032682292,
+          "description": "The rings expression is replaced with a call to array, with the viewport clearing while the call is incomplete.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 161.966666667,
+          "native_pts": 2488822,
+          "native_frame_index": 4859,
+          "previous_timestamp": 161.032682292,
+          "persistence_timestamp": 166.032682292,
+          "description": "The completed rings call changes the underside pattern from three internal tubes to six in a two-by-three grid.",
+          "category": "render"
+        },
+        {
+          "timestamp": 166.966666667,
+          "native_pts": 2565622,
+          "native_frame_index": 5009,
+          "previous_timestamp": 166.032682292,
+          "persistence_timestamp": 169.032682292,
+          "description": "The first attempt to reuse the array helper for knobs causes compiler errors and an empty viewport.",
+          "category": "diagnostic"
+        },
+        {
+          "timestamp": 169.966666667,
+          "native_pts": 2611702,
+          "native_frame_index": 5099,
+          "previous_timestamp": 169.032682292,
+          "persistence_timestamp": 172.032682292,
+          "description": "The render returns as the knob array is corrected. The edited brick then shows a regular twelve-stud top.",
+          "category": "render"
+        },
+        {
+          "timestamp": 172.966666667,
+          "native_pts": 2657782,
+          "native_frame_index": 5189,
+          "previous_timestamp": 172.032682292,
+          "persistence_timestamp": 180.032682292,
+          "description": "Changing the array helper to use the shared spacing constant leaves obsolete call arguments. Errors persist while both call sites are fixed.",
+          "category": "diagnostic"
+        },
+        {
+          "timestamp": 180.966666667,
+          "native_pts": 2780662,
+          "native_frame_index": 5429,
+          "previous_timestamp": 180.032682292,
+          "persistence_timestamp": 184.032682292,
+          "description": "The corrected helper and calls produce a twelve-stud brick and a six-tube underside as the camera rotates.",
+          "category": "render"
+        },
+        {
+          "timestamp": 188.966666667,
+          "native_pts": 2903542,
+          "native_frame_index": 5669,
+          "previous_timestamp": 188.032682292,
+          "persistence_timestamp": 192.032682292,
+          "description": "A base_height variable is introduced and connected to the base extrusion expression.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 194.966666667,
+          "native_pts": 2995702,
+          "native_frame_index": 5849,
+          "previous_timestamp": 194.032682292,
+          "persistence_timestamp": 204.032682292,
+          "description": "The standalone geometry is reorganized into a typed Brick part. Incomplete or out-of-scope definitions produce red diagnostics during the move.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 204.966666667,
+          "native_pts": 3149302,
+          "native_frame_index": 6149,
+          "previous_timestamp": 204.032682292,
+          "persistence_timestamp": 206.032682292,
+          "description": "The Brick definition is assembled in the editor. The viewport stays empty with NONE model while there is no part instance.",
+          "category": "editor_definition"
+        },
+        {
+          "timestamp": 206.966666667,
+          "native_pts": 3180022,
+          "native_frame_index": 6209,
+          "previous_timestamp": 206.032682292,
+          "persistence_timestamp": 211.032682292,
+          "description": "An explicit Brick call is added, but the declared parameter types still cause a red evaluation diagnostic and an empty viewport.",
+          "category": "diagnostic"
+        },
+        {
+          "timestamp": 211.966666667,
+          "native_pts": 3256822,
+          "native_frame_index": 6359,
+          "previous_timestamp": 211.032682292,
+          "persistence_timestamp": 213.032682292,
+          "description": "After the row and column parameters become integers, the explicit call renders one completed eight-stud brick.",
+          "category": "render"
+        },
+        {
+          "timestamp": 213.966666667,
+          "native_pts": 3287542,
+          "native_frame_index": 6419,
+          "previous_timestamp": 213.032682292,
+          "persistence_timestamp": 217.032682292,
+          "description": "Fixed brick dimensions are replaced with ranges. Early rendered variations overlap in the viewport before distribution.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 217.966666667,
+          "native_pts": 3348982,
+          "native_frame_index": 6539,
+          "previous_timestamp": 217.032682292,
+          "persistence_timestamp": 220.032682292,
+          "description": "Typing arguments for distribute_grid causes the overlapping preview to clear while evaluation reports an invalid call.",
+          "category": "diagnostic"
+        },
+        {
+          "timestamp": 220.966666667,
+          "native_pts": 3395062,
+          "native_frame_index": 6629,
+          "previous_timestamp": 220.032682292,
+          "persistence_timestamp": 223.032682292,
+          "description": "A completed grid call spreads multiple different-size, equal-height bricks across the viewport.",
+          "category": "render"
+        },
+        {
+          "timestamp": 223.966666667,
+          "native_pts": 3441142,
+          "native_frame_index": 6719,
+          "previous_timestamp": 223.032682292,
+          "persistence_timestamp": 226.032682292,
+          "description": "A multiplier range is added to the height argument and the model updates to bricks of visibly different heights.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 226.966666667,
+          "native_pts": 3487222,
+          "native_frame_index": 6809,
+          "previous_timestamp": 226.032682292,
+          "persistence_timestamp": 230.032682292,
+          "description": "The denser, wider distribution produces a large grid of different footprint and height variants.",
+          "category": "render"
+        },
+        {
+          "timestamp": 230.966666667,
+          "native_pts": 3548662,
+          "native_frame_index": 6929,
+          "previous_timestamp": 230.032682292,
+          "persistence_timestamp": 233.032682292,
+          "description": "The camera switches to a near top-down view, exposing many rows and their different stud patterns.",
+          "category": "view"
+        },
+        {
+          "timestamp": 233.966666667,
+          "native_pts": 3594742,
+          "native_frame_index": 7019,
+          "previous_timestamp": 233.032682292,
+          "persistence_timestamp": 235.032682292,
+          "description": "The full grid is rotated back to an oblique perspective where the different heights are visible.",
+          "category": "view"
+        },
+        {
+          "timestamp": 235.966666667,
+          "native_pts": 3625462,
+          "native_frame_index": 7079,
+          "previous_timestamp": 235.032682292,
+          "persistence_timestamp": 238.032682292,
+          "description": "The Share menu overlays the viewport with export controls and a QR code.",
+          "category": "popover"
+        },
+        {
+          "timestamp": 236.966666667,
+          "native_pts": 3640822,
+          "native_frame_index": 7109,
+          "previous_timestamp": 236.032682292,
+          "persistence_timestamp": 238.032682292,
+          "description": "The browser downloads list overlays the Share menu after a brick export.",
+          "category": "popover"
+        },
+        {
+          "timestamp": 238.966666667,
+          "native_pts": 3671542,
+          "native_frame_index": 7169,
+          "previous_timestamp": 238.032682292,
+          "persistence_timestamp": 240.432682292,
+          "description": "The browser and Share overlays close and the finished variant grid remains visible through the end.",
+          "category": "view"
+        }
+      ],
+      "ocr": [
+        {
+          "timestamp": 0.0,
+          "native_pts": 1014,
+          "native_frame_index": 0,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.22313297,
+            0.18427518,
+            0.14936248
+          ],
+          "text": "use std::geo2d::*;\nuse std::ops::*;\n\nconst SPACING = 8mm;\nconst THICKNESS = 1.2mm;\nconst BASE_HEIGHT = 9.6mm;\nconst TOLERANCE = 0.2mm;",
+          "description": "Imports and constants in the opening eight-stud brick example.",
+          "source_text": "use std::geo2d::*;\nuse std::ops::*;\n\nconst SPACING = 8mm;\nconst THICKNESS = 1.2mm;\nconst BASE_HEIGHT = 9.6mm;\nconst TOLERANCE = 0.2mm;",
+          "roi": [
+            0.0472973,
+            0.22313297,
+            0.18427518,
+            0.14936248
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 6.966666667,
+          "native_pts": 108022,
+          "native_frame_index": 209,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.22313297,
+            0.13022113,
+            0.04098361
+          ],
+          "text": "const SPACING = 8mm;\nconst THICKNESS = 1.",
+          "description": "Draft thickness declaration with the decimal point visible. Completion entries sit below this region.",
+          "source_text": "const SPACING = 8mm;\nconst THICKNESS = 1.",
+          "roi": [
+            0.0472973,
+            0.22313297,
+            0.13022113,
+            0.04098361
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 31.966666667,
+          "native_pts": 492022,
+          "native_frame_index": 959,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.22313297,
+            0.24938575,
+            0.29234973
+          ],
+          "text": "const SPACING = 8mm;\nconst THICKNESS = 1.2mm;\nconst BASE_HEIGHT = 9.6mm;\nconst TOLERANCE = 0.2mm;\n\nwidth = 4 * SPACING - TOLERANCE;\nheight = 2 * SPACING - TOLERANCE;\n\nuse std::ops::buffer;\n\nrect = Rect(width, height);\nframe = rect - rect.buffer(-THICKNESS);\n\nframe;",
+          "description": "The code defines the frame and emits its 2D outline.",
+          "source_text": "const SPACING = 8mm;\nconst THICKNESS = 1.2mm;\nconst BASE_HEIGHT = 9.6mm;\nconst TOLERANCE = 0.2mm;\n\nwidth = 4 * SPACING - TOLERANCE;\nheight = 2 * SPACING - TOLERANCE;\n\nuse std::ops::buffer;\n\nrect = Rect(width, height);\nframe = rect - rect.buffer(-THICKNESS);\n\nframe;",
+          "roi": [
+            0.0472973,
+            0.22313297,
+            0.24938575,
+            0.29234973
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 43.966666667,
+          "native_pts": 676342,
+          "native_frame_index": 1319,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.49362477,
+            0.27948403,
+            0.02185792
+          ],
+          "text": "rimngCircle(d = 6.51mm) - Circle(d = 4.8mm);",
+          "description": "The in-progress line contains a literal mistyped prefix at the caret.",
+          "source_text": "rimngCircle(d = 6.51mm) - Circle(d = 4.8mm);",
+          "roi": [
+            0.0472973,
+            0.49362477,
+            0.27948403,
+            0.02185792
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 50.966666667,
+          "native_pts": 783862,
+          "native_frame_index": 1529,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.49271403,
+            0.29484029,
+            0.08378871
+          ],
+          "text": "ring = Circle(d = 6.51mm) - Circle(d = 4.8mm);\nring.translate(x = [-1,0,1] * SPACING);\n\nframe;",
+          "description": "The ring translation is visible while the rectangular outline and three rings are rendered.",
+          "source_text": "ring = Circle(d = 6.51mm) - Circle(d = 4.8mm);\nring.translate(x = [-1,0,1] * SPACING);\n\nframe;",
+          "roi": [
+            0.0472973,
+            0.49271403,
+            0.29484029,
+            0.08378871
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 59.966666667,
+          "native_pts": 922102,
+          "native_frame_index": 1799,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.55555556,
+            0.21867322,
+            0.02459016
+          ],
+          "text": "base = (frame | rings).extrude();",
+          "description": "The empty extrusion call is visible while the editor reports errors.",
+          "source_text": "base = (frame | rings).extrude();",
+          "roi": [
+            0.0472973,
+            0.55555556,
+            0.21867322,
+            0.02459016
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 68.966666667,
+          "native_pts": 1060342,
+          "native_frame_index": 2069,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.49271403,
+            0.35626536,
+            0.12659381
+          ],
+          "text": "ring = Circle(d = 6.51mm) - Circle(d = 4.8mm);\nrings = ring.translate(x = [-1, 0, 1] * SPACING);\n\nbase = (frame | rings).extrude(BASE_HEIGHT - THICKNESS);\n\nbase;",
+          "description": "The frame and rings are extruded together as the hollow base.",
+          "source_text": "ring = Circle(d = 6.51mm) - Circle(d = 4.8mm);\nrings = ring.translate(x = [-1, 0, 1] * SPACING);\n\nbase = (frame | rings).extrude(BASE_HEIGHT - THICKNESS);\n\nbase;",
+          "roi": [
+            0.0472973,
+            0.49271403,
+            0.35626536,
+            0.12659381
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 82.966666667,
+          "native_pts": 1275382,
+          "native_frame_index": 2489,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.63661202,
+            0.06756757,
+            0.10837887
+          ],
+          "text": "{\n    base;\n    cap;\n}\nbase;",
+          "description": "An unfinished assembly block with an extra base expression below the brace.",
+          "source_text": "{\n    base;\n    cap;\n}\nbase;",
+          "roi": [
+            0.0472973,
+            0.63661202,
+            0.06756757,
+            0.10837887
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 90.966666667,
+          "native_pts": 1398262,
+          "native_frame_index": 2729,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.59653916,
+            0.29176904,
+            0.12932605
+          ],
+          "text": "cap = Rect(width, height).extrude(THICKNESS);\n\n{\n    base;\n    cap;\n}.std::ops::align(Z, spacing = 6mm);",
+          "description": "The selected spacing value separates the cap and base in the viewport.",
+          "source_text": "cap = Rect(width, height).extrude(THICKNESS);\n\n{\n    base;\n    cap;\n}.std::ops::align(Z, spacing = 6mm);",
+          "roi": [
+            0.0472973,
+            0.59653916,
+            0.29176904,
+            0.12932605
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 107.966666667,
+          "native_pts": 1659382,
+          "native_frame_index": 3239,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.63752277,
+            0.47604423,
+            0.02276867
+          ],
+          "text": "knobs = Circle(d = 4.8mm).multiply(4 * 2).distribute_grid(width, height, 4);",
+          "description": "The visible knob declaration has an invalid argument count and a red diagnostic underline.",
+          "source_text": "knobs = Circle(d = 4.8mm).multiply(4 * 2).distribute_grid(width, height, 4);",
+          "roi": [
+            0.0472973,
+            0.63752277,
+            0.47604423,
+            0.02276867
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 114.966666667,
+          "native_pts": 1766902,
+          "native_frame_index": 3449,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.63752277,
+            0.48832924,
+            0.02276867
+          ],
+          "text": "knobs = Circle(d = 4.8mm).multiply(4 * 2).distribute_grid(width, height, 2, 4)",
+          "description": "The editor clips the line at its right edge. The transcript ends at the last fully visible character.",
+          "source_text": "knobs = Circle(d = 4.8mm).multiply(4 * 2).distribute_grid(width, height, 2, 4)",
+          "roi": [
+            0.0472973,
+            0.63752277,
+            0.48832924,
+            0.02276867
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 117.966666667,
+          "native_pts": 1812982,
+          "native_frame_index": 3539,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.67941712,
+            0.16830467,
+            0.10564663
+          ],
+          "text": "{\n    base;\n    cap;\n    knobs;\n}.align(Z, spacing = 9mm);",
+          "description": "The parts are separated vertically in the exploded assembly view.",
+          "source_text": "{\n    base;\n    cap;\n    knobs;\n}.align(Z, spacing = 9mm);",
+          "roi": [
+            0.0472973,
+            0.67941712,
+            0.16830467,
+            0.10564663
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 133.966666667,
+          "native_pts": 2058742,
+          "native_frame_index": 4019,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.59107468,
+            0.31818182,
+            0.0856102
+          ],
+          "text": "knobs = Circle(d = 4.8mm)\n    .multiply(columns * rows)\n    .distribute_grid(width, height, rows, columns)\n    .extrude(1.7mm);",
+          "description": "The knob-generation chain is formatted across four lines.",
+          "source_text": "knobs = Circle(d = 4.8mm)\n    .multiply(columns * rows)\n    .distribute_grid(width, height, rows, columns)\n    .extrude(1.7mm);",
+          "roi": [
+            0.0472973,
+            0.59107468,
+            0.31818182,
+            0.0856102
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 135.966666667,
+          "native_pts": 2089462,
+          "native_frame_index": 4079,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.25865209,
+            0.24385749,
+            0.10746812
+          ],
+          "text": "columns = 4;\nrows = 2;\n\nwidth = columns * SPACING - TOLERANCE;\nheight = rows * SPACING - TOLERANCE;",
+          "description": "The original dimensions specify two rows.",
+          "source_text": "columns = 4;\nrows = 2;\n\nwidth = columns * SPACING - TOLERANCE;\nheight = rows * SPACING - TOLERANCE;",
+          "roi": [
+            0.0472973,
+            0.25865209,
+            0.24385749,
+            0.10746812
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 136.966666667,
+          "native_pts": 2104822,
+          "native_frame_index": 4109,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.25865209,
+            0.24385749,
+            0.10746812
+          ],
+          "text": "columns = 4;\nrows = 3;\n\nwidth = columns * SPACING - TOLERANCE;\nheight = rows * SPACING - TOLERANCE;",
+          "description": "The updated dimensions specify three rows. The selected digit remains visible.",
+          "source_text": "columns = 4;\nrows = 3;\n\nwidth = columns * SPACING - TOLERANCE;\nheight = rows * SPACING - TOLERANCE;",
+          "roi": [
+            0.0472973,
+            0.25865209,
+            0.24385749,
+            0.10746812
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 151.966666667,
+          "native_pts": 2335222,
+          "native_frame_index": 4559,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.26411658,
+            0.38083538,
+            0.04098361
+          ],
+          "text": "op array(rows: Integer, columns: Integer, spacing: Length) {\n    @input.multiply(rows * columns).dis",
+          "description": "The array helper is mid-edit. The visible call ends in the incomplete member name.",
+          "source_text": "op array(rows: Integer, columns: Integer, spacing: Length) {\n    @input.multiply(rows * columns).dis",
+          "roi": [
+            0.0472973,
+            0.26411658,
+            0.38083538,
+            0.04098361
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 153.966666667,
+          "native_pts": 2365942,
+          "native_frame_index": 4619,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.26411658,
+            0.47542998,
+            0.04098361
+          ],
+          "text": "op array(rows: Integer, columns: Integer, spacing: Length) {\n    @input.multiply(rows * columns).distribute_grid(rows, columns, spacing)",
+          "description": "The incomplete helper call has the visible spacing value and closing parenthesis.",
+          "source_text": "op array(rows: Integer, columns: Integer, spacing: Length) {\n    @input.multiply(rows * columns).distribute_grid(rows, columns, spacing)",
+          "roi": [
+            0.0472973,
+            0.26411658,
+            0.47542998,
+            0.04098361
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 163.966666667,
+          "native_pts": 2519542,
+          "native_frame_index": 4919,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.53460838,
+            0.35626536,
+            0.0856102
+          ],
+          "text": "ring = Circle(d = 6.51mm) - Circle(d = 4.8mm);\nrings = ring.array(rows - 1, columns - 1, SPACING);\n\nbase = (frame | rings).extrude(BASE_HEIGHT - THICKNESS);",
+          "description": "The ring placement now uses the array helper.",
+          "source_text": "ring = Circle(d = 6.51mm) - Circle(d = 4.8mm);\nrings = ring.array(rows - 1, columns - 1, SPACING);\n\nbase = (frame | rings).extrude(BASE_HEIGHT - THICKNESS);",
+          "roi": [
+            0.0472973,
+            0.53460838,
+            0.35626536,
+            0.0856102
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 178.966666667,
+          "native_pts": 2749942,
+          "native_frame_index": 5369,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.68032787,
+            0.3507371,
+            0.04371585
+          ],
+          "text": "knobs = Circle(d = 4.8mm).array(columns, rows, SPACING)\n    .extrude(1.7mm);",
+          "description": "This failing caller still supplies the old spacing argument.",
+          "source_text": "knobs = Circle(d = 4.8mm).array(columns, rows, SPACING)\n    .extrude(1.7mm);",
+          "roi": [
+            0.0472973,
+            0.68032787,
+            0.3507371,
+            0.04371585
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 182.966666667,
+          "native_pts": 2811382,
+          "native_frame_index": 5489,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.42440801,
+            0.35626536,
+            0.3132969
+          ],
+          "text": "ring = Circle(d = 6.51mm) - Circle(d = 4.8mm);\nrings = ring.array(rows - 1, columns - 1);\n\nbase = (frame | rings).extrude(BASE_HEIGHT - THICKNESS);\n\ncap = Rect(width, height).extrude(THICKNESS);\n\nknobs = Circle(d = 4.8mm).array(columns, rows)\n    .extrude(1.7mm);\n\n{\n    base;\n    cap;\n    knobs;\n}.align(Z);",
+          "description": "Both array calls now use two arguments and the assembly compiles.",
+          "source_text": "ring = Circle(d = 6.51mm) - Circle(d = 4.8mm);\nrings = ring.array(rows - 1, columns - 1);\n\nbase = (frame | rings).extrude(BASE_HEIGHT - THICKNESS);\n\ncap = Rect(width, height).extrude(THICKNESS);\n\nknobs = Circle(d = 4.8mm).array(columns, rows)\n    .extrude(1.7mm);\n\n{\n    base;\n    cap;\n    knobs;\n}.align(Z);",
+          "roi": [
+            0.0472973,
+            0.42440801,
+            0.35626536,
+            0.3132969
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 192.966666667,
+          "native_pts": 2964982,
+          "native_frame_index": 5789,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.34699454,
+            0.19410319,
+            0.06193078
+          ],
+          "text": "columns = 4;\nrows = 3;\nbase_height = BASE_HEIGHT * 2;",
+          "description": "The doubled height multiplier is visible during a short preview trial.",
+          "source_text": "columns = 4;\nrows = 3;\nbase_height = BASE_HEIGHT * 2;",
+          "roi": [
+            0.0472973,
+            0.34699454,
+            0.19410319,
+            0.06193078
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 202.966666667,
+          "native_pts": 3118582,
+          "native_frame_index": 6089,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.34517304,
+            0.38697789,
+            0.02276867
+          ],
+          "text": "part Brick(columns: Len, rows: Length, base_height: Length) {",
+          "description": "The part declaration still contains an incomplete type name.",
+          "source_text": "part Brick(columns: Len, rows: Length, base_height: Length) {",
+          "roi": [
+            0.0472973,
+            0.34517304,
+            0.38697789,
+            0.02276867
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 208.966666667,
+          "native_pts": 3210742,
+          "native_frame_index": 6269,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.26411658,
+            0.41584767,
+            0.52367942
+          ],
+          "text": "part Brick(columns: Length, rows: Length, base_height: Length) {\n    width = columns * SPACING - TOLERANCE;\n    height = rows * SPACING - TOLERANCE;\n\n    rect = Rect(width, height);\n    frame = rect - rect.buffer(-THICKNESS);\n\n    ring = Circle(d = 6.51mm) - Circle(d = 4.8mm);\n    rings = ring.array(rows - 1, columns - 1);\n\n    base = (frame | rings).extrude(base_height - THICKNESS);\n\n    cap = Rect(width, height).extrude(THICKNESS);\n\n    knobs = Circle(d = 4.8mm).array(columns, rows)\n        .extrude(1.7mm);\n\n    {\n        base;\n        cap;\n        knobs;\n    }.align(Z);\n}\n\nBrick(4, 2, BASE_HEIGHT);",
+          "description": "The complete attempted part definition with the still-incorrect dimension parameter types and failing call.",
+          "source_text": "part Brick(columns: Length, rows: Length, base_height: Length) {\n    width = columns * SPACING - TOLERANCE;\n    height = rows * SPACING - TOLERANCE;\n\n    rect = Rect(width, height);\n    frame = rect - rect.buffer(-THICKNESS);\n\n    ring = Circle(d = 6.51mm) - Circle(d = 4.8mm);\n    rings = ring.array(rows - 1, columns - 1);\n\n    base = (frame | rings).extrude(base_height - THICKNESS);\n\n    cap = Rect(width, height).extrude(THICKNESS);\n\n    knobs = Circle(d = 4.8mm).array(columns, rows)\n        .extrude(1.7mm);\n\n    {\n        base;\n        cap;\n        knobs;\n    }.align(Z);\n}\n\nBrick(4, 2, BASE_HEIGHT);",
+          "roi": [
+            0.0472973,
+            0.26411658,
+            0.41584767,
+            0.52367942
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 211.966666667,
+          "native_pts": 3256822,
+          "native_frame_index": 6359,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.26411658,
+            0.41584767,
+            0.52367942
+          ],
+          "text": "part Brick(columns: Integer, rows: Integer, base_height: Length) {\n    width = columns * SPACING - TOLERANCE;\n    height = rows * SPACING - TOLERANCE;\n\n    rect = Rect(width, height);\n    frame = rect - rect.buffer(-THICKNESS);\n\n    ring = Circle(d = 6.51mm) - Circle(d = 4.8mm);\n    rings = ring.array(rows - 1, columns - 1);\n\n    base = (frame | rings).extrude(base_height - THICKNESS);\n\n    cap = Rect(width, height).extrude(THICKNESS);\n\n    knobs = Circle(d = 4.8mm).array(columns, rows)\n        .extrude(1.7mm);\n\n    {\n        base;\n        cap;\n        knobs;\n    }.align(Z);\n}\n\nBrick(4, 2, BASE_HEIGHT);",
+          "description": "The corrected typed part definition and its working call.",
+          "source_text": "part Brick(columns: Integer, rows: Integer, base_height: Length) {\n    width = columns * SPACING - TOLERANCE;\n    height = rows * SPACING - TOLERANCE;\n\n    rect = Rect(width, height);\n    frame = rect - rect.buffer(-THICKNESS);\n\n    ring = Circle(d = 6.51mm) - Circle(d = 4.8mm);\n    rings = ring.array(rows - 1, columns - 1);\n\n    base = (frame | rings).extrude(base_height - THICKNESS);\n\n    cap = Rect(width, height).extrude(THICKNESS);\n\n    knobs = Circle(d = 4.8mm).array(columns, rows)\n        .extrude(1.7mm);\n\n    {\n        base;\n        cap;\n        knobs;\n    }.align(Z);\n}\n\nBrick(4, 2, BASE_HEIGHT);",
+          "roi": [
+            0.0472973,
+            0.26411658,
+            0.41584767,
+            0.52367942
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 216.966666667,
+          "native_pts": 3333622,
+          "native_frame_index": 6509,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.74590164,
+            0.24815725,
+            0.02094718
+          ],
+          "text": "Brick([1..4], [1..4], BASE_HEIGHT).dis;",
+          "description": "The in-progress distribution method ends in dis. The existing semicolon remains visible after the caret.",
+          "source_text": "Brick([1..4], [1..4], BASE_HEIGHT).dis;",
+          "roi": [
+            0.0472973,
+            0.74590164,
+            0.24815725,
+            0.02094718
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 221.966666667,
+          "native_pts": 3410422,
+          "native_frame_index": 6659,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.74499089,
+            0.43611794,
+            0.02276867
+          ],
+          "text": "Brick([1..4], [1..4], BASE_HEIGHT).distribute_grid(15cm, 15cm, 4, 4);",
+          "description": "First successful distribution of a grid of equal-height variants.",
+          "source_text": "Brick([1..4], [1..4], BASE_HEIGHT).distribute_grid(15cm, 15cm, 4, 4);",
+          "roi": [
+            0.0472973,
+            0.74499089,
+            0.43611794,
+            0.02276867
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 227.966666667,
+          "native_pts": 3502582,
+          "native_frame_index": 6839,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.74499089,
+            0.48710074,
+            0.02276867
+          ],
+          "text": "rick([1..4], [1..4], BASE_HEIGHT * [1..4]).distribute_grid(25cm, 25cm, 8, 8);",
+          "description": "Horizontal scrolling removes the first character of the call. The missing first character is left out of both transcripts.",
+          "source_text": "rick([1..4], [1..4], BASE_HEIGHT * [1..4]).distribute_grid(25cm, 25cm, 8, 8);",
+          "roi": [
+            0.0472973,
+            0.74499089,
+            0.48710074,
+            0.02276867
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 232.966666667,
+          "native_pts": 3579382,
+          "native_frame_index": 6989,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.74499089,
+            0.48710074,
+            0.02276867
+          ],
+          "text": "rick([1..4], [1..4], BASE_HEIGHT * [1..4]).distribute_grid(27cm, 27cm, 8, 8);",
+          "description": "The final spacing is visible. Horizontal scrolling still clips the first character.",
+          "source_text": "rick([1..4], [1..4], BASE_HEIGHT * [1..4]).distribute_grid(27cm, 27cm, 8, 8);",
+          "roi": [
+            0.0472973,
+            0.74499089,
+            0.48710074,
+            0.02276867
+          ],
+          "kind": "code"
+        },
+        {
+          "timestamp": 235.966666667,
+          "native_pts": 3625462,
+          "native_frame_index": 7079,
+          "rect_xywh_normalized": [
+            0.0472973,
+            0.74499089,
+            0.48832924,
+            0.02276867
+          ],
+          "text": "Brick([1..4], [1..4], BASE_HEIGHT * [1..4]).distribute_grid(27cm, 27cm, 8, 8);",
+          "description": "The final call is fully visible after the editor scrolls back.",
+          "source_text": "Brick([1..4], [1..4], BASE_HEIGHT * [1..4]).distribute_grid(27cm, 27cm, 8, 8);",
+          "roi": [
+            0.0472973,
+            0.74499089,
+            0.48832924,
+            0.02276867
+          ],
+          "kind": "code"
+        }
+      ],
+      "initial_software_view": [
+        {
+          "timestamp": 0.0,
+          "native_pts": 1014,
+          "native_frame_index": 0,
+          "previous_timestamp": null,
+          "persistence_timestamp": 2.032682292,
+          "description": "A finished blue-gray eight-stud brick is visible beside the preloaded source in the µcad Playground.",
+          "category": "render"
+        }
+      ]
+    },
+    "ocdp-inkscape": {
+      "input_sha256": "b7b39da4e336109175e614b7f456bbf8c61ef2f514fe9b4cb9fabf6fe4f37252",
+      "reviewed": true,
+      "review_start": 0,
+      "review_end": 321.302,
+      "software_interval_seconds": [
+        6.0,
+        321.20099999999996
+      ],
+      "slide_changes": [
+        20.0,
+        23.0,
+        26.0,
+        34.0,
+        38.0,
+        45.0,
+        48.267,
+        51.0,
+        55.0,
+        58.0,
+        67.0,
+        71.0,
+        73.267,
+        74.5,
+        81.0,
+        87.267,
+        90.0,
+        98.0,
+        100.0,
+        107.0,
+        111.0,
+        121.0,
+        132.0,
+        135.0,
+        140.0,
+        142.0,
+        148.0,
+        151.0,
+        162.0,
+        171.0,
+        178.0,
+        181.0,
+        184.0,
+        188.0,
+        195.0,
+        209.0,
+        213.0,
+        217.0,
+        222.0,
+        224.0,
+        228.0,
+        230.0,
+        232.0,
+        237.0,
+        242.0,
+        247.0,
+        263.0,
+        265.0,
+        270.0,
+        274.0,
+        277.0,
+        280.0,
+        283.0,
+        286.0,
+        288.0,
+        291.0,
+        293.0,
+        304.0,
+        308.267,
+        309.5,
+        313.0,
+        316.0
+      ],
+      "boundary_evidence": [
+        {
+          "timestamp": 20.0,
+          "native_pts": 20007,
+          "native_frame_index": 600,
+          "previous_timestamp": 19.007,
+          "persistence_timestamp": 22.007,
+          "description": "The standalone SVG replaces the Commons file page and displays the shirt larger on a white background.",
+          "category": "navigation"
+        },
+        {
+          "timestamp": 23.0,
+          "native_pts": 23007,
+          "native_frame_index": 690,
+          "previous_timestamp": 22.007,
+          "persistence_timestamp": 25.007,
+          "description": "The browser's save dialog opens with a filename for the original SVG.",
+          "category": "dialog"
+        },
+        {
+          "timestamp": 26.0,
+          "native_pts": 26007,
+          "native_frame_index": 780,
+          "previous_timestamp": 25.007,
+          "persistence_timestamp": 33.007,
+          "description": "The save dialog closes and the standalone SVG remains on the browser tab.",
+          "category": "dialog"
+        },
+        {
+          "timestamp": 34.0,
+          "native_pts": 34007,
+          "native_frame_index": 1020,
+          "previous_timestamp": 33.007,
+          "persistence_timestamp": 37.007,
+          "description": "A white application window replaces the browser's SVG preview during the attempt to open the source in Inkscape.",
+          "category": "navigation"
+        },
+        {
+          "timestamp": 38.0,
+          "native_pts": 38007,
+          "native_frame_index": 1140,
+          "previous_timestamp": 37.007,
+          "persistence_timestamp": 44.007,
+          "description": "The browser briefly returns to the foreground with the standalone SVG before the Inkscape window takes over.",
+          "category": "navigation"
+        },
+        {
+          "timestamp": 45.0,
+          "native_pts": 45007,
+          "native_frame_index": 1350,
+          "previous_timestamp": 44.007,
+          "persistence_timestamp": 48.007,
+          "description": "The Inkscape workspace opens with an empty white canvas, layers window, and right sidebar.",
+          "category": "workspace"
+        },
+        {
+          "timestamp": 48.267,
+          "native_pts": 48274,
+          "native_frame_index": 1448,
+          "previous_timestamp": 48.007,
+          "persistence_timestamp": 49.274,
+          "description": "The Inkscape Open dialog appears over the canvas. The original Owner Yokoyama Shuji SVG is highlighted.",
+          "category": "dialog"
+        },
+        {
+          "timestamp": 51.0,
+          "native_pts": 51007,
+          "native_frame_index": 1530,
+          "previous_timestamp": 50.007,
+          "persistence_timestamp": 54.007,
+          "description": "The SVG is loaded on the canvas and zoomed in as the Inkscape layers window stays open.",
+          "category": "workspace"
+        },
+        {
+          "timestamp": 55.0,
+          "native_pts": 55007,
+          "native_frame_index": 1650,
+          "previous_timestamp": 54.007,
+          "persistence_timestamp": 57.007,
+          "description": "The top group in the layers window is expanded to reveal individual parts of the shirt.",
+          "category": "editor_selection"
+        },
+        {
+          "timestamp": 58.0,
+          "native_pts": 58007,
+          "native_frame_index": 1740,
+          "previous_timestamp": 57.007,
+          "persistence_timestamp": 66.007,
+          "description": "The viewer-left sleeve is selected. Fill and Stroke opens a color wheel showing the sleeve's purple.",
+          "category": "editor_selection"
+        },
+        {
+          "timestamp": 67.0,
+          "native_pts": 67007,
+          "native_frame_index": 2010,
+          "previous_timestamp": 66.007,
+          "persistence_timestamp": 70.007,
+          "description": "A colored reference strip and an instructional red arrow are overlaid above the palette while the sleeve stays selected.",
+          "category": "demo_overlay"
+        },
+        {
+          "timestamp": 71.0,
+          "native_pts": 71007,
+          "native_frame_index": 2130,
+          "previous_timestamp": 70.774,
+          "persistence_timestamp": 72.774,
+          "description": "The selected viewer-left sleeve is recolored white while its cuff and opposite sleeve remain purple.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 73.267,
+          "native_pts": 73274,
+          "native_frame_index": 2198,
+          "previous_timestamp": 73.007,
+          "persistence_timestamp": 74.274,
+          "description": "The viewer-left sleeve takes on the same cyan as the body before the final red fill.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 74.5,
+          "native_pts": 74507,
+          "native_frame_index": 2235,
+          "previous_timestamp": 74.274,
+          "persistence_timestamp": 80.007,
+          "description": "The viewer-left sleeve is set to red. Its cuff and the other sleeve remain purple.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 81.0,
+          "native_pts": 81007,
+          "native_frame_index": 2430,
+          "previous_timestamp": 80.007,
+          "persistence_timestamp": 86.007,
+          "description": "The viewer-right sleeve becomes the selected object and the wheel switches back to purple.",
+          "category": "editor_selection"
+        },
+        {
+          "timestamp": 87.267,
+          "native_pts": 87274,
+          "native_frame_index": 2618,
+          "previous_timestamp": 87.007,
+          "persistence_timestamp": 88.274,
+          "description": "The selected viewer-right sleeve changes from purple to white while both cuffs remain purple.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 90.0,
+          "native_pts": 90007,
+          "native_frame_index": 2700,
+          "previous_timestamp": 89.007,
+          "persistence_timestamp": 97.007,
+          "description": "The viewer-right sleeve is set to match the red sleeve on the other side. Both cuffs remain purple.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 98.0,
+          "native_pts": 98007,
+          "native_frame_index": 2940,
+          "previous_timestamp": 97.007,
+          "persistence_timestamp": 99.007,
+          "description": "The viewer-left cuff is selected in the layers list, with the purple Fill and Stroke wheel visible.",
+          "category": "editor_selection"
+        },
+        {
+          "timestamp": 100.0,
+          "native_pts": 100007,
+          "native_frame_index": 3000,
+          "previous_timestamp": 99.007,
+          "persistence_timestamp": 105.007,
+          "description": "Two separate cuff objects are selected together, with purple still visible on both ends.",
+          "category": "editor_selection"
+        },
+        {
+          "timestamp": 107.0,
+          "native_pts": 107007,
+          "native_frame_index": 3210,
+          "previous_timestamp": 106.007,
+          "persistence_timestamp": 110.007,
+          "description": "Both selected cuffs simultaneously take on the same pale fill, after briefly going orange.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 111.0,
+          "native_pts": 111007,
+          "native_frame_index": 3330,
+          "previous_timestamp": 110.007,
+          "persistence_timestamp": 117.007,
+          "description": "Both cuffs are recolored red to match the sleeves.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 121.0,
+          "native_pts": 121007,
+          "native_frame_index": 3630,
+          "previous_timestamp": 120.007,
+          "persistence_timestamp": 126.007,
+          "description": "An instructional red arrow identifies the layer's lock icon while the red sleeves and cuffs stay visible.",
+          "category": "demo_overlay"
+        },
+        {
+          "timestamp": 132.0,
+          "native_pts": 132007,
+          "native_frame_index": 3960,
+          "previous_timestamp": 131.007,
+          "persistence_timestamp": 134.007,
+          "description": "The spot-pattern group is expanded, exposing the individual circle paths in the layers window.",
+          "category": "editor_selection"
+        },
+        {
+          "timestamp": 135.0,
+          "native_pts": 135007,
+          "native_frame_index": 4050,
+          "previous_timestamp": 134.007,
+          "persistence_timestamp": 139.007,
+          "description": "The six spot paths are selected together, with their pink fill still visible.",
+          "category": "editor_selection"
+        },
+        {
+          "timestamp": 140.0,
+          "native_pts": 140007,
+          "native_frame_index": 4200,
+          "previous_timestamp": 139.007,
+          "persistence_timestamp": 141.007,
+          "description": "The six selected front spots change from pink to a nearly white fill.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 142.0,
+          "native_pts": 142007,
+          "native_frame_index": 4260,
+          "previous_timestamp": 141.007,
+          "persistence_timestamp": 147.007,
+          "description": "All six spots turn red together while the body remains cyan.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 148.0,
+          "native_pts": 148007,
+          "native_frame_index": 4440,
+          "previous_timestamp": 147.007,
+          "persistence_timestamp": 150.007,
+          "description": "The spot paths are collapsed in the layers list and the remaining garment parts become accessible.",
+          "category": "editor_selection"
+        },
+        {
+          "timestamp": 151.0,
+          "native_pts": 151007,
+          "native_frame_index": 4530,
+          "previous_timestamp": 150.007,
+          "persistence_timestamp": 154.007,
+          "description": "The cyan body object is selected, and the Fill and Stroke wheel switches to its cyan color.",
+          "category": "editor_selection"
+        },
+        {
+          "timestamp": 162.0,
+          "native_pts": 162007,
+          "native_frame_index": 4860,
+          "previous_timestamp": 161.007,
+          "persistence_timestamp": 170.007,
+          "description": "The collar and lower hem are added to the body selection so the blue garment pieces can be changed together.",
+          "category": "editor_selection"
+        },
+        {
+          "timestamp": 171.0,
+          "native_pts": 171007,
+          "native_frame_index": 5130,
+          "previous_timestamp": 170.007,
+          "persistence_timestamp": 177.007,
+          "description": "The body, collar and hem turn white. The red sleeves, cuffs and six red spots remain.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 178.0,
+          "native_pts": 178007,
+          "native_frame_index": 5340,
+          "previous_timestamp": 177.007,
+          "persistence_timestamp": 180.007,
+          "description": "The open layer group is collapsed around the finished red-and-white design.",
+          "category": "editor_selection"
+        },
+        {
+          "timestamp": 181.0,
+          "native_pts": 181007,
+          "native_frame_index": 5430,
+          "previous_timestamp": 180.007,
+          "persistence_timestamp": 183.007,
+          "description": "Selection handles disappear and the finished design is shown on a clean canvas.",
+          "category": "workspace"
+        },
+        {
+          "timestamp": 184.0,
+          "native_pts": 184007,
+          "native_frame_index": 5520,
+          "previous_timestamp": 183.007,
+          "persistence_timestamp": 185.007,
+          "description": "The Inkscape File menu opens over the finished design and Save As is selected.",
+          "category": "menu"
+        },
+        {
+          "timestamp": 188.0,
+          "native_pts": 188007,
+          "native_frame_index": 5640,
+          "previous_timestamp": 187.007,
+          "persistence_timestamp": 194.007,
+          "description": "The Save As dialog is fully visible with the existing SVG filename ready to replace.",
+          "category": "dialog"
+        },
+        {
+          "timestamp": 195.0,
+          "native_pts": 195007,
+          "native_frame_index": 5850,
+          "previous_timestamp": 194.007,
+          "persistence_timestamp": 207.007,
+          "description": "The filename is typed for the red-and-white SVG while the Save As dialog remains open.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 209.0,
+          "native_pts": 209007,
+          "native_frame_index": 6270,
+          "previous_timestamp": 208.007,
+          "persistence_timestamp": 212.007,
+          "description": "A black chapter card introduces uploading the newly created file.",
+          "category": "title_card"
+        },
+        {
+          "timestamp": 213.0,
+          "native_pts": 213007,
+          "native_frame_index": 6390,
+          "previous_timestamp": 212.007,
+          "persistence_timestamp": 216.007,
+          "description": "The browser shows the Japanese Wikimedia Commons homepage for the upload phase.",
+          "category": "browser"
+        },
+        {
+          "timestamp": 217.0,
+          "native_pts": 217007,
+          "native_frame_index": 6510,
+          "previous_timestamp": 216.007,
+          "persistence_timestamp": 220.007,
+          "description": "The Commons homepage scrolls to expose the upload link in the left column, with an overlaid arrow pointing at it.",
+          "category": "demo_overlay"
+        },
+        {
+          "timestamp": 222.0,
+          "native_pts": 222007,
+          "native_frame_index": 6660,
+          "previous_timestamp": 221.007,
+          "persistence_timestamp": 223.007,
+          "description": "The Commons Upload Wizard presents the blue button for selecting media to upload.",
+          "category": "workspace"
+        },
+        {
+          "timestamp": 224.0,
+          "native_pts": 224007,
+          "native_frame_index": 6720,
+          "previous_timestamp": 223.007,
+          "persistence_timestamp": 226.007,
+          "description": "A Windows file picker opens. The newly saved SVG is selected from the two SVG files shown.",
+          "category": "dialog"
+        },
+        {
+          "timestamp": 228.0,
+          "native_pts": 228007,
+          "native_frame_index": 6840,
+          "previous_timestamp": 227.007,
+          "persistence_timestamp": 229.007,
+          "description": "The Upload Wizard shows the selected SVG file with a green completion mark before its preview has loaded.",
+          "category": "upload"
+        },
+        {
+          "timestamp": 230.0,
+          "native_pts": 230007,
+          "native_frame_index": 6900,
+          "previous_timestamp": 229.007,
+          "persistence_timestamp": 231.007,
+          "description": "The uploaded SVG thumbnail displays the new red-and-white design and the Continue button is available.",
+          "category": "upload"
+        },
+        {
+          "timestamp": 232.0,
+          "native_pts": 232007,
+          "native_frame_index": 6960,
+          "previous_timestamp": 231.007,
+          "persistence_timestamp": 235.007,
+          "description": "A red instructional arrow points to Continue at the bottom of the Upload Wizard's upload step.",
+          "category": "demo_overlay"
+        },
+        {
+          "timestamp": 237.0,
+          "native_pts": 237007,
+          "native_frame_index": 7110,
+          "previous_timestamp": 236.007,
+          "persistence_timestamp": 240.007,
+          "description": "The wizard advances to a permissions page showing the new SVG and ownership and license choices.",
+          "category": "permissions"
+        },
+        {
+          "timestamp": 242.0,
+          "native_pts": 242007,
+          "native_frame_index": 7260,
+          "previous_timestamp": 241.007,
+          "persistence_timestamp": 245.007,
+          "description": "The creator marks an ownership option and the visible license is Creative Commons CC0 Waiver.",
+          "category": "permissions"
+        },
+        {
+          "timestamp": 247.0,
+          "native_pts": 247007,
+          "native_frame_index": 7410,
+          "previous_timestamp": 246.007,
+          "persistence_timestamp": 259.007,
+          "description": "The wizard displays a description step with the uploaded image, title, caption and creation-date fields.",
+          "category": "form"
+        },
+        {
+          "timestamp": 263.0,
+          "native_pts": 263007,
+          "native_frame_index": 7890,
+          "previous_timestamp": 262.007,
+          "persistence_timestamp": 267.007,
+          "description": "Japanese text enters the caption field, with a visible Japanese input-method suggestion popup as the entry continues.",
+          "category": "edit"
+        },
+        {
+          "timestamp": 265.0,
+          "native_pts": 265007,
+          "native_frame_index": 7950,
+          "previous_timestamp": 264.007,
+          "persistence_timestamp": 267.007,
+          "description": "The Japanese text input suggestions open under the caption field.",
+          "category": "popover"
+        },
+        {
+          "timestamp": 270.0,
+          "native_pts": 270007,
+          "native_frame_index": 8100,
+          "previous_timestamp": 269.007,
+          "persistence_timestamp": 273.007,
+          "description": "A second input-method suggestion list appears while the caption is revised.",
+          "category": "popover"
+        },
+        {
+          "timestamp": 274.0,
+          "native_pts": 274007,
+          "native_frame_index": 8220,
+          "previous_timestamp": 273.007,
+          "persistence_timestamp": 276.007,
+          "description": "The final Japanese caption is visible in the text box after the suggestions close.",
+          "category": "form"
+        },
+        {
+          "timestamp": 277.0,
+          "native_pts": 277007,
+          "native_frame_index": 8310,
+          "previous_timestamp": 276.007,
+          "persistence_timestamp": 279.007,
+          "description": "The form scrolls down to show subject and category fields in the additional information area.",
+          "category": "navigation"
+        },
+        {
+          "timestamp": 280.0,
+          "native_pts": 280007,
+          "native_frame_index": 8400,
+          "previous_timestamp": 279.007,
+          "persistence_timestamp": 282.007,
+          "description": "The subject input is focused, and no subject is committed.",
+          "category": "form"
+        },
+        {
+          "timestamp": 283.0,
+          "native_pts": 283007,
+          "native_frame_index": 8490,
+          "previous_timestamp": 282.007,
+          "persistence_timestamp": 285.007,
+          "description": "The category field is focused and a category search begins.",
+          "category": "form"
+        },
+        {
+          "timestamp": 286.0,
+          "native_pts": 286007,
+          "native_frame_index": 8580,
+          "previous_timestamp": 285.007,
+          "persistence_timestamp": 287.007,
+          "description": "The category dropdown suggests the existing horse-racing-colours category.",
+          "category": "popover"
+        },
+        {
+          "timestamp": 288.0,
+          "native_pts": 288007,
+          "native_frame_index": 8640,
+          "previous_timestamp": 287.007,
+          "persistence_timestamp": 290.007,
+          "description": "The chosen horse-racing-colours category appears as a selected tag.",
+          "category": "form"
+        },
+        {
+          "timestamp": 291.0,
+          "native_pts": 291007,
+          "native_frame_index": 8730,
+          "previous_timestamp": 290.007,
+          "persistence_timestamp": 292.007,
+          "description": "The lower form displays a CC0 notice for contributed metadata and the blue file-publish button.",
+          "category": "form"
+        },
+        {
+          "timestamp": 293.0,
+          "native_pts": 293007,
+          "native_frame_index": 8790,
+          "previous_timestamp": 292.007,
+          "persistence_timestamp": 296.007,
+          "description": "The form returns to the upper description fields before publication.",
+          "category": "navigation"
+        },
+        {
+          "timestamp": 304.0,
+          "native_pts": 304007,
+          "native_frame_index": 9120,
+          "previous_timestamp": 303.007,
+          "persistence_timestamp": 308.007,
+          "description": "The publication attempt exposes a red validation message saying the creation date is required.",
+          "category": "diagnostic"
+        },
+        {
+          "timestamp": 308.267,
+          "native_pts": 308274,
+          "native_frame_index": 9248,
+          "previous_timestamp": 308.007,
+          "persistence_timestamp": 309.274,
+          "description": "The December 2024 date picker opens under the creation-date field.",
+          "category": "popover"
+        },
+        {
+          "timestamp": 309.5,
+          "native_pts": 309507,
+          "native_frame_index": 9285,
+          "previous_timestamp": 309.274,
+          "persistence_timestamp": 312.007,
+          "description": "December 10, 2024 is now visible in the creation-date field and the form is submitted again.",
+          "category": "form"
+        },
+        {
+          "timestamp": 313.0,
+          "native_pts": 313007,
+          "native_frame_index": 9390,
+          "previous_timestamp": 312.007,
+          "persistence_timestamp": 315.007,
+          "description": "The wizard shows the red-and-white SVG and a progress spinner while publication is underway.",
+          "category": "upload"
+        },
+        {
+          "timestamp": 316.0,
+          "native_pts": 316007,
+          "native_frame_index": 9480,
+          "previous_timestamp": 315.007,
+          "persistence_timestamp": 321.207,
+          "description": "A green completion banner confirms publication of Owner Kato Kouzaburou.svg and the wizard shows links and copy controls for the shared file.",
+          "category": "success"
+        }
+      ],
+      "ocr": [],
+      "initial_software_view": [
+        {
+          "timestamp": 6.0,
+          "native_pts": 6007,
+          "native_frame_index": 180,
+          "previous_timestamp": 5.007,
+          "persistence_timestamp": 19.007,
+          "description": "The Commons file page shows the original cyan racing silk with purple sleeves, purple cuffs, and six pink dots.",
+          "category": "browser"
+        }
+      ]
+    }
+  }
+}
