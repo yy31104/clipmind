@@ -1,0 +1,1111 @@
+{
+  "schema_version": 1,
+  "annotation_protocol": "interactive-software-native-pts-v1",
+  "method": "Independent AI-assisted source-frame annotation with reconciliation. Human review pending. Use first video PTS as origin. Score all predictions in the fixed software intervals. Full-recording scores include presentation context and have a different denominator.",
+  "cases": {
+    "software-gimp": {
+      "reviewed": true,
+      "review_start": 0,
+      "review_end": 197.199,
+      "input_sha256": "ac4c54629d148076fd9a4c1597e063bbf1e9a8a2783e099c8d5d195db89aaccd",
+      "software_interval_seconds": [
+        1.499,
+        192.499
+      ],
+      "slide_changes": [
+        11.424,
+        20.424,
+        29.697,
+        32.879,
+        39.424,
+        44.727,
+        51.576,
+        54.515,
+        57.727,
+        70.455,
+        73.0,
+        84.394,
+        86.758,
+        89.152,
+        95.788,
+        152.424,
+        174.242,
+        182.848,
+        188.394
+      ],
+      "boundary_evidence": [
+        {
+          "timestamp": 11.424,
+          "native_pts": 11425,
+          "native_frame_index": 377,
+          "category": "document_switch",
+          "description": "Switches to the working version with wider white margins."
+        },
+        {
+          "timestamp": 20.424,
+          "native_pts": 20425,
+          "native_frame_index": 674,
+          "category": "document_switch",
+          "description": "Switches back to the tighter scan."
+        },
+        {
+          "timestamp": 29.697,
+          "native_pts": 29698,
+          "native_frame_index": 943,
+          "category": "document_switch",
+          "description": "Switches to the working version with wider white margins."
+        },
+        {
+          "timestamp": 32.879,
+          "native_pts": 32880,
+          "native_frame_index": 1047,
+          "category": "document_switch",
+          "description": "Switches back to the tighter scan."
+        },
+        {
+          "timestamp": 39.424,
+          "native_pts": 39425,
+          "native_frame_index": 1244,
+          "category": "task_dialog",
+          "description": "Opens the GIMP new image dialog with a size form and the reference scan behind it."
+        },
+        {
+          "timestamp": 44.727,
+          "native_pts": 44728,
+          "native_frame_index": 1410,
+          "category": "new_document",
+          "description": "New untitled document opens and finishes painting its white background."
+        },
+        {
+          "timestamp": 51.576,
+          "native_pts": 51577,
+          "native_frame_index": 1586,
+          "category": "document_switch",
+          "description": "Switches from the new white canvas to the tightly cropped reference scan."
+        },
+        {
+          "timestamp": 54.515,
+          "native_pts": 54516,
+          "native_frame_index": 1683,
+          "category": "document_switch",
+          "description": "Switches to the larger-margin source scan for selection and cutting."
+        },
+        {
+          "timestamp": 57.727,
+          "native_pts": 57728,
+          "native_frame_index": 1756,
+          "category": "selection_change",
+          "description": "A rectangular selection drawn around the two photos reaches a held geometry and remains active through minor edge adjustments."
+        },
+        {
+          "timestamp": 70.455,
+          "native_pts": 70456,
+          "native_frame_index": 2114,
+          "category": "canvas_edit",
+          "description": "Cut completes, removing the photos from the source scan and leaving a mostly white region inside the selection."
+        },
+        {
+          "timestamp": 73.0,
+          "native_pts": 73001,
+          "native_frame_index": 2177,
+          "category": "document_switch",
+          "description": "Switches from the cut source scan to the new one-layer white document."
+        },
+        {
+          "timestamp": 84.394,
+          "native_pts": 84395,
+          "native_frame_index": 2510,
+          "category": "layer_change",
+          "description": "A second, floating-selection row appears above Background in the white document. The canvas stays white and the title gains an unsaved marker shortly after."
+        },
+        {
+          "timestamp": 86.758,
+          "native_pts": 86759,
+          "native_frame_index": 2588,
+          "category": "document_switch",
+          "description": "Opens the earlier untitled two-layer document, where the pasted photo content is visible."
+        },
+        {
+          "timestamp": 89.152,
+          "native_pts": 89153,
+          "native_frame_index": 2644,
+          "category": "document_switch",
+          "description": "Returns to the white document with its added layer."
+        },
+        {
+          "timestamp": 95.788,
+          "native_pts": 95789,
+          "native_frame_index": 2809,
+          "category": "document_close",
+          "description": "The white document closes and the earlier photo document becomes visible again."
+        },
+        {
+          "timestamp": 152.424,
+          "native_pts": 152425,
+          "native_frame_index": 4403,
+          "category": "task_dialog",
+          "description": "Layer Scale dialog opens, showing the floating layer at 926 by 1392 pixels."
+        },
+        {
+          "timestamp": 174.242,
+          "native_pts": 174243,
+          "native_frame_index": 5020,
+          "category": "parameter_commit",
+          "description": "GIMP validates the entered width and updates the linked height and dimension readout to 942 by 1416 pixels."
+        },
+        {
+          "timestamp": 182.848,
+          "native_pts": 182849,
+          "native_frame_index": 5290,
+          "category": "final_settings",
+          "description": "Final target dimensions 942 by 1363 pixels remain in the resize form until applied."
+        },
+        {
+          "timestamp": 188.394,
+          "native_pts": 188395,
+          "native_frame_index": 5433,
+          "category": "canvas_edit",
+          "description": "The scaled layer renders against the same canvas bounds, visibly changing the image proportions and surrounding white margins."
+        }
+      ],
+      "ocr": [],
+      "source_annotation_sha256": "7eed80e5f429532cb11562081bc68dd3e991dcefc858587f777baf7dbdb30b4f"
+    },
+    "software-live-kotlin": {
+      "reviewed": true,
+      "review_start": 0,
+      "review_end": 1366.122,
+      "input_sha256": "0584c10e2c9766425c062fb14ed8d03f508e1adf924ce8c51ab7b23bd01e500d",
+      "software_interval_seconds": [
+        237.68,
+        1228.76
+      ],
+      "slide_changes": [
+        3.98,
+        32.24,
+        33.48,
+        36.48,
+        43.24,
+        47.48,
+        59.24,
+        67.48,
+        98.48,
+        196.98,
+        223.24,
+        242.18,
+        255.22,
+        262.2,
+        275.7,
+        283.98,
+        286.46,
+        298.02,
+        315.28,
+        326.18,
+        351.94,
+        353.76,
+        375.28,
+        383.86,
+        425.28,
+        447.28,
+        452.04,
+        456.12,
+        457.5,
+        463.58,
+        468.48,
+        494.38,
+        501.52,
+        503.3,
+        506.78,
+        532.38,
+        540.78,
+        552.78,
+        558.78,
+        562.28,
+        571.28,
+        574.98,
+        577.98,
+        601.84,
+        622.6,
+        623.74,
+        630.56,
+        634.3,
+        642.98,
+        646.98,
+        667.28,
+        690.28,
+        702.68,
+        720.78,
+        750.78,
+        754.16,
+        762.26,
+        766.68,
+        769.98,
+        772.28,
+        776.9,
+        797.48,
+        813.98,
+        832.98,
+        834.68,
+        836.14,
+        861.28,
+        869.28,
+        880.78,
+        887.98,
+        893.48,
+        896.98,
+        901.76,
+        903.76,
+        925.8,
+        939.98,
+        944.22,
+        959.28,
+        966.78,
+        978.78,
+        981.98,
+        986.98,
+        989.26,
+        997.98,
+        1020.98,
+        1030.98,
+        1054.78,
+        1066.78,
+        1070.78,
+        1074.18,
+        1079.84,
+        1083.98,
+        1113.34,
+        1119.66,
+        1121.34,
+        1123.9,
+        1131.48,
+        1143.0,
+        1153.4,
+        1158.42,
+        1164.62,
+        1177.0,
+        1181.88,
+        1185.18,
+        1193.12,
+        1207.82,
+        1229.06,
+        1355.24
+      ],
+      "boundary_evidence": [
+        {
+          "timestamp": 3.98,
+          "native_pts": 51200,
+          "native_frame_index": 199,
+          "category": "title_card",
+          "description": "Opening talk title resolves after the event-logo animation."
+        },
+        {
+          "timestamp": 32.24,
+          "native_pts": 412928,
+          "native_frame_index": 1612,
+          "category": "presentation",
+          "description": "The stage view gives way to a black-and-white projection example."
+        },
+        {
+          "timestamp": 33.48,
+          "native_pts": 428800,
+          "native_frame_index": 1674,
+          "category": "presentation",
+          "description": "A patterned generative artwork example is displayed."
+        },
+        {
+          "timestamp": 36.48,
+          "native_pts": 467200,
+          "native_frame_index": 1824,
+          "category": "presentation",
+          "description": "A close view of the patterned artwork is introduced as a separate visual example."
+        },
+        {
+          "timestamp": 43.24,
+          "native_pts": 553728,
+          "native_frame_index": 2162,
+          "category": "presentation",
+          "description": "An image of a framed patterned artwork fills the slide area."
+        },
+        {
+          "timestamp": 47.48,
+          "native_pts": 608000,
+          "native_frame_index": 2374,
+          "category": "presentation",
+          "description": "A video of a machine working on dense circular stitching begins."
+        },
+        {
+          "timestamp": 59.24,
+          "native_pts": 758528,
+          "native_frame_index": 2962,
+          "category": "presentation",
+          "description": "A collage of creative coding frameworks replaces the stitching video."
+        },
+        {
+          "timestamp": 67.48,
+          "native_pts": 864000,
+          "native_frame_index": 3374,
+          "category": "presentation",
+          "description": "A prerecorded generative graphics montage begins."
+        },
+        {
+          "timestamp": 98.48,
+          "native_pts": 1260800,
+          "native_frame_index": 4924,
+          "category": "presentation",
+          "description": "Displays the three topics of rewiring, long builds, and repetitive tasks."
+        },
+        {
+          "timestamp": 196.98,
+          "native_pts": 2521600,
+          "native_frame_index": 9849,
+          "category": "presentation",
+          "description": "Displays the TOPLAP website overview."
+        },
+        {
+          "timestamp": 223.24,
+          "native_pts": 2857728,
+          "native_frame_index": 11162,
+          "category": "presentation",
+          "description": "Displays the live-demo setup image."
+        },
+        {
+          "timestamp": 242.18,
+          "native_pts": 3100160,
+          "native_frame_index": 12109,
+          "category": "demo_command",
+          "description": "The IDE opens its Run pane and reports that it is executing the initial live Kotlin program."
+        },
+        {
+          "timestamp": 255.22,
+          "native_pts": 3267072,
+          "native_frame_index": 12761,
+          "category": "demo_result",
+          "description": "The first OPENRNDR render opens in a separate window with a blank black canvas beside the editor."
+        },
+        {
+          "timestamp": 262.2,
+          "native_pts": 3356416,
+          "native_frame_index": 13110,
+          "category": "demo_result",
+          "description": "The live clear-color edit turns the black canvas solid pink."
+        },
+        {
+          "timestamp": 275.7,
+          "native_pts": 3529216,
+          "native_frame_index": 13785,
+          "category": "demo_result",
+          "description": "The new drawing call adds a filled pale circle centered on the pink canvas."
+        },
+        {
+          "timestamp": 283.98,
+          "native_pts": 3635200,
+          "native_frame_index": 14199,
+          "category": "demo_edit",
+          "description": "The editor completes the stroke-weight assignment at 10.0 while the circle still has its previous edge."
+        },
+        {
+          "timestamp": 286.46,
+          "native_pts": 3666944,
+          "native_frame_index": 14323,
+          "category": "demo_result",
+          "description": "The circle renders with a thick black outline."
+        },
+        {
+          "timestamp": 298.02,
+          "native_pts": 3814912,
+          "native_frame_index": 14901,
+          "category": "demo_result",
+          "description": "A translucent white stroke replaces the black outline around the circle."
+        },
+        {
+          "timestamp": 315.28,
+          "native_pts": 4035840,
+          "native_frame_index": 15764,
+          "category": "demo_edit",
+          "description": "The editor adds a complete radius expression that varies with the sine of elapsed seconds."
+        },
+        {
+          "timestamp": 326.18,
+          "native_pts": 4175360,
+          "native_frame_index": 16309,
+          "category": "demo_result",
+          "description": "The circle call now uses the radius variable, and the circle visibly pulses in size."
+        },
+        {
+          "timestamp": 351.94,
+          "native_pts": 4505088,
+          "native_frame_index": 17597,
+          "category": "demo_screen",
+          "description": "The IDE opens a newly created blank Kotlin source file for the next example."
+        },
+        {
+          "timestamp": 353.76,
+          "native_pts": 4528384,
+          "native_frame_index": 17688,
+          "category": "demo_edit",
+          "description": "The new file gains the OPENRNDR application scaffold, including configure, program, and extend blocks."
+        },
+        {
+          "timestamp": 375.28,
+          "native_pts": 4803840,
+          "native_frame_index": 18764,
+          "category": "demo_edit",
+          "description": "The drop-text listener now contains a complete println(it) callback."
+        },
+        {
+          "timestamp": 383.86,
+          "native_pts": 4913664,
+          "native_frame_index": 19193,
+          "category": "demo_result",
+          "description": "The first file drop produces a console entry showing an event coordinate and a dropped file path."
+        },
+        {
+          "timestamp": 425.28,
+          "native_pts": 5443840,
+          "native_frame_index": 21264,
+          "category": "demo_edit",
+          "description": "The editor completes a 64 by 64 drawImage initializer above the program block. The IDE marks the attempted call as unresolved."
+        },
+        {
+          "timestamp": 447.28,
+          "native_pts": 5725440,
+          "native_frame_index": 22364,
+          "category": "demo_edit",
+          "description": "The editor replaces the attempted initializer with a loadImage call using an empty string and adds the loadImage import."
+        },
+        {
+          "timestamp": 452.04,
+          "native_pts": 5786368,
+          "native_frame_index": 22602,
+          "category": "demo_screen",
+          "description": "The image viewer switches to a sustained white contour drawing on black, with a detached outline at left and loops on the right."
+        },
+        {
+          "timestamp": 456.12,
+          "native_pts": 5838592,
+          "native_frame_index": 22806,
+          "category": "demo_screen",
+          "description": "The IDE returns from the project image preview to the image-loading source, where the path argument is about to be filled."
+        },
+        {
+          "timestamp": 457.5,
+          "native_pts": 5856256,
+          "native_frame_index": 22875,
+          "category": "demo_edit",
+          "description": "The loadImage call now points to a concrete project PNG."
+        },
+        {
+          "timestamp": 463.58,
+          "native_pts": 5934080,
+          "native_frame_index": 23179,
+          "category": "demo_edit",
+          "description": "The draw extension now calls drawer.image with the loaded image."
+        },
+        {
+          "timestamp": 468.48,
+          "native_pts": 5996800,
+          "native_frame_index": 23424,
+          "category": "demo_result",
+          "description": "The first image-loading run ends with a persistent Gradle BUILD FAILED result."
+        },
+        {
+          "timestamp": 494.38,
+          "native_pts": 6328320,
+          "native_frame_index": 24719,
+          "category": "demo_screen",
+          "description": "The editor switches from the failing image-load example to the earlier live-template source before creating a separate file."
+        },
+        {
+          "timestamp": 501.52,
+          "native_pts": 6419712,
+          "native_frame_index": 25076,
+          "category": "demo_screen",
+          "description": "A second, newly created Kotlin file opens blank. A brief add-file dialog belongs to this file-creation step."
+        },
+        {
+          "timestamp": 503.3,
+          "native_pts": 6442496,
+          "native_frame_index": 25165,
+          "category": "demo_edit",
+          "description": "The second file gains its own OPENRNDR application and program scaffold."
+        },
+        {
+          "timestamp": 506.78,
+          "native_pts": 6487040,
+          "native_frame_index": 25339,
+          "category": "demo_edit",
+          "description": "The editor pastes the earlier image-loading and drop-listener source into the new file."
+        },
+        {
+          "timestamp": 532.38,
+          "native_pts": 6814720,
+          "native_frame_index": 26619,
+          "category": "demo_edit",
+          "description": "The editor settles on one application and program containing both the image draw call and the drop listener."
+        },
+        {
+          "timestamp": 540.78,
+          "native_pts": 6922240,
+          "native_frame_index": 27039,
+          "category": "demo_edit",
+          "description": "A mutable 64 by 64 drawImage buffer is initialized inside the program block."
+        },
+        {
+          "timestamp": 552.78,
+          "native_pts": 7075840,
+          "native_frame_index": 27639,
+          "category": "demo_edit",
+          "description": "The drop listener changes its print call to use the first dropped text entry."
+        },
+        {
+          "timestamp": 558.78,
+          "native_pts": 7152640,
+          "native_frame_index": 27939,
+          "category": "demo_edit",
+          "description": "The listener creates a File from the first dropped text entry, and the File import is present."
+        },
+        {
+          "timestamp": 562.28,
+          "native_pts": 7197440,
+          "native_frame_index": 28114,
+          "category": "demo_edit",
+          "description": "The callback gains a completed file-existence guard for the planned image replacement."
+        },
+        {
+          "timestamp": 571.28,
+          "native_pts": 7312640,
+          "native_frame_index": 28564,
+          "category": "demo_edit",
+          "description": "The guarded callback assigns a newly loaded image using the dropped file’s absolute path."
+        },
+        {
+          "timestamp": 574.98,
+          "native_pts": 7360000,
+          "native_frame_index": 28749,
+          "category": "demo_edit",
+          "description": "The callback destroys the previous image buffer before loading its replacement."
+        },
+        {
+          "timestamp": 577.98,
+          "native_pts": 7398400,
+          "native_frame_index": 28899,
+          "category": "demo_result",
+          "description": "The revised drop-file program still ends with BUILD FAILED."
+        },
+        {
+          "timestamp": 601.84,
+          "native_pts": 7703808,
+          "native_frame_index": 30092,
+          "category": "demo_result",
+          "description": "The Run pane reveals the runtime IllegalStateException stack trace. Further inspection exposes the missing graphics context diagnosis."
+        },
+        {
+          "timestamp": 622.6,
+          "native_pts": 7969536,
+          "native_frame_index": 31130,
+          "category": "demo_screen",
+          "description": "The presenter opens the display-layout editor to inspect the outputs after the graphics-context failure."
+        },
+        {
+          "timestamp": 623.74,
+          "native_pts": 7984128,
+          "native_frame_index": 31187,
+          "category": "demo_screen",
+          "description": "Moving the overlapping eDP tile in the configuration reveals both eDP and DisplayPort in the editable display layout."
+        },
+        {
+          "timestamp": 630.56,
+          "native_pts": 8071424,
+          "native_frame_index": 31528,
+          "category": "demo_result",
+          "description": "The internal eDP display disappears from the layout after the output is disabled, leaving DisplayPort."
+        },
+        {
+          "timestamp": 634.3,
+          "native_pts": 8119296,
+          "native_frame_index": 31715,
+          "category": "demo_screen",
+          "description": "The presenter returns from display configuration to the failed Kotlin image-drop program and resumes troubleshooting in the IDE."
+        },
+        {
+          "timestamp": 642.98,
+          "native_pts": 8230400,
+          "native_frame_index": 32149,
+          "category": "demo_result",
+          "description": "A dropped image now renders as a large green spotted-leaf photo, demonstrating the working file-drop path."
+        },
+        {
+          "timestamp": 646.98,
+          "native_pts": 8281600,
+          "native_frame_index": 32349,
+          "category": "demo_result",
+          "description": "The revised drop-file test now reports BUILD SUCCESSFUL after the earlier failures."
+        },
+        {
+          "timestamp": 667.28,
+          "native_pts": 8541440,
+          "native_frame_index": 33364,
+          "category": "demo_edit",
+          "description": "The program gains a Camera2D extension immediately before its image draw callback."
+        },
+        {
+          "timestamp": 690.28,
+          "native_pts": 8835840,
+          "native_frame_index": 34514,
+          "category": "demo_edit",
+          "description": "The program gains a Screenshots extension above Camera2D."
+        },
+        {
+          "timestamp": 702.68,
+          "native_pts": 8994560,
+          "native_frame_index": 35134,
+          "category": "demo_result",
+          "description": "The Run pane reveals a sustained screenshot-saved confirmation for a PNG file."
+        },
+        {
+          "timestamp": 720.78,
+          "native_pts": 9226240,
+          "native_frame_index": 36039,
+          "category": "demo_edit",
+          "description": "A completed Perturb filter declaration appears above the image buffer."
+        },
+        {
+          "timestamp": 750.78,
+          "native_pts": 9610240,
+          "native_frame_index": 37539,
+          "category": "demo_edit",
+          "description": "The program gains a loadFont declaration with a size of 400.0 and a placeholder path."
+        },
+        {
+          "timestamp": 754.16,
+          "native_pts": 9653504,
+          "native_frame_index": 37708,
+          "category": "demo_screen",
+          "description": "The editor opens SVG source showing XML and a sequence of path elements."
+        },
+        {
+          "timestamp": 762.26,
+          "native_pts": 9757184,
+          "native_frame_index": 38113,
+          "category": "demo_screen",
+          "description": "The editor switches from SVG markup to the earlier pink-circle template and displays the live-program source."
+        },
+        {
+          "timestamp": 766.68,
+          "native_pts": 9813760,
+          "native_frame_index": 38334,
+          "category": "demo_screen",
+          "description": "The editor opens another Kotlin sample showing a circle, explicit title drawing, and a text-drop handler."
+        },
+        {
+          "timestamp": 769.98,
+          "native_pts": 9856000,
+          "native_frame_index": 38499,
+          "category": "demo_screen",
+          "description": "A video-contour Kotlin example shows extraction of outlines and save calls for an SVG composition and a PNG."
+        },
+        {
+          "timestamp": 772.28,
+          "native_pts": 9885440,
+          "native_frame_index": 38614,
+          "category": "demo_screen",
+          "description": "The editor brings back the earlier image-loading and drop-listener source during the code comparison."
+        },
+        {
+          "timestamp": 776.9,
+          "native_pts": 9944576,
+          "native_frame_index": 38845,
+          "category": "demo_screen",
+          "description": "The presenter returns to the working Kotlin image program with the filter, font, and screenshot extensions to continue editing."
+        },
+        {
+          "timestamp": 797.48,
+          "native_pts": 10208000,
+          "native_frame_index": 39874,
+          "category": "demo_edit",
+          "description": "The loadFont call receives a concrete project-relative TrueType font path."
+        },
+        {
+          "timestamp": 813.98,
+          "native_pts": 10419200,
+          "native_frame_index": 40699,
+          "category": "demo_edit",
+          "description": "The program adds a draw-text call for LGM2026 with explicit placement near the bottom of the viewport."
+        },
+        {
+          "timestamp": 832.98,
+          "native_pts": 10662400,
+          "native_frame_index": 41649,
+          "category": "demo_edit",
+          "description": "The draw callback assigns the loaded font to drawer.fontMap immediately before drawing the title."
+        },
+        {
+          "timestamp": 834.68,
+          "native_pts": 10684160,
+          "native_frame_index": 41734,
+          "category": "demo_result",
+          "description": "The preview first renders a large bold white LGM2026 title near the bottom of the black canvas."
+        },
+        {
+          "timestamp": 836.14,
+          "native_pts": 10702848,
+          "native_frame_index": 41807,
+          "category": "demo_result",
+          "description": "The orange-ring photograph appears behind the title after a new file drop."
+        },
+        {
+          "timestamp": 861.28,
+          "native_pts": 11024640,
+          "native_frame_index": 43064,
+          "category": "demo_edit",
+          "description": "The program adds a complete AFTER_DRAW extension block as a separate drawing stage."
+        },
+        {
+          "timestamp": 869.28,
+          "native_pts": 11127040,
+          "native_frame_index": 43464,
+          "category": "demo_edit",
+          "description": "The font assignment and title draw call move into AFTER_DRAW, separate from the camera and image draw."
+        },
+        {
+          "timestamp": 880.78,
+          "native_pts": 11274240,
+          "native_frame_index": 44039,
+          "category": "demo_edit",
+          "description": "The title call moves inside a writer block while still retaining its explicit coordinates."
+        },
+        {
+          "timestamp": 887.98,
+          "native_pts": 11366400,
+          "native_frame_index": 44399,
+          "category": "demo_edit",
+          "description": "The writer now calls text for the title without a drawer receiver or explicit x and y coordinates."
+        },
+        {
+          "timestamp": 893.48,
+          "native_pts": 11436800,
+          "native_frame_index": 44674,
+          "category": "demo_edit",
+          "description": "The title writer has a completed horizontalAlign assignment of 0.5."
+        },
+        {
+          "timestamp": 896.98,
+          "native_pts": 11481600,
+          "native_frame_index": 44849,
+          "category": "demo_edit",
+          "description": "The title writer also gains a verticalAlign assignment of 0.5."
+        },
+        {
+          "timestamp": 901.76,
+          "native_pts": 11542784,
+          "native_frame_index": 45088,
+          "category": "demo_result",
+          "description": "The next render shows the large white title centered against black."
+        },
+        {
+          "timestamp": 903.76,
+          "native_pts": 11568384,
+          "native_frame_index": 45188,
+          "category": "demo_result",
+          "description": "The centered title stays fixed over the newly dropped leaf as the image moves beneath it."
+        },
+        {
+          "timestamp": 925.8,
+          "native_pts": 11850496,
+          "native_frame_index": 46290,
+          "category": "demo_edit",
+          "description": "The program adds a complete Post extension block after Camera2D."
+        },
+        {
+          "timestamp": 939.98,
+          "native_pts": 12032000,
+          "native_frame_index": 46999,
+          "category": "demo_edit",
+          "description": "The Post callback now applies Perturb to its input and output buffers."
+        },
+        {
+          "timestamp": 944.22,
+          "native_pts": 12086272,
+          "native_frame_index": 47211,
+          "category": "demo_result",
+          "description": "The orange-ring image renders as a flowing orange distortion beneath the stationary white title."
+        },
+        {
+          "timestamp": 959.28,
+          "native_pts": 12279040,
+          "native_frame_index": 47964,
+          "category": "demo_edit",
+          "description": "The program declares a GUI instance above the font and filter."
+        },
+        {
+          "timestamp": 966.78,
+          "native_pts": 12375040,
+          "native_frame_index": 48339,
+          "category": "demo_edit",
+          "description": "The program adds an initial GUI extension call that passes the uppercase GUI type."
+        },
+        {
+          "timestamp": 978.78,
+          "native_pts": 12528640,
+          "native_frame_index": 48939,
+          "category": "demo_edit",
+          "description": "The editor adds a call registering Perturb with the GUI."
+        },
+        {
+          "timestamp": 981.98,
+          "native_pts": 12569600,
+          "native_frame_index": 49099,
+          "category": "demo_result",
+          "description": "The Kotlin build console reports that it cannot infer type parameter T."
+        },
+        {
+          "timestamp": 986.98,
+          "native_pts": 12633600,
+          "native_frame_index": 49349,
+          "category": "demo_edit",
+          "description": "The extension argument is corrected to the lowercase gui instance."
+        },
+        {
+          "timestamp": 989.26,
+          "native_pts": 12662784,
+          "native_frame_index": 49463,
+          "category": "demo_result",
+          "description": "The updated renderer opens with a persistent gray Perturb group at left and the white title in the canvas. Its sliders are expanded during the run."
+        },
+        {
+          "timestamp": 997.98,
+          "native_pts": 12774400,
+          "native_frame_index": 49899,
+          "category": "demo_result",
+          "description": "The expanded Perturb controls are used to change the orange output from dense small ripples to broad flowing forms while the title stays fixed."
+        },
+        {
+          "timestamp": 1020.98,
+          "native_pts": 13068800,
+          "native_frame_index": 51049,
+          "category": "demo_edit",
+          "description": "The program declares a ColorCorrection filter as a second processing stage."
+        },
+        {
+          "timestamp": 1030.98,
+          "native_pts": 13196800,
+          "native_frame_index": 51549,
+          "category": "demo_edit",
+          "description": "The program declares a CMYKHalftone filter as a third stage."
+        },
+        {
+          "timestamp": 1054.78,
+          "native_pts": 13501440,
+          "native_frame_index": 52739,
+          "category": "demo_edit",
+          "description": "The editor combines Perturb, ColorCorrection, and CMYKHalftone in one chained filter expression."
+        },
+        {
+          "timestamp": 1066.78,
+          "native_pts": 13655040,
+          "native_frame_index": 53339,
+          "category": "demo_edit",
+          "description": "The GUI now registers both additional filter stages alongside Perturb."
+        },
+        {
+          "timestamp": 1070.78,
+          "native_pts": 13706240,
+          "native_frame_index": 53539,
+          "category": "demo_edit",
+          "description": "The Post callback is updated to apply the combined filter."
+        },
+        {
+          "timestamp": 1074.18,
+          "native_pts": 13749760,
+          "native_frame_index": 53709,
+          "category": "demo_result",
+          "description": "The combined-filter renderer opens with three named control groups, the title, and a faint patterned background."
+        },
+        {
+          "timestamp": 1079.84,
+          "native_pts": 13822208,
+          "native_frame_index": 53992,
+          "category": "demo_result",
+          "description": "The dropped image renders with green-and-pink marbling behind the white title."
+        },
+        {
+          "timestamp": 1083.98,
+          "native_pts": 13875200,
+          "native_frame_index": 54199,
+          "category": "demo_result",
+          "description": "The preview reaches a visibly coarse multicolor halftone in place of the smooth marbling."
+        },
+        {
+          "timestamp": 1113.34,
+          "native_pts": 14251008,
+          "native_frame_index": 55667,
+          "category": "demo_screen",
+          "description": "The editor opens the font-to-image exporter, showing its imports and offscreen render target."
+        },
+        {
+          "timestamp": 1119.66,
+          "native_pts": 14331904,
+          "native_frame_index": 55983,
+          "category": "demo_screen",
+          "description": "The editor opens Kotlin code that turns SVG contours into paths for mesh generation."
+        },
+        {
+          "timestamp": 1121.34,
+          "native_pts": 14353408,
+          "native_frame_index": 56067,
+          "category": "demo_screen",
+          "description": "The editor opens the image-to-SVG program, showing the Perturb configuration and image-processing setup."
+        },
+        {
+          "timestamp": 1123.9,
+          "native_pts": 14386176,
+          "native_frame_index": 56195,
+          "category": "demo_screen",
+          "description": "The presenter returns to the font-to-image exporter before running it."
+        },
+        {
+          "timestamp": 1131.48,
+          "native_pts": 14483200,
+          "native_frame_index": 56574,
+          "category": "demo_result",
+          "description": "The font exporter renders a tall, thin white LGM2026 wordmark on a black canvas."
+        },
+        {
+          "timestamp": 1143.0,
+          "native_pts": 14630656,
+          "native_frame_index": 57150,
+          "category": "demo_screen",
+          "description": "The IDE image viewer settles on an exported LGM2026 bitmap with smooth slanted lettering."
+        },
+        {
+          "timestamp": 1153.4,
+          "native_pts": 14763776,
+          "native_frame_index": 57670,
+          "category": "demo_screen",
+          "description": "The IDE opens another exported title bitmap with narrow upright lettering."
+        },
+        {
+          "timestamp": 1158.42,
+          "native_pts": 14828032,
+          "native_frame_index": 57921,
+          "category": "demo_screen",
+          "description": "The presenter returns to the image-to-SVG source to run the conversion example."
+        },
+        {
+          "timestamp": 1164.62,
+          "native_pts": 14907392,
+          "native_frame_index": 58231,
+          "category": "demo_result",
+          "description": "The conversion example renders three diagonal lines of outlined text on pink."
+        },
+        {
+          "timestamp": 1177.0,
+          "native_pts": 15065856,
+          "native_frame_index": 58850,
+          "category": "demo_screen",
+          "description": "The presenter returns to the SVG-to-mesh source and attempts to run it."
+        },
+        {
+          "timestamp": 1181.88,
+          "native_pts": 15128320,
+          "native_frame_index": 59094,
+          "category": "demo_result",
+          "description": "The SVG-to-mesh attempt reports BUILD FAILED in the Run console."
+        },
+        {
+          "timestamp": 1185.18,
+          "native_pts": 15170560,
+          "native_frame_index": 59259,
+          "category": "demo_screen",
+          "description": "A 3D mesh viewer shows golden orange extruded outlines against a purple viewport."
+        },
+        {
+          "timestamp": 1193.12,
+          "native_pts": 15272192,
+          "native_frame_index": 59656,
+          "category": "demo_screen",
+          "description": "The editor opens a separate mesh-rendering script with an orbit camera, OBJ loading, and a render target."
+        },
+        {
+          "timestamp": 1207.82,
+          "native_pts": 15460352,
+          "native_frame_index": 60391,
+          "category": "demo_result",
+          "description": "The final example displays a large white outline drawing against black."
+        },
+        {
+          "timestamp": 1229.06,
+          "native_pts": 15732224,
+          "native_frame_index": 61453,
+          "category": "screen_feed_end",
+          "description": "The direct software feed transitions back to the in-room camera."
+        },
+        {
+          "timestamp": 1355.24,
+          "native_pts": 17347328,
+          "native_frame_index": 67762,
+          "category": "credits",
+          "description": "The stream and recording credit card resolves and displays CC BY 4.0."
+        }
+      ],
+      "ocr": [
+        {
+          "timestamp": 337.52,
+          "roi": [
+            0.183333333,
+            0.427083333,
+            0.398611111,
+            0.166666667
+          ],
+          "text": "drawer.clear(ColorRGBa.PINK)\ndrawer.strokeWeight = 10.0\ndrawer.stroke = ColorRGBa.WHITE.opacify(0.5)\nval r = 250.0 + sin(seconds) * 50.0\ndrawer.circle(drawer.bounds.center, r)",
+          "kind": "code"
+        },
+        {
+          "timestamp": 375.98,
+          "roi": [
+            0.325,
+            0.397569444,
+            0.244444444,
+            0.112847222
+          ],
+          "text": "window.dropTexts.listen {\n    println(it)\n}",
+          "kind": "code"
+        },
+        {
+          "timestamp": 575.98,
+          "roi": [
+            0.316666667,
+            0.251736111,
+            0.370833333,
+            0.317708333
+          ],
+          "text": "var img = drawImage(64, 64) {}\nextend {\n    drawer.image(img)\n}\nwindow.dropTexts.listen {\n    val f = File(it.texts.first())\n    if(f.exists()) {\n        img.destroy()\n        img = loadImage(f.absolutePath)",
+          "kind": "code"
+        },
+        {
+          "timestamp": 897.98,
+          "roi": [
+            0.288888889,
+            0.286458333,
+            0.259722222,
+            0.197916667
+          ],
+          "text": "drawer.fontMap = font\nwriter {\n    horizontalAlign = 0.5\n    verticalAlign = 0.5\n    text(\"LGM2026\")\n}",
+          "kind": "code"
+        },
+        {
+          "timestamp": 1066.78,
+          "roi": [
+            0.298611111,
+            0.289930556,
+            0.241666667,
+            0.09375
+          ],
+          "text": "gui.add(fx1)\ngui.add(fx2)\ngui.add(fx3)",
+          "kind": "code"
+        }
+      ],
+      "source_annotation_sha256": "b9189a854c42b19132abf439c93be2be51fcaa5be47aa9b4402f53278dd39699"
+    }
+  }
+}

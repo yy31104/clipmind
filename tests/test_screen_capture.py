@@ -5,7 +5,7 @@ import subprocess
 import tempfile
 import unittest
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
 from clipmind import media, visual_states
 from clipmind.media import Frame
@@ -179,6 +179,56 @@ class IncrementalScreenTests(unittest.TestCase):
                 frames.append(Frame(index, index / 2, path))
             self.assertEqual(len(media.dedupe(frames)), 1)
 
+    def test_settled_small_edit_adds_a_boundary_but_a_flash_or_caret_does_not(self):
+        for kind in ('edit', 'flash', 'caret'):
+            with self.subTest(kind=kind), tempfile.TemporaryDirectory() as directory:
+                frames = []
+                for index in range(14):
+                    path = Path(directory) / f'{index}.png'
+                    image = Image.new('RGB', (640, 360), '#171717')
+                    draw = ImageDraw.Draw(image)
+                    draw.text((50, 40), 'Configuration', fill='white')
+                    edited = kind == 'edit' and index >= 6 or kind == 'flash' and index == 6
+                    draw.text((200, 110), f'timeout = {1 if edited else 0}', fill='white')
+                    if kind == 'caret':
+                        x = 279 if index < 6 else 289
+                        draw.rectangle((x, 109, x + 5, 123), fill='white')
+                    image.save(path)
+                    frames.append(Frame(index, index / 2, path, source_timestamp=index / 2))
+                self.assertLessEqual(media.hamming(media.dhash(frames[0].path),
+                                                   media.dhash(frames[6].path)), 6)
+                kept = media.dedupe(frames)
+                if kind == 'edit':
+                    self.assertEqual(
+                        [(f.timestamp, f.source_timestamp, f.path.name, f.observed_sample_count)
+                         for f in kept],
+                        [(0, 0, '0.png', 6), (3, 3, '6.png', 8)],
+                    )
+                else:
+                    self.assertEqual([f.timestamp for f in kept], [0])
+
+    def test_inverting_caret_does_not_hide_a_new_glyph_or_duplicate_old_ink(self):
+        for edit in (False, True):
+            with self.subTest(edit=edit), tempfile.TemporaryDirectory() as directory:
+                frames = []
+                for index in range(18):
+                    path = Path(directory) / f'{index}.png'
+                    image = Image.new('L', (640, 360), 23)
+                    draw = ImageDraw.Draw(image)
+                    for x in (176, 184, 192, 214, 222):
+                        draw.line((x, 110, x, 116, x + 3, 116), fill=244)
+                    cursor = 4 <= index < 10
+                    if cursor:
+                        draw.rectangle((200, 108, 208, 123), fill=244)
+                    if not edit or index >= 4:
+                        draw.line((204, 110, 204, 116, 207, 116), fill=23 if cursor else 244)
+                    image.save(path)
+                    frames.append(Frame(index, index / 2, path, source_timestamp=index / 2))
+                kept = media.dedupe(frames)
+                self.assertEqual([f.timestamp for f in kept], [0, 5] if edit else [0])
+                if edit:
+                    self.assertEqual(kept[-1].path.name, '10.png')
+
     def test_fade_uses_a_visible_onset_and_preserves_the_settled_capture(self):
         before = Image.new('RGB', (640, 360), '#181818')
         ImageDraw.Draw(before).text((35, 25), 'Sending a message', fill='white')
@@ -204,6 +254,41 @@ class IncrementalScreenTests(unittest.TestCase):
                 self.assertEqual(kept[1].source_timestamp, capture)
                 self.assertLess(kept[0].source_timestamp, onset)
                 self.assertEqual(kept[1].path, Path(directory) / f'{round(capture * 2)}.png')
+
+    def test_scroll_keeps_both_captures_before_an_unrelated_cut(self):
+        code = Image.new('L', (300, 250), 24)
+        draw = ImageDraw.Draw(code)
+        font = ImageFont.load_default(size=18)
+        for row, line in enumerate((
+            'window.open(path);', '    let channel = stdin;', '    emit(message);',
+            'append(0xFD, &payload);', 'let checksum = hash(k);', 'reader.send(port, x);',
+            'state[position] = value;', '    flush_async(queue);', 'print_result("sent");',
+            'do_work(true);', 'drop(channel);', 'close(port);', 'stop();',
+        )):
+            draw.text((20, row * 18), line, fill=60, font=font)
+        before = Image.new('L', (640, 360), 34)
+        before.paste(code.crop((0, 0, 300, 220)), (116, 32))
+        after = before.copy()
+        after.paste(code.crop((0, 18, 300, 238)), (116, 32))
+        later = before.copy()
+        later.paste(code.crop((0, 24, 300, 244)), (116, 32))
+        successor = Image.new('L', before.size, 224)
+        with tempfile.TemporaryDirectory() as directory:
+            paths = []
+            for i, image in enumerate((before,) * 2 + (after,) + (later,) * 3 + (successor,) * 3):
+                path = Path(directory) / f'{i}.png'
+                image.save(path)
+                paths.append(path)
+
+            def captures(samples):
+                frames = [Frame(i, i / 2, path, source_timestamp=i / 2) for i, path in enumerate(samples)]
+                return [(f.timestamp, f.source_timestamp, f.index, f.path) for f in media.dedupe(frames)]
+
+            scrolled = [(0, .5, 1, paths[1]), (1, 1.5, 3, paths[3])]
+            self.assertEqual(captures(paths), [*scrolled, (3, 3, 6, paths[6])])
+            self.assertEqual(captures(paths[:6]), scrolled)
+            flashed = paths[:3] + [paths[0]] * 3 + paths[6:]
+            self.assertEqual(captures(flashed), [(0, 1.5, 3, paths[0]), (3, 3, 6, paths[6])])
 
 
 if __name__ == '__main__':

@@ -3,7 +3,7 @@ from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch
 
-from clipmind import screen_rank, screen_rank_features, visual_states
+from clipmind import screen_interaction, screen_rank, screen_rank_features, visual_states
 from clipmind.media import Frame
 from scripts.classify_screen_ablation import _legacy_timeline
 from scripts.screen_evaluation import boundary_inventory
@@ -30,11 +30,18 @@ class ScreenRankTests(unittest.TestCase):
     def test_rank_keeps_warnings_and_semantic_types(self):
         timeline = frames()
         with patch.object(screen_rank_features, "features", return_value=iter(((1, (.8,)), (2, (.3,))))), \
-             patch.object(screen_rank, "_score", side_effect=(.8, .3)):
+             patch.object(screen_rank, "_score", side_effect=(.8, .3)), \
+             patch.object(screen_interaction, "adjust_scores", side_effect=lambda frames, scores: (scores, {})):
             self.assertTrue(screen_rank.annotate_information_boundaries(timeline, 5.))
         self.assertEqual([f.information_boundary for f in timeline], [None, True, False, True])
         self.assertEqual([f.change_kind for f in timeline], ["content", "speaker", "content", "uncertain"])
         self.assertEqual([f.timestamp for f in timeline], [0., 2., 3., 3.5])
+
+    def test_preferred_onset_uses_settled_fallback_when_competition_blocks_it(self):
+        times = [0, 1, 1.9, 3.4]
+        scores = {2: .18, 3: .18}
+        self.assertEqual(screen_rank._select(times, scores, set(), fallback_onsets={3: 2}), {2})
+        self.assertEqual(screen_rank._select(times, scores, {1}, fallback_onsets={3: 2}), {1, 3})
 
     def test_missing_raster_falls_back_without_partial_decisions(self):
         with TemporaryDirectory() as tmp:

@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "split": "holdout",
+  "cases": [
+    {
+      "case_id": "software-gimp",
+      "title": "GIMP fit the image to the canvas",
+      "page_url": "https://commons.wikimedia.org/wiki/File:GIMP_fit_the_image_to_the_canvas.webm",
+      "source_url": "https://upload.wikimedia.org/wikipedia/commons/4/4a/GIMP_fit_the_image_to_the_canvas.webm",
+      "creator": "Info-farmer",
+      "license": "CC0 1.0 Universal",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "publisher_media_bytes": 62234292,
+      "publisher_media_sha256": "ac4c54629d148076fd9a4c1597e063bbf1e9a8a2783e099c8d5d195db89aaccd",
+      "publisher_file": "gimp-original.webm",
+      "sample_start_seconds": 0,
+      "sample_end_seconds": 197.199,
+      "captions_available": false,
+      "source_first_video_pts": 1,
+      "native_video_time_base": "1/1000"
+    },
+    {
+      "case_id": "software-live-kotlin",
+      "title": "Live Coding for Artists and Designers",
+      "page_url": "https://media.ccc.de/v/lgm-2026-110673-live-coding-for-artists-and-designers",
+      "source_url": "https://cdn.media.ccc.de/conferences/lgm/2026/h264-sd/lgm2026-110673-eng-Live_Coding_for_Artists_and_Designers_sd.mp4",
+      "creator": "Abe Pazos Solatie",
+      "license": "CC BY 4.0 International",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "publisher_media_bytes": 125517090,
+      "publisher_media_sha256": "0584c10e2c9766425c062fb14ed8d03f508e1adf924ce8c51ab7b23bd01e500d",
+      "publisher_file": "lgm-original.mp4",
+      "sample_start_seconds": 0,
+      "sample_end_seconds": 1366.122,
+      "captions_available": false,
+      "source_first_video_pts": 256,
+      "native_video_time_base": "1/12800",
+      "recording_credit": "c3voc and Chaos West TV"
+    }
+  ],
+  "selection": "Two full licensed software recordings with different authors and applications."
+}
