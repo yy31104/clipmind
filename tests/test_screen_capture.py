@@ -5,7 +5,7 @@ import subprocess
 import tempfile
 import unittest
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
 from clipmind import media, visual_states
 from clipmind.media import Frame
@@ -254,6 +254,41 @@ class IncrementalScreenTests(unittest.TestCase):
                 self.assertEqual(kept[1].source_timestamp, capture)
                 self.assertLess(kept[0].source_timestamp, onset)
                 self.assertEqual(kept[1].path, Path(directory) / f'{round(capture * 2)}.png')
+
+    def test_scroll_keeps_both_captures_before_an_unrelated_cut(self):
+        code = Image.new('L', (300, 250), 24)
+        draw = ImageDraw.Draw(code)
+        font = ImageFont.load_default(size=18)
+        for row, line in enumerate((
+            'window.open(path);', '    let channel = stdin;', '    emit(message);',
+            'append(0xFD, &payload);', 'let checksum = hash(k);', 'reader.send(port, x);',
+            'state[position] = value;', '    flush_async(queue);', 'print_result("sent");',
+            'do_work(true);', 'drop(channel);', 'close(port);', 'stop();',
+        )):
+            draw.text((20, row * 18), line, fill=60, font=font)
+        before = Image.new('L', (640, 360), 34)
+        before.paste(code.crop((0, 0, 300, 220)), (116, 32))
+        after = before.copy()
+        after.paste(code.crop((0, 18, 300, 238)), (116, 32))
+        later = before.copy()
+        later.paste(code.crop((0, 24, 300, 244)), (116, 32))
+        successor = Image.new('L', before.size, 224)
+        with tempfile.TemporaryDirectory() as directory:
+            paths = []
+            for i, image in enumerate((before,) * 2 + (after,) + (later,) * 3 + (successor,) * 3):
+                path = Path(directory) / f'{i}.png'
+                image.save(path)
+                paths.append(path)
+
+            def captures(samples):
+                frames = [Frame(i, i / 2, path, source_timestamp=i / 2) for i, path in enumerate(samples)]
+                return [(f.timestamp, f.source_timestamp, f.index, f.path) for f in media.dedupe(frames)]
+
+            scrolled = [(0, .5, 1, paths[1]), (1, 1.5, 3, paths[3])]
+            self.assertEqual(captures(paths), [*scrolled, (3, 3, 6, paths[6])])
+            self.assertEqual(captures(paths[:6]), scrolled)
+            flashed = paths[:3] + [paths[0]] * 3 + paths[6:]
+            self.assertEqual(captures(flashed), [(0, 1.5, 3, paths[0]), (3, 3, 6, paths[6])])
 
 
 if __name__ == '__main__':

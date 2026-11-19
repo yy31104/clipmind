@@ -4,7 +4,7 @@ from __future__ import annotations
 import shutil
 import re
 from bisect import bisect_left
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import lru_cache
 from pathlib import Path
 
@@ -13,7 +13,7 @@ from PIL import Image
 
 from . import subprocesses
 from .config import settings
-from .screen_edits import SettledEdits
+from .screen_edits import SettledEdits, viewport_scrolled
 
 
 class MediaError(RuntimeError):
@@ -127,7 +127,7 @@ async def extract_still(video: Path, timestamp: float, dest: Path) -> Path:
 
 # Identifies how canonical membership was decided, so a later evaluation can
 # tell "the algorithm changed" apart from "the source bytes changed".
-DEDUPE_ALGORITHM = "dhash-stationary-strokes-native-onset-v8"
+DEDUPE_ALGORITHM = "dhash-stationary-strokes-native-onset-v9"
 
 
 def _detail_signature(path: Path) -> np.ndarray:
@@ -317,6 +317,12 @@ def _restore_settled_edits(
     starts = [positions[time] for time in coarse_onsets]
     captured_at = {path: time for time, path in samples}
     detector = SettledEdits(samples)
+    minimum_dwell = 0.85
+
+    @lru_cache(maxsize=8)
+    def thumbnail(position: int) -> np.ndarray:
+        return _detail_signature(samples[position][1])
+
     restored = []
     for number, (start, stop, original) in enumerate(zip(starts, starts[1:] + [len(frames)], kept)):
         if original.dedupe_warning:
@@ -331,16 +337,41 @@ def _restore_settled_edits(
         for position in range(start + 2, stop - 1):
             time, _ = samples[position]
             # Allow a short dwell on both sides of a recovered edit.
-            if time - previous_onset < 0.85 or next_onset - time < 0.85:
+            if time - previous_onset < minimum_dwell or next_onset - time < minimum_dwell:
                 continue
             if detector.at(position, replacing_representative=time <= original_capture):
                 positions_in_interval.append(position)
                 previous_onset = time
+        scroll_position = None
+        scrolled = None
+        first_edit = samples[positions_in_interval[1]][0] if len(positions_in_interval) > 1 else float("inf")
+        if original_capture < first_edit:
+            end = min(next_onset, first_edit, samples[stop - 1][0])
+            for position in range(start + 2, stop - 1):
+                time = samples[position][0]
+                if time > original_capture or end - time < minimum_dwell:
+                    break
+                if time - original.timestamp < minimum_dwell:
+                    continue
+                try:
+                    before, after = thumbnail(position - 1), thumbnail(position)
+                    if (np.mean(np.abs(after - before)) <= 0.25
+                            or not viewport_scrolled(thumbnail(position - 2), before, after, thumbnail(position + 1))):
+                        continue
+                except (OSError, ValueError):
+                    continue
+                # Give the original screenshot its own post-scroll interval.
+                scrolled = replace(original, timestamp=time)
+                scroll_position = position
+                positions_in_interval.insert(1, position)
+                break
         if len(positions_in_interval) == 1:
             restored.append(original)
             continue
         for left, right in zip(positions_in_interval, positions_in_interval[1:] + [stop]):
             frame = original if left == start else frames[left]
+            if scrolled is not None and left == scroll_position:
+                frame = scrolled
             if left == start and right < stop and original_capture >= samples[right][0]:
                 still = frames[right - 1]
                 frame.index, frame.path, frame.phash = still.index, still.path, still.phash
@@ -413,7 +444,7 @@ def dedupe(frames: list[Frame], threshold: int | None = None) -> list[Frame]:
                     # A first sample can contain both sides of a crossfade.
                     # Let the near-duplicate interval settle briefly while
                     # retaining its onset and the image's separate real PTS.
-                    if (detail is not None and representative_detail is not None
+                    if (representative_detail is not None
                             and frame.timestamp - kept[-1].timestamp <= 2.0
                             and np.mean(np.abs(detail - representative_detail)) > 0.25):
                         kept[-1].index, kept[-1].path = frame.index, frame.path

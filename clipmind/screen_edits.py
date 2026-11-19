@@ -7,6 +7,57 @@ import numpy as np
 from PIL import Image
 
 
+def viewport_scrolled(
+    earlier: np.ndarray, before: np.ndarray, after: np.ndarray, following: np.ndarray,
+) -> bool:
+    """Track a settled viewport through a vertical shift in 320×180 thumbnails."""
+    try:
+        import cv2
+    except ImportError:
+        return False
+
+    def edges(gray):
+        gray = gray.astype(np.float32)
+        return gray - cv2.GaussianBlur(gray, (0, 0), 1.2)
+
+    earlier, before, after, following = map(edges, (earlier, before, after, following))
+    height, width = before.shape
+    strip_height, strip_width = 28, 64
+    search_radius = 22
+    minimum_score = .72
+    matches = []
+    for top in range(search_radius, height - search_radius - strip_height + 1, strip_height // 2):
+        for left in range(12, width - strip_width + 1, 40):
+            strip = before[top:top + strip_height, left:left + strip_width]
+            if np.std(strip) < 3:
+                continue
+            after_strip = after[top - search_radius:top + strip_height + search_radius, left:left + strip_width]
+            scores = cv2.matchTemplate(after_strip, strip, cv2.TM_CCOEFF_NORMED).ravel()
+            best = int(np.argmax(scores))
+            offset = best - search_radius
+            if abs(offset) < 3 or scores[best] < minimum_score or scores[best] - scores[search_radius] < .33:
+                continue
+            lead = earlier[top:top + strip_height, left:left + strip_width]
+            if cv2.matchTemplate(lead, strip, cv2.TM_CCOEFF_NORMED)[0, 0] < minimum_score:
+                continue
+            shifted_top = top + offset
+            first = max(0, shifted_top - search_radius)
+            last = min(height, shifted_top + strip_height + search_radius)
+            shifted = after[shifted_top:shifted_top + strip_height, left:left + strip_width]
+            later = following[first:last, left:left + strip_width]
+            continuation = cv2.matchTemplate(later, shifted, cv2.TM_CCOEFF_NORMED).ravel()
+            next_best = int(np.argmax(continuation))
+            next_offset = first + next_best - shifted_top
+            if continuation[next_best] < minimum_score or (abs(next_offset) > 1 and next_offset * offset < 0):
+                continue
+            for other_left, other_top, other_offset in matches:
+                if (strip_height <= top - other_top <= 2 * strip_height
+                        and abs(left - other_left) <= strip_width and abs(offset - other_offset) <= 1):
+                    return True
+            matches.append((left, top, offset))
+    return False
+
+
 class SettledEdits:
     def __init__(self, samples: list[tuple[float, Path]]):
         paths = [path for _, path in samples]
